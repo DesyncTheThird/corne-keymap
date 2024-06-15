@@ -8,6 +8,15 @@ WPM_ENABLE = yes
 # SRC += features/select_word.c
 COMBO_ENABLE = yes
 
+STENO_ENABLE = yes
+STENO_PROTOCOL = txbolt
+
+# RGBLIGHT_SUPPORTED = yes
+# RGB_MATRIX_SUPPORTED = yes
+
+RGBLIGHT_ENABLE = no
+RGB_MATRIX_ENABLE = yes
+
 MOUSEKEY_ENABLE = yes # Mouse keys
 EXTRAKEY_ENABLE = yes # Audio control and System control
 # AUTO_SHIFT_ENABLE = yes # Auto Shift

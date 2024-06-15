@@ -11,6 +11,7 @@ enum corne_layers {
     _NUMPAD,
     _TOUHOU,
     _EDIT_OVERLAY,
+    _STENO,
 };
 
 
@@ -39,7 +40,7 @@ enum custom_keycodes {
     CS_TILD,
     CS_PLUS,
     REP,
-    SFT,
+    // SFT,
     MT_RBRC,
     MT_RPRN,
     MT_LPRN,
@@ -216,6 +217,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`---------------------------------'  `--------------------------'
     ),
 
+    [_STENO] = LAYOUT(
+      //,-----------------------------------------------------.                                 ,-----------------------------------------------------.
+           KC_ESC, STN_S1,   STN_TL,  STN_PL,  STN_HL, STN_ST1,                                   STN_ST3,  STN_FR,  STN_PR,  STN_LR,  STN_TR,  STN_DR,
+      //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
+          KC_LSFT, STN_S2,   STN_KL,  STN_WL,  STN_RL, STN_ST2,                                   STN_ST4,  STN_RR,  STN_BR,  STN_GR,  STN_SR,  STN_ZR,
+      //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
+          KC_LCTL, STN_N1,   STN_N2,  STN_N3,  STN_N4,  STN_N5,                                    STN_N6,  STN_N7,  STN_N8,   STN_N9, KC_TRNS,  KC_ENT,
+      //|--------+--------+--------+--------+--------+--------+---------------|  |--------------+--------+--------+--------+--------+--------+--------|
+                                              KC_TRNS,   STN_A,          STN_O,            STN_E,   STN_U, KC_TRNS
+                                          //`---------------------------------'  `--------------------------'
+    ),
 };
 
 
@@ -297,9 +309,9 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         // case LT(2, REP):
-        // case LT(3, KC_SPC):
-        case LT(5, KC_SLSH):
-        case LT(4, KC_BSPC):
+        case LT(3,KC_SPC):
+        case LT(5,KC_SLSH):
+        case LT(4,KC_BSPC):
             // Immediately select the hold action when another key is pressed.
             return true;
         default:
@@ -314,6 +326,7 @@ enum combo_events {
     // SCROLLLOCK,
     NOMODS,
     TOUHOU,
+    STENO,
     
     // LESSTHAN,
     // GREATERTHAN,
@@ -344,28 +357,28 @@ enum combo_events {
     R_DOT,
 
     // Steno
-    SG_THE,
-    SG_AND,
-    SG_THAT,
-    SG_THIS,
-    SG_HERE,
-    SG_HAVE,
-    SG_WITH,
-    SG_YOU,
-    SG_EVER,
-    SG_FROM,
-    SG_SOME,
-    SG_WHAT,
-    SG_BUT,
-    SG_ABOUT,
-    SG_WHICH,
-    SG_JUST,
-    SG_LIKE,
+    // SG_THE,
+    // SG_AND,
+    // SG_THAT,
+    // SG_THIS,
+    // SG_HERE,
+    // SG_HAVE,
+    // SG_WITH,
+    // SG_YOU,
+    // SG_EVER,
+    // SG_FROM,
+    // SG_SOME,
+    // SG_WHAT,
+    // SG_BUT,
+    // SG_ABOUT,
+    // SG_WHICH,
+    // SG_JUST,
+    // SG_LIKE,
     
-    SG_OUGH,
-    SG_OULD,
-    SG_ION,
-    SG_ING,
+    // SG_OUGH,
+    // SG_OULD,
+    // SG_ION,
+    // SG_ING,
     
     COMBO_LENGTH
 };
@@ -375,6 +388,7 @@ uint16_t COMBO_LEN = COMBO_LENGTH;
 // const uint16_t PROGMEM scrolllock[]     = {MT_F, MT_J, COMBO_END};
 const uint16_t PROGMEM nomods[]         = {KC_P, CS_HASH, COMBO_END};
 const uint16_t PROGMEM touhou[]         = {KC_P, CS_HASH, KC_ESC, COMBO_END};
+const uint16_t PROGMEM steno[]          = {KC_I, KC_O, KC_P, CS_HASH, COMBO_END};
 
 // const uint16_t PROGMEM leftparen[]      = {MT_S, KC_E, COMBO_END};
 // const uint16_t PROGMEM rightparen[]     = {KC_E, MT_F, COMBO_END};
@@ -407,34 +421,35 @@ const uint16_t PROGMEM colon[]          = {KC_Y, KC_U, COMBO_END};
 const uint16_t PROGMEM semicolon[]      = {KC_H, KC_U, COMBO_END};
 
 // Steno
-const uint16_t PROGMEM sg_the[]         = {LT(2,REP), KC_T, COMBO_END};
-const uint16_t PROGMEM sg_and[]         = {LT(2,REP), KC_A, COMBO_END};
-const uint16_t PROGMEM sg_that[]        = {LT(2,REP), KC_T, KC_H, COMBO_END};
-const uint16_t PROGMEM sg_this[]        = {LT(2,REP), KC_T, KC_I, COMBO_END};
-const uint16_t PROGMEM sg_here[]        = {LT(2,REP), KC_H, COMBO_END};
-const uint16_t PROGMEM sg_have[]        = {LT(2,REP), KC_H, KC_A, COMBO_END};
-const uint16_t PROGMEM sg_with[]        = {LT(2,REP), KC_W, KC_I, COMBO_END};
-const uint16_t PROGMEM sg_you[]         = {LT(2,REP), KC_U, COMBO_END};
-const uint16_t PROGMEM sg_ever[]        = {LT(2,REP), KC_E, COMBO_END};
-const uint16_t PROGMEM sg_from[]        = {LT(2,REP), MT_F, COMBO_END};
-const uint16_t PROGMEM sg_some[]        = {LT(2,REP), MT_S, COMBO_END};
-const uint16_t PROGMEM sg_what[]        = {LT(2,REP), KC_W, COMBO_END};
-const uint16_t PROGMEM sg_but[]         = {LT(2,REP), KC_B, COMBO_END};
-const uint16_t PROGMEM sg_about[]       = {LT(2,REP), KC_A, KC_B, COMBO_END};
-const uint16_t PROGMEM sg_which[]       = {LT(2,REP), KC_W, KC_H, COMBO_END};
-const uint16_t PROGMEM sg_just[]        = {LT(2,REP), MT_J, COMBO_END};
-const uint16_t PROGMEM sg_like[]        = {LT(2,REP), MT_K, COMBO_END};
+// const uint16_t PROGMEM sg_the[]         = {LT(2,REP), KC_T, COMBO_END};
+// const uint16_t PROGMEM sg_and[]         = {LT(2,REP), KC_A, COMBO_END};
+// const uint16_t PROGMEM sg_that[]        = {LT(2,REP), KC_T, KC_H, COMBO_END};
+// const uint16_t PROGMEM sg_this[]        = {LT(2,REP), KC_T, KC_I, COMBO_END};
+// const uint16_t PROGMEM sg_here[]        = {LT(2,REP), KC_H, COMBO_END};
+// const uint16_t PROGMEM sg_have[]        = {LT(2,REP), KC_H, KC_A, COMBO_END};
+// const uint16_t PROGMEM sg_with[]        = {LT(2,REP), KC_W, KC_I, COMBO_END};
+// const uint16_t PROGMEM sg_you[]         = {LT(2,REP), KC_U, COMBO_END};
+// const uint16_t PROGMEM sg_ever[]        = {LT(2,REP), KC_E, COMBO_END};
+// const uint16_t PROGMEM sg_from[]        = {LT(2,REP), MT_F, COMBO_END};
+// const uint16_t PROGMEM sg_some[]        = {LT(2,REP), MT_S, COMBO_END};
+// const uint16_t PROGMEM sg_what[]        = {LT(2,REP), KC_W, COMBO_END};
+// const uint16_t PROGMEM sg_but[]         = {LT(2,REP), KC_B, COMBO_END};
+// const uint16_t PROGMEM sg_about[]       = {LT(2,REP), KC_A, KC_B, COMBO_END};
+// const uint16_t PROGMEM sg_which[]       = {LT(2,REP), KC_W, KC_H, COMBO_END};
+// const uint16_t PROGMEM sg_just[]        = {LT(2,REP), MT_J, COMBO_END};
+// const uint16_t PROGMEM sg_like[]        = {LT(2,REP), MT_K, COMBO_END};
 
-const uint16_t PROGMEM sg_ough[]        = {LT(2,REP), KC_O, COMBO_END};
-const uint16_t PROGMEM sg_ould[]        = {LT(2,REP), MT_L, COMBO_END};
-const uint16_t PROGMEM sg_ion[]         = {LT(2,REP), MT_N, COMBO_END};
-const uint16_t PROGMEM sg_ing[]         = {LT(2,REP), KC_I, COMBO_END};
+// const uint16_t PROGMEM sg_ough[]        = {LT(2,REP), KC_O, COMBO_END};
+// const uint16_t PROGMEM sg_ould[]        = {LT(2,REP), MT_L, COMBO_END};
+// const uint16_t PROGMEM sg_ion[]         = {LT(2,REP), MT_N, COMBO_END};
+// const uint16_t PROGMEM sg_ing[]         = {LT(2,REP), KC_I, COMBO_END};
 
 combo_t key_combos[] = {
     // [CAPSLOCK]     = COMBO_ACTION(capslock),
     // [SCROLLLOCK]   = COMBO_ACTION(scrolllock),
     [NOMODS]        = COMBO_ACTION(nomods),
     [TOUHOU]        = COMBO_ACTION(touhou),
+    [STENO]         = COMBO_ACTION(steno),
     
     // Manual control
     [L_ASTERISK]    = COMBO(l_asterisk,    CM_ASTR),
@@ -466,29 +481,28 @@ combo_t key_combos[] = {
     [SEMICOLON]     = COMBO(semicolon, KC_SCLN),
 
     // Steno
-    [SG_THE]        = COMBO_ACTION(sg_the),
-    [SG_AND]        = COMBO_ACTION(sg_and),
-    [SG_THAT]       = COMBO_ACTION(sg_that),
-    [SG_THIS]       = COMBO_ACTION(sg_this),
-    [SG_HERE]       = COMBO_ACTION(sg_here),
-    [SG_HAVE]       = COMBO_ACTION(sg_have),
-    [SG_WITH]       = COMBO_ACTION(sg_with),
-    [SG_YOU]        = COMBO_ACTION(sg_you),
-    [SG_EVER]       = COMBO_ACTION(sg_ever),
-    [SG_FROM]       = COMBO_ACTION(sg_from),
-    [SG_SOME]       = COMBO_ACTION(sg_some),
-    [SG_WHAT]       = COMBO_ACTION(sg_what),
-    [SG_BUT]        = COMBO_ACTION(sg_but),
-    [SG_ABOUT]      = COMBO_ACTION(sg_about),
-    [SG_WHICH]      = COMBO_ACTION(sg_which),
-    [SG_JUST]       = COMBO_ACTION(sg_just),
-    [SG_LIKE]       = COMBO_ACTION(sg_like),
+    // [SG_THE]        = COMBO_ACTION(sg_the),
+    // [SG_AND]        = COMBO_ACTION(sg_and),
+    // [SG_THAT]       = COMBO_ACTION(sg_that),
+    // [SG_THIS]       = COMBO_ACTION(sg_this),
+    // [SG_HERE]       = COMBO_ACTION(sg_here),
+    // [SG_HAVE]       = COMBO_ACTION(sg_have),
+    // [SG_WITH]       = COMBO_ACTION(sg_with),
+    // [SG_YOU]        = COMBO_ACTION(sg_you),
+    // [SG_EVER]       = COMBO_ACTION(sg_ever),
+    // [SG_FROM]       = COMBO_ACTION(sg_from),
+    // [SG_SOME]       = COMBO_ACTION(sg_some),
+    // [SG_WHAT]       = COMBO_ACTION(sg_what),
+    // [SG_BUT]        = COMBO_ACTION(sg_but),
+    // [SG_ABOUT]      = COMBO_ACTION(sg_about),
+    // [SG_WHICH]      = COMBO_ACTION(sg_which),
+    // [SG_JUST]       = COMBO_ACTION(sg_just),
+    // [SG_LIKE]       = COMBO_ACTION(sg_like),
     
-    [SG_OUGH]       = COMBO_ACTION(sg_ough),
-    [SG_OULD]       = COMBO_ACTION(sg_ould),
-    [SG_ION]        = COMBO_ACTION(sg_ion),
-    [SG_ING]        = COMBO_ACTION(sg_ing),
-    
+    // [SG_OUGH]       = COMBO_ACTION(sg_ough),
+    // [SG_OULD]       = COMBO_ACTION(sg_ould),
+    // [SG_ION]        = COMBO_ACTION(sg_ion),
+    // [SG_ING]        = COMBO_ACTION(sg_ing),
 };
 
 
@@ -524,6 +538,16 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 }
             }
             break;
+        case STENO:
+            if (pressed) {
+                if (layer_state_is(_BASIC) || layer_state_is(_DEFAULT)) {
+                    layer_move(_STENO);
+                }
+                else if (layer_state_is(_STENO)) {
+                    layer_move(_DEFAULT);
+                }
+            }
+            break;
 
         case COLON:
             if (pressed) {
@@ -535,115 +559,115 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
             break;
 
         // Steno
-        case SG_THE:
-            if (pressed) {
-                SEND_STRING("the");
-            }
-            break;
-        case SG_AND:
-            if (pressed) {
-                SEND_STRING("and");
-            }
-            break;
-        case SG_THAT:
-            if (pressed) {
-                SEND_STRING("that");
-            }
-            break;
-        case SG_THIS:
-            if (pressed) {
-                SEND_STRING("this");
-            }
-            break;
-        case SG_HERE:
-            if (pressed) {
-                SEND_STRING("here");
-            }
-            break;
-        case SG_HAVE:
-            if (pressed) {
-                SEND_STRING("have");
-            }
-            break;
-        case SG_WITH:
-            if (pressed) {
-                SEND_STRING("with");
-            }
-            break;
-        case SG_YOU:
-            if (pressed) {
-                SEND_STRING("you");
-            }
-            break;
-        case SG_EVER:
-            if (pressed) {
-                SEND_STRING("ever");
-            }
-            break;
-        case SG_FROM:
-            if (pressed) {
-                SEND_STRING("from");
-            }
-            break;
-        case SG_SOME:
-            if (pressed) {
-                SEND_STRING("some");
-            }
-            break;
-        case SG_WHAT:
-            if (pressed) {
-                SEND_STRING("what");
-            }
-            break;
-        case SG_BUT:
-            if (pressed) {
-                SEND_STRING("but");
-            }
-            break;
-        case SG_ABOUT:
-            if (pressed) {
-                SEND_STRING("about");
-            }
-            break;
-        case SG_WHICH:
-            if (pressed) {
-                SEND_STRING("which");
-            }
-            break;
-        case SG_JUST:
-            if (pressed) {
-                SEND_STRING("just");
-            }
-            break;
-        case SG_LIKE:
-            if (pressed) {
-                SEND_STRING("like");
-            }
-            break;
+        // case SG_THE:
+        //     if (pressed) {
+        //         SEND_STRING("the");
+        //     }
+        //     break;
+        // case SG_AND:
+        //     if (pressed) {
+        //         SEND_STRING("and");
+        //     }
+        //     break;
+        // case SG_THAT:
+        //     if (pressed) {
+        //         SEND_STRING("that");
+        //     }
+        //     break;
+        // case SG_THIS:
+        //     if (pressed) {
+        //         SEND_STRING("this");
+        //     }
+        //     break;
+        // case SG_HERE:
+        //     if (pressed) {
+        //         SEND_STRING("here");
+        //     }
+        //     break;
+        // case SG_HAVE:
+        //     if (pressed) {
+        //         SEND_STRING("have");
+        //     }
+        //     break;
+        // case SG_WITH:
+        //     if (pressed) {
+        //         SEND_STRING("with");
+        //     }
+        //     break;
+        // case SG_YOU:
+        //     if (pressed) {
+        //         SEND_STRING("you");
+        //     }
+        //     break;
+        // case SG_EVER:
+        //     if (pressed) {
+        //         SEND_STRING("ever");
+        //     }
+        //     break;
+        // case SG_FROM:
+        //     if (pressed) {
+        //         SEND_STRING("from");
+        //     }
+        //     break;
+        // case SG_SOME:
+        //     if (pressed) {
+        //         SEND_STRING("some");
+        //     }
+        //     break;
+        // case SG_WHAT:
+        //     if (pressed) {
+        //         SEND_STRING("what");
+        //     }
+        //     break;
+        // case SG_BUT:
+        //     if (pressed) {
+        //         SEND_STRING("but");
+        //     }
+        //     break;
+        // case SG_ABOUT:
+        //     if (pressed) {
+        //         SEND_STRING("about");
+        //     }
+        //     break;
+        // case SG_WHICH:
+        //     if (pressed) {
+        //         SEND_STRING("which");
+        //     }
+        //     break;
+        // case SG_JUST:
+        //     if (pressed) {
+        //         SEND_STRING("just");
+        //     }
+        //     break;
+        // case SG_LIKE:
+        //     if (pressed) {
+        //         SEND_STRING("like");
+        //     }
+        //     break;
 
 
 
 
-        case SG_OUGH:
-            if (pressed) {
-                SEND_STRING("ough");
-            }
-            break;
-        case SG_OULD:
-            if (pressed) {
-                SEND_STRING("ould");
-            }
-            break;
-        case SG_ION:
-            if (pressed) {
-                SEND_STRING("ion");
-            }
-            break;
-        case SG_ING:
-            if (pressed) {
-                SEND_STRING("ing");
-            }
-            break;
+        // case SG_OUGH:
+        //     if (pressed) {
+        //         SEND_STRING("ough");
+        //     }
+        //     break;
+        // case SG_OULD:
+        //     if (pressed) {
+        //         SEND_STRING("ould");
+        //     }
+        //     break;
+        // case SG_ION:
+        //     if (pressed) {
+        //         SEND_STRING("ion");
+        //     }
+        //     break;
+        // case SG_ING:
+        //     if (pressed) {
+        //         SEND_STRING("ing");
+        //     }
+        //     break;
 
     }
 }
@@ -1315,6 +1339,9 @@ void render_layer(void) {
         case _EDIT_OVERLAY:
             oled_write_P(PSTR("Edit'"), false);
             break;
+        case _STENO:
+            oled_write_P(PSTR("STENO"), false);
+            break;
         default:
             oled_write_P(PSTR("#####"), false);
     }
@@ -1448,7 +1475,8 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
 void keyboard_post_init_user(void) {
     rgb_matrix_set_speed_noeeprom(64);
-    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE_MULTIWIDE);
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE);
+    rgb_matrix_sethsv_noeeprom(255,255,255);
 }
 
 
@@ -1457,9 +1485,13 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     if (basic != IS_LAYER_ON_STATE(state, _BASIC) || basic != IS_LAYER_ON_STATE(state, _TOUHOU)) {
         basic = !basic;
         if (basic) {
+            rgb_matrix_set_speed_noeeprom(48);
             rgb_matrix_mode_noeeprom(RGB_MATRIX_RAINBOW_PINWHEELS);
+            rgb_matrix_sethsv_noeeprom(255,225,255);
         } else {
-            rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE_MULTIWIDE);
+            rgb_matrix_set_speed_noeeprom(64);
+            rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE);
+            rgb_matrix_sethsv_noeeprom(255,255,255);
         }
     }
     return state;
