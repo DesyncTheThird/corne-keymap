@@ -3,38 +3,34 @@
 #define SPLIT_USB_DETECT
 #define SPLIT_WATCHDOG_ENABLE
 
-#define OLED_SCROLL_TIMEOUT 5000
+#define SPLIT_LAYER_STATE_ENABLE
+
+// #define OLED_SCROLL_TIMEOUT 0
+#define OLED_TIMEOUT 2000
 
 //#define USE_MATRIX_I2C
 
 // #define MASTER_LEFT
-// #define MASTER_RIGHT
-#define EE_HANDS
+#define MASTER_RIGHT
+// #define EE_HANDS
 
 //#define QUICK_TAP_TERM 0
 //#define TAPPING_TERM 100
 
-#ifdef RGBLIGHT_ENABLE
-    #define RGBLIGHT_EFFECT_BREATHING
-    #define RGBLIGHT_EFFECT_RAINBOW_MOOD
-    #define RGBLIGHT_EFFECT_RAINBOW_SWIRL
-    #define RGBLIGHT_EFFECT_SNAKE
-    #define RGBLIGHT_EFFECT_KNIGHT
-    #define RGBLIGHT_EFFECT_CHRISTMAS
-    #define RGBLIGHT_EFFECT_STATIC_GRADIENT
-    #define RGBLIGHT_EFFECT_RGB_TEST
-    #define RGBLIGHT_EFFECT_ALTERNATING
-    #define RGBLIGHT_EFFECT_TWINKLE
-    #define RGBLIGHT_LIMIT_VAL 120
-    #define RGBLIGHT_HUE_STEP 10
-    #define RGBLIGHT_SAT_STEP 17
-    #define RGBLIGHT_VAL_STEP 17
+#ifdef RGB_MATRIX_ENABLE
+    // #define RGB_MATRIX_KEYPRESSES
+    #define RGB_DISABLE_WHEN_USB_SUSPENDED
+    #define RGB_MATRIX_FRAMEBUFFER_EFFECTS
+    #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 120
+    #define RGB_MATRIX_HUE_STEP 8
+    #define RGB_MATRIX_SAT_STEP 8
+    #define RGB_MATRIX_VAL_STEP 8
+    #define RGB_MATRIX_SPD_STEP 10
+
+    #define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTIWIDE
+    #define RGB_MATRIX_SOLID_REACTIVE_GRADIENT_MODE
+    #define ENABLE_RGB_MATRIX_RAINBOW_PINWHEELS
 #endif
-
-
-
-
-
 
 
 
@@ -60,7 +56,7 @@
 
 // Timer for mod and layer taps
 #undef TAPPING_TERM
-#define TAPPING_TERM 200
+#define TAPPING_TERM 300
 #define TAPPING_TERM_PER_KEY
 
 // Perform hold action if other keys are pressed.
@@ -105,12 +101,15 @@
 
 
 
+
+
+
+
+
 // Makes GESC key output escape while ctrl is held
 // #define GRAVE_ESC_CTRL_OVERRIDE
 
 #define OLED_FONT_H "keyboards/crkbd/keymaps/desync/font.c"
-
-
 
 #undef LOCKING_SUPPORT_ENABLE
 #undef LOCKING_RESYNC_ENABLE
