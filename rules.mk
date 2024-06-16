@@ -2,14 +2,13 @@
 OLED_ENABLE = yes
 OLED_DRIVER = ssd1306
 # ENCODER_ENABLE = yes
-EXTRAKEY_ENABLE = yes
 WPM_ENABLE = yes
 # SRC += features/repeat_key.c
 # SRC += features/select_word.c
 COMBO_ENABLE = yes
 
-STENO_ENABLE = yes
-STENO_PROTOCOL = txbolt
+# STENO_ENABLE = yes
+# STENO_PROTOCOL = txbolt
 
 # RGBLIGHT_SUPPORTED = yes
 # RGB_MATRIX_SUPPORTED = yes
