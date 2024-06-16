@@ -283,11 +283,11 @@ void matrix_scan_user(void) {
 
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LT(2,REP):
-        case LT(3,KC_SPC):
-        case LT(4,KC_BSPC):
-        case LT(5,KC_SLSH):
-        case MT_S:
+        case LT(3,REP):
+        case LT(4,KC_SPC):
+        case LT(5,KC_BSPC):
+        case LT(6,KC_SLSH):
+        case MT_S:                
         case MT_D:
         case MT_F:
         case MT_C:
@@ -323,9 +323,9 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         // case LT(2, REP):
-        case LT(4,KC_SPC):
-        case LT(6,KC_SLSH):
+        // case LT(4,KC_SPC):
         case LT(5,KC_BSPC):
+        case LT(6,KC_SLSH):
             // Immediately select the hold action when another key is pressed.
             return true;
         default:
@@ -340,7 +340,7 @@ enum combo_events {
     // SCROLLLOCK,
     NOMODS,
     TOUHOU,
-    // STENO,
+    STENO,
     
     // LESSTHAN,
     // GREATERTHAN,
@@ -402,7 +402,7 @@ uint16_t COMBO_LEN = COMBO_LENGTH;
 // const uint16_t PROGMEM scrolllock[]     = {MT_F, MT_J, COMBO_END};
 const uint16_t PROGMEM nomods[]         = {KC_P, CS_HASH, COMBO_END};
 const uint16_t PROGMEM touhou[]         = {KC_P, CS_HASH, KC_ESC, COMBO_END};
-// const uint16_t PROGMEM steno[]          = {KC_I, KC_O, KC_P, CS_HASH, COMBO_END};
+const uint16_t PROGMEM steno[]          = {KC_I, KC_O, KC_P, CS_HASH, COMBO_END};
 
 // const uint16_t PROGMEM leftparen[]      = {MT_S, KC_E, COMBO_END};
 // const uint16_t PROGMEM rightparen[]     = {KC_E, MT_F, COMBO_END};
@@ -463,7 +463,7 @@ combo_t key_combos[] = {
     // [SCROLLLOCK]   = COMBO_ACTION(scrolllock),
     [NOMODS]        = COMBO_ACTION(nomods),
     [TOUHOU]        = COMBO_ACTION(touhou),
-    // [STENO]         = COMBO_ACTION(steno),
+    [STENO]         = COMBO_ACTION(steno),
     
     // Manual control
     [L_ASTERISK]    = COMBO(l_asterisk,    CM_ASTR),
@@ -552,16 +552,16 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 }
             }
             break;
-        // case STENO:
-        //     if (pressed) {
-        //         if (layer_state_is(_BASIC) || layer_state_is(_DEFAULT)) {
-        //             layer_move(_STENO);
-        //         }
-        //         else if (layer_state_is(_STENO)) {
-        //             layer_move(_DEFAULT);
-        //         }
-        //     }
-        //     break;
+        case STENO:
+            if (pressed) {
+                if (layer_state_is(_BASIC) || layer_state_is(_DEFAULT)) {
+                    layer_move(_STENO);
+                }
+                else if (layer_state_is(_STENO)) {
+                    layer_move(_DEFAULT);
+                }
+            }
+            break;
 
         case COLON:
             if (pressed) {
@@ -1050,7 +1050,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             };
             break;
 
-        case LT(2,REP):
+        case LT(3,REP):
         {
             if (!record->tap.count && record->event.pressed) { // Intercept holds only
                 layer_on(_EDIT);
