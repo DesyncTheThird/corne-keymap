@@ -120,29 +120,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`---------------------------------'  `--------------------------'
     ),
 
-    // [_STENO] = LAYOUT( //2
-    //   //,-----------------------------------------------------.                                 ,-----------------------------------------------------.
-    //        KC_ESC,  STN_S1,  STN_TL,  STN_PL,  STN_HL, STN_ST1,                                   STN_ST3,  STN_FR,  STN_PR,  STN_LR,  STN_TR,  STN_DR,
-    //   //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
-    //       KC_LSFT,  STN_S2,  STN_KL,  STN_WL,  STN_RL, STN_ST2,                                   STN_ST4,  STN_RR,  STN_BR,  STN_GR,  STN_SR,  STN_ZR,
-    //   //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
-    //       KC_LCTL,  STN_N1,  STN_N2,  STN_N3,  STN_N4,  STN_N5,                                    STN_N6,  STN_N7,  STN_N8,  STN_N9,  STN_NA,  KC_ENT,
-    //   //|--------+--------+--------+--------+--------+--------+---------------|  |--------------+--------+--------+--------+--------+--------+--------|
-    //                                            STN_FN,   STN_A,          STN_O,            STN_E,   STN_U, STN_PWR
-    //                                       //`---------------------------------'  `--------------------------'
-    // ),
-    
     [_STENO] = LAYOUT( //2
       //,-----------------------------------------------------.                                 ,-----------------------------------------------------.
-           KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                                      KC_Y,    KC_U,    KC_I,    KC_O,   KC_P,  KC_LBRC,
+           KC_ESC,  STN_S1,  STN_TL,  STN_PL,  STN_HL, STN_ST1,                                   STN_ST3,  STN_FR,  STN_PR,  STN_LR,  STN_TR,  STN_DR,
       //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
-          KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                                      KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
+          KC_LSFT,  STN_S2,  STN_KL,  STN_WL,  STN_RL, STN_ST2,                                   STN_ST4,  STN_RR,  STN_BR,  STN_GR,  STN_SR,  STN_ZR,
       //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
-          KC_LCTL,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,                                      KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,
+          KC_LCTL,  STN_N1,  STN_N2,  STN_N3,  STN_N4,  STN_N5,                                    STN_N6,  STN_N7,  STN_N8,  STN_N9,  STN_NA,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+---------------|  |--------------+--------+--------+--------+--------+--------+--------|
-                                              KC_TRNS,    KC_C,           KC_V,             KC_N,    KC_M, KC_TRNS
+                                               STN_FN,   STN_A,          STN_O,            STN_E,   STN_U, STN_PWR
                                           //`---------------------------------'  `--------------------------'
     ),
+    
+    // [_STENO] = LAYOUT( //2
+    //   //,-----------------------------------------------------.                                 ,-----------------------------------------------------.
+    //        KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                                      KC_Y,    KC_U,    KC_I,    KC_O,   KC_P,  KC_LBRC,
+    //   //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
+    //       KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                                      KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
+    //   //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
+    //       KC_LCTL,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,                                      KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,
+    //   //|--------+--------+--------+--------+--------+--------+---------------|  |--------------+--------+--------+--------+--------+--------+--------|
+    //                                           KC_TRNS,    KC_C,           KC_V,             KC_N,    KC_M, KC_TRNS
+    //                                       //`---------------------------------'  `--------------------------'
+    // ),
 
 
     [_EDIT] = LAYOUT( //3
@@ -1409,32 +1409,46 @@ bool oled_task_user(void) {
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     // Layers on underglow
+    HSV underglow_hsv = (HSV){ 0, 0, 0 };
+    RGB underglow_rgb = hsv_to_rgb(underglow_hsv);
     for (uint8_t i = 27; i < 33; i++) {
         switch(get_highest_layer(layer_state|default_layer_state)) {
             case _DATA:
-                rgb_matrix_set_color(i, RGB_GREEN);
-                rgb_matrix_set_color(i-27, RGB_GREEN);
+                underglow_hsv = (HSV){ 85, 255, 192 };
+                underglow_rgb = hsv_to_rgb(underglow_hsv);
+                rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+                rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _EDIT_OVERLAY:
             case _EDIT:
-                rgb_matrix_set_color(i, RGB_RED);
-                rgb_matrix_set_color(i-27, RGB_RED);
+                underglow_hsv = (HSV){ 0, 255, 192 };
+                underglow_rgb = hsv_to_rgb(underglow_hsv);
+                rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+                rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _SYMBOL:
-                rgb_matrix_set_color(i, RGB_BLUE);
-                rgb_matrix_set_color(i-27, RGB_BLUE);
+                underglow_hsv = (HSV){ 169, 255, 192 };
+                underglow_rgb = hsv_to_rgb(underglow_hsv);
+                rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+                rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _MOUSE:
-                rgb_matrix_set_color(i, RGB_CYAN);
-                rgb_matrix_set_color(i-27, RGB_CYAN);
+                underglow_hsv = (HSV){ 127, 255, 192 };
+                underglow_rgb = hsv_to_rgb(underglow_hsv);
+                rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+                rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _NUMPAD:
-                rgb_matrix_set_color(i, RGB_WHITE);
-                rgb_matrix_set_color(i-27, RGB_WHITE);
+                underglow_hsv = (HSV){ 43, 255, 192 };
+                underglow_rgb = hsv_to_rgb(underglow_hsv);
+                rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+                rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _FUNCTION:
-                rgb_matrix_set_color(i, RGB_MAGENTA);
-                rgb_matrix_set_color(i-27, RGB_MAGENTA);
+                underglow_hsv = (HSV){ 201, 255, 192 };
+                underglow_rgb = hsv_to_rgb(underglow_hsv);
+                rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+                rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _BASIC:
             case _TOUHOU:
@@ -1443,27 +1457,42 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         }
     }
 
+    
+    // if (get_mods() == 0) {
+    //     rgb_matrix_sethsv_noeeprom(255,255,225);
+    // } else {
+    //     rgb_matrix_sethsv_noeeprom(255,255,255);
+    // }
+
     // Thumbkeys
-    // HSV modifiers = {0,0,0}
+    HSV mod_hsv = (HSV){ 0, 0, 0 };
+    RGB mod_rgb = hsv_to_rgb(mod_hsv);
     int idxs[3] = { 33, 40, 41 };
     for (uint8_t i = 0; i < 3; i++) {
         if ((get_mods() & MOD_BIT(KC_LGUI)) == MOD_BIT(KC_LGUI) || (get_mods() & MOD_BIT(KC_RGUI)) == MOD_BIT(KC_RGUI)) {
-            rgb_matrix_set_color(idxs[i], RGB_BLUE);
-            rgb_matrix_set_color(idxs[i]-27, RGB_BLUE);
+            mod_hsv = (HSV){ 000, 255, 255 };
+            mod_rgb = hsv_to_rgb(mod_hsv);
+            rgb_matrix_set_color(idxs[i], mod_rgb.r, mod_rgb.g, mod_rgb.b);
+            rgb_matrix_set_color(idxs[i]-27, mod_rgb.r, mod_rgb.g, mod_rgb.b);
         }
         if ((get_mods() & MOD_BIT(KC_LALT)) == MOD_BIT(KC_LALT) || (get_mods() & MOD_BIT(KC_RALT)) == MOD_BIT(KC_RALT)) {
-            rgb_matrix_set_color(idxs[i], RGB_PURPLE);
-            rgb_matrix_set_color(idxs[i]-27, RGB_PURPLE);
-
+            mod_hsv = (HSV){ 180, 255, 255 };
+            mod_rgb = hsv_to_rgb(mod_hsv);
+            rgb_matrix_set_color(idxs[i], mod_rgb.r, mod_rgb.g, mod_rgb.b);
+            rgb_matrix_set_color(idxs[i]-27, mod_rgb.r, mod_rgb.g, mod_rgb.b);
         }
         if ((get_mods() & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT) || (get_mods() & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
-            rgb_matrix_set_color(idxs[i], RGB_MAGENTA);
-            rgb_matrix_set_color(idxs[i]-27, RGB_MAGENTA);
+            mod_hsv = (HSV){ 127, 255, 255 };
+            mod_rgb = hsv_to_rgb(mod_hsv);
+            rgb_matrix_set_color(idxs[i], mod_rgb.r, mod_rgb.g, mod_rgb.b);
+            rgb_matrix_set_color(idxs[i]-27, mod_rgb.r, mod_rgb.g, mod_rgb.b);
 
         }
         if ((get_mods() & MOD_BIT(KC_LCTL)) == MOD_BIT(KC_LCTL) || (get_mods() & MOD_BIT(KC_RCTL)) == MOD_BIT(KC_RCTL)) {
-            rgb_matrix_set_color(idxs[i], RGB_TEAL);
-            rgb_matrix_set_color(idxs[i]-27, RGB_TEAL);
+            mod_hsv = (HSV){ 64, 255, 255 };
+            mod_rgb = hsv_to_rgb(mod_hsv);
+            rgb_matrix_set_color(idxs[i], mod_rgb.r, mod_rgb.g, mod_rgb.b);
+            rgb_matrix_set_color(idxs[i]-27, mod_rgb.r, mod_rgb.g, mod_rgb.b);
         }
     }
 
@@ -1495,6 +1524,11 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 //   33, 40, 41
 // `-----------'
 // Underglow: 27-32
+
+
+
+
+
 
 
 void keyboard_post_init_user(void) {

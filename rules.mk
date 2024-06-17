@@ -7,8 +7,8 @@ WPM_ENABLE = yes
 # SRC += features/select_word.c
 COMBO_ENABLE = yes
 
-# STENO_ENABLE = yes
-# STENO_PROTOCOL = txbolt
+STENO_ENABLE = yes
+STENO_PROTOCOL = geminipr
 
 # RGBLIGHT_SUPPORTED = yes
 # RGB_MATRIX_SUPPORTED = yes
