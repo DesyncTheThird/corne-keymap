@@ -106,7 +106,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
           KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    MT_C,    KC_V,                                      KC_B,    MT_N,    KC_M, KC_COMM, KC_SLSH, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+---------------|  |--------------+--------+--------+--------+--------+--------+--------|
-                                                MO(8),   MO(4),   LT(3,KC_SPC),     LT(6,KC_BSPC), LT(4,REP), LT(3,KC_SLSH)
+                                                MO(8),   MO(4),   LT(3,KC_SPC),     LT(6,KC_BSPC), LT(4,REP), LT(5,KC_SLSH)
                                           //`---------------------------------'  `--------------------------'
     ),
 
@@ -310,7 +310,7 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case LT(4,REP):
         case LT(3,KC_SPC):
         case LT(6,KC_BSPC):
-        case LT(3,KC_SLSH):
+        case LT(5,KC_SLSH):
         case LT(4,KC_0):
         case LT(5,KC_0):
         case MT_S:                
@@ -333,9 +333,8 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LT(4, KC_BSPC):
-        case LT(5, REP):
-        case LT(7, KC_SLSH):
+        case LT(4, REP):
+        case LT(5, KC_SLSH):
             return 100;
         default:
             return TAPPING_TERM;
@@ -347,7 +346,7 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
         case LT(4, REP):
         // case LT(4,KC_SPC):
         case LT(6,KC_BSPC):
-        case LT(3,KC_SLSH):
+        case LT(5,KC_SLSH):
         case LT(4,KC_0):
         case LT(5,KC_0):
             // Immediately select the hold action when another key is pressed.
