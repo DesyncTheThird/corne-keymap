@@ -18,15 +18,7 @@ enum corne_layers {
 
 
 enum custom_keycodes {
-    DEFAULT = SAFE_RANGE,
-    BASIC,
-    EDIT,
-    DATA,
-    SYMBOL,
-    MOUSE,
-    FUNCTION,
-    NUMPAD,
-    SELECT,
+    SELECT = SAFE_RANGE,
     MUTE,
     CS_COLN,
     CS_UNDS,
@@ -44,6 +36,7 @@ enum custom_keycodes {
     CS_END,
     CS_HOME,
     
+    CM_MOUSE,
     REP,
     // SFT,
     MT_RBRC,
@@ -58,6 +51,7 @@ enum custom_keycodes {
     CM_UNDS,
     CM_MINS,
     CM_DOT,
+    CM_COLON,
     // CS_BSLS,
     ALTTAB,
     CS_VOLD,
@@ -112,7 +106,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
           KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    MT_C,    KC_V,                                      KC_B,    MT_N,    KC_M, KC_COMM, KC_SLSH, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+---------------|  |--------------+--------+--------+--------+--------+--------+--------|
-                                                MO(8),   MO(4),  LT(3,KC_SPC),     LT(6,KC_BSPC), LT(5,REP), LT(7,KC_SLSH)
+                                                MO(8),   MO(4),   LT(3,KC_SPC),     LT(6,KC_BSPC), LT(4,REP), LT(3,KC_SLSH)
                                           //`---------------------------------'  `--------------------------'
     ),
 
@@ -166,16 +160,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT] = LAYOUT( //4
       //,-----------------------------------------------------.                                 ,-----------------------------------------------------.
-           KC_TAB, KC_PAUS, CS_HOME,   KC_UP,  CS_END, KC_CAPS,                                    KC_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_UNDS,  KC_DEL,
+           ALTTAB, KC_PAUS, CS_HOME,   KC_UP,  CS_END, KC_CAPS,                                    KC_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_UNDS,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
           KC_LSFT, KC_PSCR, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                                     CS_LT, LT(0,MT_RPRN), LT(0,MT_LPRN), LT(0,MT_ASTR),   CS_AT,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, KC_TRNS, KC_PGUP, KC_INS,  KC_PGDN,  SELECT,                                     CS_GT, MT_RBRC, KC_LBRC, KC_QUES, CS_TILD,  KC_ENT,
+          KC_LCTL, KC_TRNS, KC_PGUP, KC_PGDN,  KC_INS,  SELECT,                                     CS_GT, MT_RBRC, KC_LBRC, KC_QUES, CS_TILD,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+---------------|  |--------------+--------+--------+--------+--------+--------+--------|
                                               KC_TRNS, CS_BSLS,        KC_TRNS,          KC_TRNS, LT(5,KC_0), KC_SPC
                                           //`---------------------------------'  `--------------------------'
     ),
-
 
     [_DATA] = LAYOUT( //5
       //,-----------------------------------------------------.                                 ,-----------------------------------------------------.
@@ -215,11 +208,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_UTILITY] = LAYOUT( //8
       //,-----------------------------------------------------.                                 ,-----------------------------------------------------.
-           ALTTAB,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                                   KC_TRNS,   KC_F7,   KC_F8,   KC_F9,  KC_F12, KC_TRNS,
+           ALTTAB,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                                   KC_SCRL,   KC_F7,   KC_F8,   KC_F9,  KC_F12, KC_TRNS,
       //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
-          KC_LSFT, RGB_VAI, KC_MPLY, CS_VOLD, CS_VOLU,    MUTE,                                   KC_TRNS,   KC_F4,   KC_F5,   KC_F6,  KC_F11, KC_TRNS,
+          KC_LSFT, RGB_VAI, KC_TRNS, CS_VOLD, CS_VOLU,    MUTE,                                     TG(9),   KC_F4,   KC_F5,   KC_F6,  KC_F11, KC_TRNS,
       //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, KC_SCRL, KC_MSTP, KC_MPRV, KC_MNXT, RGB_TOG,                                   KC_TRNS,   KC_F1,   KC_F2,   KC_F3,  KC_F10, KC_TRNS,
+          KC_LCTL, KC_SCRL, KC_TRNS, KC_MPRV, KC_MNXT, RGB_TOG,                                   KC_TRNS,   KC_F1,   KC_F2,   KC_F3,  KC_F10, KC_TRNS,
       //|--------+--------+--------+--------+--------+--------+---------------|  |--------------+--------+--------+--------+--------+--------+--------|
                                               KC_TRNS, KC_TRNS,        KC_TRNS,          KC_MPLY,    MUTE, KC_MSTP
                                           //`---------------------------------'  `--------------------------'
@@ -281,7 +274,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 bool is_alt_tab_active = false; //alt tabbing
 uint16_t alt_tab_timer = 0;
 
-uint16_t tabbing_timeout = 1250;
+uint16_t tabbing_timeout = 1000;
 
 void matrix_scan_user(void) {
     if (get_highest_layer(layer_state) == _NUMPAD) {
@@ -314,10 +307,10 @@ void matrix_scan_user(void) {
 
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LT(5,REP):
+        case LT(4,REP):
         case LT(3,KC_SPC):
         case LT(6,KC_BSPC):
-        case LT(7,KC_SLSH):
+        case LT(3,KC_SLSH):
         case LT(4,KC_0):
         case LT(5,KC_0):
         case MT_S:                
@@ -340,7 +333,6 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LT(3, KC_SPC):
         case LT(4, KC_BSPC):
         case LT(5, REP):
         case LT(7, KC_SLSH):
@@ -352,10 +344,10 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LT(5, REP):
+        case LT(4, REP):
         // case LT(4,KC_SPC):
         case LT(6,KC_BSPC):
-        case LT(7,KC_SLSH):
+        case LT(3,KC_SLSH):
         case LT(4,KC_0):
         case LT(5,KC_0):
             // Immediately select the hold action when another key is pressed.
@@ -373,6 +365,7 @@ enum combo_events {
     NOMODS,
     TOUHOU,
     STENO,
+    MOUSE,
     
     // LESSTHAN,
     // GREATERTHAN,
@@ -411,6 +404,7 @@ uint16_t COMBO_LEN = COMBO_LENGTH;
 const uint16_t PROGMEM nomods[]         = {KC_P, CS_HASH, COMBO_END};
 const uint16_t PROGMEM touhou[]         = {KC_P, CS_HASH, KC_ESC, COMBO_END};
 const uint16_t PROGMEM steno[]          = {KC_I, KC_O, KC_P, CS_HASH, COMBO_END};
+const uint16_t PROGMEM mouse[]          = {KC_TAB, KC_QUOT, COMBO_END};
 
 // const uint16_t PROGMEM leftparen[]      = {MT_S, KC_E, COMBO_END};
 // const uint16_t PROGMEM rightparen[]     = {KC_E, MT_F, COMBO_END};
@@ -448,8 +442,9 @@ combo_t key_combos[] = {
     [NOMODS]        = COMBO_ACTION(nomods),
     [TOUHOU]        = COMBO_ACTION(touhou),
     [STENO]         = COMBO_ACTION(steno),
+
+    [MOUSE]         = COMBO(mouse,         CM_MOUSE),
     
-    // Manual control
     [L_ASTERISK]    = COMBO(l_asterisk,    CM_ASTR),
     [L_COMMA]       = COMBO(l_comma,       CM_COMM),
     [L_EQUALS]      = COMBO(l_equals,      CM_EQL),
@@ -464,8 +459,7 @@ combo_t key_combos[] = {
     [R_UNDERSCORE]  = COMBO(r_underscore,  CM_UNDS),
     [R_MINUS]       = COMBO(r_minus,       CM_MINS),
     [R_DOT]         = COMBO(r_dot,         CM_DOT),
-    
-    [COLON]         = COMBO_ACTION(colon),
+    [COLON]         = COMBO(colon,         CM_COLON),
 
     // Basic key combos
     // [LEFTPAREN]     = COMBO(leftparen, KC_LPRN),
@@ -523,13 +517,9 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 }
             }
             break;
-
-        case COLON:
+        case MOUSE:
             if (pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_COLN);
-                set_mods(mods);
+                
             }
             break;
     }
@@ -537,7 +527,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
 
 // 50ms default
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
-    switch (combo->keycode) {
+    switch (index) {
         case L_EXPONENT:
         case R_EXPONENT:
         case L_UNDERSCORE:
@@ -552,7 +542,13 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
 }
 
 bool get_combo_must_tap(uint16_t index, combo_t *combo) {
-    return true;
+    switch (index) {
+        case MOUSE:
+            return false;
+        default:
+            return true;
+
+    }
 }
 
 // bool get_combo_must_press_in_order(uint16_t combo_index, combo_t *combo) {
@@ -569,11 +565,13 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
     switch (combo_index) {
         case NOMODS:
         case TOUHOU:
+        case MOUSE:
+        case STENO:
             return true;
             break;
 
         default:
-            if (!(layer_state_is(_BASIC) || layer_state_is(_TOUHOU) || layer_state_is(_MOUSE))) {
+            if (!(layer_state_is(_BASIC) || layer_state_is(_TOUHOU) || layer_state_is(_MOUSE) || layer_state_is(_STENO))) {
                 return true;
             }
             break;
@@ -652,6 +650,14 @@ bool process_select_word(uint16_t keycode, keyrecord_t* record, uint16_t sel_key
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_select_word(keycode, record, SELECT)) { return false; }
     switch (keycode) {
+        case CM_MOUSE:
+            if (record->event.pressed) {
+                layer_on(_MOUSE);
+            } else {
+                layer_off(_MOUSE);
+            }
+            break;
+
         // Combo actions
         case CM_ASTR:
             if (record->event.pressed) {
@@ -904,7 +910,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             };
             break;
 
-        case LT(5,REP):
+        case LT(4,REP):
         {
             if (!record->tap.count && record->event.pressed) { // Intercept holds only
                 layer_on(_DATA);
@@ -969,80 +975,114 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case CS_COLN:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_COLN);
-                unregister_mods(MOD_MASK_SHIFT);
+                set_mods(mods);
             }
             break;
         case CS_UNDS:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_UNDS);
-                unregister_mods(MOD_MASK_SHIFT);
+                set_mods(mods);
             }
             break;
         case CS_PIPE:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(LSFT(KC_NUBS));
-                unregister_mods(MOD_MASK_SHIFT);
+                set_mods(mods);
             }
             break;
         case CS_LT:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_LT);
-                unregister_mods(MOD_MASK_SHIFT);
+                set_mods(mods);
             }
             break;
         case CS_GT:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_GT);
-                unregister_mods(MOD_MASK_SHIFT);
+                set_mods(mods);
             }
             break;
         case CS_PERC:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_PERC);
-                unregister_mods(MOD_MASK_SHIFT);
+                set_mods(mods);
             }
             break;
         case CS_ASTR:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_ASTR);
-                unregister_mods(MOD_MASK_SHIFT);
+                set_mods(mods);
             }
             break;
         case CS_DLR:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_DLR);
-                unregister_mods(MOD_MASK_SHIFT);
+                set_mods(mods);
             }
             break;
         case CS_AMPR:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_AMPR);
-                unregister_mods(MOD_MASK_SHIFT);
+                set_mods(mods);
             }
             break;
         case CS_CIRC:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_CIRC);
-                unregister_mods(MOD_MASK_SHIFT);
+                set_mods(mods);
             }
             break;
         case CS_EXLM:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_EXLM);
-                unregister_mods(MOD_MASK_SHIFT);
+                set_mods(mods);
             }
             break;
         case CS_TILD:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(S(KC_NUHS));
-                unregister_mods(MOD_MASK_SHIFT);
+                set_mods(mods);
             }
             break;
         case CS_PLUS:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_PLUS);
-                unregister_mods(MOD_MASK_SHIFT);
+                set_mods(mods);
+            }
+            break;
+        case CM_COLON:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_COLN);
+                set_mods(mods);
             }
             break;
 
