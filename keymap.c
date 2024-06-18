@@ -213,7 +213,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
           KC_LSFT, RGB_VAI, KC_TRNS, CS_VOLD, CS_VOLU,    MUTE,                                     TG(9),   KC_F4,   KC_F5,   KC_F6,  KC_F11, KC_TRNS,
       //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, KC_SCRL, KC_TRNS, KC_MPRV, KC_MNXT, RGB_TOG,                                   KC_TRNS,   KC_F1,   KC_F2,   KC_F3,  KC_F10, KC_TRNS,
+          KC_LCTL, RGB_TOG, KC_TRNS, KC_MPRV, KC_MNXT, KC_TRNS,                                     TG(2),   KC_F1,   KC_F2,   KC_F3,  KC_F10, KC_TRNS,
       //|--------+--------+--------+--------+--------+--------+---------------|  |--------------+--------+--------+--------+--------+--------+--------|
                                               KC_TRNS, KC_TRNS,        KC_TRNS,          KC_MPLY,    MUTE, KC_MSTP
                                           //`---------------------------------'  `--------------------------'
@@ -1357,38 +1357,38 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     for (uint8_t i = 27; i < 33; i++) {
         switch(get_highest_layer(layer_state|default_layer_state)) {
             case _DATA:
-                underglow_hsv = (HSV){ 85, 255, 128 };
+                underglow_hsv = (HSV){ 85, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             // case _EDIT_OVERLAY:
             case _EDIT:
-                underglow_hsv = (HSV){ 0, 255, 128 };
+                underglow_hsv = (HSV){ 0, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _SYMBOL:
-                underglow_hsv = (HSV){ 169, 255, 128 };
+                underglow_hsv = (HSV){ 169, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _MOUSE:
-                underglow_hsv = (HSV){ 127, 255, 128 };
+                underglow_hsv = (HSV){ 127, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _NUMPAD:
-                underglow_hsv = (HSV){ 43, 255, 128 };
+                underglow_hsv = (HSV){ 43, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _UTILITY:
-                underglow_hsv = (HSV){ 201, 255, 128 };
+                underglow_hsv = (HSV){ 201, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
@@ -1413,26 +1413,26 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     int idxs[3] = { 33, 40, 41 };
     for (uint8_t i = 0; i < 3; i++) {
         if ((get_mods() & MOD_BIT(KC_LGUI)) == MOD_BIT(KC_LGUI) || (get_mods() & MOD_BIT(KC_RGUI)) == MOD_BIT(KC_RGUI)) {
-            mod_hsv = (HSV){ 000, 255, 255 };
+            mod_hsv = (HSV){ 000, 255, 128 };
             mod_rgb = hsv_to_rgb(mod_hsv);
             rgb_matrix_set_color(idxs[i], mod_rgb.r, mod_rgb.g, mod_rgb.b);
             rgb_matrix_set_color(idxs[i]-27, mod_rgb.r, mod_rgb.g, mod_rgb.b);
         }
         if ((get_mods() & MOD_BIT(KC_LALT)) == MOD_BIT(KC_LALT) || (get_mods() & MOD_BIT(KC_RALT)) == MOD_BIT(KC_RALT)) {
-            mod_hsv = (HSV){ 201, 255, 255 };
+            mod_hsv = (HSV){ 201, 255, 128 };
             mod_rgb = hsv_to_rgb(mod_hsv);
             rgb_matrix_set_color(idxs[i], mod_rgb.r, mod_rgb.g, mod_rgb.b);
             rgb_matrix_set_color(idxs[i]-27, mod_rgb.r, mod_rgb.g, mod_rgb.b);
         }
         if ((get_mods() & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT) || (get_mods() & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
-            mod_hsv = (HSV){ 127, 255, 255 };
+            mod_hsv = (HSV){ 127, 255, 128 };
             mod_rgb = hsv_to_rgb(mod_hsv);
             rgb_matrix_set_color(idxs[i], mod_rgb.r, mod_rgb.g, mod_rgb.b);
             rgb_matrix_set_color(idxs[i]-27, mod_rgb.r, mod_rgb.g, mod_rgb.b);
 
         }
         if ((get_mods() & MOD_BIT(KC_LCTL)) == MOD_BIT(KC_LCTL) || (get_mods() & MOD_BIT(KC_RCTL)) == MOD_BIT(KC_RCTL)) {
-            mod_hsv = (HSV){ 169, 255, 255 };
+            mod_hsv = (HSV){ 169, 255, 128 };
             mod_rgb = hsv_to_rgb(mod_hsv);
             rgb_matrix_set_color(idxs[i], mod_rgb.r, mod_rgb.g, mod_rgb.b);
             rgb_matrix_set_color(idxs[i]-27, mod_rgb.r, mod_rgb.g, mod_rgb.b);
