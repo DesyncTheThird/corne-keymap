@@ -33,6 +33,8 @@ enum custom_keycodes {
     CS_EXLM,
     CS_TILD,
     CS_PLUS,
+    CS_HASH,
+
     CS_END,
     CS_HOME,
     
@@ -87,7 +89,6 @@ enum custom_keycodes {
 // ISO
 #define CS_AT KC_DQUO
 #define CS_DQUO KC_AT
-#define CS_HASH KC_NUHS
 #define CS_POUN KC_HASH
 #define CS_BSLS KC_NUBS
 
@@ -148,7 +149,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_FUNCTION] = LAYOUT( //3
       //,-----------------------------------------------------.                                 ,-----------------------------------------------------.
-           KC_TAB,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                                     KC_F6,    KC_7,    KC_8,    KC_9, CS_UNDS,  KC_DEL,
+           KC_TAB,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                                      KC_6,    KC_7,    KC_8,    KC_9, CS_UNDS,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
           KC_LSFT, CS_PIPE,   CS_LT, KC_MINS,   CS_GT,  KC_EQL,                                     CS_LT,    KC_4,    KC_5,    KC_6,   CS_AT,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                                 |--------+--------+--------+--------+--------+--------|
@@ -333,8 +334,8 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LT(4, REP):
-        case LT(5, KC_SLSH):
+        case LT(4,REP):
+        case LT(5,KC_SLSH):
             return 100;
         default:
             return TAPPING_TERM;
@@ -343,7 +344,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LT(4, REP):
+        case LT(4,REP):
         // case LT(4,KC_SPC):
         case LT(6,KC_BSPC):
         case LT(5,KC_SLSH):
@@ -705,6 +706,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             break;
+        case CM_COLON:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_COLN);
+                set_mods(mods);
+            }
+            break;
 
         // Edit layer mod-taps
         case LT(0,MT_RPRN):
@@ -912,9 +921,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case LT(4,REP):
         {
             if (!record->tap.count && record->event.pressed) { // Intercept holds only
-                layer_on(_DATA);
+                layer_on(_EDIT);
             } else { // On keyup
-                layer_off(_DATA);
+                layer_off(_EDIT);
             }
             if (record->tap.count && record->event.pressed) { // Intercept taps
                 register_code(lastkey);
@@ -1076,11 +1085,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             break;
-        case CM_COLON:
+        case CS_HASH:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_COLN);
+                tap_code(KC_NUHS);
                 set_mods(mods);
             }
             break;
@@ -1348,38 +1357,38 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     for (uint8_t i = 27; i < 33; i++) {
         switch(get_highest_layer(layer_state|default_layer_state)) {
             case _DATA:
-                underglow_hsv = (HSV){ 85, 255, 192 };
+                underglow_hsv = (HSV){ 85, 255, 128 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             // case _EDIT_OVERLAY:
             case _EDIT:
-                underglow_hsv = (HSV){ 0, 255, 192 };
+                underglow_hsv = (HSV){ 0, 255, 128 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _SYMBOL:
-                underglow_hsv = (HSV){ 169, 255, 192 };
+                underglow_hsv = (HSV){ 169, 255, 128 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _MOUSE:
-                underglow_hsv = (HSV){ 127, 255, 192 };
+                underglow_hsv = (HSV){ 127, 255, 128 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _NUMPAD:
-                underglow_hsv = (HSV){ 43, 255, 192 };
+                underglow_hsv = (HSV){ 43, 255, 128 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _UTILITY:
-                underglow_hsv = (HSV){ 201, 255, 192 };
+                underglow_hsv = (HSV){ 201, 255, 128 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
