@@ -34,16 +34,17 @@ enum custom_keycodes {
     CS_HASH,
     CS_SLSH,
 
+    CS_AT,
+    CS_DQUO,
+    CS_POUN,
+    CS_BSLS,
+
     CS_END,
     CS_HOME,
     
     CM_MOUSE,
     REP,
-    // SFT,
-    MT_RBRC,
-    MT_RPRN,
-    MT_LPRN,
-    MT_ASTR,
+
 
     CM_ASTR,
     CM_COMM,
@@ -54,7 +55,7 @@ enum custom_keycodes {
     CM_DOT,
     CM_COLON,
     CM_SLSH,
-    // CS_BSLS,
+    
     ALTTAB,
 
     CS_VOLD,
@@ -64,6 +65,11 @@ enum custom_keycodes {
     CS_VALD,
     CS_RGBN,
     CS_RGBT,
+    
+    // Home block mods
+    CS_RBRC,
+    CS_RPRN,
+    CS_LPRN,
 };
 
 
@@ -90,6 +96,9 @@ enum custom_keycodes {
 #define MT_L RGUI_T(KC_L)
 
 #define MT_RBRC RCTL_T(KC_RBRC)
+#define MT_RPRN LT(0,CS_RPRN)
+#define MT_LPRN LT(0,CS_LPRN)
+#define MT_ASTR LT(0,CS_ASTR)
 
 
 // ISO
@@ -98,12 +107,12 @@ enum custom_keycodes {
 #define CS_POUN KC_HASH
 #define CS_BSLS KC_NUBS
 
-#include "features/achordion.h"
 
-
-#define CS_LT3 MO(_DATA)
+// Layer keys
+#define CS_LT3 LT(_DATA,KC_ESC)
 #define CS_LT2 MO(_EDIT)
 #define CS_LT1 LT(_FUNCTION,KC_SPC)
+
 #define CS_RT1 LT(_SYMBOL,KC_BSPC)
 #define CS_RT2 LT(_EDIT,REP)
 #define CS_RT3 LT(_UTILITY,KC_SLSH)
@@ -149,18 +158,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                STN_FN,   STN_A,   STN_O,      STN_E,   STN_U, STN_PWR
                                           //`--------------------------'  `--------------------------'
     ),
-    
-    // [_STENO] = LAYOUT( //2
-    //   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-    //        KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,   KC_P,  KC_LBRC,
-    //   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-    //       KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
-    //   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-    //       KC_LCTL,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,                         KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,
-    //   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-    //                                           _______,    KC_C,    KC_V,       KC_N,    KC_M, _______
-    //                                       //`--------------------------'  `--------------------------'
-    // ),
 
     [_FUNCTION] = LAYOUT( //3
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
@@ -178,8 +175,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_TAB, KC_PAUS, CS_HOME,   KC_UP,  CS_END,  KC_ENT,                       KC_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_UNDS,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT, KC_PSCR, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, LT(0,MT_RPRN), LT(0,MT_LPRN), LT(0,MT_ASTR),   CS_AT,  KC_TAB,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          KC_LSFT, KC_PSCR, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_ASTR,   CS_AT,  KC_TAB,
+      //|------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LCTL, CS_BSLS, KC_PGUP, KC_PGDN,  KC_INS,  SELECT,                        CS_GT, MT_RBRC, KC_LBRC, KC_QUES, CS_TILD,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, CS_BSLS, _______,    _______,  CS_AL2, KC_SPC
@@ -259,6 +256,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 };
 
+#include "features/achordion.h"
+
 //==============================================================================
 // Timers
 //==============================================================================
@@ -297,13 +296,17 @@ void matrix_scan_user(void) {
 
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case CS_RT2:
         case CS_LT1:
+        case CS_LT3:
+
         case CS_RT1:
+        case CS_RT2:
         case CS_RT3:
+        
         case CS_AL1:
         case CS_AL2:
-        case MT_S:                
+        
+        case MT_S:
         case MT_D:
         case MT_F:
         case MT_C:
@@ -312,9 +315,9 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case MT_K:
         case MT_L:
         case MT_RBRC:
-        case LT(0,MT_RPRN):
-        case LT(0,MT_LPRN):
-        case LT(0,MT_ASTR):
+        case MT_RPRN:
+        case MT_LPRN:
+        case MT_ASTR:
             return 0;
         default:
             return TAPPING_TERM;
@@ -331,36 +334,43 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
-// bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
-//     switch (keycode) {
-//         case CS_RT1:
-//         case CS_RT3:
-//         case CS_AL1:
-//         case CS_AL2:
-//             // Immediately select the hold action when another key is pressed.
-//             return true;
-//         default:
-//             // Do not select the hold action when another key is pressed.
-//             return false;
-//     }
-// }
+bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case CS_RT1:
+        case CS_RT3:
+        case CS_AL1:
+        case CS_AL2:
+            // Immediately select the hold action when another key is pressed.
+            return true;
+        default:
+            // Do not select the hold action when another key is pressed.
+            return false;
+    }
+}
+
+
+uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
+    switch (tap_hold_keycode) {
+        case CS_LT1:
+        case CS_LT3:
+        case CS_RT1:
+        case CS_RT3:
+            return 0;
+        default:
+            return TAPPING_TERM;
+    }
+}
 
 bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
                      uint16_t other_keycode, keyrecord_t* other_record) {
     switch (tap_hold_keycode) {
         case CS_RT2:
             return achordion_opposite_hands(tap_hold_record, other_record);
-        case CS_RT1:
-        case CS_RT3:
-            return true;
         default:
-            return false;
+            return true;
     }
 }
 
-uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
-    return TAPPING_TERM;
-}
 
 //==============================================================================
 // Combos
@@ -748,7 +758,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             break;
 
         // Edit layer mod-taps
-        case LT(0,MT_RPRN):
+        case MT_RPRN:
         {
             if (!record->tap.count && record->event.pressed) { // Intercept holds only
                 register_mods(MOD_MASK_SHIFT);
@@ -765,7 +775,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         }
             break;
 
-        case LT(0,MT_LPRN):
+        case MT_LPRN:
         {
             if (!record->tap.count && record->event.pressed) { // Intercept holds only
                 register_mods(MOD_BIT(KC_LALT));
@@ -782,7 +792,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         }
             break;
 
-        case LT(0,MT_ASTR):
+        case MT_ASTR:
         {
             if (!record->tap.count && record->event.pressed) { // Intercept holds only
                 register_mods(MOD_MASK_GUI);
@@ -1130,6 +1140,38 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
                 tap_code(KC_SLSH);
+                set_mods(mods);
+            }
+            break;
+        case CS_AT:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_DQUO);
+                set_mods(mods);
+            }
+            break;
+        case CS_DQUO:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_AT);
+                set_mods(mods);
+            }
+            break;
+        case CS_POUN:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_HASH);
+                set_mods(mods);
+            }
+            break;
+        case CS_BSLS:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_NUBS);
                 set_mods(mods);
             }
             break;
