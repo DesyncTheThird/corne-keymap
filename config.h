@@ -90,6 +90,8 @@
 // #define RETRO_SHIFT 500 
 
 // Mouse key speed and acceleration.
+#define MK_COMBINED
+
 #undef MOUSEKEY_DELAY
 #define MOUSEKEY_DELAY             0
 #undef MOUSEKEY_INTERVAL
@@ -99,7 +101,7 @@
 #undef MOUSEKEY_MAX_SPEED
 #define MOUSEKEY_MAX_SPEED         20
 #undef MOUSEKEY_TIME_TO_MAX
-#define MOUSEKEY_TIME_TO_MAX       100
+#define MOUSEKEY_TIME_TO_MAX       80
 #undef MOUSEKEY_WHEEL_DELAY
 #define MOUSEKEY_WHEEL_DELAY       0
 #undef MOUSEKEY_WHEEL_INTERVAL
@@ -108,9 +110,6 @@
 #define MOUSEKEY_WHEEL_MAX_SPEED   8
 #undef MOUSEKEY_WHEEL_TIME_TO_MAX
 #define MOUSEKEY_WHEEL_TIME_TO_MAX 40
-
-
-
 
 
 

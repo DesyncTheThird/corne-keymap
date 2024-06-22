@@ -94,7 +94,7 @@ enum custom_keycodes {
 
 // Layer keys
 #define CS_LT3 LT(_UTILITY,KC_ESC)
-#define CS_LT2 MO(_EDIT)
+#define CS_LT2 LT(_EDIT,KC_TAB)
 #define CS_LT1 LT(_FUNCTION,KC_SPC)
 
 #define CS_RT1 LT(_DATA,KC_BSPC)
@@ -125,7 +125,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_A,    MT_S,    MT_D,    MT_F,    KC_G,                         KC_H,    MT_J,    MT_K,    MT_L, KC_SCLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    MT_C,    KC_V,                         KC_B,    MT_N,    KC_M, KC_COMM, CS_SLSH, KC_QUOT,
+          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    MT_C,    KC_V,                         KC_B,    MT_N,    KC_M, KC_COMM, KC_SLSH, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -137,7 +137,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    KC_C,    KC_V,                         KC_B,    KC_N,    KC_M, KC_COMM, CS_SLSH, KC_QUOT,
+          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    KC_C,    KC_V,                         KC_B,    KC_N,    KC_M, KC_COMM, KC_SLSH, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______,  KC_SPC,    KC_BSPC, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -173,9 +173,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT, KC_PSCR, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_ASTR,   CS_AT,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS, KC_PGUP,  KC_INS, KC_PGDN,  SELECT,                        CS_GT, MT_RBRC, KC_LBRC, KC_QUES, CS_TILD,  KC_ENT,
+          KC_LCTL, CS_BSLS, KC_PGUP, KC_PGDN,  KC_INS,  SELECT,                        CS_GT, MT_RBRC, KC_LBRC, KC_QUES, CS_TILD,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, CS_BSLS, _______,    _______,  CS_AL2,  KC_SPC
+                                              _______, _______, _______,    _______,  CS_AL2,  KC_SPC
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -211,7 +211,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LCTL, KC_WH_L, KC_WH_U, KC_WH_D, KC_WH_R,  SELECT,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              KC_BTN3, KC_BTN2, KC_BTN1,    _______, _______, _______
+                                              KC_BTN3, KC_BTN2, KC_BTN1,    KC_ACL0, KC_ACL1, KC_ACL2
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -292,8 +292,9 @@ void matrix_scan_user(void) {
 
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case CS_LT1:
         case CS_LT3:
+        case CS_LT2:
+        case CS_LT1:
 
         case CS_RT1:
         case CS_RT2:
@@ -332,11 +333,10 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        case CS_LT3:
+        case CS_LT2:
         case CS_RT1:
         case CS_RT3:
-        case CS_LT3:
-        case CS_AL1:
-        case CS_AL2:
             // Immediately select the hold action when another key is pressed.
             return true;
         default:
@@ -348,8 +348,9 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 
 uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
     switch (tap_hold_keycode) {
-        case CS_LT1:
         case CS_LT3:
+        case CS_LT2:
+        case CS_LT1:
         case CS_RT1:
         case CS_RT3:
             return 0;
@@ -555,6 +556,8 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         case AT:
             return 50;
             break;
+        case MOUSE:
+            return 100;
         default:
             return 30;
     }
