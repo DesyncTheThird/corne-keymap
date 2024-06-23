@@ -33,6 +33,7 @@ enum custom_keycodes {
     CS_PLUS,
     CS_HASH,
     CS_SLSH,
+    CS_EQL,
 
     CS_AT,
     CS_DQUO,
@@ -159,11 +160,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_TAB,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       KC_EQL,    KC_7,    KC_8,    KC_9, CS_UNDS,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT, CS_PIPE,   CS_LT, KC_MINS,   CS_GT,  KC_EQL,                        CS_LT,    KC_4,    KC_5,    KC_6,   CS_AT,  KC_TAB,
+          KC_LSFT, CS_PIPE,   CS_LT, KC_MINS,   CS_GT,  KC_EQL,                        CS_LT,    KC_1,    KC_2,    KC_3,   CS_AT,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS, CS_COLN,  KC_DOT, KC_COMM, CS_UNDS,                        CS_GT,    KC_1,    KC_2,    KC_3, CS_TILD,  KC_ENT,
+          KC_LCTL, CS_BSLS, CS_COLN,  KC_DOT, KC_COMM, CS_UNDS,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_TILD,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              KC_SLSH, CS_BSLS, _______,    KC_BSPC,  CS_AL1, KC_SLSH
+                                              KC_SLSH, CS_BSLS, _______,    KC_BSPC,  CS_AL1, CS_SLSH
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -181,11 +182,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_DATA] = LAYOUT( //3
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_TAB,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                      _______, _______, _______, _______, _______,  KC_DEL,
+           KC_TAB, CS_PERC,    KC_7,    KC_8,    KC_9,  CS_EQL,                      _______, _______, _______, _______, _______,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT, CS_PIPE,   CS_LT, KC_MINS,   CS_GT,  KC_EQL,                      _______, _______, _______, _______, _______,  KC_TAB,
+          KC_LSFT,    KC_0,    KC_1,    KC_2,    KC_3,   CS_LT,                      _______, _______, _______, _______, _______,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS, CS_COLN,  KC_DOT, KC_COMM, CS_UNDS,                      _______, _______, _______, _______, _______,  KC_ENT,
+          KC_LCTL, CS_ASTR,    KC_4,    KC_5,    KC_6,   CS_GT,                      _______, _______, _______, _______, _______,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               KC_SLSH, CS_BSLS,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -217,11 +218,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_UTILITY] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           ALTTAB, CS_VALU, CS_RGBN, CS_VOLU, CS_RGBT, KC_SCRL,                       KC_NUM,   KC_F7,   KC_F8,   KC_F9,  KC_F12,  KC_DEL,
+           ALTTAB, CS_VALU, _______, CS_VOLU, _______, KC_SCRL,                       KC_NUM,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT, CS_VALD, KC_MPRV, CS_VOLD, KC_MNXT, KC_CAPS,                        TG(9),   KC_F4,   KC_F5,   KC_F6,  KC_F11,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL,    REDO,    UNDO,    CUT,     COPY,   PASTE,                      XXXXXXX,   KC_F1,   KC_F2,   KC_F3,  KC_F10,  KC_ENT,
+          KC_LCTL, _______, _______, _______, CS_RGBN, CS_RGBT,                      XXXXXXX,   KC_F1,   KC_F2,   KC_F3,  KC_F12,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               KC_MSTP,    MUTE, KC_MPLY,    KC_MPLY,    MUTE, KC_MSTP
                                           //`--------------------------'  `--------------------------'
@@ -235,7 +236,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, _______, _______, _______, _______, _______,                       KC_DOT,   KC_P1,   KC_P2,   KC_P3,  KC_EQL, KC_SLSH,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______,    _______,   KC_P0, _______
+                                              _______, _______, _______,    _______,   KC_P0, CS_SLSH
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -337,6 +338,8 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
         case CS_LT2:
         case CS_RT1:
         case CS_RT3:
+        case CS_AL1:
+        case CS_AL2:
             // Immediately select the hold action when another key is pressed.
             return true;
         default:
@@ -353,6 +356,8 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
         case CS_LT1:
         case CS_RT1:
         case CS_RT3:
+        case CS_AL1:
+        case CS_AL2:
             return 0;
         default:
             return TAPPING_TERM;
@@ -1123,6 +1128,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
                 tap_code(KC_SLSH);
+                set_mods(mods);
+            }
+            break;
+        case CS_EQL:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_EQL);
                 set_mods(mods);
             }
             break;
