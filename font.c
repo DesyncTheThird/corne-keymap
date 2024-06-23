@@ -1,5 +1,10 @@
+// This is the 'classic' fixed-space bitmap font for Adafruit_GFX since 1.0.
+// See gfxfont.h for newer custom bitmap font info.
+
+// Modified to show the Lily58 logo instead of the qmk logo
 #include "progmem.h"
 
+// Standard ASCII 5x7 font
 static const unsigned char PROGMEM font[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x3E, 0x5B, 0x4F, 0x5B, 0x3E, 0x00,
