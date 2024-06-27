@@ -66,7 +66,7 @@
 
 // Timer for mod and layer taps
 #undef TAPPING_TERM
-#define TAPPING_TERM 200
+#define TAPPING_TERM 225
 #define TAPPING_TERM_PER_KEY
 
 // Perform hold action if other keys are pressed.
