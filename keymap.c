@@ -326,7 +326,9 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case CS_LT3:
         case CS_LT2:
+        case CS_LT1:
         case CS_RT1:
+        case CS_RT2:
         case CS_RT3:
             return 150;
         default:
