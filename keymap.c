@@ -98,8 +98,8 @@ enum custom_keycodes {
 #define CS_LT2 LT(_EDIT,KC_TAB)
 #define CS_LT1 LT(_FUNCTION,KC_SPC)
 
-#define CS_RT1 LT(_DATA,KC_BSPC)
-#define CS_RT2 LT(_SYMBOL,REP)
+#define CS_RT1 LT(_SYMBOL,KC_BSPC)
+#define CS_RT2 LT(_DATA,REP)
 #define CS_RT3 LT(_UTILITY,KC_SLSH)
 
 // #define CS_LT3 LT(_DATA,KC_ESC)
@@ -325,12 +325,13 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case CS_LT3:
-        case CS_LT2:
         case CS_LT1:
         case CS_RT1:
         case CS_RT2:
         case CS_RT3:
             return 150;
+        case CS_LT2:
+            return 50;
         default:
             return TAPPING_TERM;
     }
@@ -983,9 +984,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CS_RT2:
         {
             if (!record->tap.count && record->event.pressed) { // Intercept holds only
-                layer_on(_SYMBOL);
+                layer_on(_DATA);
             } else { // On keyup
-                layer_off(_SYMBOL);
+                layer_off(_DATA);
             }
             if (record->tap.count && record->event.pressed) { // Intercept taps
                 register_code(lastkey);
