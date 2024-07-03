@@ -44,8 +44,12 @@ enum custom_keycodes {
     CS_HOME,
     
     CM_MOUSE,
-    REP,
 
+    REP,
+    CS_TAB,
+
+    NEWSENT,
+    // OSM_LSFT,
 
     CM_ASTR,
     CM_COMM,
@@ -95,11 +99,11 @@ enum custom_keycodes {
 
 // Layer keys
 #define CS_LT3 LT(_UTILITY,KC_ESC)
-#define CS_LT2 LT(_EDIT,KC_TAB)
+#define CS_LT2 LT(_EDIT,CS_TAB)
 #define CS_LT1 LT(_FUNCTION,KC_SPC)
 
-#define CS_RT1 LT(_SYMBOL,KC_BSPC)
-#define CS_RT2 LT(_DATA,REP)
+#define CS_RT1 LT(_DATA,KC_BSPC)
+#define CS_RT2 LT(_SYMBOL,REP)
 #define CS_RT3 LT(_UTILITY,KC_SLSH)
 
 // #define CS_LT3 LT(_DATA,KC_ESC)
@@ -280,10 +284,14 @@ void matrix_scan_user(void) {
         }
     }
     if (is_alt_tab_active) {
-        if (timer_elapsed(alt_tab_timer) > tabbing_timeout) {
+        if (IS_LAYER_OFF(_UTILITY)) {
             unregister_code(KC_LALT);
             is_alt_tab_active = false;
         }
+        // if (timer_elapsed(alt_tab_timer) > tabbing_timeout) {
+        //     unregister_code(KC_LALT);
+        //     is_alt_tab_active = false;
+        // }
     }
 }
 
@@ -331,7 +339,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case CS_RT3:
             return 150;
         case CS_LT2:
-            return 50;
+            return 75;
         default:
             return TAPPING_TERM;
     }
@@ -341,8 +349,10 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case CS_LT3:
         case CS_LT2:
+ 
         case CS_RT1:
         case CS_RT3:
+ 
         case CS_AL1:
         case CS_AL2:
             // Immediately select the hold action when another key is pressed.
@@ -984,9 +994,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CS_RT2:
         {
             if (!record->tap.count && record->event.pressed) { // Intercept holds only
-                layer_on(_DATA);
+                layer_on(_SYMBOL);
             } else { // On keyup
-                layer_off(_DATA);
+                layer_off(_SYMBOL);
             }
             if (record->tap.count && record->event.pressed) { // Intercept taps
                 register_code(lastkey);
@@ -995,10 +1005,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false; // Return true for normal processing of key
         }
+
+        case CS_LT2:
+        {
+            if (!record->tap.count && record->event.pressed) {
+                layer_on(_EDIT);
+            } else { // On keyup
+                layer_off(_EDIT);
+            }
+
+            // if (record->tap.count && record->event.pressed) { // OSM Shift
+            //     add_oneshot_mods(MOD_BIT(KC_LSFT));
+            // }
+            if (record->tap.count && record->event.pressed) { // New sentence
+               SEND_STRING(". ");
+               add_oneshot_mods(MOD_BIT(KC_LSFT));
+            }
+
+            return false; // Return true for normal processing of key
+        }
 //        case NEWSENT: 
 //            if (record->event.pressed) {
-//                SEND_STRING(". ");
-//                add_oneshot_mods(MOD_BIT(KC_LSFT));  // Set one-shot mod for shift.
 //            }
 //        break;
 
