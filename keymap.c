@@ -99,20 +99,13 @@ enum custom_keycodes {
 
 // Layer keys
 #define CS_LT3 LT(_UTILITY,KC_ESC)
-#define CS_LT2 LT(_EDIT,CS_TAB)
+// #define CS_LT2 LT(_EDIT,CS_TAB)
+#define CS_LT2 MO(_EDIT)
 #define CS_LT1 LT(_FUNCTION,KC_SPC)
 
 #define CS_RT1 LT(_DATA,KC_BSPC)
 #define CS_RT2 LT(_SYMBOL,REP)
 #define CS_RT3 LT(_UTILITY,KC_SLSH)
-
-// #define CS_LT3 LT(_DATA,KC_ESC)
-// #define CS_LT2 MO(_EDIT)
-// #define CS_LT1 LT(_FUNCTION,KC_SPC)
-
-// #define CS_RT1 LT(_SYMBOL,KC_BSPC)
-// #define CS_RT2 LT(_EDIT,REP)
-// #define CS_RT3 LT(_UTILITY,KC_SLSH)
 
 #define CS_AL1 LT(_EDIT,KC_0)
 #define CS_AL2 LT(_DATA,KC_0)
@@ -144,7 +137,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    KC_C,    KC_V,                         KC_B,    KC_N,    KC_M, KC_COMM, KC_SLSH, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______,  KC_SPC,    KC_BSPC, _______, _______
+                                              _______, _______,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -159,7 +152,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                STN_FN,   STN_A,   STN_O,      STN_E,   STN_U, STN_PWR
                                           //`--------------------------'  `--------------------------'
     ),
-
+    
     [_FUNCTION] = LAYOUT( //3
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_TAB,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       KC_EQL,    KC_7,    KC_8,    KC_9, CS_UNDS,  KC_DEL,
@@ -226,7 +219,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT, CS_VALD, KC_MPRV, CS_VOLD, KC_MNXT, KC_CAPS,                       QK_RBT,   KC_F4,   KC_F5,   KC_F6,  KC_F11,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, XXXXXXX, XXXXXXX,    MUTE, CS_RGBN, CS_RGBT,                        TG(9),   KC_F1,   KC_F2,   KC_F3,  KC_F12,  KC_ENT,
+          KC_LCTL, XXXXXXX, XXXXXXX,    MUTE, CS_RGBN, CS_RGBT,                      DB_TOGG,   KC_F1,   KC_F2,   KC_F3,  KC_F12,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               KC_MSTP,    MUTE, KC_MPLY,    KC_MPLY,    MUTE, KC_MSTP
                                           //`--------------------------'  `--------------------------'
@@ -238,7 +231,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, _______, _______, _______, _______, _______,                       KC_NUM,   KC_P4,   KC_P5,   KC_P6, KC_COMM, KC_ASTR,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, _______, _______, _______, _______, _______,                        TG(9),   KC_P1,   KC_P2,   KC_P3,  KC_EQL, KC_SLSH,
+          _______, _______, _______, _______, _______, _______,                       KC_NUM,   KC_P1,   KC_P2,   KC_P3,  KC_EQL, KC_SLSH,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______,   KC_P0, CS_SLSH
                                           //`--------------------------'  `--------------------------'
@@ -394,11 +387,11 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
 //==============================================================================
 
 
-const key_override_t redo = ko_make_basic(MOD_MASK_CS, KC_Z, C(KC_Y));
-const key_override_t **key_overrides = (const key_override_t *[]){
-    &redo,
-    NULL
-};
+// const key_override_t redo = ko_make_basic(MOD_MASK_CS, KC_Z, C(KC_Y));
+// const key_override_t **key_overrides = (const key_override_t *[]){
+//     &redo, // Shift + Undo   ->   Redo
+//     NULL
+// };
 
 
 //==============================================================================
@@ -417,6 +410,7 @@ enum combo_events {
     TOUHOU,
     STENO,
     MOUSE,
+    NUMPAD,
     
     // LESSTHAN,
     // GREATERTHAN,
@@ -454,7 +448,8 @@ uint16_t COMBO_LEN = COMBO_LENGTH;
 // const uint16_t PROGMEM scrolllock[]     = {MT_F, MT_J, COMBO_END};
 const uint16_t PROGMEM nomods[]         = {KC_P, CS_HASH, COMBO_END};
 const uint16_t PROGMEM touhou[]         = {KC_P, CS_HASH, KC_ESC, COMBO_END};
-const uint16_t PROGMEM steno[]          = {KC_I, KC_O, KC_P, CS_HASH, COMBO_END};
+const uint16_t PROGMEM steno[]          = {KC_P, CS_HASH, KC_SCLN, KC_TAB, COMBO_END};
+const uint16_t PROGMEM numpad[]         = {KC_O, KC_P, CS_HASH, COMBO_END};
 const uint16_t PROGMEM mouse[]          = {KC_TAB, KC_QUOT, COMBO_END};
 
 // const uint16_t PROGMEM leftparen[]      = {MT_S, KC_E, COMBO_END};
@@ -493,6 +488,7 @@ combo_t key_combos[] = {
     [NOMODS]        = COMBO_ACTION(nomods),
     [TOUHOU]        = COMBO_ACTION(touhou),
     [STENO]         = COMBO_ACTION(steno),
+    [NUMPAD]         = COMBO_ACTION(numpad),
 
     [MOUSE]         = COMBO(mouse,         CM_MOUSE),
     
@@ -558,6 +554,16 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 }
             }
             break;
+        case NUMPAD:
+            if (pressed) {
+                if (layer_state_is(_BASIC) || layer_state_is(_DEFAULT)) {
+                    layer_on(_NUMPAD);
+                }
+                else {
+                    layer_off(_NUMPAD);
+                }
+            }
+            break;
         case STENO:
             if (pressed) {
                 if (layer_state_is(_BASIC) || layer_state_is(_DEFAULT)) {
@@ -620,6 +626,7 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
         case TOUHOU:
         case MOUSE:
         case STENO:
+        case NUMPAD:
             return true;
             break;
 
@@ -709,6 +716,8 @@ bool process_select_word(uint16_t keycode, keyrecord_t* record, uint16_t sel_key
 //==============================================================================
 // Events
 //==============================================================================
+
+bool oled_enable = true;
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_achordion(keycode, record)) { return false; }
