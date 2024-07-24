@@ -11,6 +11,8 @@
 #define OLED_TIMEOUT 2000
 
 //#define USE_MATRIX_I2C
+#define OLED_DISPLAY_64X128
+
 
 // #define MASTER_LEFT
 #define MASTER_RIGHT
