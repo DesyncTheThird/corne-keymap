@@ -9,6 +9,11 @@
 #define SPLIT_OLED_ENABLE
 #define SPLIT_WPM_ENABLE
 
+#define SPLIT_TRANSACTION_IDS_USER USER_SYNC_A
+
+
+
+
 // #define OLED_SCROLL_TIMEOUT 0
 // #define OLED_TIMEOUT 10000
 /*
@@ -17,7 +22,7 @@ with last_input_activity_elapsed();
 timeout managed manually in keymap instead.
 */
 
-#define OLED_UPDATE_INTERVAL 25
+// #define OLED_UPDATE_INTERVAL 25
 
 //#define USE_MATRIX_I2C
 #define OLED_DISPLAY_64X128
