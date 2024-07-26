@@ -1,19 +1,27 @@
 #pragma once
 
 #define SPLIT_USB_DETECT
-#define SPLIT_WATCHDOG_ENABLE
+// #define SPLIT_WATCHDOG_ENABLE
 
-#define SPLIT_LAYER_STATE_ENABLE
-#define SPLIT_MODS_ENABLE
+// #define SPLIT_TRANSPORT_MIRROR
+// #define SPLIT_LAYER_STATE_ENABLE
+// #define SPLIT_MODS_ENABLE
 #define SPLIT_OLED_ENABLE
 #define SPLIT_WPM_ENABLE
 
 // #define OLED_SCROLL_TIMEOUT 0
-#define OLED_TIMEOUT 16000
+// #define OLED_TIMEOUT 10000
+/*
+Animations/deferred executions seem to interfere
+with last_input_activity_elapsed();
+timeout managed manually in keymap instead.
+*/
+
+#define OLED_UPDATE_INTERVAL 25
 
 //#define USE_MATRIX_I2C
 #define OLED_DISPLAY_64X128
-#define OLED_COLUMN_OFFSET 1
+// #define OLED_COLUMN_OFFSET 1
 
 
 // #define MASTER_LEFT
