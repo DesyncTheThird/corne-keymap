@@ -1726,7 +1726,7 @@ void render_draw(void) {
     if (1 == rand() % 60) {
         minor = true;
         frame_count = 1 + rand() % 10;
-        major = frame_count > 5;
+        major = frame_count > 6;
     }
 }
 
