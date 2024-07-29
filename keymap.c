@@ -4,9 +4,9 @@ enum corne_layers {
     _DEFAULT,
     _BASIC,
     _STENO,
-    _FUNCTION,
-    _EDIT,
     _DATA,
+    _EDIT,
+    _PROGRAM,
     _SYMBOL,
     _MOUSE,
     _UTILITY,
@@ -39,6 +39,11 @@ enum custom_keycodes {
     CS_DQUO,
     CS_POUN,
     CS_BSLS,
+    
+    CS_MINS,
+    CS_DOT,
+    CS_COMM,
+    CS_QUES,
 
     CS_END,
     CS_HOME,
@@ -106,14 +111,14 @@ enum custom_keycodes {
 #define CS_LT3 LT(_UTILITY,KC_ESC)
 // #define CS_LT2 LT(_EDIT,NEWSENT)
 #define CS_LT2 MO(_EDIT)
-#define CS_LT1 LT(_FUNCTION,KC_SPC)
+#define CS_LT1 LT(_DATA,KC_SPC)
 
-#define CS_RT1 LT(_DATA,KC_BSPC)
+#define CS_RT1 LT(_PROGRAM,KC_BSPC)
 #define CS_RT2 LT(_SYMBOL,REP)
 #define CS_RT3 LT(_UTILITY,KC_SLSH)
 
 #define CS_AL1 LT(_EDIT,KC_0)
-#define CS_AL2 LT(_DATA,KC_0)
+#define CS_AL2 LT(_PROGRAM,KC_0)
 
 // #define UNDO LCTL(KC_Z)
 // #define REDO LCTL(KC_Y)
@@ -128,7 +133,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_A,    MT_S,    MT_D,    MT_F,    KC_G,                         KC_H,    MT_J,    MT_K,    MT_L, KC_SCLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    MT_C,    KC_V,                         KC_B,    MT_N,    KC_M, KC_COMM, KC_SLSH, KC_QUOT,
+          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    MT_C,    KC_V,                         KC_B,    MT_N,    KC_M, KC_COMM, CS_QUES, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -140,7 +145,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    KC_C,    KC_V,                         KC_B,    KC_N,    KC_M, KC_COMM, KC_SLSH, KC_QUOT,
+          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    KC_C,    KC_V,                         KC_B,    KC_N,    KC_M, KC_COMM, CS_QUES, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -158,13 +163,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
     
-    [_FUNCTION] = LAYOUT( //3
+    [_DATA] = LAYOUT( //3
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_TAB,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       KC_EQL,    KC_7,    KC_8,    KC_9, CS_UNDS,  KC_DEL,
+           KC_TAB,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9, CS_UNDS,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT, CS_PIPE,   CS_LT, KC_MINS,   CS_GT,  KC_EQL,                        CS_LT,    KC_1,    KC_2,    KC_3,   CS_AT,  KC_TAB,
+          KC_LSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT,    KC_1,    KC_2,    KC_3,   CS_AT,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS, CS_COLN,  KC_DOT, KC_COMM, CS_UNDS,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_TILD,  KC_ENT,
+          KC_LCTL, CS_BSLS, CS_COLN,  CS_DOT, CS_COMM, CS_UNDS,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_TILD,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               KC_SLSH, CS_BSLS, _______,    KC_BSPC,  CS_AL1, CS_SLSH
                                           //`--------------------------'  `--------------------------'
@@ -178,29 +183,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LCTL, CS_BSLS, KC_PGUP, KC_PGDN,  KC_INS,  SELECT,                        CS_GT, MT_RBRC, KC_LBRC, KC_QUES, CS_TILD,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______,    _______,  CS_AL2,  KC_SPC
+                                              _______, _______, _______,    _______, _______,  KC_SPC
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_DATA] = LAYOUT( //5
+    [_PROGRAM] = LAYOUT( //5
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_TAB, CS_PERC,    KC_7,    KC_8,    KC_9, CS_CIRC,                      _______, _______, _______, _______, _______,  KC_DEL,
+           KC_GRV, CS_PERC, CS_EXLM, CS_DQUO,  CS_DLR, CS_COLN,                      _______, _______, _______, _______, _______,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT,    KC_0,    KC_1,    KC_2,    KC_3,   CS_LT,                      _______, _______, _______, _______, _______,  KC_TAB,
+          KC_LSFT, CS_CIRC, CS_PLUS, CS_MINS,  CS_EQL, CS_PIPE,                      _______, _______, _______, _______, _______,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_ASTR,    KC_4,    KC_5,    KC_6,   CS_GT,                      _______, _______, _______, _______, _______,  KC_ENT,
+          KC_LCTL, CS_TILD, CS_ASTR, CS_SLSH, CS_COLN, CS_AMPR,                      _______, _______, _______, _______, _______,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              KC_SLSH, CS_BSLS,  KC_SPC,    _______, _______, _______
+                                              CS_SLSH, CS_BSLS,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
     [_SYMBOL] = LAYOUT( //6
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_GRV, CS_PERC, CS_ASTR,  CS_DLR, CS_AMPR, CS_CIRC,                       KC_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_UNDS,  KC_DEL,
+           KC_GRV, CS_PERC, CS_ASTR,  CS_DLR, CS_AMPR, CS_CIRC,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_UNDS,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT, CS_PIPE,   CS_LT, KC_MINS,   CS_GT,  KC_EQL,                        CS_LT, KC_RPRN, KC_LPRN, CS_ASTR,   CS_AT,  KC_TAB,
+          KC_LSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT, KC_RPRN, KC_LPRN, CS_ASTR,   CS_AT,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS, CS_COLN,  KC_DOT, KC_COMM, CS_UNDS,                        CS_GT, KC_RBRC, KC_LBRC, KC_QUES, CS_TILD,  KC_ENT,
+          KC_LCTL, CS_BSLS, CS_COLN,  CS_DOT, CS_COMM, CS_UNDS,                        CS_GT, KC_RBRC, KC_LBRC, KC_QUES, CS_TILD,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               KC_SLSH, CS_BSLS,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -1397,6 +1402,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
+
         // =====================================================================
         // Custom symbol handling
         // =====================================================================
@@ -1562,6 +1568,42 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
+        case CS_MINS:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_MINS);
+                set_mods(mods);
+            }
+            break;
+        case CS_DOT:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_DOT);
+                set_mods(mods);
+            }
+            break;
+        case CS_COMM:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_COMM);
+                set_mods(mods);
+            }
+            break;
+        case CS_QUES:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_QUES);
+                set_mods(mods);
+            }
+            break;
+
+
+            
+
             
         case CS_END:
             if (record->event.pressed) {
@@ -1645,11 +1687,13 @@ void render_text_major(void) {
     oled_write_raw_P(text_major[rand() % text_major_count], frame_size);
 }
 
+
+#define BIAS 3
 void render_text_minor(bool can_be_major) {
     clean_frame = rand() % 2;
-    uint8_t frame = can_be_major ? rand() % (text_minor_count + text_major_count) : rand() % text_minor_count;
-    if (frame < text_minor_count) {
-        oled_write_raw_P(text_minor[frame], frame_size);
+    uint8_t frame = can_be_major ? rand() % (BIAS*text_minor_count + text_major_count) : rand() % text_minor_count;
+    if (frame < BIAS*text_minor_count) {
+        oled_write_raw_P(text_minor[frame % BIAS], frame_size);
         return;
     }
 
@@ -1726,7 +1770,7 @@ void render_draw(void) {
     if (1 == rand() % 60) {
         minor = true;
         frame_count = 1 + rand() % 10;
-        major = frame_count > 6;
+        major = frame_count > 5;
     }
 }
 
@@ -1901,13 +1945,13 @@ void render_layer(void) {
     //     case _STENO:
     //         oled_write_ln_P(PSTR("Steno."), false);
     //         break;
-    //     case _FUNCTION:
+    //     case _DATA:
     //         oled_write_ln_P(PSTR("Function"), false);
     //         break;
     //     case _EDIT:
     //         oled_write_ln_P(PSTR("Edit"), false);
     //         break;
-    //     case _DATA:
+    //     case _PROGRAM:
     //         oled_write_ln_P(PSTR("Data"), false);
     //         break;
     //     case _SYMBOL:
@@ -1929,20 +1973,20 @@ void render_layer(void) {
     //         oled_write_ln_P(PSTR("##########"), false);
     // }
 
-    if (IS_LAYER_ON(_FUNCTION)) {
-        oled_write_P(PSTR(">Function\n"), false);
+    if (IS_LAYER_ON(_DATA)) {
+        oled_write_P(PSTR(">Data\n"), false);
     } else {
-        oled_write_P(PSTR(" Function\n"), false);
+        oled_write_P(PSTR(" Data\n"), false);
     }
     if (IS_LAYER_ON(_EDIT)) {
         oled_write_P(PSTR(">Edit\n"), false);
     } else {
         oled_write_P(PSTR(" Edit\n"), false);
     }
-    if (IS_LAYER_ON(_DATA)) {
-        oled_write_P(PSTR(">Data\n"), false);
+    if (IS_LAYER_ON(_PROGRAM)) {
+        oled_write_P(PSTR(">Program\n"), false);
     } else {
-        oled_write_P(PSTR(" Data\n"), false);
+        oled_write_P(PSTR(" Program\n"), false);
     }
     if (IS_LAYER_ON(_SYMBOL)) {
         oled_write_P(PSTR(">Symbol\n"), false);
@@ -2156,13 +2200,13 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     RGB underglow_rgb = hsv_to_rgb(underglow_hsv);
     for (uint8_t i = 27; i < 33; i++) {
         switch(get_highest_layer(layer_state|default_layer_state)) {
-            case _DATA:
+            case _PROGRAM:
                 underglow_hsv = (HSV){ 85, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
-            case _FUNCTION:
+            case _DATA:
                 underglow_hsv = (HSV){ 127, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
