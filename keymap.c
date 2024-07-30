@@ -57,8 +57,8 @@ enum custom_keycodes {
     REP,
     CS_TAB,
 
-    // NEWSENT,
-    OSM_LSFT,
+    NEWSENT,
+    // OSM_LSFT,
 
     CM_ASTR,
     CM_COMM,
@@ -113,9 +113,9 @@ enum custom_keycodes {
 
 // Layer keys
 #define CS_LT3 LT(_UTILITY,KC_ESC)
-// #define CS_LT2 LT(_EDIT,NEWSENT)
+#define CS_LT2 LT(_EDIT,NEWSENT)
 // #define CS_LT2 MO(_EDIT)
-#define CS_LT2 LT(_EDIT,OSM_LSFT)
+// #define CS_LT2 LT(_EDIT,OSM_LSFT)
 #define CS_LT1 LT(_DATA,KC_SPC)
 
 #define CS_RT1 LT(_SYMBOL,KC_BSPC)
@@ -1021,20 +1021,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_clock(keycode, record)) { return false; }
     
     switch (keycode) {
-        case REP:
-            if (record->event.pressed) {
-                register_code(lastkey);
-            } else {
-                unregister_code(lastkey);
-            };
-            break;
 
         case CS_RT2:
         {
             if (!record->tap.count && record->event.pressed) { // Intercept holds only
-                layer_on(_SYMBOL);
+                layer_on(_PROGRAM);
             } else { // On keyup
-                layer_off(_SYMBOL);
+                layer_off(_PROGRAM);
             }
             if (record->tap.count && record->event.pressed) { // Intercept taps
                 register_code(lastkey);
@@ -1052,16 +1045,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 layer_off(_EDIT);
             }
 
-            if (record->tap.count && record->event.pressed) { // OSM Shift
-                add_oneshot_mods(MOD_BIT(KC_LSFT));
-            }
-            // if (record->tap.count && record->event.pressed) { // New sentence
-            //    SEND_STRING(". ");
-            //    add_oneshot_mods(MOD_BIT(KC_LSFT));
+            // if (record->tap.count && record->event.pressed) { // OSM Shift
+            //     add_oneshot_mods(MOD_BIT(KC_LSFT));
             // }
+            if (record->tap.count && record->event.pressed) { // New sentence
+               SEND_STRING(". ");
+               add_oneshot_mods(MOD_BIT(KC_LSFT));
+            }
 
             return false; // Return true for normal processing of key
         }
+
+        // =====================================================================
+        // Misc control
+        // =====================================================================
 
         case MUTE:
             if (record->event.pressed) {
@@ -1131,7 +1128,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             break;
 
         // =====================================================================
-        // COMBOS
+        // Combos
         // =====================================================================
 
         case CM_MOUSE:
@@ -1648,10 +1645,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-
-            
-
-            
         case CS_END:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -1735,12 +1728,12 @@ void render_text_major(void) {
 }
 
 
-#define BIAS 3
+#define BIAS 2
 void render_text_minor(bool can_be_major) {
     clean_frame = rand() % 2;
     uint8_t frame = can_be_major ? rand() % (BIAS*text_minor_count + text_major_count) : rand() % text_minor_count;
     if (frame < BIAS*text_minor_count) {
-        oled_write_raw_P(text_minor[frame % BIAS], frame_size);
+        oled_write_raw_P(text_minor[frame % text_minor_count], frame_size);
         return;
     }
 
