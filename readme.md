@@ -3,8 +3,6 @@
 
 <img src="./images/left.gif" height="200">   <img src="./images/right.jpg" height="200">   <img src="./images/waves.png" height="200">
 
-Note: image is slightly out of date but is mostly representative of the keymap.
-
 # Features
 - Common symbols and punctuation accessible through combos with many duplicated on both sides; combos trigger through most layers. (See my [Sofle keymap](https://github.com/DesyncTheThird/sofle-keymap) for combos; image for Corne WIP.)
 - Alpha-only repeat key with layer-tap on right thumb key.
@@ -20,7 +18,7 @@ Note: image is slightly out of date but is mostly representative of the keymap.
 ## OLEDs
 ### Right:
 - Default layer and layer stack display;
-- Clock -- time is set manually using keys on utility layer and doesn't require software on host;
+- Clock -- time is set manually using keys on utility layer and doesn't require software on host (persists through sleep events);
 - Custom locking key state, modifier state, and mute state indicators.
 
 ### Left:
