@@ -44,6 +44,10 @@ enum custom_keycodes {
     CS_DOT,
     CS_COMM,
     CS_QUES,
+    CS_SCLN,
+    
+    COM_DOT,
+    QUE_EXL,
 
     CS_END,
     CS_HOME,
@@ -53,8 +57,8 @@ enum custom_keycodes {
     REP,
     CS_TAB,
 
-    NEWSENT,
-    // OSM_LSFT,
+    // NEWSENT,
+    OSM_LSFT,
 
     CM_ASTR,
     CM_COMM,
@@ -103,14 +107,15 @@ enum custom_keycodes {
 #define MT_RBRC RCTL_T(KC_RBRC)
 #define MT_RPRN LT(0,CS_RPRN)
 #define MT_LPRN LT(0,CS_LPRN)
-#define MT_ASTR LT(0,CS_ASTR)
+#define MT_EXLM LT(0,CS_EXLM)
 
 
 
 // Layer keys
 #define CS_LT3 LT(_UTILITY,KC_ESC)
 // #define CS_LT2 LT(_EDIT,NEWSENT)
-#define CS_LT2 MO(_EDIT)
+// #define CS_LT2 MO(_EDIT)
+#define CS_LT2 LT(_EDIT,OSM_LSFT)
 #define CS_LT1 LT(_DATA,KC_SPC)
 
 #define CS_RT1 LT(_PROGRAM,KC_BSPC)
@@ -133,7 +138,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_A,    MT_S,    MT_D,    MT_F,    KC_G,                         KC_H,    MT_J,    MT_K,    MT_L, KC_SCLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    MT_C,    KC_V,                         KC_B,    MT_N,    KC_M, KC_COMM, CS_QUES, KC_QUOT,
+          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    MT_C,    KC_V,                         KC_B,    MT_N,    KC_M, COM_DOT, QUE_EXL, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -145,7 +150,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    KC_C,    KC_V,                         KC_B,    KC_N,    KC_M, KC_COMM, CS_QUES, KC_QUOT,
+          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    KC_C,    KC_V,                         KC_B,    KC_N,    KC_M, COM_DOT, QUE_EXL, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -167,9 +172,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_TAB,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9, CS_UNDS,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT,    KC_1,    KC_2,    KC_3,   CS_AT,  KC_TAB,
+          KC_LSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT,    KC_1,    KC_2,    KC_3, CS_COLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS, CS_COLN,  CS_DOT, CS_COMM, CS_UNDS,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_TILD,  KC_ENT,
+          KC_LCTL, CS_BSLS, CS_COLN,  CS_DOT, CS_COMM, CS_UNDS,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               KC_SLSH, CS_BSLS, _______,    KC_BSPC,  CS_AL1, CS_SLSH
                                           //`--------------------------'  `--------------------------'
@@ -177,13 +182,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT] = LAYOUT( //4
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_TAB, KC_PAUS, CS_HOME,   KC_UP,  CS_END,  KC_ENT,                       KC_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_UNDS,  KC_DEL,
+           KC_TAB, KC_PAUS, CS_HOME,   KC_UP,  CS_END,  KC_ENT,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_UNDS,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT, KC_PSCR, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_ASTR,   CS_AT,  KC_TAB,
+          KC_LSFT, KC_PSCR, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_EXLM, CS_COLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS, KC_PGUP, KC_PGDN,  KC_INS,  SELECT,                        CS_GT, MT_RBRC, KC_LBRC, KC_QUES, CS_TILD,  KC_ENT,
+          KC_LCTL, CS_BSLS, KC_PGUP, KC_PGDN,  KC_INS,  SELECT,                        CS_GT, MT_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______,    _______, _______,  KC_SPC
+                                              _______, _______, _______,    _______,  SELECT,  KC_SPC
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -195,7 +200,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LCTL, CS_TILD, CS_ASTR, CS_SLSH, CS_COLN, CS_AMPR,                      _______, _______, _______, _______, _______,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              CS_SLSH, CS_BSLS,  KC_SPC,    _______, _______, _______
+                                              CS_SLSH, CS_SCLN,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -203,9 +208,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_GRV, CS_PERC, CS_ASTR,  CS_DLR, CS_AMPR, CS_CIRC,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_UNDS,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT, KC_RPRN, KC_LPRN, CS_ASTR,   CS_AT,  KC_TAB,
+          KC_LSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT, KC_RPRN, KC_LPRN, CS_EXLM, CS_COLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS, CS_COLN,  CS_DOT, CS_COMM, CS_UNDS,                        CS_GT, KC_RBRC, KC_LBRC, KC_QUES, CS_TILD,  KC_ENT,
+          KC_LCTL, CS_BSLS, CS_COLN,  CS_DOT, CS_COMM, CS_UNDS,                        CS_GT, KC_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               KC_SLSH, CS_BSLS,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -352,7 +357,7 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case MT_RBRC:
         case MT_RPRN:
         case MT_LPRN:
-        case MT_ASTR:
+        case MT_EXLM:
             return 0;
         default:
             return TAPPING_TERM;
@@ -1047,13 +1052,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 layer_off(_EDIT);
             }
 
-            // if (record->tap.count && record->event.pressed) { // OSM Shift
-            //     add_oneshot_mods(MOD_BIT(KC_LSFT));
-            // }
-            if (record->tap.count && record->event.pressed) { // New sentence
-               SEND_STRING(". ");
-               add_oneshot_mods(MOD_BIT(KC_LSFT));
+            if (record->tap.count && record->event.pressed) { // OSM Shift
+                add_oneshot_mods(MOD_BIT(KC_LSFT));
             }
+            // if (record->tap.count && record->event.pressed) { // New sentence
+            //    SEND_STRING(". ");
+            //    add_oneshot_mods(MOD_BIT(KC_LSFT));
+            // }
 
             return false; // Return true for normal processing of key
         }
@@ -1241,7 +1246,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         }
             break;
 
-        case MT_ASTR:
+        case MT_EXLM:
         {
             if (!record->tap.count && record->event.pressed) { // Intercept holds only
                 register_mods(MOD_MASK_GUI);
@@ -1249,7 +1254,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 unregister_mods(MOD_MASK_GUI);
             }
             if (record->tap.count && record->event.pressed) { // Intercept taps
-                tap_code16(KC_ASTR);
+                tap_code16(KC_EXLM);
                 unregister_mods(MOD_MASK_SHIFT);
             } else {
                 /* intentionally empty */;
@@ -1598,6 +1603,48 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_QUES);
                 set_mods(mods);
+            }
+            break;
+        case CS_SCLN:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_SCLN);
+                set_mods(mods);
+            }
+            break;
+
+        case COM_DOT:
+            if (record->event.pressed) {
+                if (shifted()) {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code(KC_DOT);
+                    set_mods(mods);
+                }
+                else {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code(KC_COMM);
+                    set_mods(mods);
+                }
+            }
+            break;
+
+        case QUE_EXL:
+            if (record->event.pressed) {
+                if (shifted()) {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code16(KC_QUES);
+                    set_mods(mods);
+                }
+                else {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code16(KC_EXLM);
+                    set_mods(mods);
+                }
             }
             break;
 
