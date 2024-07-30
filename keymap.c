@@ -1636,13 +1636,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 if (shifted()) {
                     const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_QUES);
+                    tap_code16(KC_EXLM);
                     set_mods(mods);
                 }
                 else {
                     const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_EXLM);
+                    tap_code16(KC_QUES);
                     set_mods(mods);
                 }
             }
