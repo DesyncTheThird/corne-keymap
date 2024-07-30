@@ -7,11 +7,15 @@ Note: image is slightly out of date but is mostly representative of the keymap.
 
 # Features
 - Common symbols and punctuation accessible through combos with many duplicated on both sides; combos trigger through most layers. (See my [Sofle keymap](https://github.com/DesyncTheThird/sofle-keymap) for combos; image for Corne WIP.)
+- Alpha-only repeat key with layer-tap on right thumb key.
 - Home block mods on main layer (toggle-able).
-- Symbol layer optimised for (La)TeX editing, with brackets and many common strings as inward rolls, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `<-`, `<=`, `->`, `>=`, `|->`, `:-`, `&=`, etc. Backslash also on main thumb key on this layer.
-- Number grid accessible on both hands; function keys 1-5 on left hand; all function keys on right hand.
+- Symbol layer optimised for (La)TeX editing, with brackets and many common strings as inward rolls, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `<-`, `<=`, `->`, `>=`, `|->`, `:-`, `&=`, etc. Backslash also on main thumb key on this layer.
+- Brackets duplicated on Edit layer for easier access.
+- Program layer optimised for c programming, with comparison operators as inward rolls, logical/bitwise operators symbols closely grouped on index finger, etc.
+- Number grid on right hand with [1,2,3] on home row.
+- Function layer on right hand, F1-F5 duplicated on left side for left-hand only usage.
 - Mouse emulation accessible on pinky keys; movement same position as arrow keys on navigation layer, scrolling underneath in vim layout.
-- Steno layer (using geminipr) accessible through combo.
+- Steno layer (using GeminiPR) accessible through combo.
 
 ## OLEDs
 ### Right:
