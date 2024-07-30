@@ -172,9 +172,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_TAB,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9, CS_UNDS,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT,    KC_1,    KC_2,    KC_3, CS_COLN,  KC_TAB,
+          KC_LSFT, CS_CIRC, CS_PLUS, CS_MINS,  CS_EQL, CS_PIPE,                        CS_LT,    KC_1,    KC_2,    KC_3, CS_COLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS, CS_COLN,  CS_DOT, CS_COMM, CS_UNDS,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
+          KC_LCTL, CS_TILD, CS_ASTR, CS_SLSH, CS_COLN, CS_AMPR,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               KC_SLSH, CS_BSLS, _______,    KC_BSPC,  CS_AL1, CS_SLSH
                                           //`--------------------------'  `--------------------------'

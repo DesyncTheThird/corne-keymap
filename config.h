@@ -83,7 +83,7 @@ timeout managed manually in keymap instead.
 
 // Timer for mod and layer taps
 #undef TAPPING_TERM
-#define TAPPING_TERM 225
+#define TAPPING_TERM 250
 #define TAPPING_TERM_PER_KEY
 
 // Perform hold action if other keys are pressed.
