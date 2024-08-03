@@ -106,15 +106,15 @@ enum custom_keycodes {
 #define MT_L RGUI_T(KC_L)
 
 // Alt layout home block mods
-#define MTA_R LGUI_T(KC_S)
-#define MTA_T LALT_T(KC_D)
-#define MTA_S LSFT_T(KC_F)
-#define MTA_W LCTL_T(KC_C)
+#define MTA_R LGUI_T(KC_R)
+#define MTA_T LALT_T(KC_T)
+#define MTA_S LSFT_T(KC_S)
+#define MTA_W LCTL_T(KC_W)
 
-#define MTA_P RCTL_T(KC_N)
-#define MTA_H RSFT_T(KC_J)
-#define MTA_E LALT_T(KC_K)
-#define MTA_I RGUI_T(KC_L)
+#define MTA_P RCTL_T(KC_P)
+#define MTA_H RSFT_T(KC_H)
+#define MTA_E LALT_T(KC_E)
+#define MTA_I RGUI_T(KC_I)
 
 
 // Symbol home block mods
