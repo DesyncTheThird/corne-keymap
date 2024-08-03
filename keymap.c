@@ -461,6 +461,9 @@ const key_override_t redo  = ko_make_with_layers(MOD_MASK_CTRL, KC_X, C(KC_Y), (
 const key_override_t cut   = ko_make_with_layers(MOD_MASK_CTRL, KC_M, C(KC_X), (1 << _GALLIUM));
 const key_override_t copy  = ko_make_with_layers(MOD_MASK_CTRL, KC_W, C(KC_C), (1 << _GALLIUM));
 const key_override_t paste = ko_make_with_layers(MOD_MASK_CTRL, KC_B, C(KC_V), (1 << _GALLIUM));
+const key_override_t find  = ko_make_with_layers(MOD_MASK_CTRL, KC_B, C(KC_F), (1 << _GALLIUM));
+const key_override_t save  = ko_make_with_layers(MOD_MASK_CTRL, KC_B, C(KC_S), (1 << _GALLIUM));
+const key_override_t close = ko_make_with_layers(MOD_MASK_CTRL, KC_B, C(KC_W), (1 << _GALLIUM));
 
 const key_override_t **key_overrides = (const key_override_t *[]){
     &undo,
@@ -468,6 +471,9 @@ const key_override_t **key_overrides = (const key_override_t *[]){
     &cut,
     &copy,
     &paste,
+    &find,
+    &save,
+    &close,
     NULL
 };
 
@@ -627,7 +633,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
             break;
         case NUMPAD:
             if (pressed) {
-                if (layer_state_is(_BASIC) || layer_state_is(_QWERTY)) {
+                if (layer_state_is(_BASIC) || layer_state_is(_QWERTY)|| layer_state_is(_GALLIUM)) {
                     layer_on(_NUMPAD);
                 }
                 else {
@@ -698,14 +704,12 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
         case MOUSE:
         case STENO:
         case NUMPAD:
+        case GALLIUM:
             return true;
-            break;
-
         default:
             if (!(layer_state_is(_BASIC) || layer_state_is(_TOUHOU) || layer_state_is(_MOUSE) || layer_state_is(_STENO))) {
                 return true;
             }
-            break;
     }
     return false;
 }
@@ -1336,6 +1340,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
         case KC_E:
+        case MTA_E:
             if (record->event.pressed && no_ctrl()) {
                 lastkey = KC_E;
             }
@@ -1352,11 +1357,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
         case KC_H:
+        case MTA_H:
             if (record->event.pressed && no_ctrl()) {
                 lastkey = KC_H;
             }
             break;
         case KC_I:
+        case MTA_I:
             if (record->event.pressed && no_ctrl()) {
                 lastkey = KC_I;
             }
@@ -1396,6 +1403,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
         case KC_P:
+        case MTA_P:
             if (record->event.pressed && no_ctrl()) {
                 lastkey = KC_P;
             }
@@ -1406,17 +1414,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
         case KC_R:
+        case MTA_R:
             if (record->event.pressed && no_ctrl()) {
                 lastkey = KC_R;
             }
             break;
         case KC_S:
         case MT_S:
+        case MTA_S:
             if (record->event.pressed && no_ctrl()) {
                 lastkey = KC_S;
             }
             break;
         case KC_T:
+        case MTA_T:
             if (record->event.pressed && no_ctrl()) {
                 lastkey = KC_T;
             }
@@ -1432,6 +1443,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
         case KC_W:
+        case MTA_W:
             if (record->event.pressed && no_ctrl()) {
                 lastkey = KC_W;
             }
