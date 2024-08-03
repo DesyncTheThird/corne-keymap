@@ -2144,7 +2144,7 @@ bool oled_task_user(void) {
     }
     if (is_keyboard_master()) {
         if (wave_on) {
-            oled_write_raw_P(wave_right, frame_size);
+            oled_write_raw_P(static_right, frame_size);
         }
         else {
             render_status();
@@ -2153,7 +2153,7 @@ bool oled_task_user(void) {
     else {
         if (wave_on || sync_data.wave_on_sync) {
             ;
-            // oled_write_raw_P(wave_left, frame_size);
+            // oled_write_raw_P(static_left, frame_size);
         }
         else {
             render_draw();
@@ -2295,21 +2295,16 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    static bool basic = false;
-    // static uint8_t mode;
-    // mode = rgb_matrix_get_mode();
-    if (basic != IS_LAYER_ON_STATE(state, _BASIC) || basic != IS_LAYER_ON_STATE(state, _TOUHOU)) {
-        basic = !basic;
-        if (basic) {
-            // mode = rgb_matrix_get_mode();
-            rgb_matrix_set_speed_noeeprom(48);
-            rgb_matrix_mode_noeeprom(RGB_MATRIX_RAINBOW_PINWHEELS);
-            rgb_matrix_sethsv_noeeprom(255,225,255);
-        } else {
-            rgb_matrix_set_speed_noeeprom(64);
-            rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE);
-            rgb_matrix_sethsv_noeeprom(255,255,255);
-        }
+    
+    if (IS_LAYER_ON_STATE(state, _BASIC)) {
+        rgb_matrix_set_speed_noeeprom(48);
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_RAINBOW_PINWHEELS);
+        rgb_matrix_sethsv_noeeprom(255,225,255);
+    }
+    else {
+        rgb_matrix_set_speed_noeeprom(64);
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE);
+        rgb_matrix_sethsv_noeeprom(255,255,255);
     }
     // switch(get_highest_layer(layer_state)) {
     //     case _QWERTY:
@@ -2356,7 +2351,7 @@ void housekeeping_task_user(void) {
     }
     else { // slave side
         if (sync_data.wave_on_sync) { 
-            oled_write_raw_P(wave_left, frame_size);
+            oled_write_raw_P(static_left, frame_size);
         }
         else {
             // render_draw();
