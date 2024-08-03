@@ -473,9 +473,10 @@ const key_override_t redo  = ko_make_with_layers(MOD_MASK_CTRL, KC_X, C(KC_Y), (
 const key_override_t cut   = ko_make_with_layers(MOD_MASK_CTRL, KC_M, C(KC_X), (1 << _GALLIUM));
 const key_override_t copy  = ko_make_with_layers(MOD_MASK_CTRL, KC_W, C(KC_C), (1 << _GALLIUM));
 const key_override_t paste = ko_make_with_layers(MOD_MASK_CTRL, KC_B, C(KC_V), (1 << _GALLIUM));
-const key_override_t find  = ko_make_with_layers(MOD_MASK_CTRL, KC_B, C(KC_F), (1 << _GALLIUM));
-const key_override_t save  = ko_make_with_layers(MOD_MASK_CTRL, KC_B, C(KC_S), (1 << _GALLIUM));
-const key_override_t close = ko_make_with_layers(MOD_MASK_CTRL, KC_B, C(KC_W), (1 << _GALLIUM));
+const key_override_t find  = ko_make_with_layers(MOD_MASK_CTRL, KC_S, C(KC_F), (1 << _GALLIUM));
+const key_override_t save  = ko_make_with_layers(MOD_MASK_CTRL, KC_T, C(KC_S), (1 << _GALLIUM));
+const key_override_t close = ko_make_with_layers(MOD_MASK_CTRL, KC_D, C(KC_W), (1 << _GALLIUM));
+const key_override_t tab   = ko_make_with_layers(MOD_MASK_CTRL, KC_V, C(KC_W), (1 << _GALLIUM));
 
 const key_override_t **key_overrides = (const key_override_t *[]){
     &undo,
@@ -535,25 +536,25 @@ const uint16_t PROGMEM numpad[]         = {KC_O, KC_P, CS_HASH, COMBO_END};
 const uint16_t PROGMEM mouse[]          = {KC_TAB, KC_QUOT, COMBO_END};
 
 const uint16_t PROGMEM l_exponent[]     = {MT_S, KC_E, MT_F, COMBO_END};
-const uint16_t PROGMEM l_comma[]        = {MT_D, MT_F, COMBO_END};
+const uint16_t PROGMEM l_comma[]        = {MT_D, MT_C, COMBO_END};
 const uint16_t PROGMEM l_dot[]          = {MT_S, MT_D, COMBO_END};
 const uint16_t PROGMEM l_underscore[]   = {KC_X, MT_C, COMBO_END};
-const uint16_t PROGMEM l_asterisk[]     = {MT_D, MT_C, COMBO_END};
+const uint16_t PROGMEM l_asterisk[]     = {MT_C, KC_V, COMBO_END};
 const uint16_t PROGMEM l_equals[]       = {KC_E, KC_R, COMBO_END};
 const uint16_t PROGMEM l_plus[]         = {MT_F, KC_G, COMBO_END};
-const uint16_t PROGMEM l_minus[]        = {MT_C, KC_V, COMBO_END};
+const uint16_t PROGMEM l_minus[]        = {MT_D, MT_F, COMBO_END};
 
 const uint16_t PROGMEM ampersand[]      = {KC_E, MT_F, COMBO_END};
 const uint16_t PROGMEM exclamation[]    = {MT_S, KC_E, COMBO_END};
 
 const uint16_t PROGMEM r_exponent[]     = {MT_J, KC_I, MT_L, COMBO_END};
-const uint16_t PROGMEM r_comma[]        = {MT_J, MT_K, COMBO_END};
+const uint16_t PROGMEM r_comma[]        = {MT_N, MT_K, COMBO_END};
 const uint16_t PROGMEM r_dot[]          = {MT_K, MT_L, COMBO_END};
 const uint16_t PROGMEM r_underscore[]   = {MT_N, KC_M,COMBO_END};
-const uint16_t PROGMEM r_asterisk[]     = {MT_N, MT_K, COMBO_END};
+const uint16_t PROGMEM r_asterisk[]     = {KC_B, MT_N, COMBO_END};
 const uint16_t PROGMEM r_equals[]       = {KC_U, KC_I, COMBO_END};
 const uint16_t PROGMEM r_plus[]         = {KC_H, MT_J, COMBO_END};
-const uint16_t PROGMEM r_minus[]        = {KC_B, MT_N, COMBO_END};
+const uint16_t PROGMEM r_minus[]        = {MT_J, MT_K, COMBO_END};
 
 const uint16_t PROGMEM colon[]          = {MT_J, KC_I, COMBO_END};
 const uint16_t PROGMEM semicolon[]      = {KC_I, MT_L, COMBO_END};
