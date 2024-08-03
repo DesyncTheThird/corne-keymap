@@ -500,34 +500,30 @@ enum combo_events {
     STENO,
     MOUSE,
     NUMPAD,
-    
-    // LESSTHAN,
-    // GREATERTHAN,
-    AMPERSAND,
-    EXCLAMATION,
 
-    // LEFTPAREN,
-    // RIGHTPAREN,
-    COLON,
-    SEMICOLON,
-    
     L_EXPONENT,
-    L_ASTERISK,
     L_COMMA,
+    L_DOT,
+    L_UNDERSCORE,
+    L_ASTERISK,
     L_PLUS,
     L_EQUALS,
     L_MINUS,
-    L_UNDERSCORE,
-    L_DOT,
+
+    AMPERSAND,
+    EXCLAMATION,
 
     R_EXPONENT,
-    R_ASTERISK,
     R_COMMA,
+    R_DOT,
+    R_UNDERSCORE,
+    R_ASTERISK,
     R_PLUS,
     R_EQUALS,
     R_MINUS,
-    R_UNDERSCORE,
-    R_DOT,
+
+    COLON,
+    SEMICOLON,
 
     COMBO_LENGTH
 };
@@ -547,8 +543,8 @@ const uint16_t PROGMEM l_equals[]       = {KC_E, KC_R, COMBO_END};
 const uint16_t PROGMEM l_plus[]         = {MT_F, KC_G, COMBO_END};
 const uint16_t PROGMEM l_minus[]        = {MT_C, KC_V, COMBO_END};
 
-const uint16_t PROGMEM ampersand[]      = {KC_E, KC_F, COMBO_END};
-const uint16_t PROGMEM exclamation[]    = {KC_S, KC_E, COMBO_END};
+const uint16_t PROGMEM ampersand[]      = {KC_E, MT_F, COMBO_END};
+const uint16_t PROGMEM exclamation[]    = {MT_S, KC_E, COMBO_END};
 
 const uint16_t PROGMEM r_exponent[]     = {MT_J, KC_I, MT_L, COMBO_END};
 const uint16_t PROGMEM r_comma[]        = {MT_J, MT_K, COMBO_END};
@@ -559,20 +555,20 @@ const uint16_t PROGMEM r_equals[]       = {KC_U, KC_I, COMBO_END};
 const uint16_t PROGMEM r_plus[]         = {KC_H, MT_J, COMBO_END};
 const uint16_t PROGMEM r_minus[]        = {KC_B, MT_N, COMBO_END};
 
-const uint16_t PROGMEM colon[]          = {KC_J, KC_I, COMBO_END};
-const uint16_t PROGMEM semicolon[]      = {KC_I, KC_L, COMBO_END};
+const uint16_t PROGMEM colon[]          = {MT_J, KC_I, COMBO_END};
+const uint16_t PROGMEM semicolon[]      = {KC_I, MT_L, COMBO_END};
 
 combo_t key_combos[] = {
     [TOUHOU]        = COMBO_ACTION(touhou),
     [STENO]         = COMBO_ACTION(steno),
     [NUMPAD]        = COMBO_ACTION(numpad),
 
-    [MOUSE]         = COMBO(mouse),
+    [MOUSE]         = COMBO(mouse,         CM_MOUSE),
     
     [L_EXPONENT]    = COMBO(l_exponent,    CM_CIRC),
     [L_COMMA]       = COMBO(l_comma,       CM_COMM),
     [L_DOT]         = COMBO(l_dot,         CM_DOT),
-    [L_UNDERSCORE]  = COMBO(l_underscore,  CM_UNDS)
+    [L_UNDERSCORE]  = COMBO(l_underscore,  CM_UNDS),
     [L_ASTERISK]    = COMBO(l_asterisk,    CM_ASTR),
     [L_EQUALS]      = COMBO(l_equals,      CM_EQL),
     [L_PLUS]        = COMBO(l_plus,        CM_PLUS),
@@ -625,7 +621,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                     layer_on(_STENO);
                 }
                 else if (layer_state_is(_STENO)) {
-                    layer_off(_QWERTY);
+                    layer_off(_STENO);
                 }
             }
             break;
@@ -1156,12 +1152,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case BASE:
             if (record->event.pressed) {
                 if (IS_LAYER_ON(_QWERTY)) {
-                    default_layer_set(1 << _GALLIUM);
+                    layer_on(_GALLIUM);
                 }
                 else {
-                    default_layer_set(1 << _QWERTY);
+                    layer_off(_GALLIUM);
                 }
             }
+            break;
         case BASIC:
             if (record->event.pressed) {
                 if (IS_LAYER_ON(_BASIC)) {
@@ -1171,6 +1168,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                     layer_on(_BASIC);
                 }
             }
+            break;
         case CS_BOOT:
             if (record->event.pressed) {
                 if (shifted()) {
@@ -1180,6 +1178,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                     reset_keyboard();
                 }
             }
+            break;
 
         // =====================================================================
         // Combos
