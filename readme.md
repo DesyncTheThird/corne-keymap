@@ -6,6 +6,8 @@
 
 ---
 
+# Layers
+
 ![Base](images/gallium.png?raw=true)
 
 ![Data](images/data.png?raw=true)
@@ -24,7 +26,7 @@
 
 ![Combos](images/combos.png?raw=true)
 
-# QWERTY Base Layer
+# Alt Base Layer
 
 ![QWERTY](images/qwerty.png?raw=true)
 
