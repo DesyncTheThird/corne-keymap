@@ -479,13 +479,13 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
 // const key_override_t redo = ko_make_basic(MOD_MASK_CS, KC_Z, C(KC_Y));
 
 const key_override_t undo    = ko_make_with_layers(MOD_MASK_CTRL, KC_M, C(KC_Z), (1 << _GALLIUM));
-const key_override_t redo    = ko_make_with_layers(MOD_MASK_CTRL, KC_X, C(KC_Y), (1 << _GALLIUM));
+const key_override_t redo    = ko_make_with_layers(MOD_MASK_CTRL, KC_Z, C(KC_Y), (1 << _GALLIUM));
 const key_override_t cut     = ko_make_with_layers(MOD_MASK_CTRL, KC_Q, C(KC_X), (1 << _GALLIUM));
-const key_override_t copy    = ko_make_with_layers(MOD_MASK_CTRL, KC_C, C(KC_C), (1 << _GALLIUM));
+const key_override_t copy    = ko_make_with_layers(MOD_MASK_CTRL, MT_C, C(KC_C), (1 << _GALLIUM));
 const key_override_t paste   = ko_make_with_layers(MOD_MASK_CTRL, KC_B, C(KC_V), (1 << _GALLIUM));
-const key_override_t find    = ko_make_with_layers(MOD_MASK_CTRL, KC_T, C(KC_F), (1 << _GALLIUM));
-const key_override_t save    = ko_make_with_layers(MOD_MASK_CTRL, KC_S, C(KC_S), (1 << _GALLIUM));
-const key_override_t all     = ko_make_with_layers(MOD_MASK_CTRL, KC_N, C(KC_S), (1 << _GALLIUM));
+const key_override_t find    = ko_make_with_layers(MOD_MASK_CTRL, MTA_T, C(KC_F), (1 << _GALLIUM));
+const key_override_t save    = ko_make_with_layers(MOD_MASK_CTRL, MTA_S, C(KC_S), (1 << _GALLIUM));
+const key_override_t all     = ko_make_with_layers(MOD_MASK_CTRL, MTA_N, C(KC_S), (1 << _GALLIUM));
 const key_override_t close   = ko_make_with_layers(MOD_MASK_CTRL, KC_D, C(KC_W), (1 << _GALLIUM));
 const key_override_t tab     = ko_make_with_layers(MOD_MASK_CTRL, KC_V, C(KC_W), (1 << _GALLIUM));
 const key_override_t window  = ko_make_with_layers(MOD_MASK_CTRL, KC_G, C(KC_N), (1 << _GALLIUM));
