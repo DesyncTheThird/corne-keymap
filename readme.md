@@ -3,8 +3,34 @@
 
 <img src="./images/left.gif" height="200">   <img src="./images/right.jpg" height="200">   <img src="./images/waves.png" height="200">   <img src="./images/four-byte-burger.png" height="200">
 
+
+---
+
+![Base](images/gallium.png?raw=true)
+
+![Data](images/data.png?raw=true)
+
+![Edit](images/edit.png?raw=true)
+
+![Symbol](images/symbol.png?raw=true)
+
+![Program](images/program.png?raw=true)
+
+![Utility](images/utility.png?raw=true)
+
+![Mouse](images/mouse.png?raw=true)
+
+# Combos
+
+![Combos](images/combos.png?raw=true)
+
+# QWERTY Base Layer
+
+![QWERTY](images/qwerty.png?raw=true)
+
+
 # Features
-- Common symbols and punctuation accessible through combos with many duplicated on both sides; combos trigger through most layers. (See my [Sofle keymap](https://github.com/DesyncTheThird/sofle-keymap) for combos; image for Corne WIP.)
+- Common symbols and punctuation accessible through combos with many duplicated on both sides; combos trigger through most layers.
 - Alpha-only repeat key with layer-tap on right thumb key.
 - Home block mods on main layer (toggle-able).
 - Symbol layer optimised for (La)TeX editing, with brackets and many common strings as inward rolls, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `<-`, `<=`, `->`, `>=`, `|->`, `:-`, `&=`, etc. Backslash also on main thumb key on this layer.
