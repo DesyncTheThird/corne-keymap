@@ -118,10 +118,10 @@ enum custom_keycodes {
 #define MT_L RGUI_T(KC_L)
 
 // Alt layout home block mods
-#define MTA_R LGUI_T(KC_R)
+#define MTA_N LGUI_T(KC_N)
 #define MTA_T LALT_T(KC_T)
 #define MTA_S LSFT_T(KC_S)
-#define MTA_W LCTL_T(KC_W)
+// #define MTA_C LCTL_T(KC_C)
 
 #define MTA_P RCTL_T(KC_P)
 #define MTA_H RSFT_T(KC_H)
@@ -173,11 +173,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_GALLIUM] = LAYOUT( //1
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_ESC,    KC_Z,    KC_L,    KC_D,    KC_C,    KC_V,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
+           KC_ESC,    KC_X,    KC_L,    KC_D,    KC_W,    KC_V,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A,  KC_TAB,
+          KC_LSFT,    KC_R,   MTA_N,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL,    KC_X,    KC_Q,    KC_M,   MTA_W,    KC_B,                         KC_K,   MTA_P, CS_MINS, COM_DOT, QUE_EXL, KC_QUOT,
+          KC_LCTL,    KC_Z,    KC_M,    KC_Q,    MT_C,    KC_B,                         KC_K,   MTA_P, CS_MINS, COM_DOT, QUE_EXL, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -209,7 +209,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_DATA] = LAYOUT( //4
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_TAB,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9, CS_SCLN,  KC_DEL,
+           KC_ESC,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT, CS_CIRC, CS_PLUS, CS_MINS,  CS_EQL, CS_PIPE,                        CS_LT,    KC_1,    KC_2,    KC_3, CS_EXLM,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -221,11 +221,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT] = LAYOUT( //5
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_TAB, KC_PAUS, CS_HOME,   KC_UP,  CS_END,  KC_ENT,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
+           KC_ESC, KC_PAUS, CS_HOME,   KC_UP,  CS_END,  KC_ENT,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT, KC_PSCR, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, CS_EXLM,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS, KC_PGUP, KC_PGDN,  KC_INS,  SELECT,                        CS_GT, MT_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
+          KC_LCTL,  KC_TAB, KC_PGUP, KC_PGDN,  KC_INS,  SELECT,                        CS_GT, MT_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______,  CS_AL2,  KC_SPC
                                           //`--------------------------'  `--------------------------'
@@ -394,10 +394,10 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case MT_K:
         case MT_L:
 
-        case MTA_R:
+        case MTA_N:
         case MTA_T:
         case MTA_S:
-        case MTA_W:
+        // case MTA_C:
         case MTA_P:
         case MTA_H:
         case MTA_E:
@@ -478,15 +478,18 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
 
 // const key_override_t redo = ko_make_basic(MOD_MASK_CS, KC_Z, C(KC_Y));
 
-const key_override_t undo  = ko_make_with_layers(MOD_MASK_CTRL, KC_Q, C(KC_Z), (1 << _GALLIUM));
-const key_override_t redo  = ko_make_with_layers(MOD_MASK_CTRL, KC_X, C(KC_Y), (1 << _GALLIUM));
-const key_override_t cut   = ko_make_with_layers(MOD_MASK_CTRL, KC_M, C(KC_X), (1 << _GALLIUM));
-const key_override_t copy  = ko_make_with_layers(MOD_MASK_CTRL, KC_W, C(KC_C), (1 << _GALLIUM));
-const key_override_t paste = ko_make_with_layers(MOD_MASK_CTRL, KC_B, C(KC_V), (1 << _GALLIUM));
-const key_override_t find  = ko_make_with_layers(MOD_MASK_CTRL, KC_S, C(KC_F), (1 << _GALLIUM));
-const key_override_t save  = ko_make_with_layers(MOD_MASK_CTRL, KC_T, C(KC_S), (1 << _GALLIUM));
-const key_override_t close = ko_make_with_layers(MOD_MASK_CTRL, KC_D, C(KC_W), (1 << _GALLIUM));
-const key_override_t tab   = ko_make_with_layers(MOD_MASK_CTRL, KC_V, C(KC_W), (1 << _GALLIUM));
+const key_override_t undo    = ko_make_with_layers(MOD_MASK_CTRL, KC_M, C(KC_Z), (1 << _GALLIUM));
+const key_override_t redo    = ko_make_with_layers(MOD_MASK_CTRL, KC_X, C(KC_Y), (1 << _GALLIUM));
+const key_override_t cut     = ko_make_with_layers(MOD_MASK_CTRL, KC_Q, C(KC_X), (1 << _GALLIUM));
+const key_override_t copy    = ko_make_with_layers(MOD_MASK_CTRL, KC_C, C(KC_C), (1 << _GALLIUM));
+const key_override_t paste   = ko_make_with_layers(MOD_MASK_CTRL, KC_B, C(KC_V), (1 << _GALLIUM));
+const key_override_t find    = ko_make_with_layers(MOD_MASK_CTRL, KC_T, C(KC_F), (1 << _GALLIUM));
+const key_override_t save    = ko_make_with_layers(MOD_MASK_CTRL, KC_S, C(KC_S), (1 << _GALLIUM));
+const key_override_t all     = ko_make_with_layers(MOD_MASK_CTRL, KC_N, C(KC_S), (1 << _GALLIUM));
+const key_override_t close   = ko_make_with_layers(MOD_MASK_CTRL, KC_D, C(KC_W), (1 << _GALLIUM));
+const key_override_t tab     = ko_make_with_layers(MOD_MASK_CTRL, KC_V, C(KC_W), (1 << _GALLIUM));
+const key_override_t window  = ko_make_with_layers(MOD_MASK_CTRL, KC_G, C(KC_N), (1 << _GALLIUM));
+const key_override_t refresh = ko_make_with_layers(MOD_MASK_CTRL, KC_W, C(KC_N), (1 << _GALLIUM));
 
 const key_override_t **key_overrides = (const key_override_t *[]){
     &undo,
@@ -496,7 +499,11 @@ const key_override_t **key_overrides = (const key_override_t *[]){
     &paste,
     &find,
     &save,
+    &all,
     &close,
+    &tab,
+    &window,
+    &refresh,
     NULL
 };
 
@@ -521,8 +528,8 @@ enum combo_events {
     L_EQUALS,
     L_MINUS,
 
-    AMPERSAND,
     EXCLAMATION,
+    COLON,
 
     R_EXPONENT,
     R_COMMA,
@@ -533,8 +540,8 @@ enum combo_events {
     R_EQUALS,
     R_MINUS,
 
-    COLON,
     SEMICOLON,
+    AMPERSAND,
 
     COMBO_LENGTH
 };
@@ -554,8 +561,8 @@ const uint16_t PROGMEM l_equals[]       = {KC_E, KC_R, COMBO_END};
 const uint16_t PROGMEM l_plus[]         = {MT_F, KC_G, COMBO_END};
 const uint16_t PROGMEM l_minus[]        = {MT_D, MT_F, COMBO_END};
 
-const uint16_t PROGMEM ampersand[]      = {KC_E, MT_F, COMBO_END};
 const uint16_t PROGMEM exclamation[]    = {MT_S, KC_E, COMBO_END};
+const uint16_t PROGMEM colon[]          = {KC_E, MT_F, COMBO_END};
 
 const uint16_t PROGMEM r_exponent[]     = {MT_J, KC_I, MT_L, COMBO_END};
 const uint16_t PROGMEM r_comma[]        = {MT_N, MT_K, COMBO_END};
@@ -566,8 +573,8 @@ const uint16_t PROGMEM r_equals[]       = {KC_U, KC_I, COMBO_END};
 const uint16_t PROGMEM r_plus[]         = {KC_H, MT_J, COMBO_END};
 const uint16_t PROGMEM r_minus[]        = {MT_J, MT_K, COMBO_END};
 
-const uint16_t PROGMEM colon[]          = {MT_J, KC_I, COMBO_END};
-const uint16_t PROGMEM semicolon[]      = {KC_I, MT_L, COMBO_END};
+const uint16_t PROGMEM semicolon[]      = {MT_J, KC_I, COMBO_END};
+const uint16_t PROGMEM ampersand[]      = {KC_I, MT_L, COMBO_END};
 
 combo_t key_combos[] = {
     [TOUHOU]        = COMBO_ACTION(touhou),
@@ -585,8 +592,8 @@ combo_t key_combos[] = {
     [L_PLUS]        = COMBO(l_plus,        CM_PLUS),
     [L_MINUS]       = COMBO(l_minus,       CM_MINS),
     
-    [AMPERSAND]     = COMBO(ampersand,     CM_AMPR),
     [EXCLAMATION]   = COMBO(exclamation,   CM_EXLM),
+    [COLON]         = COMBO(colon,         CM_COLN),
     
     [R_EXPONENT]    = COMBO(r_exponent,    CM_CIRC),
     [R_COMMA]       = COMBO(r_comma,       CM_COMM),
@@ -597,8 +604,8 @@ combo_t key_combos[] = {
     [R_PLUS]        = COMBO(r_plus,        CM_PLUS),
     [R_MINUS]       = COMBO(r_minus,       CM_MINS),
 
-    [COLON]         = COMBO(colon,         CM_COLN),
     [SEMICOLON]     = COMBO(semicolon,     CM_SCLN),
+    [AMPERSAND]     = COMBO(ampersand,     CM_AMPR),
 
 
 };
@@ -1380,6 +1387,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             break;
         case KC_C:
         case MT_C:
+        // case MTA_C:
             if (record->event.pressed && no_ctrl()) {
                 lastkey = KC_C;
             }
@@ -1465,11 +1473,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
         case KC_R:
-        case MTA_R:
-            if (record->event.pressed && no_ctrl()) {
-                lastkey = KC_R;
-            }
-            break;
         case KC_S:
         case MT_S:
         case MTA_S:
@@ -1494,11 +1497,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
         case KC_W:
-        case MTA_W:
-            if (record->event.pressed && no_ctrl()) {
-                lastkey = KC_W;
-            }
-            break;
         case KC_X:
             if (record->event.pressed && no_ctrl()) {
                 lastkey = KC_X;
