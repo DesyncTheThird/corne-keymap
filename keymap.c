@@ -120,7 +120,7 @@ enum custom_keycodes {
 #define MTA_R LGUI_T(KC_R)
 #define MTA_T LALT_T(KC_T)
 #define MTA_S LSFT_T(KC_S)
-// #define MTA_C LCTL_T(KC_C)
+#define MTA_W LCTL_T(KC_W)
 
 #define MTA_P RCTL_T(KC_P)
 #define MTA_H RSFT_T(KC_H)
@@ -171,11 +171,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_BASE] = LAYOUT( //1
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_ESC,    KC_X,    KC_L,    KC_D,    KC_W,    KC_V,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
+           KC_ESC,    KC_X,    KC_L,    KC_D,    KC_C,    KC_V,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL,    KC_Z,    KC_Q,    KC_M,    MT_C,    KC_B,                         KC_K,   MTA_P, CS_MINS, COM_DOT, QUE_EXL, KC_QUOT,
+          KC_LCTL,    KC_Z,    KC_Q,    KC_M,   MTA_W,    KC_B,                         KC_K,   MTA_P, CS_MINS, COM_DOT, QUE_EXL, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -395,7 +395,7 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case MTA_R:
         case MTA_T:
         case MTA_S:
-        // case MTA_C:
+        case MTA_W:
         case MTA_P:
         case MTA_H:
         case MTA_E:
@@ -479,7 +479,7 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
 const key_override_t undo    = ko_make_with_layers(MOD_MASK_CTRL, KC_Q, C(KC_Z), (1 << _BASE));
 const key_override_t redo    = ko_make_with_layers(MOD_MASK_CTRL, KC_Z, C(KC_Y), (1 << _BASE));
 const key_override_t cut     = ko_make_with_layers(MOD_MASK_CTRL, KC_M, C(KC_X), (1 << _BASE));
-const key_override_t copy    = ko_make_with_layers(MOD_MASK_CTRL, MT_C, C(KC_C), (1 << _BASE));
+const key_override_t copy    = ko_make_with_layers(MOD_MASK_CTRL, MTA_W, C(KC_C), (1 << _BASE));
 const key_override_t paste   = ko_make_with_layers(MOD_MASK_CTRL, KC_B, C(KC_V), (1 << _BASE));
 const key_override_t find    = ko_make_with_layers(MOD_MASK_CTRL, MTA_S, C(KC_F), (1 << _BASE));
 const key_override_t save    = ko_make_with_layers(MOD_MASK_CTRL, MTA_T, C(KC_S), (1 << _BASE));
@@ -487,7 +487,7 @@ const key_override_t all     = ko_make_with_layers(MOD_MASK_CTRL, MTA_R, C(KC_A)
 const key_override_t close   = ko_make_with_layers(MOD_MASK_CTRL, KC_D, C(KC_W), (1 << _BASE));
 const key_override_t tab     = ko_make_with_layers(MOD_MASK_CTRL, KC_V, C(KC_T), (1 << _BASE));
 const key_override_t window  = ko_make_with_layers(MOD_MASK_CTRL, KC_G, C(KC_N), (1 << _BASE));
-const key_override_t refresh = ko_make_with_layers(MOD_MASK_CTRL, KC_W, C(KC_R), (1 << _BASE));
+const key_override_t refresh = ko_make_with_layers(MOD_MASK_CTRL, KC_C, C(KC_R), (1 << _BASE));
 
 const key_override_t **key_overrides = (const key_override_t *[]){
     &undo,
@@ -1166,13 +1166,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (IS_LAYER_ON(_BASIC)) {
                     layer_off(_BASIC);
-                    layer_on(_BASE);
                 }
                 else if (IS_LAYER_ON(_BASE)) {
+                    layer_on(_QWERTY);
                     layer_off(_BASE);
                 }
                 else {
                     layer_on(_BASE);
+                    layer_off(_QWERTY);
                 }
             }
             break;
@@ -1382,7 +1383,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             break;
         case KC_C:
         case MT_C:
-        // case MTA_C:
             if (record->event.pressed && no_ctrl()) {
                 lastkey = KC_C;
             }
@@ -1497,6 +1497,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
         case KC_W:
+        case MTA_W:
             if (record->event.pressed && no_ctrl()) {
                 lastkey = KC_W;
             }
@@ -1931,8 +1932,6 @@ void render_draw(void) {
 
 
 
-
-
 void render_linebreak(void) {
     oled_write_P(PSTR("__________"), false);
 }
@@ -1953,8 +1952,11 @@ void render_mode(void) {
     else if (IS_LAYER_ON(_QWERTY)){
         oled_write_P(PSTR(" QWERTY\n"), false);
     }
-    else {
+    else if (IS_LAYER_ON(_BASE)){
         oled_write_P(PSTR(" Base\n"), false);
+    }
+    else {
+        oled_write_P(PSTR(" REEEE\n"), false);
     }
 }
 
@@ -2346,7 +2348,7 @@ void keyboard_post_init_user(void) {
 
     transaction_register_rpc(USER_SYNC_A, user_config_sync_handler);
 
-    layer_move(1 << _BASE);
+    layer_move(_BASE);
 }
 
 void housekeeping_task_user(void) {
