@@ -2,7 +2,7 @@
 
 enum corne_layers {
     _QWERTY,
-    _GALLIUM,
+    _BASE,
     _BASIC,
     _STENO,
     _DATA,
@@ -57,7 +57,6 @@ enum custom_keycodes {
     CS_TAB,
 
     NEWSENT,
-    // OSM_LSFT,
 
     BASIC,
     BASE,
@@ -118,7 +117,7 @@ enum custom_keycodes {
 #define MT_L RGUI_T(KC_L)
 
 // Alt layout home block mods
-#define MTA_N LGUI_T(KC_N)
+#define MTA_R LGUI_T(KC_R)
 #define MTA_T LALT_T(KC_T)
 #define MTA_S LSFT_T(KC_S)
 // #define MTA_C LCTL_T(KC_C)
@@ -142,7 +141,6 @@ enum custom_keycodes {
 #define CS_LT3 LT(_UTILITY,KC_ESC)
 #define CS_LT2 LT(_EDIT,NEWSENT)
 // #define CS_LT2 MO(_EDIT)
-// #define CS_LT2 LT(_EDIT,OSM_LSFT)
 #define CS_LT1 LT(_DATA,KC_SPC)
 
 #define CS_RT1 LT(_SYMBOL,KC_BSPC)
@@ -171,13 +169,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_GALLIUM] = LAYOUT( //1
+    [_BASE] = LAYOUT( //1
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,    KC_X,    KC_L,    KC_D,    KC_W,    KC_V,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT,    KC_R,   MTA_N,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A,  KC_TAB,
+          KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL,    KC_Z,    KC_M,    KC_Q,    MT_C,    KC_B,                         KC_K,   MTA_P, CS_MINS, COM_DOT, QUE_EXL, KC_QUOT,
+          KC_LCTL,    KC_Z,    KC_Q,    KC_M,    MT_C,    KC_B,                         KC_K,   MTA_P, CS_MINS, COM_DOT, QUE_EXL, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -394,7 +392,7 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case MT_K:
         case MT_L:
 
-        case MTA_N:
+        case MTA_R:
         case MTA_T:
         case MTA_S:
         // case MTA_C:
@@ -478,18 +476,18 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
 
 // const key_override_t redo = ko_make_basic(MOD_MASK_CS, KC_Z, C(KC_Y));
 
-const key_override_t undo    = ko_make_with_layers(MOD_MASK_CTRL, KC_M, C(KC_Z), (1 << _GALLIUM));
-const key_override_t redo    = ko_make_with_layers(MOD_MASK_CTRL, KC_Z, C(KC_Y), (1 << _GALLIUM));
-const key_override_t cut     = ko_make_with_layers(MOD_MASK_CTRL, KC_Q, C(KC_X), (1 << _GALLIUM));
-const key_override_t copy    = ko_make_with_layers(MOD_MASK_CTRL, MT_C, C(KC_C), (1 << _GALLIUM));
-const key_override_t paste   = ko_make_with_layers(MOD_MASK_CTRL, KC_B, C(KC_V), (1 << _GALLIUM));
-const key_override_t find    = ko_make_with_layers(MOD_MASK_CTRL, MTA_T, C(KC_F), (1 << _GALLIUM));
-const key_override_t save    = ko_make_with_layers(MOD_MASK_CTRL, MTA_S, C(KC_S), (1 << _GALLIUM));
-const key_override_t all     = ko_make_with_layers(MOD_MASK_CTRL, MTA_N, C(KC_S), (1 << _GALLIUM));
-const key_override_t close   = ko_make_with_layers(MOD_MASK_CTRL, KC_D, C(KC_W), (1 << _GALLIUM));
-const key_override_t tab     = ko_make_with_layers(MOD_MASK_CTRL, KC_V, C(KC_W), (1 << _GALLIUM));
-const key_override_t window  = ko_make_with_layers(MOD_MASK_CTRL, KC_G, C(KC_N), (1 << _GALLIUM));
-const key_override_t refresh = ko_make_with_layers(MOD_MASK_CTRL, KC_W, C(KC_N), (1 << _GALLIUM));
+const key_override_t undo    = ko_make_with_layers(MOD_MASK_CTRL, KC_M, C(KC_Z), (1 << _BASE));
+const key_override_t redo    = ko_make_with_layers(MOD_MASK_CTRL, KC_Z, C(KC_Y), (1 << _BASE));
+const key_override_t cut     = ko_make_with_layers(MOD_MASK_CTRL, KC_Q, C(KC_X), (1 << _BASE));
+const key_override_t copy    = ko_make_with_layers(MOD_MASK_CTRL, MT_C, C(KC_C), (1 << _BASE));
+const key_override_t paste   = ko_make_with_layers(MOD_MASK_CTRL, KC_B, C(KC_V), (1 << _BASE));
+const key_override_t find    = ko_make_with_layers(MOD_MASK_CTRL, MTA_S, C(KC_F), (1 << _BASE));
+const key_override_t save    = ko_make_with_layers(MOD_MASK_CTRL, MTA_T, C(KC_S), (1 << _BASE));
+const key_override_t all     = ko_make_with_layers(MOD_MASK_CTRL, MTA_R, C(KC_A), (1 << _BASE));
+const key_override_t close   = ko_make_with_layers(MOD_MASK_CTRL, KC_D, C(KC_W), (1 << _BASE));
+const key_override_t tab     = ko_make_with_layers(MOD_MASK_CTRL, KC_V, C(KC_T), (1 << _BASE));
+const key_override_t window  = ko_make_with_layers(MOD_MASK_CTRL, KC_G, C(KC_N), (1 << _BASE));
+const key_override_t refresh = ko_make_with_layers(MOD_MASK_CTRL, KC_W, C(KC_R), (1 << _BASE));
 
 const key_override_t **key_overrides = (const key_override_t *[]){
     &undo,
@@ -625,7 +623,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
             break;
         case NUMPAD:
             if (pressed) {
-                if (layer_state_is(_BASIC) || layer_state_is(_QWERTY)|| layer_state_is(_GALLIUM)) {
+                if (layer_state_is(_BASIC) || layer_state_is(_QWERTY)|| layer_state_is(_BASE)) {
                     layer_on(_NUMPAD);
                 }
                 else {
@@ -1085,9 +1083,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 layer_off(_EDIT);
             }
 
-            // if (record->tap.count && record->event.pressed) { // OSM Shift
-            //     add_oneshot_mods(MOD_BIT(KC_LSFT));
-            // }
             if (record->tap.count && record->event.pressed) { // New sentence
                SEND_STRING(". ");
                add_oneshot_mods(MOD_BIT(KC_LSFT));
@@ -1171,13 +1166,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (IS_LAYER_ON(_BASIC)) {
                     layer_off(_BASIC);
-                    layer_on(_GALLIUM);
+                    layer_on(_BASE);
                 }
-                else if (IS_LAYER_ON(_GALLIUM)) {
-                    layer_off(_GALLIUM);
+                else if (IS_LAYER_ON(_BASE)) {
+                    layer_off(_BASE);
                 }
                 else {
-                    layer_on(_GALLIUM);
+                    layer_on(_BASE);
                 }
             }
             break;
@@ -1473,6 +1468,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
         case KC_R:
+        case MTA_R:
+            if (record->event.pressed && no_ctrl()) {
+                lastkey = KC_R;
+            }
+            break;
         case KC_S:
         case MT_S:
         case MTA_S:
@@ -1497,6 +1497,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
         case KC_W:
+            if (record->event.pressed && no_ctrl()) {
+                lastkey = KC_W;
+            }
+            break;
         case KC_X:
             if (record->event.pressed && no_ctrl()) {
                 lastkey = KC_X;
@@ -1678,7 +1682,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             break;
-
         case CS_MINS:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -1938,20 +1941,20 @@ void render_mode(void) {
     if (IS_LAYER_ON(_NUMPAD)){
         oled_write_P(PSTR(" Numpad\n"), false);
     }
+    else if (IS_LAYER_ON(_TOUHOU)){
+        oled_write_P(PSTR(" Touhou\n"), false);
+    }
     else if (IS_LAYER_ON(_BASIC)){
         oled_write_P(PSTR(" Basic\n"), false);
     }
     else if (IS_LAYER_ON(_STENO)){
         oled_write_P(PSTR(" Steno.\n"), false);
     }
-    else if (IS_LAYER_ON(_TOUHOU)){
-        oled_write_P(PSTR(" Touhou\n"), false);
-    }
-    else if (IS_LAYER_ON(_GALLIUM)){
-        oled_write_P(PSTR(" Gallium\n"), false);
+    else if (IS_LAYER_ON(_QWERTY)){
+        oled_write_P(PSTR(" QWERTY\n"), false);
     }
     else {
-        oled_write_P(PSTR(" QWERTY\n"), false);
+        oled_write_P(PSTR(" Base\n"), false);
     }
 }
 
@@ -2342,6 +2345,8 @@ void keyboard_post_init_user(void) {
     defer_exec(timer_callback(0,NULL), timer_callback, NULL);
 
     transaction_register_rpc(USER_SYNC_A, user_config_sync_handler);
+
+    default_layer_set(1 << _BASE);
 }
 
 void housekeeping_task_user(void) {
