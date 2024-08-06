@@ -10,8 +10,8 @@ enum corne_layers {
     _PROGRAM,
     _SYMBOL,
     _MOUSE,
-    _UTILITY,
     _NUMPAD,
+    _UTILITY,
     _TOUHOU,
 };
 
@@ -221,9 +221,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC, KC_PAUS, CS_HOME,   KC_UP,  CS_END,  KC_ENT,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT, KC_PSCR, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, CS_EXLM,  KC_TAB,
+          KC_LSFT,  KC_INS, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, CS_EXLM,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL,  KC_TAB, KC_PGUP, KC_PGDN,  KC_INS,  SELECT,                        CS_GT, MT_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
+          KC_LCTL,  KC_TAB, KC_PGUP, KC_PGDN, KC_CAPS,  SELECT,                        CS_GT, MT_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______,  CS_AL2,  KC_SPC
                                           //`--------------------------'  `--------------------------'
@@ -265,19 +265,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_UTILITY] = LAYOUT( //9
-      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           ALTTAB, CLOCKUP, CS_VALD, CS_VOLU, CS_VALU, KC_SCRL,                      CS_BOOT,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_DEL,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT, CLOCKDN, KC_MPRV, CS_VOLD, KC_MNXT, KC_CAPS,                        BASIC,   KC_F1,   KC_F2,   KC_F3,  KC_F11,  KC_TAB,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CLOCKNX, OLEDSAV,    MUTE, CS_RGBN, CS_RGBT,                         BASE,   KC_F4,   KC_F5,   KC_F6,  KC_F12,  KC_ENT,
-      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              KC_MSTP,    MUTE, KC_MPLY,    KC_MPLY,    MUTE, KC_MSTP
-                                          //`--------------------------'  `--------------------------'
-    ),
-
-    [_NUMPAD] = LAYOUT( //11
+    [_NUMPAD] = LAYOUT( //9
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, _______, _______, _______, _______,                       KC_NUM,   KC_P7,   KC_P8,   KC_P9, KC_CIRC,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -288,8 +276,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                               _______, _______, _______,    _______,   KC_P0, _______
                                           //`--------------------------'  `--------------------------'
     ),
+    
+    [_UTILITY] = LAYOUT( //10
+      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+           ALTTAB, CLOCKUP, CS_VALD, CS_VOLU, CS_VALU, KC_SCRL,                      CS_BOOT,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_DEL,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          KC_LSFT, CLOCKDN, KC_MPRV, CS_VOLD, KC_MNXT, KC_PSCR,                        BASIC,   KC_F1,   KC_F2,   KC_F3,  KC_F11,  KC_TAB,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          KC_LCTL, CLOCKNX, OLEDSAV,    MUTE, CS_RGBN, CS_RGBT,                         BASE,   KC_F4,   KC_F5,   KC_F6,  KC_F12,  KC_ENT,
+      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                              KC_MSTP,    MUTE, KC_MPLY,    KC_MPLY,    MUTE, KC_MSTP
+                                          //`--------------------------'  `--------------------------'
+    ),
 
-    [_TOUHOU] = LAYOUT( //12
+    [_TOUHOU] = LAYOUT( //11
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, _______,   KC_UP, _______, _______,                      _______, _______, _______, _______, _______,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -613,31 +613,31 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
     switch(combo_index) {
         case TOUHOU:
             if (pressed) {
-                if (layer_state_is(_BASIC) || layer_state_is(_QWERTY)) {
-                    layer_on(_TOUHOU);
-                }
-                else if (layer_state_is(_TOUHOU)) {
+                if (IS_LAYER_ON(_TOUHOU)) {
                     layer_off(_TOUHOU);
+                }
+                else {
+                    layer_on(_TOUHOU);
                 }
             }
             break;
         case NUMPAD:
             if (pressed) {
-                if (layer_state_is(_BASIC) || layer_state_is(_QWERTY)|| layer_state_is(_BASE)) {
-                    layer_on(_NUMPAD);
+                if (IS_LAYER_ON(_NUMPAD)) {
+                    layer_off(_NUMPAD);
                 }
                 else {
-                    layer_off(_NUMPAD);
+                    layer_on(_NUMPAD);
                 }
             }
             break;
         case STENO:
             if (pressed) {
-                if (layer_state_is(_BASIC) || layer_state_is(_QWERTY)) {
-                    layer_on(_STENO);
-                }
-                else if (layer_state_is(_STENO)) {
+                if (IS_LAYER_ON(_STENO)) {
                     layer_off(_STENO);
+                }
+                else {
+                    layer_on(_STENO);
                 }
             }
             break;
