@@ -35,7 +35,7 @@
 - Common symbols and punctuation accessible through combos with many duplicated on both sides; combos trigger through most layers.
 - Alpha-only repeat key with layer-tap on right thumb key.
 - Home block mods on main layer (toggle-able).
-- Symbol layer optimised for (La)TeX editing, with brackets and many common strings as inward rolls, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `<-`, `<=`, `->`, `>=`, `|->`, `:-`, `&=`, etc. Backslash also on main thumb key on this layer.
+- Symbol layer optimised for (La)TeX editing, with brackets and many common strings as inward rolls, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `<-`, `<=`, `->`, `>=`, `|->`, `:-`, `&=`, etc. (Intended to be used with snippet extensions.) Backslash also on main thumb key on this layer.
 - Brackets duplicated on Edit layer for easier access.
 - Program layer optimised for c programming, with comparison operators as inward rolls, logical/bitwise operators symbols closely grouped on index finger, etc.
 - Number grid on right hand with [1,2,3] on home row.
@@ -44,10 +44,11 @@
 - Steno layer (using GeminiPR) accessible through combo.
 
 ## OLEDs
+(128x64 OLEDs)
 ### Right:
 - Default layer and layer stack display;
 - Clock -- time is set manually using keys on utility layer and doesn't require software on host (persists through sleep events);
-- Custom locking key state, modifier state, and mute state indicators.
+- Custom locking key, modifier, and mute state indicators.
 
 ### Left:
 - Cycles between text and logo with cyberpunk glich aesthetic animation;
