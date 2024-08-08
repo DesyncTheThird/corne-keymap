@@ -279,11 +279,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     
     [_UTILITY] = LAYOUT( //10
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           ALTTAB, CLOCKUP, CS_VALD, CS_VOLU, CS_VALU, KC_SCRL,                      CS_BOOT,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_DEL,
+           ALTTAB, CLOCKUP, CS_VALD, CS_VOLU, CS_VALU, CS_RGBN,                      CS_BOOT,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT, CLOCKDN, KC_MPRV, CS_VOLD, KC_MNXT, KC_PSCR,                        BASIC,   KC_F1,   KC_F2,   KC_F3,  KC_F11,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CLOCKNX, OLEDSAV,    MUTE, CS_RGBN, CS_RGBT,                         BASE,   KC_F4,   KC_F5,   KC_F6,  KC_F12,  KC_ENT,
+          KC_LCTL, CLOCKNX, OLEDSAV,    MUTE, KC_SCRL, CS_RGBT,                         BASE,   KC_F4,   KC_F5,   KC_F6,  KC_F12,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               KC_MSTP,    MUTE, KC_MPLY,    KC_MPLY,    MUTE, KC_MSTP
                                           //`--------------------------'  `--------------------------'
@@ -319,6 +319,7 @@ uint16_t lastkey = KC_NO;
 bool muted = false;
 
 
+static uint8_t set_rgb_mode = 3;
 
 
 bool no_ctrl(void) {
@@ -1118,21 +1119,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case CS_RGBN:
             if (record->event.pressed) {
-                static uint8_t set_mode = 2;
                 if (shifted()) {
-                    if (set_mode < 6) {
-                        set_mode += 1;
+                    if (set_rgb_mode < 6) {
+                        set_rgb_mode += 1;
+                        
                     } else {
-                        set_mode = 2;
+                        set_rgb_mode = 2;
                     }
                 } else {
-                    if (set_mode > 2) {
-                        set_mode -= 1;
+                    if (set_rgb_mode > 2) {
+                        set_rgb_mode -= 1;
                     } else {
-                        set_mode = 6;
+                        set_rgb_mode = 6;
                     }
                 }
-                rgb_matrix_mode(set_mode);
+                rgb_matrix_mode(set_rgb_mode);
             }
             break;
 
@@ -2314,9 +2315,9 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RAINBOW_PINWHEELS);
         rgb_matrix_sethsv_noeeprom(255,225,255);
     }
-    else {
+    else if (IS_LAYER_ON_STATE(state, _BASE)) {
         rgb_matrix_set_speed_noeeprom(64);
-        rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE);
+        rgb_matrix_mode_noeeprom(set_rgb_mode);
         rgb_matrix_sethsv_noeeprom(255,255,255);
     }
     // switch(get_highest_layer(layer_state)) {
