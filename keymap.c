@@ -319,7 +319,7 @@ uint16_t lastkey = KC_NO;
 bool muted = false;
 
 
-static uint8_t set_rgb_mode = 3;
+static uint8_t set_rgb_mode = 5;
 
 
 bool no_ctrl(void) {
@@ -557,8 +557,8 @@ const uint16_t PROGMEM l_dot[]          = {MT_S, MT_D, COMBO_END};
 const uint16_t PROGMEM l_underscore[]   = {KC_X, MT_C, COMBO_END};
 const uint16_t PROGMEM l_asterisk[]     = {MT_C, KC_V, COMBO_END};
 const uint16_t PROGMEM l_equals[]       = {KC_E, KC_R, COMBO_END};
-const uint16_t PROGMEM l_plus[]         = {MT_F, KC_G, COMBO_END};
-const uint16_t PROGMEM l_minus[]        = {MT_D, MT_F, COMBO_END};
+const uint16_t PROGMEM l_plus[]         = {MT_D, MT_F, COMBO_END};
+const uint16_t PROGMEM l_minus[]        = {MT_F, KC_G, COMBO_END};
 
 const uint16_t PROGMEM exclamation[]    = {MT_S, KC_E, COMBO_END};
 const uint16_t PROGMEM colon[]          = {KC_E, MT_F, COMBO_END};
@@ -569,8 +569,8 @@ const uint16_t PROGMEM r_dot[]          = {MT_K, MT_L, COMBO_END};
 const uint16_t PROGMEM r_underscore[]   = {MT_N, KC_M,COMBO_END};
 const uint16_t PROGMEM r_asterisk[]     = {KC_B, MT_N, COMBO_END};
 const uint16_t PROGMEM r_equals[]       = {KC_U, KC_I, COMBO_END};
-const uint16_t PROGMEM r_plus[]         = {KC_H, MT_J, COMBO_END};
-const uint16_t PROGMEM r_minus[]        = {MT_J, MT_K, COMBO_END};
+const uint16_t PROGMEM r_plus[]         = {MT_J, MT_K, COMBO_END};
+const uint16_t PROGMEM r_minus[]        = {KC_H, MT_J, COMBO_END};
 
 const uint16_t PROGMEM semicolon[]      = {MT_J, KC_I, COMBO_END};
 const uint16_t PROGMEM ampersand[]      = {KC_I, MT_L, COMBO_END};
