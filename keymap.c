@@ -178,7 +178,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL,    KC_Z,    KC_Q,    KC_M,   MTA_W,    KC_B,                         KC_K,   MTA_P, CS_MINS, COM_DOT, QUE_EXL, KC_QUOT,
+          KC_LCTL,    KC_Z,    KC_Q,    KC_M,   MTA_W,    KC_B,                         KC_K,   MTA_P, KC_MINS, COM_DOT, QUE_EXL, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -559,11 +559,11 @@ const uint16_t PROGMEM steno[]          = {KC_P, CS_HASH, KC_SCLN, KC_TAB, COMBO
 const uint16_t PROGMEM numpad[]         = {KC_O, KC_P, CS_HASH, COMBO_END};
 const uint16_t PROGMEM mouse[]          = {KC_SCLN, QUE_EXL, COMBO_END};
 
-const uint16_t PROGMEM l_exponent[]     = {MT_S, KC_E, MT_F, COMBO_END};
+const uint16_t PROGMEM l_exponent[]     = {KC_W, KC_E, COMBO_END};
 const uint16_t PROGMEM l_comma[]        = {MT_D, MT_C, COMBO_END};
 const uint16_t PROGMEM l_dot[]          = {MT_S, MT_D, COMBO_END};
 const uint16_t PROGMEM l_underscore[]   = {KC_X, MT_C, COMBO_END};
-const uint16_t PROGMEM l_asterisk[]     = {MT_C, KC_V, COMBO_END};
+const uint16_t PROGMEM l_asterisk[]     = {MT_F, KC_V, COMBO_END};
 const uint16_t PROGMEM l_equals[]       = {KC_E, KC_R, COMBO_END};
 const uint16_t PROGMEM l_plus[]         = {MT_D, MT_F, COMBO_END};
 const uint16_t PROGMEM l_minus[]        = {MT_F, KC_G, COMBO_END};
@@ -571,11 +571,11 @@ const uint16_t PROGMEM l_minus[]        = {MT_F, KC_G, COMBO_END};
 const uint16_t PROGMEM exclamation[]    = {MT_S, KC_E, COMBO_END};
 const uint16_t PROGMEM colon[]          = {KC_E, MT_F, COMBO_END};
 
-const uint16_t PROGMEM r_exponent[]     = {MT_J, KC_I, MT_L, COMBO_END};
+const uint16_t PROGMEM r_exponent[]     = {KC_I, KC_O, COMBO_END};
 const uint16_t PROGMEM r_comma[]        = {MT_N, MT_K, COMBO_END};
 const uint16_t PROGMEM r_dot[]          = {MT_K, MT_L, COMBO_END};
-const uint16_t PROGMEM r_underscore[]   = {MT_N, KC_M,COMBO_END};
-const uint16_t PROGMEM r_asterisk[]     = {KC_B, MT_N, COMBO_END};
+const uint16_t PROGMEM r_underscore[]   = {MT_N, KC_M, COMBO_END};
+const uint16_t PROGMEM r_asterisk[]     = {KC_B, MT_J, COMBO_END};
 const uint16_t PROGMEM r_equals[]       = {KC_U, KC_I, COMBO_END};
 const uint16_t PROGMEM r_plus[]         = {MT_J, MT_K, COMBO_END};
 const uint16_t PROGMEM r_minus[]        = {KC_H, MT_J, COMBO_END};
