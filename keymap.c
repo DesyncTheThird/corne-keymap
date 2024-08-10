@@ -83,8 +83,6 @@ enum custom_keycodes {
     CLOCKNX,
     OLEDSAV,
 
-
-
     CM_MOUSE,
 
     CM_CIRC,
@@ -130,10 +128,15 @@ enum custom_keycodes {
 
 // Symbol home block mods
 
-#define MT_RBRC RCTL_T(KC_RBRC)
+#define MT_RBRC LT(0,CS_RBRC)
 #define MT_RPRN LT(0,CS_RPRN)
 #define MT_LPRN LT(0,CS_LPRN)
-#define MT_UNDS LT(0,CS_EXLM)
+#define MT_UNDS LT(0,CS_UNDS)
+
+#define MT_PLUS LT(0,CS_PLUS)
+#define MT_MINS LT(0,CS_MINS)
+#define MT_EQL  LT(0,CS_EQL)
+#define MT_COMM LT(0,CS_COMM)
 
 
 
@@ -209,9 +212,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT, CS_CIRC, CS_PLUS, CS_MINS,  CS_EQL, CS_PIPE,                        CS_LT,    KC_1,    KC_2,    KC_3, CS_EXLM,  KC_TAB,
+          KC_LSFT, CS_CIRC, MT_PLUS, MT_MINS,  MT_EQL, CS_PIPE,                        CS_LT,    KC_1,    KC_2,    KC_3, CS_EXLM,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_TILD, CS_ASTR,  CS_DOT, CS_COMM, CS_POUN,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
+          KC_LCTL, CS_TILD, CS_ASTR,  CS_DOT, MT_COMM, CS_POUN,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    KC_BSPC,  CS_AL1, CS_SLSH
                                           //`--------------------------'  `--------------------------'
@@ -406,6 +409,11 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case MT_RPRN:
         case MT_LPRN:
         case MT_UNDS:
+
+        case MT_PLUS:
+        case MT_MINS:
+        case MT_EQL:
+        case MT_COMM:
             return 0;
         default:
             return TAPPING_TERM;
@@ -1312,58 +1320,144 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             break;
 
         // =====================================================================
-        // Edit layer mod-taps
+        // Mod-taps
         // =====================================================================
 
-        // Edit layer mod-taps
+        // Edit layer
+        case MT_RBRC:
+        {
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_MASK_CTRL);
+            } else {
+                unregister_mods(MOD_MASK_CTRL);
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_RBRC);
+                set_mods(mods);
+            }
+            return false;
+        }
+            break;
         case MT_RPRN:
         {
-            if (!record->tap.count && record->event.pressed) { // Intercept holds only
+            if (!record->tap.count && record->event.pressed) {
                 register_mods(MOD_MASK_SHIFT);
-            } else { // On keyup
-                unregister_mods(MOD_MASK_SHIFT);
-            }
-            if (record->tap.count && record->event.pressed) { // Intercept taps
-                tap_code16(KC_RPRN);
-                unregister_mods(MOD_MASK_SHIFT);
             } else {
-                /* intentionally empty */;
+                unregister_mods(MOD_MASK_SHIFT);
             }
-            return false; // Return true for normal processing of key
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_RPRN);
+                set_mods(mods);
+            }
+            return false;
         }
             break;
 
         case MT_LPRN:
         {
-            if (!record->tap.count && record->event.pressed) { // Intercept holds only
+            if (!record->tap.count && record->event.pressed) {
                 register_mods(MOD_BIT(KC_LALT));
-            } else { // On keyup
+            } else {
                 unregister_mods(MOD_BIT(KC_LALT));
             }
-            if (record->tap.count && record->event.pressed) { // Intercept taps
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_LPRN);
-                unregister_mods(MOD_MASK_SHIFT);
-            } else {
-                /* intentionally empty */;
+                set_mods(mods);
             }
-            return false; // Return true for normal processing of key
+            return false;
         }
             break;
 
         case MT_UNDS:
         {
-            if (!record->tap.count && record->event.pressed) { // Intercept holds only
+            if (!record->tap.count && record->event.pressed) {
                 register_mods(MOD_MASK_GUI);
-            } else { // On keyup
+            } else {
                 unregister_mods(MOD_MASK_GUI);
             }
-            if (record->tap.count && record->event.pressed) { // Intercept taps
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_UNDS);
-                unregister_mods(MOD_MASK_SHIFT);
-            } else {
-                /* intentionally empty */;
+                set_mods(mods);
             }
-            return false; // Return true for normal processing of key
+            return false;
+        }
+            break;
+
+
+
+        // Data layer
+        case MT_COMM:
+        {
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_MASK_CTRL);
+            } else {
+                unregister_mods(MOD_MASK_CTRL);
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_COMM);
+                set_mods(mods);
+            }
+            return false;
+        }
+            break;
+        case MT_EQL:
+        {
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_MASK_SHIFT);
+            } else {
+                unregister_mods(MOD_MASK_SHIFT);
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_EQL);
+                set_mods(mods);
+            }
+            return false;
+        }
+            break;
+
+        case MT_MINS:
+        {
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_BIT(KC_LALT));
+            } else {
+                unregister_mods(MOD_BIT(KC_LALT));
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_MINS);
+                set_mods(mods);
+            }
+            return false;
+        }
+            break;
+
+        case MT_PLUS:
+        {
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_MASK_GUI);
+            } else {
+                unregister_mods(MOD_MASK_GUI);
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_PLUS);
+                set_mods(mods);
+            }
+            return false;
         }
             break;
 
