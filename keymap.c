@@ -20,6 +20,7 @@ enum custom_keycodes {
     SELECT = SAFE_RANGE,
 
     REP,
+    MAGIC,
 
     CS_COLN,
     CS_UNDS,
@@ -55,8 +56,6 @@ enum custom_keycodes {
     CS_END,
     CS_HOME,
     CS_TAB,
-
-    NEWSENT,
 
     BASIC,
     BASE,
@@ -142,8 +141,7 @@ enum custom_keycodes {
 
 // Layer keys
 #define CS_LT3 LT(_UTILITY,KC_ESC)
-#define CS_LT2 LT(_EDIT,NEWSENT)
-// #define CS_LT2 MO(_EDIT)
+#define CS_LT2 LT(_EDIT,MAGIC)
 #define CS_LT1 LT(_DATA,KC_SPC)
 
 #define CS_RT1 LT(_SYMBOL,KC_BSPC)
@@ -422,13 +420,12 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case CS_LT3:
+        case CS_LT2:
         case CS_LT1:
         case CS_RT1:
         case CS_RT2:
         case CS_RT3:
             return 150;
-        case CS_LT2:
-            return 75;
         default:
             return TAPPING_TERM;
     }
@@ -724,8 +721,21 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
         } else {
             layer_off(_PROGRAM);
         }
+        if (record->tap.count && record->event.pressed) {
+            register_code(last_key);
+        } else {
+            unregister_code(last_key);
+        }
+        return false;
+    }
 
-
+    if (keycode == CS_LT2) {
+        if (!record->tap.count && record->event.pressed) {
+            layer_on(_EDIT);
+        } else {
+            layer_off(_EDIT);
+        }
+        
         if (IS_LAYER_ON(_QWERTY)|| IS_LAYER_ON(_BASIC)) {
             repeat_key = last_key;
         }
@@ -781,7 +791,6 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
                     repeat_key = KC_N;
                     break;
 
-
                 case KC_N:
                     repeat_key = KC_A;
                     break;
@@ -801,6 +810,7 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
         }
         return false;
     }
+
     return true;
 }
 
@@ -1160,22 +1170,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_cs_repeat(keycode, record)) { return false; }
     
     switch (keycode) {
-
-        case CS_LT2:
-        {
-            if (!record->tap.count && record->event.pressed) {
-                layer_on(_EDIT);
-            } else {
-                layer_off(_EDIT);
-            }
-
-            if (record->tap.count && record->event.pressed) { // New sentence
-               SEND_STRING(". ");
-               add_oneshot_mods(MOD_BIT(KC_LSFT));
-            }
-
-            return false;
-        }
 
         // =====================================================================
         // Misc control
@@ -2480,7 +2474,6 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    
     if (IS_LAYER_ON_STATE(state, _BASIC)) {
         rgb_matrix_set_speed_noeeprom(48);
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RAINBOW_PINWHEELS);
@@ -2491,19 +2484,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         rgb_matrix_mode_noeeprom(set_rgb_mode);
         rgb_matrix_sethsv_noeeprom(255,255,255);
     }
-    // switch(get_highest_layer(layer_state)) {
-    //     case _QWERTY:
-    //         rgb_matrix_set_speed_noeeprom(64);
-    //         rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE);
-    //         rgb_matrix_sethsv_noeeprom(255,255,255);
-    //     case _BASIC:
-    //         rgb_matrix_set_speed_noeeprom(48);
-    //         rgb_matrix_mode_noeeprom(RGB_MATRIX_RAINBOW_PINWHEELS);
-    //         rgb_matrix_sethsv_noeeprom(255,225,255);
-    //         break;
-    //     default:
-    //         break;
-    // }
     return state;
 }
 
