@@ -524,6 +524,7 @@ enum combo_events {
     TOUHOU,
     STENO,
     MOUSE,
+    MOUSE2,
     NUMPAD,
 
     L_EXPONENT,
@@ -558,6 +559,7 @@ const uint16_t PROGMEM touhou[]         = {KC_P, CS_HASH, KC_ESC, COMBO_END};
 const uint16_t PROGMEM steno[]          = {KC_P, CS_HASH, KC_SCLN, KC_TAB, COMBO_END};
 const uint16_t PROGMEM numpad[]         = {KC_O, KC_P, CS_HASH, COMBO_END};
 const uint16_t PROGMEM mouse[]          = {KC_SCLN, QUE_EXL, COMBO_END};
+const uint16_t PROGMEM mouse2[]         = {KC_TAB, KC_QUOT, COMBO_END};
 
 const uint16_t PROGMEM l_exponent[]     = {KC_W, KC_E, COMBO_END};
 const uint16_t PROGMEM l_comma[]        = {MT_D, MT_C, COMBO_END};
@@ -589,6 +591,7 @@ combo_t key_combos[] = {
     [NUMPAD]        = COMBO_ACTION(numpad),
 
     [MOUSE]         = COMBO(mouse,         CM_MOUSE),
+    [MOUSE2]        = COMBO(mouse2,        CM_MOUSE),
     
     [L_EXPONENT]    = COMBO(l_exponent,    CM_CIRC),
     [L_COMMA]       = COMBO(l_comma,       CM_COMM),
@@ -650,25 +653,19 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 }
             }
             break;
-        case MOUSE:
-            if (pressed) {
-                
-            }
-            break;
     }
 }
 
 // 50ms default
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
-        case L_EXPONENT:
-        case R_EXPONENT:
         case L_UNDERSCORE:
         case R_UNDERSCORE:
             return 50;
             break;
         case MOUSE:
-            return 100;
+        case MOUSE2:
+            return 75;
         default:
             return 30;
     }
@@ -677,6 +674,7 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
 bool get_combo_must_tap(uint16_t index, combo_t *combo) {
     switch (index) {
         case MOUSE:
+        case MOUSE2:
             return false;
         default:
             return true;
@@ -698,6 +696,7 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
     switch (combo_index) {
         case TOUHOU:
         case MOUSE:
+        case MOUSE2:
         case STENO:
         case NUMPAD:
             return true;
