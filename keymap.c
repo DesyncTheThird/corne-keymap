@@ -6,9 +6,9 @@ enum corne_layers {
     _BASIC,
     _STENO,
     _DATA,
-    _EDIT,
     _PROGRAM,
     _SYMBOL,
+    _EDIT,
     _MOUSE,
     _NUMPAD,
     _UTILITY,
@@ -149,7 +149,8 @@ enum custom_keycodes {
 #define CS_RT3 LT(_UTILITY,KC_SLSH)
 
 #define CS_AL1 LT(_EDIT,KC_0)
-#define CS_AL2 LT(_PROGRAM,KC_0)
+#define CS_AL2 LT(_EDIT,CS_BSLS)
+#define CS_AL3 LT(_EDIT,CS_SCLN)
 
 // #define UNDO LCTL(KC_Z)
 // #define REDO LCTL(KC_Y)
@@ -218,18 +219,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_EDIT] = LAYOUT( //5
-      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_ESC, KC_PAUS, CS_HOME,   KC_UP,  CS_END,  KC_ENT,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT,  KC_INS, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, CS_EXLM,  KC_TAB,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL,  KC_TAB, KC_PGUP, KC_PGDN, KC_CAPS,  SELECT,                        CS_GT, MT_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
-      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______,    _______,  CS_AL2,  KC_SPC
-                                          //`--------------------------'  `--------------------------'
-    ),
-
     [_SYMBOL] = LAYOUT( //6
       //,-----------------------------------------------------.                    ,---------------------------------------------------.
            KC_GRV, CS_PERC, CS_ASTR, CS_SLSH, CS_AMPR, CS_CIRC,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
@@ -238,7 +227,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LCTL, CS_TILD, CS_COLN,  CS_DOT, CS_COMM,  CS_DLR,                        CS_GT, KC_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              CS_UNDS, CS_BSLS,  KC_SPC,    _______, _______, _______
+                                              CS_UNDS,  CS_AL2,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -250,7 +239,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LCTL, CS_TILD, CS_ASTR, CS_SLSH, CS_HASH, CS_AMPR,                        CS_GT, KC_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              CS_UNDS, CS_SCLN,  KC_SPC,    _______, _______, _______
+                                              CS_UNDS,  CS_AL3,  KC_SPC,    _______, _______, _______
+                                          //`--------------------------'  `--------------------------'
+    ),
+    
+    [_EDIT] = LAYOUT( //5
+      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+           KC_ESC, KC_PAUS, CS_HOME,   KC_UP,  CS_END,  KC_ENT,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          KC_LSFT,  KC_INS, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, CS_EXLM,  KC_TAB,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          KC_LCTL,  KC_TAB, KC_PGUP, KC_PGDN, KC_CAPS,  SELECT,                        CS_GT, MT_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
+      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                              _______, _______, _______,    _______,    KC_0,  KC_SPC
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -383,6 +384,7 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         
         case CS_AL1:
         case CS_AL2:
+        case CS_AL3:
         
         case MT_S:
         case MT_D:
@@ -441,6 +443,7 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
  
         case CS_AL1:
         case CS_AL2:
+        case CS_AL3:
             // Immediately select the hold action when another key is pressed.
             return true;
         default:
@@ -455,11 +458,16 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
         case CS_LT3:
         case CS_LT2:
         case CS_LT1:
+
         case CS_RT1:
+        // case CS_RT2:
         case CS_RT3:
+
         case CS_AL1:
         case CS_AL2:
+        case CS_AL3:
             return 0;
+
         default:
             return TAPPING_TERM;
     }
@@ -475,6 +483,39 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
     }
 }
 
+
+
+bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
+    if (keycode == CS_AL2) {
+        if (!record->tap.count && record->event.pressed) {
+            layer_on(_EDIT);
+        } else {
+            layer_off(_EDIT);
+        }
+        if (record->tap.count && record->event.pressed) {
+            const uint8_t mods = get_mods();
+            del_mods(MOD_MASK_SHIFT);
+            tap_code16(KC_NUBS);
+            set_mods(mods);
+        }
+        return false;
+    }
+    if (keycode == CS_AL3) {
+        if (!record->tap.count && record->event.pressed) {
+            layer_on(_EDIT);
+        } else {
+            layer_off(_EDIT);
+        }
+        if (record->tap.count && record->event.pressed) {
+            const uint8_t mods = get_mods();
+            del_mods(MOD_MASK_SHIFT);
+            tap_code16(KC_SCLN);
+            set_mods(mods);
+        }
+        return false;
+    }
+    return true;
+}
 //==============================================================================
 // Modifier+key overrides
 //==============================================================================
@@ -513,8 +554,6 @@ const key_override_t **key_overrides = (const key_override_t *[]){
 //==============================================================================
 // Combos
 //==============================================================================
-
-
 
 enum combo_events {
     TOUHOU,
@@ -678,16 +717,6 @@ bool get_combo_must_tap(uint16_t index, combo_t *combo) {
     }
 }
 
-// bool get_combo_must_press_in_order(uint16_t combo_index, combo_t *combo) {
-//     switch (combo->keycode) {
-//         case REP:
-//             return true;
-//             break;
-//         default:
-//             return false;
-//     }
-// }
-
 bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode, keyrecord_t *record) {
     switch (combo_index) {
         case TOUHOU:
@@ -707,9 +736,8 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
 
 
 //==============================================================================
-// Magic key
+// Repeat and Magic key
 //==============================================================================
-
 
 uint16_t last_key = KC_NO;
 uint16_t repeat_key = KC_NO;
@@ -1168,6 +1196,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_vol_repeat(keycode, record)) { return false; }
     if (!process_clock(keycode, record)) { return false; }
     if (!process_cs_repeat(keycode, record)) { return false; }
+    if (!process_cs_layer_tap(keycode, record)) { return false; }
     
     switch (keycode) {
 
@@ -2132,11 +2161,6 @@ void render_layer(void) {
     } else {
         oled_write_P(PSTR(" Data\n"), false);
     }
-    if (IS_LAYER_ON(_EDIT)) {
-        oled_write_P(PSTR(">Edit\n"), false);
-    } else {
-        oled_write_P(PSTR(" Edit\n"), false);
-    }
     if (IS_LAYER_ON(_SYMBOL)) {
         oled_write_P(PSTR(">Symbol\n"), false);
     } else {
@@ -2146,6 +2170,11 @@ void render_layer(void) {
         oled_write_P(PSTR(">Program\n"), false);
     } else {
         oled_write_P(PSTR(" Program\n"), false);
+    }
+    if (IS_LAYER_ON(_EDIT)) {
+        oled_write_P(PSTR(">Edit\n"), false);
+    } else {
+        oled_write_P(PSTR(" Edit\n"), false);
     }
     if (IS_LAYER_ON(_MOUSE)) {
         oled_write_P(PSTR(">Mouse\n"), false);
