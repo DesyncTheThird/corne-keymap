@@ -817,6 +817,7 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
                     break;
 
 
+
                 case KC_S:
                     repeat_key = KC_C;
                     break;
@@ -837,7 +838,10 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
                     break;
 
                 case KC_R:
-                    repeat_key = KC_N;
+                    repeat_key = KC_L;
+                    break;
+                case KC_L:
+                    repeat_key = KC_R;
                     break;
 
                 case KC_N:
