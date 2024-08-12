@@ -476,6 +476,22 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
 bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
                      uint16_t other_keycode, keyrecord_t* other_record) {
     switch (tap_hold_keycode) {
+        case MT_S:
+        case MT_D:
+        case MT_F:
+        case MT_C:
+        case MT_N:
+        case MT_J:
+        case MT_K:
+        case MT_L:
+        case MTA_R:
+        case MTA_T:
+        case MTA_S:
+        case MTA_W:
+        case MTA_P:
+        case MTA_H:
+        case MTA_E:
+        case MTA_I:
         case CS_RT2:
             return achordion_opposite_hands(tap_hold_record, other_record);
         default:
@@ -786,6 +802,11 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
                 case KC_P:
                     repeat_key = KC_H;
                     break;
+
+                case KC_J:
+                    repeat_key = KC_U;
+                    break;
+
 
 
                 case KC_T:
