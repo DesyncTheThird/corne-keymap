@@ -141,6 +141,7 @@ enum custom_keycodes {
 
 // Layer keys
 #define CS_LT3 LT(_UTILITY,KC_ESC)
+#define CS_LT3 LT(_UTILITY,KC_ENT)
 #define CS_LT2 LT(_EDIT,MAGIC)
 #define CS_LT1 LT(_DATA,KC_SPC)
 
@@ -315,10 +316,9 @@ static uint8_t min = 0;
 static uint8_t hrs = 0;
 static uint8_t sec = 0;
 
-static bool wave_on = false;
+static bool static_display = false;
 
-bool muted = false;
-
+static bool muted = false;
 
 static uint8_t set_rgb_mode = 5;
 
@@ -1198,7 +1198,7 @@ void render_clock(uint8_t shift, uint8_t line) {
 #include "transactions.h"
 
 typedef struct _master_to_slave_t {
-    bool wave_on_sync :1;
+    bool static_display_sync :1;
     bool oled_timeout_sync :1;
 } master_to_slave_t;
 
@@ -1289,8 +1289,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case OLEDSAV:
             if (record->event.pressed) {
-                wave_on = !wave_on;
-                if (!wave_on) {
+                static_display = !static_display;
+                if (!static_display) {
                     oled_clear();
                 }
             }
@@ -2376,7 +2376,7 @@ bool oled_task_user(void) {
         return false;
     }
     if (is_keyboard_master()) {
-        if (wave_on) {
+        if (static_display) {
             oled_write_raw_P(static_right, frame_size);
         }
         else {
@@ -2384,7 +2384,7 @@ bool oled_task_user(void) {
         }
     }
     else {
-        if (wave_on || sync_data.wave_on_sync) {
+        if (static_display || sync_data.static_display_sync) {
             ;
             // oled_write_raw_P(static_left, frame_size);
         }
@@ -2561,8 +2561,8 @@ void housekeeping_task_user(void) {
     if (is_keyboard_master()) {
         static uint32_t last_sync = 0;
         if (timer_elapsed32(last_sync) > 500) { // Interact with slave every 500ms
-            // master_to_slave_t m2s = { .wave_on_sync = wave_on };
-            master_to_slave_t m2s = { .wave_on_sync = wave_on, .oled_timeout_sync = oled_timeout };
+            // master_to_slave_t m2s = { .static_display_sync = static_display };
+            master_to_slave_t m2s = { .static_display_sync = static_display, .oled_timeout_sync = oled_timeout };
             if (transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s)) {
                 last_sync = timer_read32();
             } else {
@@ -2571,7 +2571,7 @@ void housekeeping_task_user(void) {
         }
     }
     else { // slave side
-        if (sync_data.wave_on_sync) { 
+        if (sync_data.static_display_sync) { 
             oled_write_raw_P(static_left, frame_size);
         }
         else {
