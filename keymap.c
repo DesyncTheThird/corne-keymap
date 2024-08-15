@@ -1,5 +1,8 @@
 #include QMK_KEYBOARD_H
 
+#include "ps2_mouse.h"
+#include "ps2.h"
+
 enum corne_layers {
     _QWERTY,
     _BASE,
@@ -10,6 +13,7 @@ enum corne_layers {
     _SYMBOL,
     _EDIT,
     _MOUSE,
+    _MOUSE_BTN,
     _NUMPAD,
     _UTILITY,
     _TOUHOU,
@@ -140,7 +144,6 @@ enum custom_keycodes {
 
 
 // Layer keys
-#define CS_LT3 LT(_UTILITY,KC_ESC)
 #define CS_LT3 LT(_UTILITY,KC_ENT)
 #define CS_LT2 LT(_EDIT,MAGIC)
 #define CS_LT1 LT(_DATA,KC_SPC)
@@ -268,7 +271,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_NUMPAD] = LAYOUT( //9
+    [_MOUSE_BTN] = LAYOUT( //9
+      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+          _______, _______, KC_BTN4, _______, KC_BTN5,  KC_TAB,                      _______, _______, _______, _______, _______, _______,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          _______, _______, _______, _______, _______,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          _______, _______, _______, _______, _______,  SELECT,                      _______, _______, _______, _______, _______, _______,
+      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                              KC_BTN3, KC_BTN2, KC_BTN1,    _______, _______, _______
+                                          //`--------------------------'  `--------------------------'
+    ),
+
+    [_NUMPAD] = LAYOUT( //10
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, _______, _______, _______, _______,                       KC_NUM,   KC_P7,   KC_P8,   KC_P9, KC_CIRC,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -280,7 +295,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
     
-    [_UTILITY] = LAYOUT( //10
+    [_UTILITY] = LAYOUT( //11
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            ALTTAB, CLOCKUP, CS_VALD, CS_VOLU, CS_VALU, CS_RGBN,                      CS_BOOT,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -292,7 +307,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_TOUHOU] = LAYOUT( //11
+    [_TOUHOU] = LAYOUT( //12
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, _______,   KC_UP, _______, _______,                      _______, _______, _______, _______, _______,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -332,6 +347,83 @@ bool shifted(void) {
 }
 
 //==============================================================================
+// Trackpoint
+//==============================================================================
+
+static uint8_t trackpoint_sensitivity = 90;
+
+void trackpoint_set_sensitivity(uint8_t sensitivity) {
+    PS2_MOUSE_SEND(0xE2, "trackpoint_set_sensitivity: 0xE2");
+    PS2_MOUSE_SEND(0x81, "trackpoint_set_sensitivity: 0x81");
+    PS2_MOUSE_SEND(0x4A, "trackpoint_set_sensitivity: 0x4A");
+    PS2_MOUSE_SEND(sensitivity, "trackpoint_set_sensitivity: xxx");
+}
+
+void trackpoint_reset(void) {
+    PS2_MOUSE_SEND(0xE2, "trackpoint_reset: 0xE2");
+    PS2_MOUSE_SEND(0x51, "trackpoint_reset: 0x51");
+}
+
+void ps2_mouse_init_user() {
+    // set TrackPoint sensitivity
+    trackpoint_set_sensitivity(trackpoint_sensitivity);
+}
+
+void ps2_regdump(void) {
+    println("Register dump:");
+    print("     ");
+    for (uint8_t addr = 0; addr <= 0xF; addr++) {
+        print_hex8(addr);
+        print(" ");
+    }
+    println("");
+    for (uint16_t addr = 0; addr <= 0xFF; addr++) {
+        uint8_t data;
+        if ((addr & 0xf) == 0) {
+            print_hex8(addr);
+            print(" | ");
+        }
+
+        ps2_host_send(0xE2);
+        ps2_host_send(0x80);
+        data = ps2_host_send((uint8_t)addr);
+        if (data == 0xFA) {
+            data = ps2_host_recv_response();
+            print_hex8(data);
+            print(" ");
+        } else {
+            print("xx ");
+        }
+        if ((addr & 0xf) == 0xf) {
+            println("");
+        }
+    }
+    println("");
+}
+
+static uint16_t mh_auto_buttons_timer;
+extern int tp_buttons; // mousekey button state set in action.c and used in ps2_mouse.c
+
+void ps2_mouse_moved_user(report_mouse_t *mouse_report) {
+    if (abs(mouse_report->x) <= 1 && abs(mouse_report->y) <= 1) {
+        // Ignore tiny mouse events
+        return;
+    }
+    if (mh_auto_buttons_timer) {
+        mh_auto_buttons_timer = timer_read();
+    } else {
+        if (!tp_buttons) {
+            layer_on(MH_AUTO_BUTTONS_LAYER);
+            mh_auto_buttons_timer = timer_read();
+#if defined CONSOLE_ENABLE
+            print("mh_auto_buttons: on\n");
+#endif
+        }
+    }
+}
+
+
+//==============================================================================
 // Timers
 //==============================================================================
 
@@ -342,6 +434,13 @@ static bool oled_timeout = false;
 
 void matrix_scan_user(void) {
     achordion_task();
+
+    // if (mh_auto_buttons_timer && (timer_elapsed(mh_auto_buttons_timer) > MH_AUTO_BUTTONS_TIMEOUT)) {
+    //     if (!tp_buttons) {
+    //         layer_off(MH_AUTO_BUTTONS_LAYER);
+    //         mh_auto_buttons_timer = 0;
+    //     }
+    // }
 
     if (get_highest_layer(layer_state) == _NUMPAD) {
         if (last_input_activity_elapsed() > IDLE_TIMEOUT) {
@@ -2201,7 +2300,7 @@ void render_layer(void) {
     } else {
         oled_write_P(PSTR(" Edit\n"), false);
     }
-    if (IS_LAYER_ON(_MOUSE)) {
+    if (IS_LAYER_ON(_MOUSE) || IS_LAYER_ON(_MOUSE_BTN)) {
         oled_write_P(PSTR(">Mouse\n"), false);
     } else {
         oled_write_P(PSTR(" Mouse\n"), false);
@@ -2546,6 +2645,10 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 // =============================================================================
 
 void keyboard_post_init_user(void) {
+    debug_enable = true;
+    // debug_matrix = true;
+    // debug_keyboard = true;
+    debug_mouse = true;
     rgb_matrix_set_speed_noeeprom(64);
     rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE);
     rgb_matrix_sethsv_noeeprom(255,255,255);
