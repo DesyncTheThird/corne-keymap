@@ -1,7 +1,7 @@
 #include QMK_KEYBOARD_H
 
-#include "ps2_mouse.h"
-#include "ps2.h"
+// #include "ps2_mouse.h"
+// #include "ps2.h"
 
 enum corne_layers {
     _QWERTY,
@@ -63,6 +63,7 @@ enum custom_keycodes {
 
     BASIC,
     BASE,
+    MENU,
     
     ALTTAB,
     CS_BOOT,
@@ -303,7 +304,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LCTL, CLOCKNX, OLEDSAV,    MUTE, KC_SCRL, CS_RGBT,                         BASE,   KC_F4,   KC_F5,   KC_F6,  KC_F12,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              KC_MSTP,    MUTE, KC_MPLY,    KC_MPLY,    MUTE, KC_MSTP
+                                              KC_MSTP,    MUTE, KC_MPLY,    KC_MPLY,    MENU, KC_MSTP
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -331,6 +332,12 @@ static uint8_t min = 0;
 static uint8_t hrs = 0;
 static uint8_t sec = 0;
 
+// static uint8_t t_min = 0;
+// static uint8_t t_hrs = 0;
+// static uint8_t t_sec = 0;
+
+static uint8_t menu = 0;
+
 static bool static_display = false;
 
 static bool muted = false;
@@ -350,77 +357,77 @@ bool shifted(void) {
 // Trackpoint
 //==============================================================================
 
-static uint8_t trackpoint_sensitivity = 90;
+// static uint8_t trackpoint_sensitivity = 90;
 
-void trackpoint_set_sensitivity(uint8_t sensitivity) {
-    PS2_MOUSE_SEND(0xE2, "trackpoint_set_sensitivity: 0xE2");
-    PS2_MOUSE_SEND(0x81, "trackpoint_set_sensitivity: 0x81");
-    PS2_MOUSE_SEND(0x4A, "trackpoint_set_sensitivity: 0x4A");
-    PS2_MOUSE_SEND(sensitivity, "trackpoint_set_sensitivity: xxx");
-}
+// void trackpoint_set_sensitivity(uint8_t sensitivity) {
+//     PS2_MOUSE_SEND(0xE2, "trackpoint_set_sensitivity: 0xE2");
+//     PS2_MOUSE_SEND(0x81, "trackpoint_set_sensitivity: 0x81");
+//     PS2_MOUSE_SEND(0x4A, "trackpoint_set_sensitivity: 0x4A");
+//     PS2_MOUSE_SEND(sensitivity, "trackpoint_set_sensitivity: xxx");
+// }
 
-void trackpoint_reset(void) {
-    PS2_MOUSE_SEND(0xE2, "trackpoint_reset: 0xE2");
-    PS2_MOUSE_SEND(0x51, "trackpoint_reset: 0x51");
-}
+// void trackpoint_reset(void) {
+//     PS2_MOUSE_SEND(0xE2, "trackpoint_reset: 0xE2");
+//     PS2_MOUSE_SEND(0x51, "trackpoint_reset: 0x51");
+// }
 
-void ps2_mouse_init_user() {
-    // set TrackPoint sensitivity
-    trackpoint_set_sensitivity(trackpoint_sensitivity);
-}
+// void ps2_mouse_init_user() {
+//     // set TrackPoint sensitivity
+//     trackpoint_set_sensitivity(trackpoint_sensitivity);
+// }
 
-void ps2_regdump(void) {
-    println("Register dump:");
-    print("     ");
-    for (uint8_t addr = 0; addr <= 0xF; addr++) {
-        print_hex8(addr);
-        print(" ");
-    }
-    println("");
-    for (uint16_t addr = 0; addr <= 0xFF; addr++) {
-        uint8_t data;
-        if ((addr & 0xf) == 0) {
-            print_hex8(addr);
-            print(" | ");
-        }
+// void ps2_regdump(void) {
+//     println("Register dump:");
+//     print("     ");
+//     for (uint8_t addr = 0; addr <= 0xF; addr++) {
+//         print_hex8(addr);
+//         print(" ");
+//     }
+//     println("");
+//     for (uint16_t addr = 0; addr <= 0xFF; addr++) {
+//         uint8_t data;
+//         if ((addr & 0xf) == 0) {
+//             print_hex8(addr);
+//             print(" | ");
+//         }
 
-        ps2_host_send(0xE2);
-        ps2_host_send(0x80);
-        data = ps2_host_send((uint8_t)addr);
-        if (data == 0xFA) {
-            data = ps2_host_recv_response();
-            print_hex8(data);
-            print(" ");
-        } else {
-            print("xx ");
-        }
-        if ((addr & 0xf) == 0xf) {
-            println("");
-        }
-    }
-    println("");
-}
+//         ps2_host_send(0xE2);
+//         ps2_host_send(0x80);
+//         data = ps2_host_send((uint8_t)addr);
+//         if (data == 0xFA) {
+//             data = ps2_host_recv_response();
+//             print_hex8(data);
+//             print(" ");
+//         } else {
+//             print("xx ");
+//         }
+//         if ((addr & 0xf) == 0xf) {
+//             println("");
+//         }
+//     }
+//     println("");
+// }
 
-static uint16_t mh_auto_buttons_timer;
-extern int tp_buttons; // mousekey button state set in action.c and used in ps2_mouse.c
+// static uint16_t mh_auto_buttons_timer;
+// extern int tp_buttons; // mousekey button state set in action.c and used in ps2_mouse.c
 
-void ps2_mouse_moved_user(report_mouse_t *mouse_report) {
-    if (abs(mouse_report->x) <= 1 && abs(mouse_report->y) <= 1) {
-        // Ignore tiny mouse events
-        return;
-    }
-    if (mh_auto_buttons_timer) {
-        mh_auto_buttons_timer = timer_read();
-    } else {
-        if (!tp_buttons) {
-            layer_on(MH_AUTO_BUTTONS_LAYER);
-            mh_auto_buttons_timer = timer_read();
-#if defined CONSOLE_ENABLE
-            print("mh_auto_buttons: on\n");
-#endif
-        }
-    }
-}
+// void ps2_mouse_moved_user(report_mouse_t *mouse_report) {
+//     if (abs(mouse_report->x) <= 1 && abs(mouse_report->y) <= 1) {
+//         // Ignore tiny mouse events
+//         return;
+//     }
+//     if (mh_auto_buttons_timer) {
+//         mh_auto_buttons_timer = timer_read();
+//     } else {
+//         if (!tp_buttons) {
+//             layer_on(MH_AUTO_BUTTONS_LAYER);
+//             mh_auto_buttons_timer = timer_read();
+// #if defined CONSOLE_ENABLE
+//             print("mh_auto_buttons: on\n");
+// #endif
+//         }
+//     }
+// }
 
 
 //==============================================================================
@@ -1138,9 +1145,7 @@ bool process_vol_repeat(uint16_t keycode, keyrecord_t* record) {
 
 
 
-
-
-uint32_t timer_callback(uint32_t trigger_time, void* cb_arg) {
+uint32_t clock_callback(uint32_t trigger_time, void* cb_arg) {
     sec++;
     if (sec >= 60) {
         sec = 0;
@@ -1327,6 +1332,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         // =====================================================================
         // Misc control
         // =====================================================================
+
+        case MENU:
+            if (record->event.pressed) {
+                if (menu == 0) {
+                    menu = 1;
+                }
+                else if (menu == 1) {
+                    menu = 0;
+                }
+            }
+            break;
 
         case MUTE:
             if (record->event.pressed) {
@@ -2115,7 +2131,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 //==============================================================================
 // OLED
 //==============================================================================
-#ifdef OLED_ENABLE
 
 void render_wpm(void) {
     uint8_t n = get_current_wpm();
@@ -2313,6 +2328,9 @@ void render_layer(void) {
 }
 
 
+
+
+
 void render_locking_key_state(led_t led_usb_state) {
     if (led_usb_state.caps_lock) {
         oled_write_char(203,false);
@@ -2447,15 +2465,68 @@ void render_modifier_state(uint8_t line) {
     oled_advance_page(false);
 }
 
+
+#include "menu.c"
+
+
+
+void render_layout(void) {
+    switch (get_highest_layer(layer_state)) {
+        case _BASE:
+            oled_write_raw_P(menu_layout_base, frame_size);
+            break;
+        case _DATA:
+            oled_write_raw_P(menu_layout_data, frame_size);
+            break;
+        case _SYMBOL:
+            oled_write_raw_P(menu_layout_symbol, frame_size);
+            break;
+        case _PROGRAM:
+            oled_write_raw_P(menu_layout_program, frame_size);
+            break;
+        case _EDIT:
+            oled_write_raw_P(menu_layout_edit, frame_size);
+            break;
+        case _BASIC:
+        case _QWERTY:
+            oled_write_raw_P(menu_layout_qwerty, frame_size);
+            break;
+        default:
+            break;
+    }
+    // if (IS_LAYER_ON(_DATA)) {
+        
+    // }
+    // if (IS_LAYER_ON(_SYMBOL)) {
+        
+    // }
+    // if (IS_LAYER_ON(_PROGRAM)) {
+        
+    // }
+    // if (IS_LAYER_ON(_EDIT)) {
+        
+    // }
+}
+
 static void render_status(void) {
+    if (menu == 0) {
+        oled_set_cursor(0,3);
+        oled_write_ln_P(PSTR("Layer:"), false); // 1
+        render_layer(); // 7
+    }
+    else if (menu == 1) {
+        render_layout();
+    }
+
     oled_write_ln_P(PSTR("Mode:"), false); // 1
     render_mode(); // 1
 
     render_linebreak(); // 1
 
-    oled_write_ln_P(PSTR("Layer:"), false); // 1
-    render_layer(); // 7
 
+    
+    
+    oled_set_cursor(0,10);
     render_linebreak(); // 1
     oled_write_P(PSTR("\n"), false); // 1
     render_linebreak(); // 1
@@ -2494,8 +2565,6 @@ bool oled_task_user(void) {
     return false;
 }
 
-#endif
-
 
 //==============================================================================
 // RGB
@@ -2506,7 +2575,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     HSV underglow_hsv = (HSV){ 0, 0, 0 };
     RGB underglow_rgb = hsv_to_rgb(underglow_hsv);
     for (uint8_t i = 27; i < 33; i++) {
-        switch(get_highest_layer(layer_state|default_layer_state)) {
+        switch (get_highest_layer(layer_state|default_layer_state)) {
             case _PROGRAM:
                 underglow_hsv = (HSV){ 85, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
@@ -2653,7 +2722,7 @@ void keyboard_post_init_user(void) {
     rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE);
     rgb_matrix_sethsv_noeeprom(255,255,255);
 
-    defer_exec(timer_callback(0,NULL), timer_callback, NULL);
+    defer_exec(clock_callback(0,NULL), clock_callback, NULL);
 
     transaction_register_rpc(USER_SYNC_A, user_config_sync_handler);
 

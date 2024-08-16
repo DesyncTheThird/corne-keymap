@@ -149,14 +149,14 @@ timeout managed manually in keymap instead.
 
 
 
-#define PS2_CLOCK_PIN B5
-#define PS2_DATA_PIN  B4
-#define PS2_PIO_USE_PIO1
-#define PS2_MOUSE_ROTATE 90
-#define PS2_MOUSE_SCROLL_BTN_MASK 0
+// #define PS2_CLOCK_PIN B5
+// #define PS2_DATA_PIN  B4
+// #define PS2_PIO_USE_PIO1
+// #define PS2_MOUSE_ROTATE 90
+// #define PS2_MOUSE_SCROLL_BTN_MASK 0
 
-#define PS2_MOUSE_DEBUG_RAW
-#define PS2_MOUSE_DEBUG_HID
+// #define PS2_MOUSE_DEBUG_RAW
+// #define PS2_MOUSE_DEBUG_HID
 
-#define MH_AUTO_BUTTONS_LAYER _MOUSE_BTN
-#define MH_AUTO_BUTTONS_TIMEOUT 750
+// #define MH_AUTO_BUTTONS_LAYER _MOUSE_BTN
+// #define MH_AUTO_BUTTONS_TIMEOUT 750
