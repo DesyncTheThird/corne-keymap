@@ -2518,6 +2518,7 @@ static void render_status(void) {
         render_layout();
     }
 
+    oled_set_cursor(0,0);
     oled_write_ln_P(PSTR("Mode:"), false); // 1
     render_mode(); // 1
 
