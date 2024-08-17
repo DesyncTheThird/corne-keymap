@@ -2473,7 +2473,15 @@ void render_modifier_state(uint8_t line) {
 void render_layout(void) {
     switch (get_highest_layer(layer_state)) {
         case _BASE:
+        default:
             oled_write_raw_P(menu_layout_base, frame_size);
+            break;
+        case _BASIC:
+        case _QWERTY:
+            oled_write_raw_P(menu_layout_qwerty, frame_size);
+            break;
+        case _STENO:
+            oled_write_raw_P(menu_layout_steno, frame_size);
             break;
         case _DATA:
             oled_write_raw_P(menu_layout_data, frame_size);
@@ -2487,11 +2495,8 @@ void render_layout(void) {
         case _EDIT:
             oled_write_raw_P(menu_layout_edit, frame_size);
             break;
-        case _BASIC:
-        case _QWERTY:
-            oled_write_raw_P(menu_layout_qwerty, frame_size);
-            break;
-        default:
+        case _UTILITY:
+            oled_write_raw_P(menu_layout_utility, frame_size);
             break;
     }
     // if (IS_LAYER_ON(_DATA)) {
@@ -2517,7 +2522,7 @@ static void render_status(void) {
     else if (menu == 1) {
         render_layout();
     }
-
+    
     oled_set_cursor(0,0);
     oled_write_ln_P(PSTR("Mode:"), false); // 1
     render_mode(); // 1
