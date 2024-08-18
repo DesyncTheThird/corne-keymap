@@ -8,7 +8,7 @@
 
 # Layers
 
-![Base](images/gallium.png?raw=true)
+![Base](images/base.png?raw=true)
 
 ![Data](images/data.png?raw=true)
 
@@ -47,6 +47,7 @@
 (128x64 OLEDs)
 ### Right:
 - Default layer and layer stack display;
+- Menu key swaps layer stack to layout display;
 - Clock -- time is set manually using keys on utility layer and doesn't require software on host (persists through sleep events);
 - Custom locking key, modifier, and mute state indicators.
 
