@@ -5,9 +5,48 @@
 
 
 ---
+# Features
+- Common symbols and punctuation accessible through combos with many duplicated on both sides; combos trigger through most layers.
+- Repeat key on right thumb, magic key on left thumb.
+- Home block mods on main layer (toggle-able).
+- Symbol layer optimised for (La)TeX editing, with brackets and many common strings as inward rolls, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `<-`, `<=`, `->`, `>=`, `|->`, `:-`, `&=`, etc. (Intended to be used with snippet extensions.) Backslash also on main thumb key on this layer.
+- Brackets duplicated on Edit layer for easier access.
+- Program layer optimised for c programming, with comparison operators as inward rolls, logical/bitwise operators symbols closely grouped on index finger, etc.
+- Number grid on right hand with [1,2,3] on home row.
+- Function layer on right hand, F1-F5 duplicated on left side for left-hand only usage.
+- Mouse emulation accessible on pinky keys; movement same position as arrow keys on navigation layer, scrolling underneath in vim layout.
+- Steno layer (using GeminiPR) accessible through combo.
+
+### Magic Key
+
+|     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Prev  | `A` | `B`  | `C` | `D` | `E` | `F` | `G` | `H` | `I` | `J`   | `K` | `L` | `M`   | 
+| Magic | --  | `S`  | `S` | `T` | `O` | --  | `S` | `Y` | `U` | `UST` | --  | `R` | `ENT` |
+
+|     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Prev  | `N`   | `O` | `P` | `Q` | `R` | `S` | `T` | `U` | `V`  | `W` | `X` | `Y` | `Z` |
+| Magic | `ION` | `E` | `H` | `U` | `L` | `C` | `D` | `I` | `ER` | `S` | --  | --  | --  |
+
+
+
+## OLEDs
+(128x64 OLEDs)
+### Right:
+- Default layer and layer stack display;
+- Menu key swaps layer stack to layout display;
+- Clock -- time is set manually using keys on utility layer and doesn't require software on host (persists through sleep events);
+- Custom locking key, modifier, and mute state indicators.
+
+### Left:
+- Cycles between text and logo with cyberpunk glich aesthetic animation;
+- Logo displays WPM and current session time.
+
+Key on utility layer available to change both OLEDs to static images.
+
 
 # Layers
-
 ![Base](images/base.png?raw=true)
 
 ![Data](images/data.png?raw=true)
@@ -29,32 +68,5 @@
 # Alt Base Layer
 
 ![QWERTY](images/qwerty.png?raw=true)
-
-
-# Features
-- Common symbols and punctuation accessible through combos with many duplicated on both sides; combos trigger through most layers.
-- Alpha-only repeat key with layer-tap on right thumb key.
-- Home block mods on main layer (toggle-able).
-- Symbol layer optimised for (La)TeX editing, with brackets and many common strings as inward rolls, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `<-`, `<=`, `->`, `>=`, `|->`, `:-`, `&=`, etc. (Intended to be used with snippet extensions.) Backslash also on main thumb key on this layer.
-- Brackets duplicated on Edit layer for easier access.
-- Program layer optimised for c programming, with comparison operators as inward rolls, logical/bitwise operators symbols closely grouped on index finger, etc.
-- Number grid on right hand with [1,2,3] on home row.
-- Function layer on right hand, F1-F5 duplicated on left side for left-hand only usage.
-- Mouse emulation accessible on pinky keys; movement same position as arrow keys on navigation layer, scrolling underneath in vim layout.
-- Steno layer (using GeminiPR) accessible through combo.
-
-## OLEDs
-(128x64 OLEDs)
-### Right:
-- Default layer and layer stack display;
-- Menu key swaps layer stack to layout display;
-- Clock -- time is set manually using keys on utility layer and doesn't require software on host (persists through sleep events);
-- Custom locking key, modifier, and mute state indicators.
-
-### Left:
-- Cycles between text and logo with cyberpunk glich aesthetic animation;
-- Logo displays WPM and current session time.
-
-Key on utility layer available to change both OLEDs to static images.
 
 
