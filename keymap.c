@@ -865,7 +865,6 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
 //==============================================================================
 
 uint16_t last_key = KC_NO;
-uint16_t repeat_key = KC_NO;
 
 bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_RT2) {
@@ -875,9 +874,7 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
             layer_off(_PROGRAM);
         }
         if (record->tap.count && record->event.pressed) {
-            register_code(last_key);
-        } else {
-            unregister_code(last_key);
+            tap_code(last_key);
         }
         return false;
     }
@@ -888,87 +885,43 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
         } else {
             layer_off(_EDIT);
         }
-        
-        if (IS_LAYER_ON(_QWERTY)|| IS_LAYER_ON(_BASIC)) {
-            repeat_key = last_key;
-        }
-        else {
-            switch (last_key) {
-                case KC_E:
-                    repeat_key = KC_O;
-                    break;
-                case KC_O:
-                    repeat_key = KC_E;
-                    break;
-
-                case KC_I:
-                    repeat_key = KC_U;
-                    break;
-                case KC_U:
-                    repeat_key = KC_I;
-                    break;
-
-                case KC_P:
-                    repeat_key = KC_H;
-                    break;
-
-                case KC_J:
-                    repeat_key = KC_U;
-                    break;
-
-
-
-                case KC_T:
-                    repeat_key = KC_D;
-                    break;
-                case KC_D:
-                    repeat_key = KC_T;
-                    break;
-
-
-
-                case KC_S:
-                    repeat_key = KC_C;
-                    break;
-                case KC_C:
-                    repeat_key = KC_S;
-                    break;
-                case KC_V:
-                    repeat_key = KC_S;
-                    break;
-                case KC_G:
-                    repeat_key = KC_S;
-                    break;
-                case KC_B:
-                    repeat_key = KC_S;
-                    break;
-                case KC_W:
-                    repeat_key = KC_S;
-                    break;
-
-                case KC_R:
-                    repeat_key = KC_L;
-                    break;
-                case KC_L:
-                    repeat_key = KC_R;
-                    break;
-
-                case KC_N:
-                    repeat_key = KC_A;
-                    break;
-                case KC_A:
-                    repeat_key = KC_N;
-                    break;
-
-                default:
-                    repeat_key = last_key;
-            }
-        }
-
         if (record->tap.count && record->event.pressed) {
-            register_code(repeat_key);
-        } else {
-            unregister_code(repeat_key);
+            if (IS_LAYER_ON(_QWERTY)|| IS_LAYER_ON(_BASIC)) {
+                tap_code(last_key);
+                return false;
+            }
+
+            switch (last_key) {
+                case KC_E: tap_code(KC_O); break;
+                case KC_O: tap_code(KC_E); break;
+
+                case KC_I: tap_code(KC_U); break;
+                case KC_U: tap_code(KC_I); break;
+
+                case KC_P: tap_code(KC_H); break;
+                case KC_H: tap_code(KC_Y); break;
+
+                case KC_T: tap_code(KC_D); break;
+                case KC_D: tap_code(KC_T); break;
+
+                case KC_S: tap_code(KC_C); break;
+                case KC_C: tap_code(KC_S); break;
+                case KC_G: tap_code(KC_S); break;
+                case KC_B: tap_code(KC_S); break;
+                case KC_W: tap_code(KC_S); break;
+
+                case KC_R: tap_code(KC_L); break;
+                case KC_L: tap_code(KC_R); break;
+
+                case KC_Q: tap_code(KC_U); break;
+
+                case KC_N: SEND_STRING(/*n*/"ion"); break;
+                case KC_J: SEND_STRING(/*j*/"ust"); break;
+                case KC_V: SEND_STRING(/*v*/"er"); break;
+                case KC_M: SEND_STRING(/*m*/"ent"); break;
+
+                default: tap_code(last_key); break;
+            }
         }
         return false;
     }
