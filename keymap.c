@@ -300,9 +300,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            ALTTAB, CLOCKUP, CS_VALD, CS_VOLU, CS_VALU, CS_RGBN,                      CS_BOOT,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT, CLOCKDN, KC_MPRV, CS_VOLD, KC_MNXT, KC_PSCR,                        BASIC,   KC_F1,   KC_F2,   KC_F3,  KC_F11,  KC_TAB,
+          KC_LSFT, CLOCKDN, KC_MPRV, CS_VOLD, KC_MNXT,    BASE,                        BASIC,   KC_F1,   KC_F2,   KC_F3,  KC_F11,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CLOCKNX, OLEDSAV,    MUTE, KC_SCRL, CS_RGBT,                         BASE,   KC_F4,   KC_F5,   KC_F6,  KC_F12,  KC_ENT,
+          KC_LCTL, CLOCKNX, KC_PSCR,    MUTE, KC_SCRL, OLEDSAV,                      CS_RGBT,   KC_F4,   KC_F5,   KC_F6,  KC_F12,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               KC_MSTP,    MUTE, KC_MPLY,    KC_MPLY,    MENU, KC_MSTP
                                           //`--------------------------'  `--------------------------'
@@ -655,7 +655,8 @@ const key_override_t all     = ko_make_with_layers(MOD_MASK_CTRL, MTA_R, C(KC_A)
 const key_override_t close   = ko_make_with_layers(MOD_MASK_CTRL, KC_D, C(KC_W), (1 << _BASE));
 const key_override_t tab     = ko_make_with_layers(MOD_MASK_CTRL, KC_V, C(KC_T), (1 << _BASE));
 const key_override_t window  = ko_make_with_layers(MOD_MASK_CTRL, KC_G, C(KC_N), (1 << _BASE));
-const key_override_t refresh = ko_make_with_layers(MOD_MASK_CTRL, KC_C, C(KC_R), (1 << _BASE));
+const key_override_t refresh = ko_make_with_layers(MOD_MASK_CTRL, KC_X, C(KC_R), (1 << _BASE));
+const key_override_t merge   = ko_make_with_layers(MOD_MASK_CTRL, KC_C, C(KC_E), (1 << _BASE));
 
 const key_override_t **key_overrides = (const key_override_t *[]){
     &undo,
@@ -670,6 +671,7 @@ const key_override_t **key_overrides = (const key_override_t *[]){
     &tab,
     &window,
     &refresh,
+    &merge,
     NULL
 };
 
