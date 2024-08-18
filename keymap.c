@@ -782,6 +782,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
     switch(combo_index) {
         case TOUHOU:
             if (pressed) {
+                menu = 1;
                 if (IS_LAYER_ON(_TOUHOU)) {
                     layer_off(_TOUHOU);
                 }
@@ -2497,6 +2498,12 @@ void render_layout(void) {
             break;
         case _UTILITY:
             oled_write_raw_P(menu_layout_utility, frame_size);
+            break;
+        case _TOUHOU:
+            oled_write_raw_P(menu_layout_touhou, frame_size);
+            break;
+        case _NUMPAD:
+            oled_write_raw_P(menu_layout_numpad, frame_size);
             break;
     }
     // if (IS_LAYER_ON(_DATA)) {
