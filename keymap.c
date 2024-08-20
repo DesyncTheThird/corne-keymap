@@ -66,7 +66,6 @@ enum custom_keycodes {
     MENU,
     
     ALTTAB,
-    CS_BOOT,
 
     MUTE,
     CS_VOLD,
@@ -105,6 +104,9 @@ enum custom_keycodes {
     CM_SCLN,
 };
 
+
+// Custom tap-hold keys
+#define CS_BOOT LT(0,KC_ESC)
 
 
 // Home block mods
@@ -897,6 +899,8 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
 
                 case KC_I: tap_code(KC_U); break;
                 case KC_U: tap_code(KC_I); break;
+                
+                case KC_A: tap_code(KC_U); break;
 
                 case KC_P: tap_code(KC_H); break;
                 case KC_H: tap_code(KC_Y); break;
@@ -1393,13 +1397,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
         case CS_BOOT:
-            if (record->event.pressed) {
-                if (shifted()) {
-                    soft_reset_keyboard();
-                }
-                else {
-                    reset_keyboard();
-                }
+            if (!record->tap.count && record->event.pressed) {
+                reset_keyboard();
+            }
+            if (record->tap.count && record->event.pressed) {
+                soft_reset_keyboard();
             }
             break;
 
@@ -2664,7 +2666,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    if (IS_LAYER_ON_STATE(state, _BASIC)) {
+    if (IS_LAYER_ON_STATE(state, _BASIC) || IS_LAYER_ON_STATE(state, _QWERTY)) {
         rgb_matrix_set_speed_noeeprom(48);
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RAINBOW_PINWHEELS);
         rgb_matrix_sethsv_noeeprom(255,225,255);
