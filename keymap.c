@@ -180,11 +180,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_BASE] = LAYOUT( //1
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_ESC,    KC_X,    KC_L,    KC_D,    KC_C,    KC_V,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
+           KC_ESC,    KC_Z,    KC_L,    KC_D,    KC_C,    KC_V,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL,    KC_Z,    KC_Q,    KC_M,   MTA_W,    KC_B,                         KC_K,   MTA_P, KC_MINS, KC_QUOT, QUE_EXL, COM_DOT,
+          KC_LCTL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_B,                         KC_K,   MTA_P, KC_MINS, COM_DOT, QUE_EXL, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -646,8 +646,8 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
 
 // const key_override_t redo = ko_make_basic(MOD_MASK_CS, KC_Z, C(KC_Y));
 
-const key_override_t undo    = ko_make_with_layers(MOD_MASK_CTRL, KC_Q,  C(KC_Z), (1 << _BASE));
-const key_override_t redo    = ko_make_with_layers(MOD_MASK_CTRL, KC_Z,  C(KC_Y), (1 << _BASE));
+const key_override_t undo    = ko_make_with_layers(MOD_MASK_CTRL, KC_X,  C(KC_Z), (1 << _BASE));
+const key_override_t redo    = ko_make_with_layers(MOD_MASK_CTRL, KC_Q,  C(KC_Y), (1 << _BASE));
 const key_override_t cut     = ko_make_with_layers(MOD_MASK_CTRL, KC_M,  C(KC_X), (1 << _BASE));
 const key_override_t copy    = ko_make_with_layers(MOD_MASK_CTRL, MTA_W, C(KC_C), (1 << _BASE));
 const key_override_t paste   = ko_make_with_layers(MOD_MASK_CTRL, KC_B,  C(KC_V), (1 << _BASE));
@@ -659,6 +659,10 @@ const key_override_t tab     = ko_make_with_layers(MOD_MASK_CTRL, KC_V,  C(KC_T)
 const key_override_t window  = ko_make_with_layers(MOD_MASK_CTRL, KC_G,  C(KC_N), (1 << _BASE));
 const key_override_t refresh = ko_make_with_layers(MOD_MASK_CTRL, KC_C,  C(KC_R), (1 << _BASE));
 const key_override_t merge   = ko_make_with_layers(MOD_MASK_CTRL, KC_L,  C(KC_E), (1 << _BASE));
+
+const key_override_t bold    = ko_make_with_layers(MOD_MASK_CTRL, KC_K,  C(KC_B), (1 << _BASE));
+
+// to do; change overrides to layer
 
 const key_override_t **key_overrides = (const key_override_t *[]){
     &undo,
@@ -674,6 +678,7 @@ const key_override_t **key_overrides = (const key_override_t *[]){
     &window,
     &refresh,
     &merge,
+    &bold,
     NULL
 };
 
