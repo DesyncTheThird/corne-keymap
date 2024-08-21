@@ -6,6 +6,7 @@
 enum corne_layers {
     _QWERTY,
     _BASE,
+    _CONTROL,
     _BASIC,
     _STENO,
     _DATA,
@@ -159,11 +160,24 @@ enum custom_keycodes {
 #define CS_AL2 LT(_EDIT,CS_BSLS)
 #define CS_AL3 LT(_EDIT,CS_SCLN)
 
-// #define UNDO LCTL(KC_Z)
-// #define REDO LCTL(KC_Y)
-// #define CUT LCTL(KC_X)
-// #define COPY LCTL(KC_C)
-// #define PASTE LCTL(KC_V)
+#define CS_CTRL LM(_CONTROL, MOD_LCTL)
+
+#define UNDO LCTL(KC_Z)
+#define REDO LCTL(KC_Y)
+#define CUT LCTL(KC_X)
+#define COPY LCTL(KC_C)
+#define PASTE LCTL(KC_V)
+#define FIND LCTL(KC_F)
+#define SAVE LCTL(KC_S)
+#define ALL LCTL(KC_A)
+#define CLOSE LCTL(KC_W)
+#define TAB LCTL(KC_T)
+#define WINDOW LCTL(KC_N)
+#define REFRESH LCTL(KC_R)
+#define MERGE LCTL(KC_E)
+#define BOLD LCTL(KC_E)
+#define GROUP LCTL(KC_G)
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTY] = LAYOUT( //0
@@ -172,7 +186,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_A,    MT_S,    MT_D,    MT_F,    KC_G,                         KC_H,    MT_J,    MT_K,    MT_L, KC_SCLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    MT_C,    KC_V,                         KC_B,    MT_N,    KC_M, COM_DOT, QUE_EXL, KC_QUOT,
+          CS_CTRL, CS_BSLS,    KC_Z,    KC_X,    MT_C,    KC_V,                         KC_B,    MT_N,    KC_M, COM_DOT, QUE_EXL, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -180,17 +194,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_BASE] = LAYOUT( //1
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_ESC,    KC_Z,    KC_L,    KC_D,    KC_C,    KC_V,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
+           KC_ESC,    KC_Z,    KC_L,    KC_D,    KC_W,    KC_V,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_B,                         KC_K,   MTA_P, KC_MINS, COM_DOT, QUE_EXL, KC_QUOT,
+          CS_CTRL,    KC_Q,    KC_X,    KC_M,    MT_C,    KC_B,                         KC_K,   MTA_P, KC_MINS, COM_DOT, QUE_EXL, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
     ),
+    
+    [_CONTROL] = LAYOUT( //2
+      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+          _______, _______,   MERGE,   CLOSE, REFRESH,     TAB,                         REDO, _______, _______, _______, _______, _______,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          _______, _______,     ALL,    SAVE,    FIND,  WINDOW,                        GROUP, _______, _______, _______, _______, _______,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          _______,    REDO,    UNDO,     CUT,    COPY,   PASTE,                         BOLD, _______, _______, _______, _______, _______,
+      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                              _______, _______, _______,    _______, _______, _______
+                                          //`--------------------------'  `--------------------------'
+    ),
 
-    [_BASIC] = LAYOUT( //2
+    [_BASIC] = LAYOUT( //3
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -202,7 +228,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_STENO] = LAYOUT( //3
+    [_STENO] = LAYOUT( //4
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,  STN_S1,  STN_TL,  STN_PL,  STN_HL, STN_ST1,                      STN_ST3,  STN_FR,  STN_PR,  STN_LR,  STN_TR,  STN_DR,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -214,7 +240,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_DATA] = LAYOUT( //4
+    [_DATA] = LAYOUT( //5
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -250,7 +276,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
     
-    [_EDIT] = LAYOUT( //5
+    [_EDIT] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC, KC_PAUS, CS_HOME,   KC_UP,  CS_END,  KC_TAB,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -262,7 +288,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_MOUSE] = LAYOUT( //8
+    [_MOUSE] = LAYOUT( //9
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC, XXXXXXX, KC_BTN4, KC_MS_U, KC_BTN5,  KC_TAB,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -274,7 +300,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_MOUSE_BTN] = LAYOUT( //9
+    [_MOUSE_BTN] = LAYOUT( //10
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, KC_BTN4, _______, KC_BTN5,  KC_TAB,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -286,7 +312,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_NUMPAD] = LAYOUT( //10
+    [_NUMPAD] = LAYOUT( //11
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, _______, _______, _______, _______,                       KC_NUM,   KC_P7,   KC_P8,   KC_P9, KC_CIRC,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -298,7 +324,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
     
-    [_UTILITY] = LAYOUT( //11
+    [_UTILITY] = LAYOUT( //12
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            ALTTAB, CLOCKUP, CS_VALD, CS_VOLU, CS_VALU, CS_RGBN,                      CS_BOOT,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -310,7 +336,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_TOUHOU] = LAYOUT( //12
+    [_TOUHOU] = LAYOUT( //13
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, _______,   KC_UP, _______, _______,                      _______, _______, _______, _______, _______,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -646,41 +672,40 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
 
 // const key_override_t redo = ko_make_basic(MOD_MASK_CS, KC_Z, C(KC_Y));
 
-const key_override_t undo    = ko_make_with_layers(MOD_MASK_CTRL, KC_X,  C(KC_Z), (1 << _BASE));
-const key_override_t redo    = ko_make_with_layers(MOD_MASK_CTRL, KC_Q,  C(KC_Y), (1 << _BASE));
-const key_override_t cut     = ko_make_with_layers(MOD_MASK_CTRL, KC_M,  C(KC_X), (1 << _BASE));
-const key_override_t copy    = ko_make_with_layers(MOD_MASK_CTRL, MTA_W, C(KC_C), (1 << _BASE));
-const key_override_t paste   = ko_make_with_layers(MOD_MASK_CTRL, KC_B,  C(KC_V), (1 << _BASE));
-const key_override_t find    = ko_make_with_layers(MOD_MASK_CTRL, MTA_S, C(KC_F), (1 << _BASE));
-const key_override_t save    = ko_make_with_layers(MOD_MASK_CTRL, MTA_T, C(KC_S), (1 << _BASE));
-const key_override_t all     = ko_make_with_layers(MOD_MASK_CTRL, MTA_R, C(KC_A), (1 << _BASE));
-const key_override_t close   = ko_make_with_layers(MOD_MASK_CTRL, KC_D,  C(KC_W), (1 << _BASE));
-const key_override_t tab     = ko_make_with_layers(MOD_MASK_CTRL, KC_V,  C(KC_T), (1 << _BASE));
-const key_override_t window  = ko_make_with_layers(MOD_MASK_CTRL, KC_G,  C(KC_N), (1 << _BASE));
-const key_override_t refresh = ko_make_with_layers(MOD_MASK_CTRL, KC_C,  C(KC_R), (1 << _BASE));
-const key_override_t merge   = ko_make_with_layers(MOD_MASK_CTRL, KC_L,  C(KC_E), (1 << _BASE));
+// const key_override_t undo    = ko_make_with_layers(MOD_MASK_CTRL, KC_X,  C(KC_Z), (1 << _BASE));
+// const key_override_t redo    = ko_make_with_layers(MOD_MASK_CTRL, KC_Q,  C(KC_Y), (1 << _BASE));
+// const key_override_t cut     = ko_make_with_layers(MOD_MASK_CTRL, KC_M,  C(KC_X), (1 << _BASE));
+// const key_override_t copy    = ko_make_with_layers(MOD_MASK_CTRL, MTA_W, C(KC_C), (1 << _BASE));
+// const key_override_t paste   = ko_make_with_layers(MOD_MASK_CTRL, KC_B,  C(KC_V), (1 << _BASE));
+// const key_override_t find    = ko_make_with_layers(MOD_MASK_CTRL, MTA_S, C(KC_F), (1 << _BASE));
+// const key_override_t save    = ko_make_with_layers(MOD_MASK_CTRL, MTA_T, C(KC_S), (1 << _BASE));
+// const key_override_t all     = ko_make_with_layers(MOD_MASK_CTRL, MTA_R, C(KC_A), (1 << _BASE));
+// const key_override_t close   = ko_make_with_layers(MOD_MASK_CTRL, KC_D,  C(KC_W), (1 << _BASE));
+// const key_override_t tab     = ko_make_with_layers(MOD_MASK_CTRL, KC_V,  C(KC_T), (1 << _BASE));
+// const key_override_t window  = ko_make_with_layers(MOD_MASK_CTRL, KC_G,  C(KC_N), (1 << _BASE));
+// const key_override_t refresh = ko_make_with_layers(MOD_MASK_CTRL, KC_C,  C(KC_R), (1 << _BASE));
+// const key_override_t merge   = ko_make_with_layers(MOD_MASK_CTRL, KC_L,  C(KC_E), (1 << _BASE));
 
-const key_override_t bold    = ko_make_with_layers(MOD_MASK_CTRL, KC_K,  C(KC_B), (1 << _BASE));
+// const key_override_t bold    = ko_make_with_layers(MOD_MASK_CTRL, KC_K,  C(KC_B), (1 << _BASE));
 
-// to do; change overrides to layer
 
-const key_override_t **key_overrides = (const key_override_t *[]){
-    &undo,
-    &redo,
-    &cut,
-    &copy,
-    &paste,
-    &find,
-    &save,
-    &all,
-    &close,
-    &tab,
-    &window,
-    &refresh,
-    &merge,
-    &bold,
-    NULL
-};
+// const key_override_t **key_overrides = (const key_override_t *[]){
+//     &undo,
+//     &redo,
+//     &cut,
+//     &copy,
+//     &paste,
+//     &find,
+//     &save,
+//     &all,
+//     &close,
+//     &tab,
+//     &window,
+//     &refresh,
+//     &merge,
+//     &bold,
+//     NULL
+// };
 
 //==============================================================================
 // Combos
@@ -874,18 +899,6 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
 uint16_t last_key = KC_NO;
 
 bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
-    if (keycode == CS_RT2) {
-        if (!record->tap.count && record->event.pressed) {
-            layer_on(_PROGRAM);
-        } else {
-            layer_off(_PROGRAM);
-        }
-        if (record->tap.count && record->event.pressed) {
-            tap_code(last_key);
-        }
-        return false;
-    }
-
     if (keycode == CS_LT2) {
         if (!record->tap.count && record->event.pressed) {
             layer_on(_EDIT);
@@ -909,8 +922,10 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
 
                 case KC_P: tap_code(KC_H); break;
                 case KC_H: tap_code(KC_Y); break;
+                case KC_K: tap_code(KC_Y); break;
+                case KC_F: tap_code(KC_Y); break;
+                case KC_Y: tap_code(KC_P); break;
 
-                case KC_T: tap_code(KC_D); break;
                 case KC_D: tap_code(KC_T); break;
 
                 case KC_S: tap_code(KC_C); break;
@@ -924,6 +939,7 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
 
                 case KC_Q: tap_code(KC_U); break;
 
+                case KC_T: SEND_STRING(/*t*/"ion"); break;
                 case KC_N: SEND_STRING(/*n*/"ion"); break;
                 case KC_J: SEND_STRING(/*j*/"ust"); break;
                 case KC_V: SEND_STRING(/*v*/"er"); break;
@@ -935,6 +951,18 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
         return false;
     }
 
+    if (keycode == CS_RT2) {
+        if (!record->tap.count && record->event.pressed) {
+            layer_on(_PROGRAM);
+        } else {
+            layer_off(_PROGRAM);
+        }
+        if (record->tap.count && record->event.pressed) {
+            tap_code(last_key);
+        }
+        return false;
+    }
+    
     return true;
 }
 
