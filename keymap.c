@@ -2264,7 +2264,8 @@ void render_layer(void) {
     } else {
         oled_write_P(PSTR(" Edit\n"), false);
     }
-    if (IS_LAYER_ON(_MOUSE) || IS_LAYER_ON(_MOUSE_BTN)) {
+    // if (IS_LAYER_ON(_MOUSE) || IS_LAYER_ON(_MOUSE_BTN)) {
+    if (IS_LAYER_ON(_MOUSE)) {
         oled_write_P(PSTR(">Mouse\n"), false);
     } else {
         oled_write_P(PSTR(" Mouse\n"), false);
