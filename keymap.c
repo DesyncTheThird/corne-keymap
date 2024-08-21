@@ -14,7 +14,7 @@ enum corne_layers {
     _SYMBOL,
     _EDIT,
     _MOUSE,
-    _MOUSE_BTN,
+    // _MOUSE_BTN,
     _NUMPAD,
     _UTILITY,
     _TOUHOU,
@@ -194,11 +194,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_BASE] = LAYOUT( //1
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_ESC,    KC_Z,    KC_L,    KC_D,    KC_W,    KC_V,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
+           KC_ESC,    KC_Z,    KC_L,    KC_D,    KC_C,    KC_B,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_CTRL,    KC_Q,    KC_X,    KC_M,    MT_C,    KC_B,                         KC_K,   MTA_P, KC_MINS, COM_DOT, QUE_EXL, KC_QUOT,
+          CS_CTRL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, KC_MINS, COM_DOT, QUE_EXL, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -300,17 +300,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_MOUSE_BTN] = LAYOUT( //10
-      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, _______, KC_BTN4, _______, KC_BTN5,  KC_TAB,                      _______, _______, _______, _______, _______, _______,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, _______, _______, _______, _______,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, _______, _______, _______, _______,  SELECT,                      _______, _______, _______, _______, _______, _______,
-      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              KC_BTN3, KC_BTN2, KC_BTN1,    _______, _______, _______
-                                          //`--------------------------'  `--------------------------'
-    ),
+    // [_MOUSE_BTN] = LAYOUT( //10
+    //   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+    //       _______, _______, KC_BTN4, _______, KC_BTN5,  KC_TAB,                      _______, _______, _______, _______, _______, _______,
+    //   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+    //       _______, _______, _______, _______, _______,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
+    //   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+    //       _______, _______, _______, _______, _______,  SELECT,                      _______, _______, _______, _______, _______, _______,
+    //   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+    //                                           KC_BTN3, KC_BTN2, KC_BTN1,    _______, _______, _______
+    //                                       //`--------------------------'  `--------------------------'
+    // ),
 
     [_NUMPAD] = LAYOUT( //11
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
@@ -496,8 +496,7 @@ void matrix_scan_user(void) {
     if (last_input_activity_elapsed() > 15000) {
         time_setting = 0;
         oled_timeout = true;
-    }
-    else {
+    } else {
         oled_timeout = false;
     }
 }
@@ -819,8 +818,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 menu = 1;
                 if (IS_LAYER_ON(_TOUHOU)) {
                     layer_off(_TOUHOU);
-                }
-                else {
+                } else {
                     layer_on(_TOUHOU);
                 }
             }
@@ -829,8 +827,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
             if (pressed) {
                 if (IS_LAYER_ON(_NUMPAD)) {
                     layer_off(_NUMPAD);
-                }
-                else {
+                } else {
                     layer_on(_NUMPAD);
                 }
             }
@@ -839,8 +836,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
             if (pressed) {
                 if (IS_LAYER_ON(_STENO)) {
                     layer_off(_STENO);
-                }
-                else {
+                } else {
                     layer_on(_STENO);
                 }
             }
@@ -1043,8 +1039,7 @@ static uint32_t VOLD_callback(uint32_t trigger_time, void* cb_arg) {
     if (!VOLD_active) {
         register_code16(KC_VOLD);
         VOLD_active = true;
-    }
-    else {
+    } else {
         unregister_code16(KC_VOLD);
         VOLD_active = false;
     }
@@ -1054,8 +1049,7 @@ static uint32_t VOLU_callback(uint32_t trigger_time, void* cb_arg) {
     if (!VOLU_active) {
         register_code16(KC_VOLU);
         VOLU_active = true;
-    }
-    else {
+    } else {
         unregister_code16(KC_VOLU);
         VOLU_active = false;
     }
@@ -1102,12 +1096,10 @@ bool process_vol_repeat(uint16_t keycode, keyrecord_t* record) {
             muted = false;
             if (shifted()) {
                 register_code16(KC_VOLD);
-            }
-            else {
+            } else {
                 VOLD_start();
             }
-        }
-        else {
+        } else {
             VOLD_stop();
             unregister_code16(KC_VOLD);
         }
@@ -1118,12 +1110,10 @@ bool process_vol_repeat(uint16_t keycode, keyrecord_t* record) {
             muted = false;
             if (shifted()) {
                 register_code16(KC_VOLU);
-            }
-            else {
+            } else {
                 VOLU_start();
             }
-        }
-        else {
+        } else {
             VOLU_stop();
             unregister_code16(KC_VOLU);
         }
@@ -1154,7 +1144,6 @@ uint32_t clock_callback(uint32_t trigger_time, void* cb_arg) {
     return 1000;
 }
 
-
 bool process_clock(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CLOCKUP) {
         if (record->event.pressed) {
@@ -1164,15 +1153,13 @@ bool process_clock(uint16_t keycode, keyrecord_t* record) {
                 } else {
                     hrs++;
                 }
-            }
-            else if (time_setting == 2) {
+            } else if (time_setting == 2) {
                 if (min == 60) {
                     min = 0;
                 } else {
                     min++;
                 }
-            }
-            else if (time_setting == 3) {
+            } else if (time_setting == 3) {
                 if (sec == 60) {
                     sec = 0;
                 } else {
@@ -1191,15 +1178,13 @@ bool process_clock(uint16_t keycode, keyrecord_t* record) {
                 } else {
                     hrs--;
                 }
-            }
-            else if (time_setting == 2) {
+            } else if (time_setting == 2) {
                 if (min == 0) {
                     min = 59;
                 } else {
                     min--;
                 }
-            }
-            else if (time_setting == 3) {
+            } else if (time_setting == 3) {
                 if (sec == 0) {
                     sec = 59;
                 } else {
@@ -1215,16 +1200,13 @@ bool process_clock(uint16_t keycode, keyrecord_t* record) {
             if (shifted()) {
                 if (time_setting == 0) {
                     time_setting = 3;
-                }
-                else {
+                } else {
                     time_setting--;
                 }
-            }
-            else {
+            } else {
                 if (time_setting == 3) {
                     time_setting = 0;
-                }
-                else {
+                } else {
                     time_setting++;
                 }
             }
@@ -1234,13 +1216,9 @@ bool process_clock(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-
-
 void render_clock(uint8_t shift, uint8_t line) {
     // char time_str[11];
     char time_str[8];
-
-
 
     // time_str[8] = '\0';
     time_str[7] = '0' + sec % 10;
@@ -1259,16 +1237,14 @@ void render_clock(uint8_t shift, uint8_t line) {
         oled_set_cursor(shift,line+1);
         oled_write_char(180,false);
         oled_write_char(181,false);
-    }
-    else if (time_setting == 2) {
+    } else if (time_setting == 2) {
         oled_set_cursor(shift+3,line-1);
         oled_write_char(148,false);
         oled_write_char(149,false);
         oled_set_cursor(shift+3,line+1);
         oled_write_char(180,false);
         oled_write_char(181,false);
-    }
-    else if (time_setting == 3) {
+    } else if (time_setting == 3) {
         oled_set_cursor(shift+6,line-1);
         oled_write_char(148,false);
         oled_write_char(149,false);
@@ -1280,11 +1256,6 @@ void render_clock(uint8_t shift, uint8_t line) {
     oled_set_cursor(shift,line);
     oled_write(time_str, false);
 }
-
-
-
-
-
 
 
 
@@ -1330,8 +1301,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (menu == 0) {
                     menu = 1;
-                }
-                else if (menu == 1) {
+                } else if (menu == 1) {
                     menu = 0;
                 }
             }
@@ -1363,7 +1333,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 if (shifted()) {
                     if (set_rgb_mode < 6) {
                         set_rgb_mode += 1;
-                        
                     } else {
                         set_rgb_mode = 2;
                     }
@@ -1408,12 +1377,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (IS_LAYER_ON(_BASIC)) {
                     layer_off(_BASIC);
-                }
-                else if (IS_LAYER_ON(_BASE)) {
+                } else if (IS_LAYER_ON(_BASE)) {
                     layer_on(_QWERTY);
                     layer_off(_BASE);
-                }
-                else {
+                } else {
                     layer_on(_BASE);
                     layer_off(_QWERTY);
                 }
@@ -1423,8 +1390,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (IS_LAYER_ON(_BASIC)) {
                     layer_off(_BASIC);
-                }
-                else {
+                } else {
                     layer_on(_BASIC);
                 }
             }
@@ -2057,8 +2023,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                     del_mods(MOD_MASK_SHIFT);
                     tap_code(KC_DOT);
                     set_mods(mods);
-                }
-                else {
+                } else {
                     const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_SHIFT);
                     tap_code(KC_COMM);
@@ -2074,8 +2039,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                     del_mods(MOD_MASK_SHIFT);
                     tap_code16(KC_EXLM);
                     set_mods(mods);
-                }
-                else {
+                } else {
                     const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_SHIFT);
                     tap_code16(KC_QUES);
@@ -2262,25 +2226,19 @@ void render_linebreak(void) {
 }
 
 void render_mode(void) {
-    if (IS_LAYER_ON(_NUMPAD)){
+    if (IS_LAYER_ON(_NUMPAD)) {
         oled_write_P(PSTR(" Numpad\n"), false);
-    }
-    else if (IS_LAYER_ON(_TOUHOU)){
+    } else if (IS_LAYER_ON(_TOUHOU)) {
         oled_write_P(PSTR(" Touhou\n"), false);
-    }
-    else if (IS_LAYER_ON(_BASIC)){
+    } else if (IS_LAYER_ON(_BASIC)) {
         oled_write_P(PSTR(" Basic\n"), false);
-    }
-    else if (IS_LAYER_ON(_STENO)){
+    } else if (IS_LAYER_ON(_STENO)) {
         oled_write_P(PSTR(" Steno.\n"), false);
-    }
-    else if (IS_LAYER_ON(_QWERTY)){
+    } else if (IS_LAYER_ON(_QWERTY)) {
         oled_write_P(PSTR(" QWERTY\n"), false);
-    }
-    else if (IS_LAYER_ON(_BASE)){
+    } else if (IS_LAYER_ON(_BASE)) {
         oled_write_P(PSTR(" Base\n"), false);
-    }
-    else {
+    } else {
         oled_write_P(PSTR(" REEEE\n"), false);
     }
 }
@@ -2335,14 +2293,11 @@ void render_locking_key_state(led_t led_usb_state) {
 
     if (led_usb_state.caps_lock && !led_usb_state.scroll_lock) {
         oled_write_char(206,false);
-    }
-    else if (led_usb_state.caps_lock && led_usb_state.scroll_lock) {
+    } else if (led_usb_state.caps_lock && led_usb_state.scroll_lock) {
         oled_write_char(207,false);
-    }
-    else if (!led_usb_state.caps_lock && led_usb_state.scroll_lock) {
+    } else if (!led_usb_state.caps_lock && led_usb_state.scroll_lock) {
         oled_write_char(208,false);
-    }
-    else {
+    } else {
         oled_write_char(196,false);
     }
     
@@ -2357,16 +2312,13 @@ void render_locking_key_state(led_t led_usb_state) {
     if (led_usb_state.scroll_lock && !led_usb_state.num_lock) {
         oled_write_char(211,false);
         oled_write_char(200,false);
-    }
-    else if (led_usb_state.scroll_lock && led_usb_state.num_lock) {
+    } else if (led_usb_state.scroll_lock && led_usb_state.num_lock) {
         oled_write_char(212,false);
         oled_write_char(213,false);
-    }
-    else if (!led_usb_state.scroll_lock && led_usb_state.num_lock) {
+    } else if (!led_usb_state.scroll_lock && led_usb_state.num_lock) {
         oled_write_char(199,false);
         oled_write_char(214,false);
-    }
-    else {
+    } else {
         oled_write_char(199,false);
         oled_write_char(200,false);
     }
@@ -2388,7 +2340,6 @@ void render_modifier_state(uint8_t line) {
         oled_set_cursor(0,line+1);
         oled_write_char(169,false);
         oled_write_char(170,false);
-
     } else {
         oled_write_char(129,false);
         oled_write_char(130,false);
@@ -2438,7 +2389,6 @@ void render_modifier_state(uint8_t line) {
         oled_write_char(167,false);
         oled_write_char(168,false);
     }
-
     oled_set_cursor(8,line);
     oled_write_char(145,false);
     oled_set_cursor(8,line+1);
@@ -2458,7 +2408,6 @@ void render_modifier_state(uint8_t line) {
 
 
 #include "menu.c"
-
 
 
 void render_layout(void) {
@@ -2496,18 +2445,6 @@ void render_layout(void) {
             oled_write_raw_P(menu_layout_numpad, frame_size);
             break;
     }
-    // if (IS_LAYER_ON(_DATA)) {
-        
-    // }
-    // if (IS_LAYER_ON(_SYMBOL)) {
-        
-    // }
-    // if (IS_LAYER_ON(_PROGRAM)) {
-        
-    // }
-    // if (IS_LAYER_ON(_EDIT)) {
-        
-    // }
 }
 
 static void render_status(void) {
@@ -2515,8 +2452,7 @@ static void render_status(void) {
         oled_set_cursor(0,3);
         oled_write_ln_P(PSTR("Layer:"), false); // 1
         render_layer(); // 7
-    }
-    else if (menu == 1) {
+    } else if (menu == 1) {
         render_layout();
     }
     
@@ -2527,8 +2463,8 @@ static void render_status(void) {
     render_linebreak(); // 1
 
 
-    
-    
+
+
     oled_set_cursor(0,10);
     render_linebreak(); // 1
     oled_write_P(PSTR("\n"), false); // 1
@@ -2551,17 +2487,14 @@ bool oled_task_user(void) {
     if (is_keyboard_master()) {
         if (static_display) {
             oled_write_raw_P(static_right, frame_size);
-        }
-        else {
+        } else {
             render_status();
         }
-    }
-    else {
+    } else {
         if (static_display || sync_data.static_display_sync) {
             ;
             // oled_write_raw_P(static_left, frame_size);
-        }
-        else {
+        } else {
             render_draw();
         }
     }
@@ -2703,8 +2636,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         rgb_matrix_set_speed_noeeprom(48);
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RAINBOW_PINWHEELS);
         rgb_matrix_sethsv_noeeprom(255,225,255);
-    }
-    else if (IS_LAYER_ON_STATE(state, _BASE)) {
+    } else if (IS_LAYER_ON_STATE(state, _BASE)) {
         rgb_matrix_set_speed_noeeprom(64);
         rgb_matrix_mode_noeeprom(set_rgb_mode);
         rgb_matrix_sethsv_noeeprom(255,255,255);
@@ -2744,18 +2676,15 @@ void housekeeping_task_user(void) {
                 dprint("Slave sync failed!\n");
             }
         }
-    }
-    else { // slave side
+    } else { // slave side
         if (sync_data.static_display_sync) { 
             oled_write_raw_P(static_left, frame_size);
-        }
-        else {
+        } else {
             // render_draw();
         }
         if (sync_data.oled_timeout_sync) { 
             oled_off();
-        }
-        else {
+        } else {
             oled_on();
         }
     }
