@@ -175,7 +175,7 @@ enum custom_keycodes {
 #define WINDOW LCTL(KC_N)
 #define REFRESH LCTL(KC_R)
 #define MERGE LCTL(KC_E)
-#define BOLD LCTL(KC_E)
+#define BOLD LCTL(KC_B)
 #define GROUP LCTL(KC_G)
 
 
