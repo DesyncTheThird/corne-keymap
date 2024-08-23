@@ -26,6 +26,32 @@ enum custom_keycodes {
 
     REP,
     MAGIC,
+    ALTTAB,
+
+    BASIC,
+    BASE,
+    MENU,
+
+    CS_END,
+    CS_HOME,
+
+    MUTE,
+    CS_VOLD,
+    CS_VOLU,
+
+    CS_VALU,
+    CS_VALD,
+    CS_RGBN,
+    CS_RGBT,
+    
+    CLOCKUP,
+    CLOCKDN,
+    CLOCKNX,
+    OLEDSAV,
+
+    // Custom Symbols
+    COM_DOT,
+    QUE_EXL,
 
     CS_COLN,
     CS_UNDS,
@@ -43,50 +69,22 @@ enum custom_keycodes {
     CS_HASH,
     CS_SLSH,
     CS_EQL,
-
     CS_AT,
     CS_DQUO,
     CS_POUN,
     CS_BSLS,
-    
     CS_MINS,
     CS_DOT,
     CS_COMM,
     CS_QUES,
     CS_SCLN,
     
-    COM_DOT,
-    QUE_EXL,
-
-    CS_END,
-    CS_HOME,
-    CS_TAB,
-
-    BASIC,
-    BASE,
-    MENU,
-    
-    ALTTAB,
-
-    MUTE,
-    CS_VOLD,
-    CS_VOLU,
-
-    CS_VALU,
-    CS_VALD,
-    CS_RGBN,
-    CS_RGBT,
-    
     // Home block mods
     CS_RBRC,
     CS_RPRN,
     CS_LPRN,
 
-    CLOCKUP,
-    CLOCKDN,
-    CLOCKNX,
-    OLEDSAV,
-
+    // Combos
     CM_MOUSE,
 
     CM_CIRC,
@@ -108,6 +106,7 @@ enum custom_keycodes {
 
 // Custom tap-hold keys
 #define CS_BOOT LT(0,KC_ESC)
+
 
 
 // Home block mods
@@ -132,9 +131,7 @@ enum custom_keycodes {
 #define MTA_E LALT_T(KC_E)
 #define MTA_I RGUI_T(KC_I)
 
-
 // Symbol home block mods
-
 #define MT_RBRC LT(0,CS_RBRC)
 #define MT_RPRN LT(0,CS_RPRN)
 #define MT_LPRN LT(0,CS_LPRN)
@@ -160,7 +157,10 @@ enum custom_keycodes {
 #define CS_AL2 LT(_EDIT,CS_BSLS)
 #define CS_AL3 LT(_EDIT,CS_SCLN)
 
-#define CS_CTRL LM(_CONTROL, MOD_LCTL)
+
+
+// Control keys
+#define CS_LCTL LM(_CONTROL, MOD_LCTL)
 
 #define UNDO LCTL(KC_Z)
 #define REDO LCTL(KC_Y)
@@ -186,7 +186,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_A,    MT_S,    MT_D,    MT_F,    KC_G,                         KC_H,    MT_J,    MT_K,    MT_L, KC_SCLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_CTRL, CS_BSLS,    KC_Z,    KC_X,    MT_C,    KC_V,                         KC_B,    MT_N,    KC_M, COM_DOT, QUE_EXL, KC_QUOT,
+          CS_LCTL, CS_BSLS,    KC_Z,    KC_X,    MT_C,    KC_V,                         KC_B,    MT_N,    KC_M, COM_DOT, QUE_EXL, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -198,7 +198,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_CTRL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, KC_MINS, COM_DOT, QUE_EXL, KC_QUOT,
+          CS_LCTL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, KC_MINS, COM_DOT, QUE_EXL, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -585,6 +585,40 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
+bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case MT_S:
+        case MT_D:
+        case MT_F:
+        case MT_C:
+        case MT_N:
+        case MT_J:
+        case MT_K:
+        case MT_L:
+
+        case MTA_R:
+        case MTA_T:
+        case MTA_S:
+        case MTA_W:
+        case MTA_P:
+        case MTA_H:
+        case MTA_E:
+        case MTA_I:
+
+        case MT_RBRC:
+        case MT_RPRN:
+        case MT_LPRN:
+        case MT_UNDS:
+
+        case MT_PLUS:
+        case MT_MINS:
+        case MT_EQL:
+        case MT_COMM:
+        default:
+            return true;
+            // Immediately select the hold action when another key is tapped.
+    }
+}
 
 uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
     switch (tap_hold_keycode) {
@@ -1124,9 +1158,9 @@ bool process_vol_repeat(uint16_t keycode, keyrecord_t* record) {
 
 
 
-
-
-
+//==============================================================================
+// Clock
+//==============================================================================
 
 uint32_t clock_callback(uint32_t trigger_time, void* cb_arg) {
     sec++;
@@ -2069,21 +2103,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 }
 
 //==============================================================================
-// OSM
-//==============================================================================
-
-// bool ONESHOT_SHIFT = false;
-// void oneshot_mods_changed_user(uint8_t mods) {
-//     if (mods & MOD_MASK_SHIFT) {
-//         ONESHOT_SHIFT = true;
-//     }
-//     if (!mods) {
-//         ONESHOT_SHIFT = false;
-//     }
-// }
-
-
-//==============================================================================
 // OLED
 //==============================================================================
 
@@ -2493,7 +2512,7 @@ bool oled_task_user(void) {
         }
     } else {
         if (static_display || sync_data.static_display_sync) {
-            ;
+            /* intentionally blank */;
             // oled_write_raw_P(static_left, frame_size);
         } else {
             render_draw();
@@ -2651,8 +2670,8 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 void keyboard_post_init_user(void) {
     debug_enable = true;
-    // debug_matrix = true;
-    // debug_keyboard = true;
+    debug_matrix = true;
+    debug_keyboard = true;
     debug_mouse = true;
     rgb_matrix_set_speed_noeeprom(64);
     rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE);

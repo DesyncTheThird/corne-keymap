@@ -65,7 +65,7 @@ timeout managed manually in keymap instead.
 #define TAPPING_TOGGLE 2
 
 #undef ONESHOT_TAP_TOGGLE
-#define ONESHOT_TAP_TOGGLE 5
+#define ONESHOT_TAP_TOGGLE 3
 #undef ONESHOT_TIMEOUT
 #define ONESHOT_TIMEOUT 1000
 // #define NO_ACTION_ONESHOT
@@ -83,11 +83,16 @@ timeout managed manually in keymap instead.
 
 // Timer for mod and layer taps
 #undef TAPPING_TERM
-#define TAPPING_TERM 250
+#define TAPPING_TERM 200
 #define TAPPING_TERM_PER_KEY
 
-// Perform hold action if other keys are pressed.
+// Perform hold action if other keys are pressed (nested/rolled activations).
 #define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
+
+// Perform hold action if other keys are pressed (nested only).
+#define PERMISSIVE_HOLD_PER_KEY
+
+#define ACHORDION_STREAK
 
 // Disable repeating tap function on tap-hold keys.
 // #define QUICK_TAP_TERM 0
