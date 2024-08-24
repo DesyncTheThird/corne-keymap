@@ -61,6 +61,8 @@ Key on utility layer available to change both OLEDs to static images.
 
 ![Mouse](images/mouse.png?raw=true)
 
+![Control](images/control.png?raw=true)
+
 # Combos
 
 ![Combos](images/combos.png?raw=true)
