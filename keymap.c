@@ -131,6 +131,8 @@ enum custom_keycodes {
 #define MTA_E LALT_T(KC_E)
 #define MTA_I RGUI_T(KC_I)
 
+#define TAB_SFT RSFT_T(KC_TAB)
+
 // Symbol home block mods
 #define MT_RBRC LT(0,CS_RBRC)
 #define MT_RPRN LT(0,CS_RPRN)
@@ -186,7 +188,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT,    KC_A,    MT_S,    MT_D,    MT_F,    KC_G,                         KC_H,    MT_J,    MT_K,    MT_L, KC_SCLN,  KC_TAB,
+          KC_LSFT,    KC_A,    MT_S,    MT_D,    MT_F,    KC_G,                         KC_H,    MT_J,    MT_K,    MT_L, KC_SCLN, TAB_SFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           CS_LCTL, CS_BSLS,    KC_Z,    KC_X,    MT_C,    KC_V,                         KC_B,    MT_N,    KC_M, COM_DOT, QUE_EXL, KC_QUOT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -198,14 +200,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,    KC_Z,    KC_L,    KC_D,    KC_C,    KC_B,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A,  KC_TAB,
+          KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A, TAB_SFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, KC_MINS, COM_DOT, QUE_EXL, KC_QUOT,
+          CS_LCTL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, KC_QUOT, COM_DOT, QUE_EXL, KC_MINS,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
     ),
-    
+
     [_CONTROL] = LAYOUT( //2
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______,   LEVEL,   MERGE,   CLOSE, REFRESH,     TAB,                         REDO, _______, _______, _______, _______, _______,
@@ -277,7 +279,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                               CS_UNDS,  CS_AL3,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
-    
+
     [_EDIT] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC, KC_PAUS, CS_HOME,   KC_UP,  CS_END,  KC_TAB,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
@@ -548,6 +550,8 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case MT_MINS:
         case MT_EQL:
         case MT_COMM:
+
+        case TAB_SFT:
             return 0;
         default:
             return TAPPING_TERM;
@@ -562,6 +566,10 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case CS_RT1:
         case CS_RT2:
         case CS_RT3:
+
+        // shift mods
+        case MTA_H:
+        case MTA_S:
             return 150;
         default:
             return TAPPING_TERM;
@@ -616,6 +624,8 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
         case MT_MINS:
         case MT_EQL:
         case MT_COMM:
+
+        case TAB_SFT:
         default:
             return true;
             // Immediately select the hold action when another key is tapped.
@@ -635,10 +645,12 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
         case CS_AL1:
         case CS_AL2:
         case CS_AL3:
+        
+        case CS_BOOT:
             return 0;
 
         default:
-            return TAPPING_TERM;
+            return 500;
     }
 }
 
@@ -653,6 +665,7 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
         case MT_J:
         case MT_K:
         case MT_L:
+
         case MTA_R:
         case MTA_T:
         case MTA_S:
@@ -661,14 +674,35 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
         case MTA_H:
         case MTA_E:
         case MTA_I:
+        
         case CS_RT2:
+
+        case TAB_SFT:
             return achordion_opposite_hands(tap_hold_record, other_record);
         default:
             return true;
     }
 }
 
+uint16_t achordion_streak_chord_timeout(
+    uint16_t tap_hold_keycode, uint16_t next_keycode) {
+  return 200;
+}
 
+bool achordion_eager_mod(uint8_t mod) {
+    switch (mod) {
+        case MOD_LSFT:
+        case MOD_RSFT:
+        case MOD_LCTL:
+        case MOD_RCTL:
+        case MOD_LALT:
+        case MOD_RALT:
+            return true;  // Eagerly apply Shift and Ctrl mods.
+
+        default:
+            return false;
+    }
+}
 
 bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_AL2) {
@@ -701,46 +735,6 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
     }
     return true;
 }
-//==============================================================================
-// Modifier+key overrides
-//==============================================================================
-
-// const key_override_t redo = ko_make_basic(MOD_MASK_CS, KC_Z, C(KC_Y));
-
-// const key_override_t undo    = ko_make_with_layers(MOD_MASK_CTRL, KC_X,  C(KC_Z), (1 << _BASE));
-// const key_override_t redo    = ko_make_with_layers(MOD_MASK_CTRL, KC_Q,  C(KC_Y), (1 << _BASE));
-// const key_override_t cut     = ko_make_with_layers(MOD_MASK_CTRL, KC_M,  C(KC_X), (1 << _BASE));
-// const key_override_t copy    = ko_make_with_layers(MOD_MASK_CTRL, MTA_W, C(KC_C), (1 << _BASE));
-// const key_override_t paste   = ko_make_with_layers(MOD_MASK_CTRL, KC_B,  C(KC_V), (1 << _BASE));
-// const key_override_t find    = ko_make_with_layers(MOD_MASK_CTRL, MTA_S, C(KC_F), (1 << _BASE));
-// const key_override_t save    = ko_make_with_layers(MOD_MASK_CTRL, MTA_T, C(KC_S), (1 << _BASE));
-// const key_override_t all     = ko_make_with_layers(MOD_MASK_CTRL, MTA_R, C(KC_A), (1 << _BASE));
-// const key_override_t close   = ko_make_with_layers(MOD_MASK_CTRL, KC_D,  C(KC_W), (1 << _BASE));
-// const key_override_t tab     = ko_make_with_layers(MOD_MASK_CTRL, KC_V,  C(KC_T), (1 << _BASE));
-// const key_override_t window  = ko_make_with_layers(MOD_MASK_CTRL, KC_G,  C(KC_N), (1 << _BASE));
-// const key_override_t refresh = ko_make_with_layers(MOD_MASK_CTRL, KC_C,  C(KC_R), (1 << _BASE));
-// const key_override_t merge   = ko_make_with_layers(MOD_MASK_CTRL, KC_L,  C(KC_E), (1 << _BASE));
-
-// const key_override_t bold    = ko_make_with_layers(MOD_MASK_CTRL, KC_K,  C(KC_B), (1 << _BASE));
-
-
-// const key_override_t **key_overrides = (const key_override_t *[]){
-//     &undo,
-//     &redo,
-//     &cut,
-//     &copy,
-//     &paste,
-//     &find,
-//     &save,
-//     &all,
-//     &close,
-//     &tab,
-//     &window,
-//     &refresh,
-//     &merge,
-//     &bold,
-//     NULL
-// };
 
 //==============================================================================
 // Combos
@@ -782,10 +776,10 @@ enum combo_events {
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
 const uint16_t PROGMEM touhou[]         = {KC_P, CS_HASH, KC_ESC, COMBO_END};
-const uint16_t PROGMEM steno[]          = {KC_P, CS_HASH, KC_SCLN, KC_TAB, COMBO_END};
+const uint16_t PROGMEM steno[]          = {KC_P, CS_HASH, KC_SCLN, TAB_SFT, COMBO_END};
 const uint16_t PROGMEM numpad[]         = {KC_O, KC_P, CS_HASH, COMBO_END};
 const uint16_t PROGMEM mouse[]          = {KC_SCLN, QUE_EXL, COMBO_END};
-const uint16_t PROGMEM mouse2[]         = {KC_TAB, KC_QUOT, COMBO_END};
+const uint16_t PROGMEM mouse2[]         = {TAB_SFT, KC_QUOT, COMBO_END};
 
 const uint16_t PROGMEM l_exponent[]     = {KC_W, KC_E, COMBO_END};
 const uint16_t PROGMEM l_comma[]        = {MT_D, MT_C, COMBO_END};
@@ -793,8 +787,8 @@ const uint16_t PROGMEM l_dot[]          = {MT_S, MT_D, COMBO_END};
 const uint16_t PROGMEM l_underscore[]   = {KC_X, MT_C, COMBO_END};
 const uint16_t PROGMEM l_asterisk[]     = {MT_F, KC_V, COMBO_END};
 const uint16_t PROGMEM l_equals[]       = {KC_E, KC_R, COMBO_END};
-const uint16_t PROGMEM l_plus[]         = {MT_D, MT_F, COMBO_END};
-const uint16_t PROGMEM l_minus[]        = {MT_F, KC_G, COMBO_END};
+const uint16_t PROGMEM l_plus[]         = {MT_F, KC_G, COMBO_END};
+const uint16_t PROGMEM l_minus[]        = {MT_D, MT_F, COMBO_END};
 
 const uint16_t PROGMEM exclamation[]    = {MT_S, KC_E, COMBO_END};
 const uint16_t PROGMEM colon[]          = {KC_E, MT_F, COMBO_END};
@@ -805,8 +799,8 @@ const uint16_t PROGMEM r_dot[]          = {MT_K, MT_L, COMBO_END};
 const uint16_t PROGMEM r_underscore[]   = {MT_N, KC_M, COMBO_END};
 const uint16_t PROGMEM r_asterisk[]     = {KC_B, MT_J, COMBO_END};
 const uint16_t PROGMEM r_equals[]       = {KC_U, KC_I, COMBO_END};
-const uint16_t PROGMEM r_plus[]         = {MT_J, MT_K, COMBO_END};
-const uint16_t PROGMEM r_minus[]        = {KC_H, MT_J, COMBO_END};
+const uint16_t PROGMEM r_plus[]         = {KC_H, MT_J, COMBO_END};
+const uint16_t PROGMEM r_minus[]        = {MT_J, MT_K, COMBO_END};
 
 const uint16_t PROGMEM semicolon[]      = {MT_J, KC_I, COMBO_END};
 const uint16_t PROGMEM ampersand[]      = {KC_I, MT_L, COMBO_END};
