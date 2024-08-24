@@ -9,6 +9,7 @@
 - Common symbols and punctuation accessible through combos with many duplicated on both sides; combos trigger through most layers.
 - Repeat key on right thumb, magic key on left thumb.
 - Home block mods on main layer (toggle-able).
+- Control key overrides for easier left-hand only use; overrides disabled on home block mods.
 - Symbol layer optimised for (La)TeX editing, with brackets and many common strings as inward rolls, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `<-`, `<=`, `->`, `>=`, `|->`, `:-`, `&=`, etc. (Intended to be used with snippet extensions.) Backslash also on main thumb key on this layer.
 - Brackets duplicated on Edit layer for easier access.
 - Program layer optimised for c programming, with comparison operators as inward rolls, logical/bitwise operators symbols closely grouped on index finger, etc.
@@ -45,6 +46,9 @@
 
 Key on utility layer available to change both OLEDs to static images.
 
+# Combos
+
+![Combos](images/combos.png?raw=true)
 
 # Layers
 ![Base](images/base.png?raw=true)
@@ -63,9 +67,6 @@ Key on utility layer available to change both OLEDs to static images.
 
 ![Control](images/control.png?raw=true)
 
-# Combos
-
-![Combos](images/combos.png?raw=true)
 
 # Alt Base Layer
 
