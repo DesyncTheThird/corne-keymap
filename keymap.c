@@ -72,6 +72,7 @@ enum custom_keycodes {
     CS_SLSH,
     CS_EQL,
     CS_AT,
+    CS_QUOT,
     CS_DQUO,
     CS_POUN,
     CS_BSLS,
@@ -204,7 +205,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A, TAB_SFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, APO_QUO, COM_DOT, QUE_EXL, MINS_AT,
+          CS_LCTL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, CS_QUOT, COM_DOT, QUE_EXL, MINS_AT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -1591,6 +1592,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_DQUO);
+                set_mods(mods);
+            }
+            break;
+        case CS_QUOT:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_QUOT);
                 set_mods(mods);
             }
             break;
