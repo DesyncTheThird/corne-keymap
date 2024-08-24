@@ -52,6 +52,8 @@ enum custom_keycodes {
     // Custom Symbols
     COM_DOT,
     QUE_EXL,
+    MINS_AT,
+    APO_QUO,
 
     CS_COLN,
     CS_UNDS,
@@ -202,7 +204,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A, TAB_SFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, KC_QUOT, COM_DOT, QUE_EXL, KC_MINS,
+          CS_LCTL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, APO_QUO, COM_DOT, QUE_EXL, MINS_AT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -1425,6 +1427,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 }
             }
             break;
+
         case CS_BOOT:
             if (!record->tap.count && record->event.pressed) {
                 reset_keyboard();
@@ -1434,412 +1437,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        // =====================================================================
-        // Combos
-        // =====================================================================
-
-        case CM_MOUSE:
-            if (record->event.pressed) {
-                layer_on(_MOUSE);
-            } else {
-                layer_off(_MOUSE);
-            }
-            break;
-
-        // Combo actions
-        case CM_CIRC:
+        case CS_END:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_CIRC);
+                del_mods(MOD_MASK_CTRL);
+                tap_code(KC_END);
                 set_mods(mods);
             }
             break;
-        case CM_COMM:
+        case CS_HOME:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_COMM);
+                del_mods(MOD_MASK_CTRL);
+                tap_code(KC_HOME);
                 set_mods(mods);
             }
             break;
-        case CM_DOT:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_DOT);
-                set_mods(mods);
-            }
-            break;
-        case CM_UNDS:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_UNDS);
-                set_mods(mods);
-            }
-            break;
-        case CM_ASTR:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_ASTR);
-                set_mods(mods);
-            }
-            break;
-        case CM_EQL:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_EQL);
-                set_mods(mods);
-            }
-            break;
-        case CM_PLUS:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_PLUS);
-                set_mods(mods);
-            }
-            break;
-        case CM_MINS:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_MINS);
-                set_mods(mods);
-            }
-            break;
-            
-        case CM_AMPR:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_AMPR);
-                set_mods(mods);
-            }
-            break;
-        case CM_EXLM:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_EXLM);
-                set_mods(mods);
-            }
-            break;
-
-        case CM_COLN:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_COLN);
-                set_mods(mods);
-            }
-            break;
-        case CM_SCLN:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_SCLN);
-                set_mods(mods);
-            }
-            break;
-
-        // =====================================================================
-        // Mod-taps
-        // =====================================================================
-
-        // Edit layer
-        case MT_RBRC:
-        {
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_MASK_CTRL);
-            } else {
-                unregister_mods(MOD_MASK_CTRL);
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_RBRC);
-                set_mods(mods);
-            }
-            return false;
-        }
-            break;
-        case MT_RPRN:
-        {
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_MASK_SHIFT);
-            } else {
-                unregister_mods(MOD_MASK_SHIFT);
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_RPRN);
-                set_mods(mods);
-            }
-            return false;
-        }
-            break;
-
-        case MT_LPRN:
-        {
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LALT));
-            } else {
-                unregister_mods(MOD_BIT(KC_LALT));
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_LPRN);
-                set_mods(mods);
-            }
-            return false;
-        }
-            break;
-
-        case MT_UNDS:
-        {
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_MASK_GUI);
-            } else {
-                unregister_mods(MOD_MASK_GUI);
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_UNDS);
-                set_mods(mods);
-            }
-            return false;
-        }
-            break;
-
-
-
-        // Data layer
-        case MT_COMM:
-        {
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_MASK_CTRL);
-            } else {
-                unregister_mods(MOD_MASK_CTRL);
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_COMM);
-                set_mods(mods);
-            }
-            return false;
-        }
-            break;
-        case MT_EQL:
-        {
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_MASK_SHIFT);
-            } else {
-                unregister_mods(MOD_MASK_SHIFT);
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_EQL);
-                set_mods(mods);
-            }
-            return false;
-        }
-            break;
-
-        case MT_MINS:
-        {
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LALT));
-            } else {
-                unregister_mods(MOD_BIT(KC_LALT));
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_MINS);
-                set_mods(mods);
-            }
-            return false;
-        }
-            break;
-
-        case MT_PLUS:
-        {
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_MASK_GUI);
-            } else {
-                unregister_mods(MOD_MASK_GUI);
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_PLUS);
-                set_mods(mods);
-            }
-            return false;
-        }
-            break;
-
-        // =====================================================================
-        // Repeat key
-        // =====================================================================
-
-        case KC_A:
-        // case MT_A:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_A;
-            }
-            break;
-        case KC_B:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_B;
-            }
-            break;
-        case KC_C:
-        case MT_C:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_C;
-            }
-            break;
-        case KC_D:
-        case MT_D:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_D;
-            }
-            break;
-        case KC_E:
-        case MTA_E:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_E;
-            }
-            break;
-        case KC_F:
-        case MT_F:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_F;
-            }
-            break;
-        case KC_G:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_G;
-            }
-            break;
-        case KC_H:
-        case MTA_H:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_H;
-            }
-            break;
-        case KC_I:
-        case MTA_I:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_I;
-            }
-            break;
-        case KC_J:
-        case MT_J:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_J;
-            }
-            break;
-        case KC_K:
-        case MT_K:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_K;
-            }
-            break;
-        case KC_L:
-        case MT_L:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_L;
-            }
-            break;
-        case KC_M:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_M;
-            }
-            break;
-        case KC_N:
-        case MT_N:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_N;
-            }
-            break;
-        case KC_O:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_O;
-            }
-            break;
-        case KC_P:
-        case MTA_P:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_P;
-            }
-            break;
-        case KC_Q:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_Q;
-            }
-            break;
-        case KC_R:
-        case MTA_R:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_R;
-            }
-            break;
-        case KC_S:
-        case MT_S:
-        case MTA_S:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_S;
-            }
-            break;
-        case KC_T:
-        case MTA_T:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_T;
-            }
-            break;
-        case KC_U:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_U;
-            }
-            break;
-        case KC_V:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_V;
-            }
-            break;
-        case KC_W:
-        case MTA_W:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_W;
-            }
-            break;
-        case KC_X:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_X;
-            }
-            break;
-        case KC_Y:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_Y;
-            }
-            break;
-        case KC_Z:
-            if (record->event.pressed && no_ctrl()) {
-                last_key = KC_Z;
-            }
-            break;
-
 
         // =====================================================================
         // Custom symbol handling
@@ -2078,20 +1691,441 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        case CS_END:
+        case APO_QUO:
+            if (record->event.pressed) {
+                if (shifted()) {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code16(KC_AT);
+                    set_mods(mods);
+                } else {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code16(KC_QUOT);
+                    set_mods(mods);
+                }
+            }
+            break;
+
+        case MINS_AT:
+            if (record->event.pressed) {
+                if (shifted()) {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code16(KC_DQUO);
+                    set_mods(mods);
+                } else {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code(KC_MINS);
+                    set_mods(mods);
+                }
+            }
+            break;
+
+        // =====================================================================
+        // Mod-taps
+        // =====================================================================
+
+        // Edit layer
+        case MT_RBRC:
+        {
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_MASK_CTRL);
+            } else {
+                unregister_mods(MOD_MASK_CTRL);
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_RBRC);
+                set_mods(mods);
+            }
+            return false;
+        }
+            break;
+        case MT_RPRN:
+        {
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_MASK_SHIFT);
+            } else {
+                unregister_mods(MOD_MASK_SHIFT);
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_RPRN);
+                set_mods(mods);
+            }
+            return false;
+        }
+            break;
+
+        case MT_LPRN:
+        {
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_BIT(KC_LALT));
+            } else {
+                unregister_mods(MOD_BIT(KC_LALT));
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_LPRN);
+                set_mods(mods);
+            }
+            return false;
+        }
+            break;
+
+        case MT_UNDS:
+        {
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_MASK_GUI);
+            } else {
+                unregister_mods(MOD_MASK_GUI);
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_UNDS);
+                set_mods(mods);
+            }
+            return false;
+        }
+            break;
+
+
+
+        // Data layer
+        case MT_COMM:
+        {
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_MASK_CTRL);
+            } else {
+                unregister_mods(MOD_MASK_CTRL);
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_COMM);
+                set_mods(mods);
+            }
+            return false;
+        }
+            break;
+        case MT_EQL:
+        {
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_MASK_SHIFT);
+            } else {
+                unregister_mods(MOD_MASK_SHIFT);
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_EQL);
+                set_mods(mods);
+            }
+            return false;
+        }
+            break;
+
+        case MT_MINS:
+        {
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_BIT(KC_LALT));
+            } else {
+                unregister_mods(MOD_BIT(KC_LALT));
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_MINS);
+                set_mods(mods);
+            }
+            return false;
+        }
+            break;
+
+        case MT_PLUS:
+        {
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_MASK_GUI);
+            } else {
+                unregister_mods(MOD_MASK_GUI);
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_PLUS);
+                set_mods(mods);
+            }
+            return false;
+        }
+            break;
+
+        // =====================================================================
+        // Combos
+        // =====================================================================
+
+        case CM_MOUSE:
+            if (record->event.pressed) {
+                layer_on(_MOUSE);
+            } else {
+                layer_off(_MOUSE);
+            }
+            break;
+
+        // Combo actions
+        case CM_CIRC:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CTRL);
-                tap_code(KC_END);
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_CIRC);
                 set_mods(mods);
             }
             break;
-        case CS_HOME:
+        case CM_COMM:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CTRL);
-                tap_code(KC_HOME);
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_COMM);
                 set_mods(mods);
+            }
+            break;
+        case CM_DOT:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_DOT);
+                set_mods(mods);
+            }
+            break;
+        case CM_UNDS:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_UNDS);
+                set_mods(mods);
+            }
+            break;
+        case CM_ASTR:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_ASTR);
+                set_mods(mods);
+            }
+            break;
+        case CM_EQL:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_EQL);
+                set_mods(mods);
+            }
+            break;
+        case CM_PLUS:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_PLUS);
+                set_mods(mods);
+            }
+            break;
+        case CM_MINS:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_MINS);
+                set_mods(mods);
+            }
+            break;
+            
+        case CM_AMPR:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_AMPR);
+                set_mods(mods);
+            }
+            break;
+        case CM_EXLM:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_EXLM);
+                set_mods(mods);
+            }
+            break;
+
+        case CM_COLN:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_COLN);
+                set_mods(mods);
+            }
+            break;
+        case CM_SCLN:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_SCLN);
+                set_mods(mods);
+            }
+            break;
+
+        // =====================================================================
+        // Repeat key
+        // =====================================================================
+
+        case KC_A:
+        // case MT_A:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_A;
+            }
+            break;
+        case KC_B:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_B;
+            }
+            break;
+        case KC_C:
+        case MT_C:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_C;
+            }
+            break;
+        case KC_D:
+        case MT_D:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_D;
+            }
+            break;
+        case KC_E:
+        case MTA_E:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_E;
+            }
+            break;
+        case KC_F:
+        case MT_F:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_F;
+            }
+            break;
+        case KC_G:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_G;
+            }
+            break;
+        case KC_H:
+        case MTA_H:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_H;
+            }
+            break;
+        case KC_I:
+        case MTA_I:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_I;
+            }
+            break;
+        case KC_J:
+        case MT_J:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_J;
+            }
+            break;
+        case KC_K:
+        case MT_K:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_K;
+            }
+            break;
+        case KC_L:
+        case MT_L:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_L;
+            }
+            break;
+        case KC_M:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_M;
+            }
+            break;
+        case KC_N:
+        case MT_N:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_N;
+            }
+            break;
+        case KC_O:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_O;
+            }
+            break;
+        case KC_P:
+        case MTA_P:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_P;
+            }
+            break;
+        case KC_Q:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_Q;
+            }
+            break;
+        case KC_R:
+        case MTA_R:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_R;
+            }
+            break;
+        case KC_S:
+        case MT_S:
+        case MTA_S:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_S;
+            }
+            break;
+        case KC_T:
+        case MTA_T:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_T;
+            }
+            break;
+        case KC_U:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_U;
+            }
+            break;
+        case KC_V:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_V;
+            }
+            break;
+        case KC_W:
+        case MTA_W:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_W;
+            }
+            break;
+        case KC_X:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_X;
+            }
+            break;
+        case KC_Y:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_Y;
+            }
+            break;
+        case KC_Z:
+            if (record->event.pressed && no_ctrl()) {
+                last_key = KC_Z;
             }
             break;
     }
