@@ -1,6 +1,7 @@
 .vscode
 *.kra
+*.mp4
 menu
-case
-features
 OLED frames
+features
+case
