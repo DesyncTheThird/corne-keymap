@@ -1,8 +1,8 @@
 # Desync's Keymap
 ![Layout](images/layout.png?raw=true)
 
-<img src="./images/left.gif" height="250">   <img src="./images/right.jpg" height="250">   <img src="./images/waves.png" height="250">   <img src="./images/four-byte-burger.png" height="250">
 
+<img src="./images/left.gif" height="225"> <img src="./images/right.jpg" height="225"> <img src="./images/base display.png" height="225"> <img src="./images/edit display.png" height="225"> <img src="./images/waves.png" height="225"> <img src="./images/four-byte-burger.png" height="225">
 
 ---
 # Features
