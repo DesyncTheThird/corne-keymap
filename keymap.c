@@ -27,6 +27,7 @@ enum custom_keycodes {
     REP,
     MAGIC,
     ALTTAB,
+    NEWSENT,
 
     BASIC,
     BASE,
@@ -150,7 +151,7 @@ enum custom_keycodes {
 
 
 // Layer keys
-#define CS_LT3 LT(_UTILITY,KC_ENT)
+#define CS_LT3 LT(_UTILITY,NEWSENT)
 #define CS_LT2 LT(_EDIT,MAGIC)
 #define CS_LT1 LT(_DATA,KC_SPC)
 
@@ -205,7 +206,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A, TAB_SFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, CS_QUOT, COM_DOT, QUE_EXL, MINS_AT,
+          CS_LCTL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, KC_QUOT, COM_DOT, QUE_EXL,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -708,6 +709,22 @@ bool achordion_eager_mod(uint8_t mod) {
 }
 
 bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
+    if (keycode == CS_LT3) {
+        if (!record->tap.count && record->event.pressed) {
+            layer_on(_UTILITY);
+        } else {
+            layer_off(_UTILITY);
+        }
+        if (record->tap.count && record->event.pressed) {
+            const uint8_t mods = get_mods();
+            del_mods(MOD_MASK_SHIFT);
+            SEND_STRING(". ");
+            set_mods(mods);
+            add_oneshot_mods(MOD_BIT(KC_LSFT));
+        }
+        return false;
+    }
+    
     if (keycode == CS_AL2) {
         if (!record->tap.count && record->event.pressed) {
             layer_on(_EDIT);
