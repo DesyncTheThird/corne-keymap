@@ -943,8 +943,15 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
 //==============================================================================
 
 uint16_t last_key = KC_NO;
+uint16_t last_key_2 = KC_NO;
 
 bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
+    if (keycode == CS_RT1) {
+        if (record->tap.count && record->event.pressed) {
+            last_key = last_key_2;
+        }
+        return true;
+    }
     if (keycode == CS_LT2) {
         if (!record->tap.count && record->event.pressed) {
             layer_on(_EDIT);
@@ -1004,12 +1011,23 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
             layer_off(_PROGRAM);
         }
         if (record->tap.count && record->event.pressed) {
-            tap_code(last_key);
+            switch (last_key) {
+                case KC_I: SEND_STRING(/*i*/"ng"); break;
+                case KC_V: SEND_STRING(/*v*/"er"); break;
+                case KC_Q: tap_code(KC_U); break;
+
+                default: tap_code(last_key); break;
+            }
+            return false;
         }
-        return false;
     }
-    
     return true;
+}
+
+
+void update_last_key(uint16_t new_keycode) {
+    last_key_2 = last_key;
+    last_key = new_keycode;
 }
 
 //==============================================================================
@@ -2010,148 +2028,148 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case KC_A:
         // case MT_A:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_A;
+                update_last_key(KC_A);
             }
             break;
         case KC_B:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_B;
+                update_last_key(KC_B);
             }
             break;
         case KC_C:
         case MT_C:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_C;
+                update_last_key(KC_C);
             }
             break;
         case KC_D:
         case MT_D:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_D;
+                update_last_key(KC_D);
             }
             break;
         case KC_E:
         case MTA_E:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_E;
+                update_last_key(KC_E);
             }
             break;
         case KC_F:
         case MT_F:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_F;
+                update_last_key(KC_F);
             }
             break;
         case KC_G:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_G;
+                update_last_key(KC_G);
             }
             break;
         case KC_H:
         case MTA_H:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_H;
+                update_last_key(KC_H);
             }
             break;
         case KC_I:
         case MTA_I:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_I;
+                update_last_key(KC_I);
             }
             break;
         case KC_J:
         case MT_J:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_J;
+                update_last_key(KC_J);
             }
             break;
         case KC_K:
         case MT_K:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_K;
+                update_last_key(KC_K);
             }
             break;
         case KC_L:
         case MT_L:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_L;
+                update_last_key(KC_L);
             }
             break;
         case KC_M:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_M;
+                update_last_key(KC_M);
             }
             break;
         case KC_N:
         case MT_N:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_N;
+                update_last_key(KC_N);
             }
             break;
         case KC_O:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_O;
+                update_last_key(KC_O);
             }
             break;
         case KC_P:
         case MTA_P:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_P;
+                update_last_key(KC_P);
             }
             break;
         case KC_Q:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_Q;
+                update_last_key(KC_Q);
             }
             break;
         case KC_R:
         case MTA_R:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_R;
+                update_last_key(KC_R);
             }
             break;
         case KC_S:
         case MT_S:
         case MTA_S:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_S;
+                update_last_key(KC_S);
             }
             break;
         case KC_T:
         case MTA_T:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_T;
+                update_last_key(KC_T);
             }
             break;
         case KC_U:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_U;
+                update_last_key(KC_U);
             }
             break;
         case KC_V:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_V;
+                update_last_key(KC_V);
             }
             break;
         case KC_W:
         case MTA_W:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_W;
+                update_last_key(KC_W);
             }
             break;
         case KC_X:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_X;
+                update_last_key(KC_X);
             }
             break;
         case KC_Y:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_Y;
+                update_last_key(KC_Y);
             }
             break;
         case KC_Z:
             if (record->event.pressed && no_ctrl()) {
-                last_key = KC_Z;
+                update_last_key(KC_Z);
             }
             break;
     }
