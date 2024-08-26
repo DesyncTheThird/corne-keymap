@@ -1012,9 +1012,11 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
         }
         if (record->tap.count && record->event.pressed) {
             switch (last_key) {
+                case KC_A: SEND_STRING(/*a*/"nd"); break;
                 case KC_I: SEND_STRING(/*i*/"ng"); break;
-                case KC_V: SEND_STRING(/*v*/"er"); break;
                 case KC_Q: tap_code(KC_U); break;
+                case KC_V: SEND_STRING(/*v*/"er"); break;
+                case KC_Y: SEND_STRING(/*y*/"ou"); break;
 
                 default: tap_code(last_key); break;
             }
