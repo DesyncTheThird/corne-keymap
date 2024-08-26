@@ -30,6 +30,13 @@
 | Prev  | `N`   | `O` | `P` | `Q` | `R` | `S` | `T`   | `U` | `V`  | `W` | `X` | `Y` | `Z` |
 | Magic | `ION` | `E` | `H` | `U` | `L` | `C` | `ION` | `I` | `ER` | `S` | --  | --  | --  |
 
+### Repeat Key Overrides
+
+|     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- |
+| Prev   | `A`  | `I`  | `Q` | `V`  | `Y`  |
+| Repeat | `ND` | `NG` | `U` | `ER` | `OU` |
+
 
 
 ## OLEDs
