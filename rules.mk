@@ -6,7 +6,7 @@ SRC += features/achordion.c
 COMBO_ENABLE = yes
 
 DEFERRED_EXEC_ENABLE = yes
-KEY_OVERRIDE_ENABLE = yes
+# KEY_OVERRIDE_ENABLE = yes
 
 STENO_ENABLE = yes
 STENO_PROTOCOL = geminipr
