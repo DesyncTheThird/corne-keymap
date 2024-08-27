@@ -39,6 +39,12 @@
 
 `Repeat` key just repeats any other key; these overrides are on letters that are not commonly repeated.
 
+Repeat/magic key outputs are not tracked:
+
+> `b [Magic] [Rep]` produces `b s b` (`Rep` ignores `Magic` output and returns `b`, not `s`);
+> 
+> `b [Magic] [Magic]` produces `b s s` (`Magic` ignores `Magic` output and returns `s`, not `c`);
+
 `Backspace` reverts the tracked key to the previous distinct key:
 
 > `a b c [Rep]` produces `a b c c` (`Rep` returns `c`);
@@ -48,14 +54,6 @@
 Duplicated keys are not tracked:
 
 > `a b c c c c [BSPC] [Rep]` produces `a b c c c b` (`Rep` returns previous distinct tracked key `b`);
-
-Repeat/magic key outputs are not tracked:
-
-> `a [Rep] [Rep]` produces `a n d a` (`Rep` ignores `Rep` output and returns `a`, not `d`);
-> 
-> `b [Magic] [Rep]` produces `b s b` (`Rep` ignores `Magic` output and returns `b`, not `s`);
-> 
-> `b [Magic] [Magic]` produces `b s s` (`Magic` ignores `Magic` output and returns `s`, not `c`);
 
 
 ## OLEDs
