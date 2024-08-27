@@ -10,12 +10,12 @@
 - Repeat key on right thumb, magic key on left thumb.
 - Home block mods on main layer (toggle-able).
 - Control key overrides for easier left-hand only use; overrides disabled on home block mods.
-- Symbol layer optimised for (La)TeX editing, with brackets and many common strings as inward rolls, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `<-`, `<=`, `->`, `>=`, `|->`, `:-`, `&=`, etc. (Intended to be used with snippet extensions.) Backslash also on main thumb key on this layer.
-- Brackets duplicated on Edit layer for easier access.
-- Program layer optimised for c programming, with comparison operators as inward rolls, logical/bitwise operators symbols closely grouped on index finger, etc.
-- Number grid on right hand with [1,2,3] on home row.
+- Brackets/paired delimiters accessible on Edit layer with many common strings as inward rolls, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `?()`; also duplicated on Symbol and Program layers.
+- Symbol layer optimised for (La)TeX editing, with brackets and many common strings as inward rolls, e.g.; `<-`, `<=`, `->`, `>=`, `|->`, `<-`, `~>`, `:-`, `&=`, etc. (Intended to be used with snippet extensions.) Backslash also on main thumb key on this layer.
+- Program layer optimised for c programming, with comparison operators as inward rolls, logical/bitwise operators symbols grouped on index finger, etc.
+- Number layer with number grid on right hand with [1,2,3] on home row and common numerical punctuation on left hand.
 - Function layer on right hand, F1-F5 duplicated on left side for left-hand only usage.
-- Mouse emulation accessible on pinky keys; movement same position as arrow keys on navigation layer, scrolling underneath in vim layout.
+- Mouse emulation accessible on pinky key combo; movement same position as arrow keys on navigation layer, scrolling underneath in vim layout.
 - Steno layer (using GeminiPR) accessible through combo.
 
 ### Magic Key
@@ -32,10 +32,10 @@
 
 ### Repeat Key Overrides
 
-|     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- |
-| Prev   | `A`  | `I`  | `Q` | `V`  | `Y`  |
-| Repeat | `ND` | `NG` | `U` | `ER` | `OU` |
+|     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Prev   | `A`  | `H`   | `I`  | `J`   | `K`  | `Q` | `V`  | `W`   | `Y`  |
+| Repeat | `ND` | `ERE` | `NG` | `ECT` | `EY` | `U` | `ER` | `ITH` | `OU` |
 
 
 
