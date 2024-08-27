@@ -946,7 +946,7 @@ uint16_t last_key = KC_NO;
 uint16_t last_key_2 = KC_NO;
 
 bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
-    if (keycode == CS_RT1) {
+    if ((keycode == CS_RT1) || (keycode == KC_BSPC)) {
         if (record->tap.count && record->event.pressed) {
             last_key = last_key_2;
         }
@@ -1013,9 +1013,13 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
         if (record->tap.count && record->event.pressed) {
             switch (last_key) {
                 case KC_A: SEND_STRING(/*a*/"nd"); break;
+                case KC_H: SEND_STRING(/*h*/"ere"); break;
                 case KC_I: SEND_STRING(/*i*/"ng"); break;
+                case KC_J: SEND_STRING(/*j*/"ect"); break;
+                case KC_K: SEND_STRING(/*k*/"ey"); break;
                 case KC_Q: tap_code(KC_U); break;
                 case KC_V: SEND_STRING(/*v*/"er"); break;
+                case KC_W: SEND_STRING(/*w*/"ith"); break;
                 case KC_Y: SEND_STRING(/*y*/"ou"); break;
 
                 default: tap_code(last_key); break;
@@ -1028,8 +1032,10 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
 
 
 void update_last_key(uint16_t new_keycode) {
-    last_key_2 = last_key;
-    last_key = new_keycode;
+    if (new_keycode != last_key) {
+        last_key_2 = last_key;
+        last_key = new_keycode;
+    }
 }
 
 //==============================================================================
