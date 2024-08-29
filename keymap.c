@@ -969,6 +969,7 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
                 case KC_W: tap_code(KC_S); break;
                 case KC_V: SEND_STRING(/*v*/"ery"); break;
 
+                // Right hand overrides
                 case KC_J: SEND_STRING(/*j*/"ust"); break;
                 case KC_Y: SEND_STRING(/*y*/"ou"); break;
                 case KC_H: SEND_STRING(/*h*/"ere"); break;
@@ -991,21 +992,25 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
         if (record->tap.count && record->event.pressed) {
             switch (last_key) {
 
+                // Right hand keys
                 case KC_J: SEND_STRING(/*j*/"ect"); break;
-                case KC_K: SEND_STRING(/*k*/"ey"); break;
                 case KC_F: tap_code(KC_Y); break;
+                case KC_O: tap_code(KC_E); break;
                 case KC_U: tap_code(KC_I); break;
 
+                case KC_Y: tap_code(KC_P); break;
+                case KC_H: tap_code(KC_Y); break;
                 case KC_E: tap_code(KC_O); break;
                 case KC_I: tap_code(KC_U); break;
                 case KC_A: tap_code(KC_U); break;
+
                 case KC_K: tap_code(KC_Y); break;
                 case KC_P: tap_code(KC_H); break;
 
+                // Left hand overrides
                 case KC_Q: tap_code(KC_U); break;
                 case KC_V: SEND_STRING(/*v*/"er"); break;
                 case KC_W: SEND_STRING(/*w*/"ith"); break;
-                case KC_Y: SEND_STRING(/*y*/"ou"); break;
 
                 default: tap_code(last_key); break;
             }
@@ -1485,7 +1490,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case CS_LCTL:
             if (record->event.pressed) {
+                add_oneshot_mods(MOD_BIT(KC_LCTL));
             }
+            return true;
+            break;
 
         // =====================================================================
         // Custom symbol handling
@@ -2006,7 +2014,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_EXLM);
+                tap_code16(KC_COLN);
                 set_mods(mods);
             }
             break;

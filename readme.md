@@ -7,54 +7,87 @@
 ---
 # Features
 - Common symbols and punctuation accessible through combos with many duplicated on both sides; combos trigger through most layers.
-- Repeat key on right thumb, magic key on left thumb.
-- Home block mods on main layer (toggle-able).
+- `Repeat` key on right thumb, `Magic` key on left thumb.
+- Home block mods on main layer.
+- [Achordion](https://getreuer.info/posts/keyboards/achordion/index.html) enabled with opposite hand triggers and typing streak detection for home block mod and `Repeat`/`Magic` layer-tap safety.
 - Control key overrides for easier left-hand only use; overrides disabled on home block mods.
-- Brackets/paired delimiters accessible on Edit layer with many common strings as inward rolls, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `?()`; also duplicated on Symbol and Program layers.
-- Symbol layer optimised for (La)TeX editing, with brackets and many common strings as inward rolls, e.g.; `<-`, `<=`, `->`, `>=`, `|->`, `<-`, `~>`, `:-`, `&=`, etc. (Intended to be used with snippet extensions.) Backslash also on main thumb key on this layer.
-- Program layer optimised for c programming, with comparison operators as inward rolls, logical/bitwise operators symbols grouped on index finger, etc.
-- Number layer with number grid on right hand with [1,2,3] on home row and common numerical punctuation on left hand.
-- Function layer on right hand, F1-F5 duplicated on left side for left-hand only usage.
-- Mouse emulation accessible on pinky key combo; movement same position as arrow keys on navigation layer, scrolling underneath in vim layout.
-- Steno layer (using GeminiPR) accessible through combo.
+- Mouse emulation accessible on pinky key combo; movement keys in same position as arrow keys on navigation layer, scrolling underneath in vim layout.
+- Numpad and Steno (GeminiPR) layers accessible through combos.
+
+
+## Dynamic Keys
+
+`Repeat` and `Magic` are dynamic keys that return different outputs depending on the previous key.
+
+Despite the names, both keys have magic and repeat functionality: default behaviour is to repeat keys on opposite hand and (generally) swap first and second row keys on same hand. This eliminates many SFBs, turning them into alternations for repeated keys and rolls for many other SFBs.
+
+The most common use case for the same hand behaviour is for the vowel block on the right side, turning the `IU`, `UI`, `OE`, `EO` SFBs and the `AU` and `UA` scissors into rolls; as well as the various index finger SFBs on both sides (i.e., in the words `T[YP]E`, `[SC]IENCE`, `[PH]ONE`, `[HY]PHEN` or `H[YP]HEN`, etc.).
+
+Letters on opposite hand that are not commonly repeated (i.e. `I`, `Q`) are overridden and instead return common n-grams.
 
 ### Magic Key
 
-|     |     |     |     |     |     |     |     |     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `A` | `B`  | `C` | `D` | `E` | `F` | `G` | `H` | `I` | `J`   | `K` | `L` | `M`   | 
-| Magic | `U` | `S`  | `S` | `T` | `O` | `Y` | `S` | `Y` | `U` | `UST` | `Y` | `R` | `ENT` |
+Left hand keys:
+|     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Prev  | `Z` | `L` | `D` | `C` | `B` | `N`   | `R` | `T`   | `S` | `G` | `Q` | `X` | `M`   | `W` | `V`   |
+| Magic | `N` | `R` | `T` | `S` | `S` | `ION` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `ERY` |
 
-|     |     |     |     |     |     |     |     |     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `N`   | `O` | `P` | `Q` | `R` | `S` | `T`   | `U` | `V`  | `W` | `X` | `Y` | `Z` |
-| Magic | `ION` | `E` | `H` | `U` | `L` | `C` | `ION` | `I` | `ER` | `S` | --  | `P` | --  |
+Right hand overrides:
+|     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- |
+| Prev  | `J`   | `Y`  | `H`   | `I`  | `A`  | `K`  |
+| Magic | `UST` | `OU` | `ERE` | `NG` | `ND` | `EY` |
 
-### Repeat Key Overrides
+(Other right hand keys are repeated.)
 
-|     |     |     |     |     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev   | `A`  | `H`   | `I`  | `J`   | `K`  | `Q` | `V`  | `W`   | `Y`  |
-| Repeat | `ND` | `ERE` | `NG` | `ECT` | `EY` | `U` | `ER` | `ITH` | `OU` |
+### Repeat Key
 
-`Repeat` key just repeats any other key; these overrides are on letters that are not commonly repeated.
+Right hand keys:
+|     |     |     |     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Prev   | `J`   | `F` | `O` | `U` | `Y` | `H` | `E` | `I` | `A` | `K` | `P` |
+| Repeat | `ECT` | `Y` | `E` | `I` | `P` | `Y` | `O` | `U` | `U` | `Y` | `Y` |
 
-Repeat/magic key outputs are not tracked:
+Left hand overrides:  
+|     |     |     |     |
+| --- | --- | --- | --- |
+| Prev   | `Q` | `V`  | `W`   |
+| Repeat | `U` | `ER` | `ITH` |
 
-> `b [Magic] [Rep]` produces `b s b` (`Rep` ignores `Magic` output and returns `b`, not `s`);
+(Other left hand keys are repeated.)
+
+---
+
+Only alpha keys are tracked:
+
+> `a 1 [Rep]` produces `a 1 a`.
+
+Modifiers are not tracked (but the dynamic keys may be modified):
+
+> `[Shift] a [Release shift] [Magic]` produces `A a`;
+>
+>` a [Shift] [Magic] [Release shift] ` produces `a A`.
+
+Alpha keys pressed while the control modifier is active are not tracked:
+
+> `a [CTRL] b [Release CTRL] [Magic]` produces `a ^b a`.
+
+Repeat/magic key outputs are also not tracked:
+
+> `e [Rep] [Magic]` produces `e o e` (`Rep` ignores `Magic` output and returns `e`, not `o`);
 > 
-> `b [Magic] [Magic]` produces `b s s` (`Magic` ignores `Magic` output and returns `s`, not `c`);
+> `t [Magic] [Rep]` produces `t i o n t` (`Magic` ignores `Magic` output and returns `t`, not `n`).
 
 `Backspace` reverts the tracked key to the previous distinct key:
 
 > `a b c [Rep]` produces `a b c c` (`Rep` returns `c`);
 >
-> `a b c [BSPC] [Rep]` produces `a b b` (`Rep` returns previous tracked key `b`);
+> `a b c [BSPC] [Rep]` produces `a b b` (`Rep` returns previous tracked key `b`).
 
 Duplicated keys are not tracked:
 
-> `a b c c c c [BSPC] [Rep]` produces `a b c c c b` (`Rep` returns previous distinct tracked key `b`);
-
+> `a b c c c c [BSPC] [Rep]` produces `a b c c c b` (`Rep` returns previous distinct tracked key `b`).
 
 ## OLEDs
 (128x64 OLEDs)
@@ -74,26 +107,60 @@ Key on utility layer available to change both OLEDs to static images.
 
 ![Combos](images/combos.png?raw=true)
 
+(Press `Esc`, `;`, and `#` to access Touhou layer and to see funky Cirno fumo on right OLED.)
+
 # Layers
+### Base
 ![Base](images/base.png?raw=true)
+Base layer alphas is a slightly modified graphite layout, with home block mods, and magic/repeat keys on middle thumb keys.
 
+`Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together/omitted as they accessible from combos near or on the home row. `Hash` is included on base layer as I use it as a (La)TeX snippet trigger.
+
+`Tab` is on right hand to reduce left hand contortions and also functions as `RShift` when held. `New Sentence` macro sends a dot, a space, then sets a one shot shift.
+
+### Data
 ![Data](images/data.png?raw=true)
+Number grid with `1`, `2`, and `3` on right hand home row, along with arithmetic and numerical symbols on left hand, sharing locations from `Symbol` and `Program` layers.
 
+Function keys also available for left hand only usage.
+
+### Edit
 ![Edit](images/edit.png?raw=true)
+Navigation/editing keys on left hand and paired delimiters and common symbol combinations on right hand. `Select` key by [Getreuer](https://getreuer.info/posts/keyboards/select-word/index.html).
 
+Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `?()`; right hand also duplicated on Symbol and Program layers.
+
+### Symbol
 ![Symbol](images/symbol.png?raw=true)
+Symbol layout optimised for (La)TeX editing, with brackets as above on left hand, and many common strings as inward rolls on left hand, e.g.; `<-`, `<=`, `->`, `>=`, `|->`, `<-`, `~>`, `:-`, `&=`, etc. (Intended to be used with snippet extensions.) Backslash also on main thumb key on this layer.
 
+### Program
 ![Program](images/program.png?raw=true)
+Program layer optimised for c programming, with comparison operators as inward rolls, logical/bitwise operators symbols grouped on index finger, etc. Brackets on right hand as above.
 
+### Utility
 ![Utility](images/utility.png?raw=true)
+Layer is accessible using either outer thumb key (XOR). Media control, RGB, and OLED control on left hand, and function keys on right hand.
 
+`Base` swaps default layer to QWERTY layout (useful for art programs); `Basic` swaps default layer to QWERTY layout with home block mods and `Space` layer-tap disabled (useful for games).
+
+`Clock` keys set the OLED clock. `OLED Static` disables animations and changes OLEDs to static images. `OLED Menu` toggles between layer stack view and layout display on right OLED.
+
+`Alt Tab` holds `LAlt` on first press and taps `Tab`; `LAlt` is released when layer key is released.
+
+Tap the `Boot/Reboot` key to reboot keyboard, and hold for one second to enter bootloader.
+
+### Mouse
 ![Mouse](images/mouse.png?raw=true)
+Mouse emulation accessible on pinky key combo to allow mouse movement without moving from home row. Override cursor/scroll speed with right thumb keys.
 
+### Control
 ![Control](images/control.png?raw=true)
-
+Control key overrides for easier left-hand only use (useful for art programs). Overrides activate only from left hand control key; home block mods are unaffected.
 
 # Alt Base Layer
 
+### QWERTY
 ![QWERTY](images/qwerty.png?raw=true)
 
-
+Accessible with `Base` key on Utility layer, or `Basic` to also disable home block mods and `Space` layer-tap.
