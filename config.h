@@ -67,7 +67,7 @@ timeout managed manually in keymap instead.
 #undef ONESHOT_TAP_TOGGLE
 #define ONESHOT_TAP_TOGGLE 3
 #undef ONESHOT_TIMEOUT
-#define ONESHOT_TIMEOUT 1000
+#define ONESHOT_TIMEOUT 500
 // #define NO_ACTION_ONESHOT
 
 //#define COMBO_TERM 20

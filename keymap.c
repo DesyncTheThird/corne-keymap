@@ -101,10 +101,10 @@ enum custom_keycodes {
     CM_MINS,
     
     CM_AMPR,
-    CM_EXLM,
-    
     CM_COLN,
+
     CM_SCLN,
+    CM_EXLM,
 };
 
 
@@ -794,7 +794,7 @@ const uint16_t PROGMEM l_equals[]       = {KC_E, KC_R, COMBO_END};
 const uint16_t PROGMEM l_plus[]         = {MT_F, KC_G, COMBO_END};
 const uint16_t PROGMEM l_minus[]        = {MT_D, MT_F, COMBO_END};
 
-const uint16_t PROGMEM exclamation[]    = {MT_S, KC_E, COMBO_END};
+const uint16_t PROGMEM ampersand[]      = {MT_S, KC_E, COMBO_END};
 const uint16_t PROGMEM colon[]          = {KC_E, MT_F, COMBO_END};
 
 const uint16_t PROGMEM r_exponent[]     = {KC_I, KC_O, COMBO_END};
@@ -807,7 +807,7 @@ const uint16_t PROGMEM r_plus[]         = {KC_H, MT_J, COMBO_END};
 const uint16_t PROGMEM r_minus[]        = {MT_J, MT_K, COMBO_END};
 
 const uint16_t PROGMEM semicolon[]      = {MT_J, KC_I, COMBO_END};
-const uint16_t PROGMEM ampersand[]      = {KC_I, MT_L, COMBO_END};
+const uint16_t PROGMEM exclamation[]    = {KC_I, MT_L, COMBO_END};
 
 combo_t key_combos[] = {
     [TOUHOU]        = COMBO_ACTION(touhou),
@@ -826,7 +826,7 @@ combo_t key_combos[] = {
     [L_PLUS]        = COMBO(l_plus,        CM_PLUS),
     [L_MINUS]       = COMBO(l_minus,       CM_MINS),
     
-    [EXCLAMATION]   = COMBO(exclamation,   CM_EXLM),
+    [AMPERSAND]     = COMBO(ampersand,     CM_AMPR),
     [COLON]         = COMBO(colon,         CM_COLN),
     
     [R_EXPONENT]    = COMBO(r_exponent,    CM_CIRC),
@@ -839,7 +839,7 @@ combo_t key_combos[] = {
     [R_MINUS]       = COMBO(r_minus,       CM_MINS),
 
     [SEMICOLON]     = COMBO(semicolon,     CM_SCLN),
-    [AMPERSAND]     = COMBO(ampersand,     CM_AMPR),
+    [EXCLAMATION]   = COMBO(exclamation,   CM_EXLM),
 
 
 };
@@ -949,38 +949,32 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
             }
 
             switch (last_key) {
-                case KC_E: tap_code(KC_O); break;
-                case KC_O: tap_code(KC_E); break;
+                // Left hand keys
 
-                case KC_I: tap_code(KC_U); break;
-                case KC_U: tap_code(KC_I); break;
-                
-                case KC_A: tap_code(KC_U); break;
-
-                case KC_P: tap_code(KC_H); break;
-                case KC_H: tap_code(KC_Y); break;
-                case KC_K: tap_code(KC_Y); break;
-                case KC_F: tap_code(KC_Y); break;
-                case KC_Y: tap_code(KC_P); break;
-
-                case KC_D: tap_code(KC_T); break;
-
-                case KC_S: tap_code(KC_C); break;
-                case KC_C: tap_code(KC_S); break;
-                case KC_G: tap_code(KC_S); break;
-                case KC_B: tap_code(KC_S); break;
-                case KC_W: tap_code(KC_S); break;
-
-                case KC_R: tap_code(KC_L); break;
+                case KC_Z: tap_code(KC_N); break;
                 case KC_L: tap_code(KC_R); break;
+                case KC_D: tap_code(KC_T); break;
+                case KC_C: tap_code(KC_S); break;
+                case KC_B: tap_code(KC_S); break;
 
-                case KC_Q: tap_code(KC_U); break;
-
-                case KC_T: SEND_STRING(/*t*/"ion"); break;
                 case KC_N: SEND_STRING(/*n*/"ion"); break;
-                case KC_J: SEND_STRING(/*j*/"ust"); break;
-                case KC_V: SEND_STRING(/*v*/"ery"); break;
+                case KC_R: tap_code(KC_L); break;
+                case KC_T: SEND_STRING(/*t*/"ion"); break;
+                case KC_S: tap_code(KC_C); break;
+                case KC_G: tap_code(KC_S); break;
+                
+                case KC_Q: tap_code(KC_U); break;
+                case KC_X: tap_code(KC_C); break;
                 case KC_M: SEND_STRING(/*m*/"ent"); break;
+                case KC_W: tap_code(KC_S); break;
+                case KC_V: SEND_STRING(/*v*/"ery"); break;
+
+                case KC_J: SEND_STRING(/*j*/"ust"); break;
+                case KC_Y: SEND_STRING(/*y*/"ou"); break;
+                case KC_H: SEND_STRING(/*h*/"ere"); break;
+                case KC_A: SEND_STRING(/*a*/"nd"); break;
+                case KC_I: SEND_STRING(/*i*/"ng"); break;
+                case KC_K: SEND_STRING(/*k*/"ey"); break;
 
                 default: tap_code(last_key); break;
             }
@@ -996,11 +990,18 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
         }
         if (record->tap.count && record->event.pressed) {
             switch (last_key) {
-                case KC_A: SEND_STRING(/*a*/"nd"); break;
-                case KC_H: SEND_STRING(/*h*/"ere"); break;
-                case KC_I: SEND_STRING(/*i*/"ng"); break;
+
                 case KC_J: SEND_STRING(/*j*/"ect"); break;
                 case KC_K: SEND_STRING(/*k*/"ey"); break;
+                case KC_F: tap_code(KC_Y); break;
+                case KC_U: tap_code(KC_I); break;
+
+                case KC_E: tap_code(KC_O); break;
+                case KC_I: tap_code(KC_U); break;
+                case KC_A: tap_code(KC_U); break;
+                case KC_K: tap_code(KC_Y); break;
+                case KC_P: tap_code(KC_H); break;
+
                 case KC_Q: tap_code(KC_U); break;
                 case KC_V: SEND_STRING(/*v*/"er"); break;
                 case KC_W: SEND_STRING(/*w*/"ith"); break;
@@ -1481,6 +1482,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             break;
+
+        case CS_LCTL:
+            if (record->event.pressed) {
+            }
 
         // =====================================================================
         // Custom symbol handling
@@ -1997,7 +2002,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             break;
-        case CM_EXLM:
+        case CM_COLN:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -2006,19 +2011,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        case CM_COLN:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_COLN);
-                set_mods(mods);
-            }
-            break;
         case CM_SCLN:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
                 tap_code(KC_SCLN);
+                set_mods(mods);
+            }
+            break;
+        case CM_EXLM:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_EXLM);
                 set_mods(mods);
             }
             break;
