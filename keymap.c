@@ -961,32 +961,31 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
 
             switch (last_key) {
                 // Left hand keys
+                case KC_Z: tap_code(KC_N); update_last_key(KC_N); break;
+                case KC_L: tap_code(KC_R); update_last_key(KC_R); break;
+                case KC_D: tap_code(KC_T); update_last_key(KC_T); break;
+                case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
+                case KC_B: tap_code(KC_S); update_last_key(KC_S); break;
 
-                case KC_Z: tap_code(KC_N); break;
-                case KC_L: tap_code(KC_R); break;
-                case KC_D: tap_code(KC_T); break;
-                case KC_C: tap_code(KC_S); break;
-                case KC_B: tap_code(KC_S); break;
-
-                case KC_N: SEND_STRING(/*n*/"ion"); break;
-                case KC_R: tap_code(KC_L); break;
-                case KC_T: SEND_STRING(/*t*/"ion"); break;
-                case KC_S: tap_code(KC_C); break;
-                case KC_G: tap_code(KC_S); break;
+                case KC_N: SEND_STRING(/*n*/"ion"); update_last_keys(KC_O, KC_N); break;
+                case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
+                case KC_T: SEND_STRING(/*t*/"ion"); update_last_keys(KC_O, KC_N); break;
+                case KC_S: tap_code(KC_C); update_last_key(KC_C); break;
+                case KC_G: tap_code(KC_S); update_last_key(KC_S); break;
                 
-                case KC_Q: tap_code(KC_U); break;
-                case KC_X: tap_code(KC_C); break;
-                case KC_M: SEND_STRING(/*m*/"ent"); break;
-                case KC_W: tap_code(KC_S); break;
-                case KC_V: SEND_STRING(/*v*/"ery"); break;
+                case KC_Q: tap_code(KC_U); update_last_key(KC_U); break;
+                case KC_X: tap_code(KC_C); update_last_key(KC_C) ;break;
+                case KC_M: SEND_STRING(/*m*/"ent"); update_last_keys(KC_N, KC_T); break;
+                case KC_W: tap_code(KC_S); update_last_key(KC_S); break;
+                case KC_V: SEND_STRING(/*v*/"ery"); update_last_keys(KC_R, KC_Y); break;
 
                 // Right hand overrides
-                case KC_J: SEND_STRING(/*j*/"ust"); break;
-                case KC_Y: SEND_STRING(/*y*/"ou"); break;
-                case KC_H: SEND_STRING(/*h*/"ere"); break;
-                case KC_A: SEND_STRING(/*a*/"nd"); break;
-                case KC_I: SEND_STRING(/*i*/"ng"); break;
-                case KC_K: SEND_STRING(/*k*/"ey"); break;
+                case KC_J: SEND_STRING(/*j*/"ust"); update_last_keys(KC_S, KC_T); break;
+                case KC_Y: SEND_STRING(/*y*/"ou"); update_last_keys(KC_O, KC_U); break;
+                case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_R, KC_E); break;
+                case KC_A: SEND_STRING(/*a*/"nd"); update_last_keys(KC_N, KC_D); break;
+                case KC_I: SEND_STRING(/*i*/"ng"); update_last_keys(KC_N, KC_G); break;
+                case KC_K: SEND_STRING(/*k*/"ey"); update_last_keys(KC_E, KC_Y); break;
 
                 default: tap_code(last_key); break;
             }
@@ -1002,26 +1001,25 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
         }
         if (record->tap.count && record->event.pressed) {
             switch (last_key) {
-
                 // Right hand keys
-                case KC_J: SEND_STRING(/*j*/"ect"); break;
-                case KC_F: tap_code(KC_Y); break;
-                case KC_O: tap_code(KC_E); break;
-                case KC_U: tap_code(KC_I); break;
+                case KC_J: SEND_STRING(/*j*/"ect"); update_last_keys(KC_C, KC_T); break;
+                case KC_F: tap_code(KC_Y); update_last_key(KC_Y); break;
+                case KC_O: tap_code(KC_E); update_last_key(KC_E); break;
+                case KC_U: tap_code(KC_I); update_last_key(KC_I); break;
 
-                case KC_Y: tap_code(KC_P); break;
-                case KC_H: tap_code(KC_Y); break;
-                case KC_E: tap_code(KC_O); break;
-                case KC_I: tap_code(KC_U); break;
-                case KC_A: tap_code(KC_U); break;
+                case KC_Y: tap_code(KC_P); update_last_key(KC_P); break;
+                case KC_H: tap_code(KC_Y); update_last_key(KC_Y); break;
+                case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
+                case KC_I: tap_code(KC_U); update_last_key(KC_U); break;
+                case KC_A: tap_code(KC_U); update_last_key(KC_U); break;
 
-                case KC_K: tap_code(KC_Y); break;
-                case KC_P: tap_code(KC_H); break;
+                case KC_K: tap_code(KC_Y); update_last_key(KC_Y); break;
+                case KC_P: tap_code(KC_H); update_last_key(KC_H); break;
 
                 // Left hand overrides
-                case KC_Q: tap_code(KC_U); break;
-                case KC_V: SEND_STRING(/*v*/"er"); break;
-                case KC_W: SEND_STRING(/*w*/"ith"); break;
+                case KC_Q: tap_code(KC_U); update_last_key(KC_U); break;
+                case KC_V: SEND_STRING(/*v*/"er"); update_last_keys(KC_E, KC_R); break;
+                case KC_W: SEND_STRING(/*w*/"ith"); update_last_keys(KC_T, KC_H); break;
 
                 default: tap_code(last_key); break;
             }
