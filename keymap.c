@@ -583,7 +583,11 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case MTA_S:
         case MTA_H:
             return 150;
-        
+
+        case MTA_T:
+        case MTA_E:
+            return 225;
+
         case MTA_R:
         case MTA_I:
             return 250;
@@ -2137,6 +2141,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_CSAG);
+                tap_code(KC_RGHT);
                 add_mods(MOD_MASK_CTRL);
                 tap_code(KC_LEFT);
                 tap_code(KC_DEL);
