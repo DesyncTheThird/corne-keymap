@@ -116,9 +116,6 @@ enum custom_keycodes {
 };
 
 
-// Custom tap-hold keys
-#define CS_BOOT LT(0,KC_ESC)
-
 
 
 // Home block mods
@@ -143,8 +140,6 @@ enum custom_keycodes {
 #define MTA_E LALT_T(KC_E)
 #define MTA_I RGUI_T(KC_I)
 
-#define TAB_SFT RSFT_T(KC_TAB)
-
 // Symbol home block mods
 #define MT_RBRC LT(0,CS_RBRC)
 #define MT_RPRN LT(0,CS_RPRN)
@@ -155,8 +150,6 @@ enum custom_keycodes {
 #define MT_MINS LT(0,CS_MINS)
 #define MT_EQL  LT(0,CS_EQL)
 #define MT_COMM LT(0,CS_COMM)
-
-
 
 // Layer keys
 #define CS_LT3 LT(_UTILITY,KC_ENT)
@@ -171,7 +164,9 @@ enum custom_keycodes {
 #define CS_AL2 LT(_EDIT,CS_BSLS)
 #define CS_AL3 LT(_EDIT,CS_SCLN)
 
-
+// Custom tap-hold keys
+#define CS_BOOT LT(0,KC_ESC)
+#define TAB_SFT RSFT_T(KC_TAB)
 
 // Control keys
 #define CS_LCTL LM(_CONTROL, MOD_LCTL)
@@ -579,15 +574,17 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case CS_RT2:
         case CS_RT3:
 
-        // shift mods
+        // Shift mod-taps
         case MTA_S:
         case MTA_H:
             return 150;
 
+        // Alt mod-taps
         case MTA_T:
         case MTA_E:
             return 225;
 
+        // GUI mod-taps
         case MTA_R:
         case MTA_I:
             return 250;
@@ -1413,7 +1410,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_select_word(keycode, record, SELECT)) { return false; }
     if (!process_vol_repeat(keycode, record)) { return false; }
     if (!process_clock(keycode, record)) { return false; }
-    if (!process_cs_repeat(keycode, record)) { return false; }
+    if (!process_magic(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
     
     switch (keycode) {
