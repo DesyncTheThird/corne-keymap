@@ -572,9 +572,14 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case CS_RT3:
 
         // shift mods
-        case MTA_H:
         case MTA_S:
+        case MTA_H:
             return 150;
+        
+        case MTA_R:
+        case MTA_I:
+            return 300;
+
         default:
             return TAPPING_TERM;
     }
@@ -654,7 +659,7 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
             return 0;
 
         default:
-            return 500;
+            return 800;
     }
 }
 
@@ -690,7 +695,11 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
 
 uint16_t achordion_streak_chord_timeout(
     uint16_t tap_hold_keycode, uint16_t next_keycode) {
-  return 200;
+    uint8_t mod = mod_config(QK_MOD_TAP_GET_MODS(tap_hold_keycode));
+    if (((mod & MOD_LSFT) != 0) || ((mod & MOD_RSFT) != 0)) {
+        return 150;
+    }
+    return 250;
 }
 
 bool achordion_eager_mod(uint8_t mod) {
@@ -700,8 +709,8 @@ bool achordion_eager_mod(uint8_t mod) {
         case MOD_LCTL:
         case MOD_RCTL:
         case MOD_LALT:
-        case MOD_RALT:
-            return true;  // Eagerly apply Shift and Ctrl mods.
+        // case MOD_RALT:
+            return true;
 
         default:
             return false;
@@ -883,13 +892,15 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
         case L_UNDERSCORE:
         case R_UNDERSCORE:
-            return 50;
-            break;
+            return 30;
+        case L_EXPONENT:
+        case R_EXPONENT:
+            return 15;
         case MOUSE:
         case MOUSE2:
             return 75;
         default:
-            return 30;
+            return 25;
     }
 }
 
