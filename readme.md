@@ -76,12 +76,6 @@ Alpha keys pressed while the control modifier is active are not tracked:
 
 > `a [CTRL] b [Release CTRL] [Magic]` produces `a ^b a`.
 
-Repeat/magic key outputs are also not tracked:
-
-> `e [Rep] [Magic]` produces `e o e` (`Rep` ignores `Magic` output and returns `e`, not `o`);
-> 
-> `t [Magic] [Rep]` produces `t i o n t` (`Magic` ignores `Magic` output and returns `t`, not `n`).
-
 `Backspace` reverts the tracked key to the previous distinct key:
 
 > `a b c [Rep]` produces `a b c c` (`Rep` returns `c`);
@@ -115,7 +109,10 @@ Key on utility layer available to change both OLEDs to static images.
 
 (Press `Esc`, `;`, and `#` to access Touhou layer and to see funky Cirno fumo on right OLED.)
 
-
+---
+- `Line` combos add empty lines above/below current position;
+- `Join` combo joins current line to following line with space between;
+- `Del` combos delete leftwards, current word, and rightwards.
 
 # Layers
 ### Base

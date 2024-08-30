@@ -105,6 +105,14 @@ enum custom_keycodes {
 
     CM_SCLN,
     CM_EXLM,
+
+    CM_SPC_1,
+    CM_SPC_2,
+    CM_SPC_3,
+
+    CM_BSPC_1,
+    CM_BSPC_2,
+    CM_BSPC_3,
 };
 
 
@@ -578,7 +586,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         
         case MTA_R:
         case MTA_I:
-            return 300;
+            return 250;
 
         default:
             return TAPPING_TERM;
@@ -659,7 +667,7 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
             return 0;
 
         default:
-            return 800;
+            return 300;
     }
 }
 
@@ -699,7 +707,7 @@ uint16_t achordion_streak_chord_timeout(
     if (((mod & MOD_LSFT) != 0) || ((mod & MOD_RSFT) != 0)) {
         return 150;
     }
-    return 250;
+    return 200;
 }
 
 bool achordion_eager_mod(uint8_t mod) {
@@ -784,6 +792,14 @@ enum combo_events {
     SEMICOLON,
     AMPERSAND,
 
+    SPC_1,
+    SPC_2,
+    SPC_3,
+
+    BSPC_1,
+    BSPC_2,
+    BSPC_3,
+
     COMBO_LENGTH
 };
 uint16_t COMBO_LEN = COMBO_LENGTH;
@@ -818,6 +834,14 @@ const uint16_t PROGMEM r_minus[]        = {MT_J, MT_K, COMBO_END};
 const uint16_t PROGMEM semicolon[]      = {MT_J, KC_I, COMBO_END};
 const uint16_t PROGMEM exclamation[]    = {KC_I, MT_L, COMBO_END};
 
+const uint16_t PROGMEM spc_1[]          = {CS_LT1, MT_F, COMBO_END};
+const uint16_t PROGMEM spc_2[]          = {CS_LT1, MT_D, COMBO_END};
+const uint16_t PROGMEM spc_3[]          = {CS_LT1, MT_S, COMBO_END};
+
+const uint16_t PROGMEM bspc_1[]         = {CS_RT1, MT_J, COMBO_END};
+const uint16_t PROGMEM bspc_2[]         = {CS_RT1, MT_K, COMBO_END};
+const uint16_t PROGMEM bspc_3[]         = {CS_RT1, MT_L, COMBO_END};
+
 combo_t key_combos[] = {
     [TOUHOU]        = COMBO_ACTION(touhou),
     [STENO]         = COMBO_ACTION(steno),
@@ -850,6 +874,12 @@ combo_t key_combos[] = {
     [SEMICOLON]     = COMBO(semicolon,     CM_SCLN),
     [EXCLAMATION]   = COMBO(exclamation,   CM_EXLM),
 
+    [SPC_1]         = COMBO(spc_1,         CM_SPC_1),
+    [SPC_2]         = COMBO(spc_2,         CM_SPC_2),
+    [SPC_3]         = COMBO(spc_3,         CM_SPC_3),
+    [BSPC_1]        = COMBO(bspc_1,        CM_BSPC_1),
+    [BSPC_2]        = COMBO(bspc_2,        CM_BSPC_2),
+    [BSPC_3]        = COMBO(bspc_3,        CM_BSPC_3),
 
 };
 
@@ -892,13 +922,24 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
         case L_UNDERSCORE:
         case R_UNDERSCORE:
+        
+        case SPC_1:
+        case SPC_2:
+        case SPC_3:
+
+        case BSPC_1:
+        case BSPC_2:
+        case BSPC_3:
             return 30;
+
         case L_EXPONENT:
         case R_EXPONENT:
             return 15;
+
         case MOUSE:
         case MOUSE2:
             return 75;
+
         default:
             return 25;
     }
@@ -939,6 +980,18 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
 
 uint16_t last_key = KC_NO;
 uint16_t last_key_2 = KC_NO;
+
+void update_last_key(uint16_t new_keycode) {
+    if (new_keycode != last_key) {
+        last_key_2 = last_key;
+        last_key = new_keycode;
+    }
+}
+
+void update_last_keys(uint16_t new_keycode_2, uint16_t new_keycode) {
+        last_key_2 = new_keycode_2;
+        last_key = new_keycode;
+}
 
 bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
     if ((keycode == CS_RT1) || (keycode == KC_BSPC)) {
@@ -1029,13 +1082,6 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-
-void update_last_key(uint16_t new_keycode) {
-    if (new_keycode != last_key) {
-        last_key_2 = last_key;
-        last_key = new_keycode;
-    }
-}
 
 //==============================================================================
 // Select word
@@ -1497,12 +1543,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        case CS_LCTL:
-            if (record->event.pressed) {
-                add_oneshot_mods(MOD_BIT(KC_LCTL));
-            }
-            return true;
-            break;
+        // case CS_LCTL:
+        //     if (record->event.pressed) {
+        //         add_oneshot_mods(MOD_BIT(KC_LCTL));
+        //     }
+        //     return true;
+        //     break;
 
         // =====================================================================
         // Custom symbol handling
@@ -2041,6 +2087,68 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
                 tap_code16(KC_EXLM);
+                set_mods(mods);
+            }
+            break;
+
+            
+        case CM_SPC_3:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code(KC_HOME);
+                tap_code(KC_ENT);
+                tap_code(KC_UP);
+                set_mods(mods);
+            }
+            break;
+        case CM_SPC_2:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code(KC_END);
+                add_mods(MOD_MASK_CTRL);
+                tap_code(KC_DEL);
+                del_mods(MOD_MASK_CTRL);
+                tap_code(KC_SPC);
+                set_mods(mods);
+            }
+            break;
+        case CM_SPC_1:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code(KC_END);
+                tap_code(KC_ENT);
+                set_mods(mods);
+            }
+            break;
+            
+        case CM_BSPC_1:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                add_mods(MOD_MASK_CTRL);
+                tap_code(KC_BSPC);
+                set_mods(mods);
+            }
+            break;
+        case CM_BSPC_2:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                add_mods(MOD_MASK_CTRL);
+                tap_code(KC_LEFT);
+                tap_code(KC_DEL);
+                set_mods(mods);
+            }
+            break;
+        case CM_BSPC_3:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                add_mods(MOD_MASK_CTRL);
+                tap_code(KC_DEL);
                 set_mods(mods);
             }
             break;
