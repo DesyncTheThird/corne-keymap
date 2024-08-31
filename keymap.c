@@ -205,11 +205,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_BASE] = LAYOUT( //1
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_ESC,    KC_Q,    KC_L,    KC_D,    KC_C,    KC_B,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
+           KC_ESC,    KC_Z,    KC_L,    KC_D,    KC_C,    KC_B,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A, TAB_SFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Z,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, KC_QUOT, COM_DOT, QUE_EXL, NEWSENT,
+          CS_LCTL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, KC_QUOT, COM_DOT, QUE_EXL, NEWSENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -383,13 +383,28 @@ static bool muted = false;
 
 static uint8_t set_rgb_mode = 5;
 
-
 bool ctrl_on(void) {
     return ((get_mods() & MOD_BIT(KC_LCTL)) == MOD_BIT(KC_LCTL) || (get_mods() & MOD_BIT(KC_RCTL)) == MOD_BIT(KC_RCTL));
 }
 
 bool shifted(void) {
     return ((get_mods() & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT) || (get_mods() & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT));
+}
+
+bool is_magic(uint16_t keycode) {
+    if ((keycode == CS_LT2) || (keycode == CS_RT2)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool is_bspc(uint16_t keycode) {
+    if ((keycode == CS_RT1) || (keycode == KC_BSPC)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 //==============================================================================
@@ -604,8 +619,10 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case CS_LT3:
         case CS_LT2:
+        // case CS_LT1:
 
         case CS_RT1:
+        // case CS_RT2:
         case CS_RT3:
  
         case CS_AL1:
@@ -659,8 +676,8 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
 uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
     switch (tap_hold_keycode) {
         case CS_LT3:
-        case CS_LT2:
-        case CS_LT1:
+        // case CS_LT2:
+        // case CS_LT1:
 
         case CS_RT1:
         // case CS_RT2:
@@ -703,6 +720,9 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
 
         case TAB_SFT:
             return achordion_opposite_hands(tap_hold_record, other_record);
+        
+        case CS_LT2:
+        case CS_LT1:
         default:
             return true;
     }
@@ -712,9 +732,12 @@ uint16_t achordion_streak_chord_timeout(
     uint16_t tap_hold_keycode, uint16_t next_keycode) {
     uint8_t mod = mod_config(QK_MOD_TAP_GET_MODS(tap_hold_keycode));
     if (((mod & MOD_LSFT) != 0) || ((mod & MOD_RSFT) != 0)) {
-        return 150;
+        return 100;
     }
-    return 200;
+    if (is_magic(tap_hold_keycode)) {
+        return 100;
+    }
+    return 250;
 }
 
 bool achordion_eager_mod(uint8_t mod) {
@@ -984,24 +1007,6 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
 //==============================================================================
 // Repeat and Magic key
 //==============================================================================
-
-bool is_magic(uint16_t keycode) {
-    if ((keycode == CS_LT2) || (keycode == CS_RT2)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool is_bspc(uint16_t keycode) {
-    if ((keycode == CS_RT1) || (keycode == KC_BSPC)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-
 
 uint16_t last_key = KC_NO;
 uint16_t last_key_2 = KC_NO;
