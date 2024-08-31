@@ -76,17 +76,18 @@ Alpha keys pressed while the control modifier is active are not tracked:
 
 > `a [CTRL] b [Release CTRL] [Magic]` produces `a ^b a`.
 
+Duplicated keys are not tracked:
+
+> `a b c c c c [BSPC] [Rep]` produces `a b c c c b` (`Rep` returns previous distinct tracked key `b`).
+
 `Backspace` reverts the tracked key to the previous distinct key:
 
 > `a b c [Rep]` produces `a b c c` (`Rep` returns `c`);
 >
 > `a b c [BSPC] [Rep]` produces `a b b` (`Rep` returns previous tracked key `b`).
 
-Duplicated keys are not tracked:
-
-> `a b c c c c [BSPC] [Rep]` produces `a b c c c b` (`Rep` returns previous distinct tracked key `b`).
-
 For longer magic outputs, (e.g. `W -> WITH`) there is a short window (default 500ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
+
 
 
 ## OLEDs
