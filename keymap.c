@@ -575,6 +575,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case CS_LT3:
         case CS_LT2:
         case CS_LT1:
+        
         case CS_RT1:
         case CS_RT2:
         case CS_RT3:
@@ -722,7 +723,7 @@ bool achordion_eager_mod(uint8_t mod) {
         case MOD_RSFT:
         case MOD_LCTL:
         case MOD_RCTL:
-        case MOD_LALT:
+        // case MOD_LALT:
         // case MOD_RALT:
             return true;
 
@@ -1082,7 +1083,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_I: SEND_STRING(/*i*/"ng"); update_last_keys(KC_G, 2); break;
                 case KC_K: SEND_STRING(/*k*/"ey"); update_last_keys(KC_Y, 2); break;
 
-                default: tap_code(last_key); break;
+                default: tap_code(last_key); char_count = 1; break;
             }
         }
         return false;
@@ -1116,7 +1117,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_V: SEND_STRING(/*v*/"er"); update_last_keys(KC_R, 2); break;
                 case KC_W: SEND_STRING(/*w*/"ith"); update_last_keys(KC_H, 3); break;
 
-                default: tap_code(last_key); break;
+                default: tap_code(last_key); char_count = 1; break;
             }
             return false;
         }
