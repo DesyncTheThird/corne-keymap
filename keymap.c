@@ -384,12 +384,12 @@ static bool muted = false;
 static uint8_t set_rgb_mode = 5;
 
 
-bool no_ctrl(void) {
-    return !((get_mods() & MOD_BIT(KC_LCTL)) == MOD_BIT(KC_LCTL) || (get_mods() & MOD_BIT(KC_RCTL)) == MOD_BIT(KC_RCTL));
+bool ctrl_on(void) {
+    return ((get_mods() & MOD_BIT(KC_LCTL)) == MOD_BIT(KC_LCTL) || (get_mods() & MOD_BIT(KC_RCTL)) == MOD_BIT(KC_RCTL));
 }
 
 bool shifted(void) {
-    return ((get_mods() & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT));
+    return ((get_mods() & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT) || (get_mods() & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT));
 }
 
 //==============================================================================
@@ -478,6 +478,8 @@ bool shifted(void) {
 static bool alt_tab_active = false;
 static bool oled_timeout = false;
 
+uint8_t char_count = 1;
+
 void matrix_scan_user(void) {
     achordion_task();
 
@@ -503,6 +505,9 @@ void matrix_scan_user(void) {
             unregister_code(KC_LALT);
             alt_tab_active = false;
         }
+    }
+    if (last_input_activity_elapsed() > 500) {
+        char_count = 1;
     }
     if (last_input_activity_elapsed() > 15000) {
         time_setting = 0;
@@ -979,25 +984,62 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
 // Repeat and Magic key
 //==============================================================================
 
-uint16_t last_key = KC_NO;
-uint16_t last_key_2 = KC_NO;
-
-void update_last_key(uint16_t new_keycode) {
-    if (new_keycode != last_key) {
-        last_key_2 = last_key;
-        last_key = new_keycode;
+bool is_magic(uint16_t keycode) {
+    if ((keycode == CS_LT2) || (keycode == CS_RT2)) {
+        return true;
+    } else {
+        return false;
     }
 }
 
-void update_last_keys(uint16_t new_keycode_2, uint16_t new_keycode) {
-        last_key_2 = new_keycode_2;
-        last_key = new_keycode;
+bool is_bspc(uint16_t keycode) {
+    if ((keycode == CS_RT1) || (keycode == KC_BSPC)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
-bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
-    if ((keycode == CS_RT1) || (keycode == KC_BSPC)) {
+
+
+uint16_t last_key = KC_NO;
+uint16_t last_key_2 = KC_NO;
+uint16_t last_key_3 = KC_NO;
+
+void update_last_key(uint16_t new_keycode) {
+    last_key_2 = last_key;
+    last_key = new_keycode;
+
+    char_count = 1;
+}
+
+void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
+    last_key_2 = last_key;
+    last_key = new_keycode;
+
+    char_count = new_count;
+}
+
+void rollback_last_key(void) {
+    last_key = last_key_2;
+    last_key_2 = KC_NO;
+}
+
+bool process_magic(uint16_t keycode, keyrecord_t* record) {
+    if (!is_magic(keycode) && !is_bspc(keycode)) {
+        char_count = 1;
+        return true;
+    }
+
+    if (is_bspc(keycode)) {
         if (record->tap.count && record->event.pressed) {
-            last_key = last_key_2;
+            if (!shifted() && !ctrl_on()) {
+                for (int i = 1; i < char_count; i++) {
+                    rollback_last_key();
+                    tap_code(KC_BSPC);
+                }
+            }
+        char_count = 1;
         }
         return true;
     }
@@ -1021,25 +1063,25 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
                 case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
                 case KC_B: tap_code(KC_S); update_last_key(KC_S); break;
 
-                case KC_N: SEND_STRING(/*n*/"ion"); update_last_keys(KC_O, KC_N); break;
+                case KC_N: SEND_STRING(/*n*/"ion"); update_last_keys(KC_N, 3); break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
-                case KC_T: SEND_STRING(/*t*/"ion"); update_last_keys(KC_O, KC_N); break;
+                case KC_T: SEND_STRING(/*t*/"ion"); update_last_keys(KC_N, 3); break;
                 case KC_S: tap_code(KC_C); update_last_key(KC_C); break;
                 case KC_G: tap_code(KC_S); update_last_key(KC_S); break;
                 
                 case KC_Q: tap_code(KC_U); update_last_key(KC_U); break;
                 case KC_X: tap_code(KC_C); update_last_key(KC_C) ;break;
-                case KC_M: SEND_STRING(/*m*/"ent"); update_last_keys(KC_N, KC_T); break;
+                case KC_M: SEND_STRING(/*m*/"ent"); update_last_keys(KC_T, 3); break;
                 case KC_W: tap_code(KC_S); update_last_key(KC_S); break;
-                case KC_V: SEND_STRING(/*v*/"ery"); update_last_keys(KC_R, KC_Y); break;
+                case KC_V: SEND_STRING(/*v*/"ery"); update_last_keys(KC_Y, 3); break;
 
                 // Right hand overrides
-                case KC_J: SEND_STRING(/*j*/"ust"); update_last_keys(KC_S, KC_T); break;
-                case KC_Y: SEND_STRING(/*y*/"ou"); update_last_keys(KC_O, KC_U); break;
-                case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_R, KC_E); break;
-                case KC_A: SEND_STRING(/*a*/"nd"); update_last_keys(KC_N, KC_D); break;
-                case KC_I: SEND_STRING(/*i*/"ng"); update_last_keys(KC_N, KC_G); break;
-                case KC_K: SEND_STRING(/*k*/"ey"); update_last_keys(KC_E, KC_Y); break;
+                case KC_J: SEND_STRING(/*j*/"ust"); update_last_keys(KC_T, 3); break;
+                case KC_Y: SEND_STRING(/*y*/"ou"); update_last_keys(KC_U, 2); break;
+                case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_E, 3); break;
+                case KC_A: SEND_STRING(/*a*/"nd"); update_last_keys(KC_D, 2); break;
+                case KC_I: SEND_STRING(/*i*/"ng"); update_last_keys(KC_G, 2); break;
+                case KC_K: SEND_STRING(/*k*/"ey"); update_last_keys(KC_Y, 2); break;
 
                 default: tap_code(last_key); break;
             }
@@ -1056,7 +1098,7 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
         if (record->tap.count && record->event.pressed) {
             switch (last_key) {
                 // Right hand keys
-                case KC_J: SEND_STRING(/*j*/"ect"); update_last_keys(KC_C, KC_T); break;
+                case KC_J: SEND_STRING(/*j*/"ect"); update_last_keys(KC_T, 3); break;
                 case KC_F: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_O: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_U: tap_code(KC_I); update_last_key(KC_I); break;
@@ -1072,8 +1114,8 @@ bool process_cs_repeat(uint16_t keycode, keyrecord_t* record) {
 
                 // Left hand overrides
                 case KC_Q: tap_code(KC_U); update_last_key(KC_U); break;
-                case KC_V: SEND_STRING(/*v*/"er"); update_last_keys(KC_E, KC_R); break;
-                case KC_W: SEND_STRING(/*w*/"ith"); update_last_keys(KC_T, KC_H); break;
+                case KC_V: SEND_STRING(/*v*/"er"); update_last_keys(KC_R, 2); break;
+                case KC_W: SEND_STRING(/*w*/"ith"); update_last_keys(KC_H, 3); break;
 
                 default: tap_code(last_key); break;
             }
@@ -2161,148 +2203,148 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case KC_A:
         // case MT_A:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_A);
             }
             break;
         case KC_B:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_B);
             }
             break;
         case KC_C:
         case MT_C:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_C);
             }
             break;
         case KC_D:
         case MT_D:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_D);
             }
             break;
         case KC_E:
         case MTA_E:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_E);
             }
             break;
         case KC_F:
         case MT_F:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_F);
             }
             break;
         case KC_G:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_G);
             }
             break;
         case KC_H:
         case MTA_H:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_H);
             }
             break;
         case KC_I:
         case MTA_I:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_I);
             }
             break;
         case KC_J:
         case MT_J:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_J);
             }
             break;
         case KC_K:
         case MT_K:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_K);
             }
             break;
         case KC_L:
         case MT_L:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_L);
             }
             break;
         case KC_M:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_M);
             }
             break;
         case KC_N:
         case MT_N:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_N);
             }
             break;
         case KC_O:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_O);
             }
             break;
         case KC_P:
         case MTA_P:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_P);
             }
             break;
         case KC_Q:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_Q);
             }
             break;
         case KC_R:
         case MTA_R:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_R);
             }
             break;
         case KC_S:
         case MT_S:
         case MTA_S:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_S);
             }
             break;
         case KC_T:
         case MTA_T:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_T);
             }
             break;
         case KC_U:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_U);
             }
             break;
         case KC_V:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_V);
             }
             break;
         case KC_W:
         case MTA_W:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_W);
             }
             break;
         case KC_X:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_X);
             }
             break;
         case KC_Y:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_Y);
             }
             break;
         case KC_Z:
-            if (record->event.pressed && no_ctrl()) {
+            if (record->event.pressed && !ctrl_on()) {
                 update_last_key(KC_Z);
             }
             break;
