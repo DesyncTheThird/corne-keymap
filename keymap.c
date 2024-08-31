@@ -1033,9 +1033,9 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
 
     if (is_bspc(keycode)) {
         if (record->tap.count && record->event.pressed) {
+            rollback_last_key();
             if (!shifted() && !ctrl_on()) {
                 for (int i = 1; i < char_count; i++) {
-                    rollback_last_key();
                     tap_code(KC_BSPC);
                 }
             }
