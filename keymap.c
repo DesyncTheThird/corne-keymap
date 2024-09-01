@@ -366,22 +366,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // Variables
 //==============================================================================
 
-static uint8_t time_setting = 0;
-static uint8_t min = 0;
-static uint8_t hrs = 0;
-static uint8_t sec = 0;
+uint8_t time_setting = 0;
+uint8_t min = 0;
+uint8_t hrs = 0;
+uint8_t sec = 0;
 
-// static uint8_t t_min = 0;
-// static uint8_t t_hrs = 0;
-// static uint8_t t_sec = 0;
+// uint8_t t_min = 0;
+// uint8_t t_hrs = 0;
+// uint8_t t_sec = 0;
 
-static uint8_t menu = 0;
+uint8_t menu = 0;
 
-static bool static_display = false;
+bool static_display = false;
 
-static bool muted = false;
+bool muted = false;
 
-static uint8_t set_rgb_mode = 5;
+uint8_t set_rgb_mode = 5;
+
+bool ctrl_linger = false;
 
 bool ctrl_on(void) {
     return ((get_mods() & MOD_BIT(KC_LCTL)) == MOD_BIT(KC_LCTL) || (get_mods() & MOD_BIT(KC_RCTL)) == MOD_BIT(KC_RCTL));
@@ -406,6 +408,8 @@ bool is_bspc(uint16_t keycode) {
         return false;
     }
 }
+
+
 
 //==============================================================================
 // Trackpoint
@@ -1197,14 +1201,55 @@ bool process_select_word(uint16_t keycode, keyrecord_t* record, uint16_t sel_key
 // Deferred Executions
 //==============================================================================
 
-static bool VOLD_active = false;
-static bool VOLU_active = false;
-static deferred_token VOLD_token = INVALID_DEFERRED_TOKEN;
-static deferred_token VOLU_token = INVALID_DEFERRED_TOKEN;
+uint32_t ctrl_linger_callback(uint32_t trigger_time, void *cb_arg) {
+    ctrl_linger = false;
+    return 0;
+}
+
+bool process_lingering_mods(uint16_t keycode, keyrecord_t* record) {
+        if (keycode == CS_LCTL) {
+            if (record->event.pressed) {
+                ctrl_linger = true;
+                defer_exec(500, ctrl_linger_callback, NULL);
+            }
+            return true;
+        }
+        if (keycode == CS_RT1) {
+            if (record->tap.count && record->event.pressed) {
+                if (ctrl_linger) {
+                    const uint8_t mods = get_mods();
+                    register_mods(MOD_BIT(KC_LCTL));
+                    tap_code(KC_BSPC);
+                    set_mods(mods);
+                    ctrl_linger = false;
+                    return false;
+                }
+            }
+            return true;
+        }
+        if (keycode == KC_BSPC) {
+            if (ctrl_linger) {
+                const uint8_t mods = get_mods();
+                register_mods(MOD_BIT(KC_LCTL));
+                tap_code(KC_BSPC);
+                set_mods(mods);
+                ctrl_linger = false;
+                return false;
+            }
+            return true;
+        }
+        ctrl_linger = false;
+        return true;
+}
+
+bool VOLD_active = false;
+bool VOLU_active = false;
+deferred_token VOLD_token = INVALID_DEFERRED_TOKEN;
+deferred_token VOLU_token = INVALID_DEFERRED_TOKEN;
 
 #define interval 15
 
-static uint32_t VOLD_callback(uint32_t trigger_time, void* cb_arg) {
+uint32_t VOLD_callback(uint32_t trigger_time, void* cb_arg) {
     if (!VOLD_active) {
         register_code16(KC_VOLD);
         VOLD_active = true;
@@ -1214,7 +1259,7 @@ static uint32_t VOLD_callback(uint32_t trigger_time, void* cb_arg) {
     }
     return interval;
 }
-static uint32_t VOLU_callback(uint32_t trigger_time, void* cb_arg) {
+uint32_t VOLU_callback(uint32_t trigger_time, void* cb_arg) {
     if (!VOLU_active) {
         register_code16(KC_VOLU);
         VOLU_active = true;
@@ -1225,20 +1270,20 @@ static uint32_t VOLU_callback(uint32_t trigger_time, void* cb_arg) {
     return interval * 1.5;
 }
 
-static void VOLD_start(void) {
+void VOLD_start(void) {
     if (VOLD_token == INVALID_DEFERRED_TOKEN) {
         uint32_t delay = VOLD_callback(0, NULL);
         VOLD_token = defer_exec(delay, VOLD_callback, NULL);
     }
 }
-static void VOLU_start(void) {
+void VOLU_start(void) {
     if (VOLU_token == INVALID_DEFERRED_TOKEN) {
         uint32_t delay = VOLU_callback(0, NULL);
         VOLU_token = defer_exec(delay, VOLU_callback, NULL);
     }
 }
 
-static void VOLD_stop(void) {
+void VOLD_stop(void) {
     if (VOLD_token != INVALID_DEFERRED_TOKEN) {
         cancel_deferred_exec(VOLD_token);
         VOLD_token = INVALID_DEFERRED_TOKEN;
@@ -1248,7 +1293,7 @@ static void VOLD_stop(void) {
         }
     }
 }
-static void VOLU_stop(void) {
+void VOLU_stop(void) {
     if (VOLU_token != INVALID_DEFERRED_TOKEN) {
         cancel_deferred_exec(VOLU_token);
         VOLU_token = INVALID_DEFERRED_TOKEN;
@@ -1459,13 +1504,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_clock(keycode, record)) { return false; }
     if (!process_magic(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
+    if (!process_lingering_mods(keycode, record)) { return false; }
     
     switch (keycode) {
 
         // =====================================================================
         // Misc control
         // =====================================================================
-
+            
         case MENU:
             if (record->event.pressed) {
                 if (menu == 0) {
@@ -1591,12 +1637,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        case CS_LCTL:
-            if (record->event.pressed) {
-                add_oneshot_mods(MOD_BIT(KC_LCTL));
-            }
-            return true;
-            break;
 
         // =====================================================================
         // Custom symbol handling
@@ -1893,9 +1933,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case MT_RBRC:
         {
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_MASK_CTRL);
+                register_mods(MOD_BIT(KC_RCTL));
             } else {
-                unregister_mods(MOD_MASK_CTRL);
+                unregister_mods(MOD_BIT(KC_RCTL));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -1909,9 +1949,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case MT_RPRN:
         {
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_MASK_SHIFT);
+                register_mods(MOD_BIT(KC_RSFT));
             } else {
-                unregister_mods(MOD_MASK_SHIFT);
+                unregister_mods(MOD_BIT(KC_RSFT));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -1943,9 +1983,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case MT_UNDS:
         {
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_MASK_GUI);
+                register_mods(MOD_BIT(KC_RGUI));
             } else {
-                unregister_mods(MOD_MASK_GUI);
+                unregister_mods(MOD_BIT(KC_RGUI));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -1963,9 +2003,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case MT_COMM:
         {
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_MASK_CTRL);
+                register_mods(MOD_BIT(KC_LCTL));
             } else {
-                unregister_mods(MOD_MASK_CTRL);
+                unregister_mods(MOD_BIT(KC_LCTL));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -1979,9 +2019,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case MT_EQL:
         {
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_MASK_SHIFT);
+                register_mods(MOD_BIT(KC_LSFT));
             } else {
-                unregister_mods(MOD_MASK_SHIFT);
+                unregister_mods(MOD_BIT(KC_LSFT));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -2013,9 +2053,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case MT_PLUS:
         {
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_MASK_GUI);
+                register_mods(MOD_BIT(KC_LGUI));
             } else {
-                unregister_mods(MOD_MASK_GUI);
+                unregister_mods(MOD_BIT(KC_LGUI));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -2378,16 +2418,16 @@ void render_wpm(void) {
 // Animation
 //------------
 
-static bool minor = true;
-static bool major = false;
-static uint8_t frame_count = 15;
-static uint16_t render_timer;
-static uint16_t anim_timer = 0;
-static bool show_text = true;
+bool minor = true;
+bool major = false;
+uint8_t frame_count = 15;
+uint16_t render_timer;
+uint16_t anim_timer = 0;
+bool show_text = true;
 
 #include "frames.c"
 
-static uint8_t clean_frame = 0;
+uint8_t clean_frame = 0;
 
 void render_stats(void) {
     oled_set_cursor(0,14);
@@ -2722,7 +2762,7 @@ void render_layout(void) {
     }
 }
 
-static void render_status(void) {
+void render_status(void) {
     if (menu == 0) {
         oled_set_cursor(0,3);
         oled_write_ln_P(PSTR("Layer:"), false); // 1
@@ -2925,8 +2965,8 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 void keyboard_post_init_user(void) {
     debug_enable = true;
-    debug_matrix = true;
-    debug_keyboard = true;
+    // debug_matrix = true;
+    // debug_keyboard = true;
     debug_mouse = true;
     rgb_matrix_set_speed_noeeprom(64);
     rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE);
