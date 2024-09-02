@@ -103,8 +103,6 @@ enum custom_keycodes {
     CM_1,
     CM_2,
     CM_3,
-    CM_4,
-    CM_5,
 };
 
 
@@ -833,12 +831,6 @@ enum combo_events {
     BSPC_2,
     BSPC_3,
 
-    NUM_1,
-    NUM_2,
-    NUM_3,
-    NUM_4,
-    NUM_5,
-
     COMBO_LENGTH
 };
 uint16_t COMBO_LEN = COMBO_LENGTH;
@@ -925,12 +917,6 @@ combo_t key_combos[] = {
 
     [SEMICOLON]     = COMBO(semicolon,     CS_SCLN),
     [EXCLAMATION]   = COMBO(exclamation,   CS_EXLM),
-
-    [NUM_1]         = COMBO(num_1,         CM_1),
-    [NUM_2]         = COMBO(num_2,         CM_2),
-    [NUM_3]         = COMBO(num_3,         CM_3),
-    [NUM_4]         = COMBO(num_4,         CM_4),
-    [NUM_5]         = COMBO(num_5,         CM_5),
 };
 
 
@@ -970,9 +956,6 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
 // 50ms default
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
-        case L_UNDERSCORE:
-        case R_UNDERSCORE:
-        
         case SPC_1:
         case SPC_2:
         case SPC_3:
@@ -980,6 +963,9 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         case BSPC_1:
         case BSPC_2:
         case BSPC_3:
+
+        case L_UNDERSCORE:
+        case R_UNDERSCORE:
             return 30;
 
         case L_EXPONENT:
@@ -2120,31 +2106,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CM_SPC_3:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_HOME);
-                tap_code(KC_ENT);
-                tap_code(KC_UP);
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_1);
                 set_mods(mods);
             }
             break;
         case CM_SPC_2:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_END);
-                add_mods(MOD_MASK_CTRL);
-                tap_code(KC_DEL);
-                del_mods(MOD_MASK_CTRL);
-                tap_code(KC_SPC);
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_2);
                 set_mods(mods);
             }
             break;
         case CM_SPC_1:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_END);
-                tap_code(KC_ENT);
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_3);
                 set_mods(mods);
             }
             break;
@@ -2162,10 +2141,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_CSAG);
-                tap_code(KC_RGHT);
+                tap_code(KC_END);
                 add_mods(MOD_MASK_CTRL);
-                tap_code(KC_LEFT);
                 tap_code(KC_DEL);
+                del_mods(MOD_MASK_CTRL);
+                tap_code(KC_SPC);
                 set_mods(mods);
             }
             break;
@@ -2173,49 +2153,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_CSAG);
-                add_mods(MOD_MASK_CTRL);
-                tap_code(KC_DEL);
-                set_mods(mods);
-            }
-            break;
-            
-        case CM_1:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_1);
-                set_mods(mods);
-            }
-            break;
-        case CM_2:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_2);
-                set_mods(mods);
-            }
-            break;
-        case CM_3:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_3);
-                set_mods(mods);
-            }
-            break;
-        case CM_4:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_4);
-                set_mods(mods);
-            }
-            break;
-        case CM_5:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_5);
+                tap_code(KC_END);
+                tap_code(KC_ENT);
                 set_mods(mods);
             }
             break;
