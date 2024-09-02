@@ -681,7 +681,7 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
     switch (tap_hold_keycode) {
         case CS_LT3:
         // case CS_LT2:
-        // case CS_LT1:
+        case CS_LT1:
 
         case CS_RT1:
         // case CS_RT2:
@@ -726,7 +726,6 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
             return achordion_opposite_hands(tap_hold_record, other_record);
         
         case CS_LT2:
-        case CS_LT1:
         default:
             return true;
     }
