@@ -90,22 +90,7 @@ enum custom_keycodes {
 
     // Combos
     CM_MOUSE,
-
-    CM_CIRC,
-    CM_COMM,
-    CM_DOT,
-    CM_UNDS,
-    CM_ASTR,
-    CM_EQL,
-    CM_PLUS,
-    CM_MINS,
     
-    CM_AMPR,
-    CM_COLN,
-
-    CM_SCLN,
-    CM_EXLM,
-
     CM_SPC_1,
     CM_SPC_2,
     CM_SPC_3,
@@ -403,6 +388,14 @@ bool is_magic(uint16_t keycode) {
 
 bool is_bspc(uint16_t keycode) {
     if ((keycode == CS_RT1) || (keycode == KC_BSPC)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool is_spc(uint16_t keycode) {
+    if ((keycode == CS_LT1) || (keycode == KC_SPC)) {
         return true;
     } else {
         return false;
@@ -882,30 +875,6 @@ combo_t key_combos[] = {
 
     [MOUSE]         = COMBO(mouse,         CM_MOUSE),
     [MOUSE2]        = COMBO(mouse2,        CM_MOUSE),
-    
-    [L_EXPONENT]    = COMBO(l_exponent,    CM_CIRC),
-    [L_COMMA]       = COMBO(l_comma,       CM_COMM),
-    [L_DOT]         = COMBO(l_dot,         CM_DOT),
-    [L_UNDERSCORE]  = COMBO(l_underscore,  CM_UNDS),
-    [L_ASTERISK]    = COMBO(l_asterisk,    CM_ASTR),
-    [L_EQUALS]      = COMBO(l_equals,      CM_EQL),
-    [L_PLUS]        = COMBO(l_plus,        CM_PLUS),
-    [L_MINUS]       = COMBO(l_minus,       CM_MINS),
-    
-    [AMPERSAND]     = COMBO(ampersand,     CM_AMPR),
-    [COLON]         = COMBO(colon,         CM_COLN),
-    
-    [R_EXPONENT]    = COMBO(r_exponent,    CM_CIRC),
-    [R_COMMA]       = COMBO(r_comma,       CM_COMM),
-    [R_DOT]         = COMBO(r_dot,         CM_DOT),
-    [R_UNDERSCORE]  = COMBO(r_underscore,  CM_UNDS),
-    [R_ASTERISK]    = COMBO(r_asterisk,    CM_ASTR),
-    [R_EQUALS]      = COMBO(r_equals,      CM_EQL),
-    [R_PLUS]        = COMBO(r_plus,        CM_PLUS),
-    [R_MINUS]       = COMBO(r_minus,       CM_MINS),
-
-    [SEMICOLON]     = COMBO(semicolon,     CM_SCLN),
-    [EXCLAMATION]   = COMBO(exclamation,   CM_EXLM),
 
     [SPC_1]         = COMBO(spc_1,         CM_SPC_1),
     [SPC_2]         = COMBO(spc_2,         CM_SPC_2),
@@ -913,7 +882,30 @@ combo_t key_combos[] = {
     [BSPC_1]        = COMBO(bspc_1,        CM_BSPC_1),
     [BSPC_2]        = COMBO(bspc_2,        CM_BSPC_2),
     [BSPC_3]        = COMBO(bspc_3,        CM_BSPC_3),
+    
+    [L_EXPONENT]    = COMBO(l_exponent,    CS_CIRC),
+    [L_COMMA]       = COMBO(l_comma,       CS_COMM),
+    [L_DOT]         = COMBO(l_dot,         CS_DOT),
+    [L_UNDERSCORE]  = COMBO(l_underscore,  CS_UNDS),
+    [L_ASTERISK]    = COMBO(l_asterisk,    CS_ASTR),
+    [L_EQUALS]      = COMBO(l_equals,      CS_EQL),
+    [L_PLUS]        = COMBO(l_plus,        CS_PLUS),
+    [L_MINUS]       = COMBO(l_minus,       CS_MINS),
+    
+    [AMPERSAND]     = COMBO(ampersand,     CS_AMPR),
+    [COLON]         = COMBO(colon,         CS_COLN),
+    
+    [R_EXPONENT]    = COMBO(r_exponent,    CS_CIRC),
+    [R_COMMA]       = COMBO(r_comma,       CS_COMM),
+    [R_DOT]         = COMBO(r_dot,         CS_DOT),
+    [R_UNDERSCORE]  = COMBO(r_underscore,  CS_UNDS),
+    [R_ASTERISK]    = COMBO(r_asterisk,    CS_ASTR),
+    [R_EQUALS]      = COMBO(r_equals,      CS_EQL),
+    [R_PLUS]        = COMBO(r_plus,        CS_PLUS),
+    [R_MINUS]       = COMBO(r_minus,       CS_MINS),
 
+    [SEMICOLON]     = COMBO(semicolon,     CS_SCLN),
+    [EXCLAMATION]   = COMBO(exclamation,   CS_EXLM),
 };
 
 
@@ -1034,8 +1026,15 @@ void rollback_last_key(void) {
 }
 
 bool process_magic(uint16_t keycode, keyrecord_t* record) {
-    if (!is_magic(keycode) && !is_bspc(keycode)) {
+    if (!is_magic(keycode) && !is_bspc(keycode) && !is_spc(keycode)) {
         char_count = 1;
+        return true;
+    }
+
+    if (is_spc(keycode)) {
+        if (record->tap.count && record->event.pressed) {
+            update_last_key(KC_SPC);
+        }
         return true;
     }
 
@@ -1051,6 +1050,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
+
     if (keycode == CS_LT2) {
         if (!record->tap.count && record->event.pressed) {
             layer_on(_EDIT);
@@ -1081,7 +1081,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_X: tap_code(KC_C); update_last_key(KC_C) ;break;
                 case KC_M: SEND_STRING(/*m*/"ent"); update_last_keys(KC_T, 3); break;
                 case KC_W: tap_code(KC_S); update_last_key(KC_S); break;
-                case KC_V: SEND_STRING(/*v*/"ery"); update_last_keys(KC_Y, 3); break;
+                case KC_V: SEND_STRING(/*v*/"er"); update_last_keys(KC_R, 2); break;
 
                 // Right hand overrides
                 case KC_J: SEND_STRING(/*j*/"ust"); update_last_keys(KC_T, 3); break;
@@ -1090,6 +1090,10 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_A: SEND_STRING(/*a*/"nd"); update_last_keys(KC_D, 2); break;
                 case KC_I: SEND_STRING(/*i*/"ng"); update_last_keys(KC_G, 2); break;
                 case KC_K: SEND_STRING(/*k*/"ey"); update_last_keys(KC_Y, 2); break;
+
+                case KC_SPC: SEND_STRING("the"); update_last_keys(KC_E, 3); break;
+                case KC_DOT: SEND_STRING("com"); update_last_keys(KC_M, 3); break;
+                case KC_COMM: SEND_STRING(" the"); update_last_keys(KC_E, 3); break;
 
                 default: tap_code(last_key); char_count = 1; break;
             }
@@ -1121,15 +1125,21 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_P: tap_code(KC_H); update_last_key(KC_H); break;
 
                 // Left hand overrides
+                case KC_B: SEND_STRING(/*b*/"ecause"); update_last_keys(KC_E, 6); break;
                 case KC_Q: tap_code(KC_U); update_last_key(KC_U); break;
                 case KC_V: SEND_STRING(/*v*/"er"); update_last_keys(KC_R, 2); break;
                 case KC_W: SEND_STRING(/*w*/"ith"); update_last_keys(KC_H, 3); break;
+
+                case KC_SPC: SEND_STRING("and"); update_last_keys(KC_D, 3); break;
+                case KC_DOT: SEND_STRING("com"); update_last_keys(KC_D, 3); break;
+                case KC_COMM: SEND_STRING(" and"); update_last_keys(KC_D, 3); break;
 
                 default: tap_code(last_key); char_count = 1; break;
             }
             return false;
         }
     }
+
     return true;
 }
 
@@ -1823,6 +1833,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 del_mods(MOD_MASK_SHIFT);
                 tap_code(KC_DOT);
                 set_mods(mods);
+                update_last_key(KC_DOT);
             }
             break;
         case CS_COMM:
@@ -1831,6 +1842,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 del_mods(MOD_MASK_SHIFT);
                 tap_code(KC_COMM);
                 set_mods(mods);
+                update_last_key(KC_COMM);
             }
             break;
         case CS_QUES:
@@ -1921,6 +1933,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 SEND_STRING(". ");
                 set_mods(mods);
                 add_oneshot_mods(MOD_BIT(KC_LSFT));
+                update_last_key(KC_SPC);
             }
             break;
 
@@ -2079,106 +2092,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             break;
 
         // Combo actions
-        case CM_CIRC:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_CIRC);
-                set_mods(mods);
-            }
-            break;
-        case CM_COMM:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_COMM);
-                set_mods(mods);
-            }
-            break;
-        case CM_DOT:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_DOT);
-                set_mods(mods);
-            }
-            break;
-        case CM_UNDS:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_UNDS);
-                set_mods(mods);
-            }
-            break;
-        case CM_ASTR:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_ASTR);
-                set_mods(mods);
-            }
-            break;
-        case CM_EQL:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_EQL);
-                set_mods(mods);
-            }
-            break;
-        case CM_PLUS:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_PLUS);
-                set_mods(mods);
-            }
-            break;
-        case CM_MINS:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_MINS);
-                set_mods(mods);
-            }
-            break;
-            
-        case CM_AMPR:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_AMPR);
-                set_mods(mods);
-            }
-            break;
-        case CM_COLN:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_COLN);
-                set_mods(mods);
-            }
-            break;
-
-        case CM_SCLN:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_SCLN);
-                set_mods(mods);
-            }
-            break;
-        case CM_EXLM:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_EXLM);
-                set_mods(mods);
-            }
-            break;
-
-            
         case CM_SPC_3:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();

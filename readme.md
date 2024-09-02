@@ -33,16 +33,22 @@ Letters on opposite hand that are not commonly repeated (i.e. `I`, `Q`) are over
 Left hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `Z` | `L` | `D` | `C` | `B` | `N`   | `R` | `T`   | `S` | `G` | `Q` | `X` | `M`   | `W` | `V`   |
-| Magic | `N` | `R` | `T` | `S` | `S` | `ION` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `ERY` |
+| Prev  | `Z` | `L` | `D` | `C` | `B` | `N`   | `R` | `T`   | `S` | `G` | `Q` | `X` | `M`   | `W` | `V`  |
+| Magic | `N` | `R` | `T` | `S` | `S` | `ION` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `ER` |
 
-Right hand overrides:
-|     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- |
+Right hand overrides and combos/other:
+|     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- |
 | Prev  | `J`   | `Y`  | `H`   | `I`  | `A`  | `K`  |
 | Magic | `UST` | `OU` | `ERE` | `NG` | `ND` | `EY` |
 
 (Other right hand keys are repeated.)
+
+Other:
+|     |     |     |
+| --- | --- | --- |
+| `⎵`   | `,`    | `.`   |
+| `THE` | `⎵THE` | `COM` |
 
 ### Repeat Key
 
@@ -52,13 +58,19 @@ Right hand keys:
 | Prev   | `J`   | `F` | `O` | `U` | `Y` | `H` | `E` | `I` | `A` | `K` | `P` |
 | Repeat | `ECT` | `Y` | `E` | `I` | `P` | `Y` | `O` | `U` | `U` | `Y` | `Y` |
 
-Left hand overrides:  
-|     |     |     |     |
-| --- | --- | --- | --- |
-| Prev   | `Q` | `V`  | `W`   |
-| Repeat | `U` | `ER` | `ITH` |
+Left hand overrides:
+|     |     |     |     |     |
+| --- | --- | --- | --- | --- |
+| Prev   | `B`      | `Q` | `V`  | `W`   |
+| Repeat | `ECAUSE` | `U` | `ER` | `ITH` |
 
 (Other left hand keys are repeated.)
+
+Other:
+|     |     |     |
+| --- | --- | --- |
+| `⎵`   | `,`    | `.`   |
+| `AND` | `⎵AND` | `COM` |
 
 ---
 
