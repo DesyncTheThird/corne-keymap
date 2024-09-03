@@ -50,7 +50,7 @@ Other:
 |     |     |     |
 | --- | --- | --- |
 | `⎵`   | `,`    | `.`   |
-| `AND` | `⎵AND` | `COM` |
+| `THE` | `⎵AND` | `COM` |
 
 ### Repeat Key
 

@@ -1094,11 +1094,11 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_I: SEND_STRING(/*i*/"on"); update_last_keys(KC_N, 2); break;
                 case KC_K: SEND_STRING(/*k*/"ey"); update_last_keys(KC_Y, 2); break;
 
-                case KC_SPC: SEND_STRING("and"); update_last_keys(KC_D, 3); break;
+                case KC_SPC: send_the(false); update_last_keys(KC_D, 3); break;
                 case KC_COMM: SEND_STRING(" and"); update_last_keys(KC_D, 3); break;
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_D, 3); break;
 
-                default: tap_code(last_key); char_count = 1; break;
+                default: tap_code(last_key); update_last_key(last_key); break;
             }
         }
         return false;
@@ -1137,7 +1137,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_COMM: SEND_STRING(" but"); update_last_keys(KC_E, 3); break;
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_M, 3); break;
 
-                default: tap_code(last_key); char_count = 1; break;
+                default: tap_code(last_key); update_last_key(last_key); break;
             }
             return false;
         }
