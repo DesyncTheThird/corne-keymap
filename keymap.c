@@ -255,13 +255,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_SYMBOL] = LAYOUT( //6
       //,-----------------------------------------------------.                    ,---------------------------------------------------.
-           KC_GRV, CS_PERC, CS_ASTR, CS_SLSH, CS_AMPR, CS_CIRC,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
+           KC_GRV, CS_PERC, CS_ASTR,  CS_DLR, CS_AMPR, CS_CIRC,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT, KC_RPRN, KC_LPRN, CS_UNDS, CS_EXLM, TAB_SFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CS_TILD, CS_COLN,  CS_DOT, CS_COMM,  CS_DLR,                        CS_GT, KC_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
+          _______, CS_TILD, CS_COLN,  CS_DOT, CS_COMM, CS_UNDS,                        CS_GT, KC_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              CS_UNDS,  CS_AL2,  KC_SPC,    _______, _______, _______
+                                              CS_SLSH,  CS_AL2,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -381,6 +381,39 @@ bool ctrl_on(void) {
 
 bool shifted(void) {
     return ((get_mods() & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT) || (get_mods() & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT));
+}
+
+bool is_alpha(uint16_t keycode) {
+    if (keycode >= KC_A && keycode <= KC_Z) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool is_hrm(uint16_t keycode) {
+    switch (keycode) {
+        case MT_S:
+        case MT_D:
+        case MT_F:
+        case MT_C:
+        case MT_N:
+        case MT_J:
+        case MT_K:
+        case MT_L:
+
+        case MTA_R:
+        case MTA_T:
+        case MTA_S:
+        case MTA_W:
+        case MTA_P:
+        case MTA_H:
+        case MTA_E:
+        case MTA_I:
+            return true;
+        default:
+            return false;
+    }
 }
 
 bool is_magic(uint16_t keycode) {
@@ -539,6 +572,10 @@ void matrix_scan_user(void) {
 //==============================================================================
 
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
+    if (is_hrm(keycode)) {
+        return 0;
+    }
+
     switch (keycode) {
         case CS_LT3:
         case CS_LT2:
@@ -551,24 +588,6 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case CS_AL1:
         case CS_AL2:
         case CS_AL3:
-        
-        case MT_S:
-        case MT_D:
-        case MT_F:
-        case MT_C:
-        case MT_N:
-        case MT_J:
-        case MT_K:
-        case MT_L:
-
-        case MTA_R:
-        case MTA_T:
-        case MTA_S:
-        case MTA_W:
-        case MTA_P:
-        case MTA_H:
-        case MTA_E:
-        case MTA_I:
 
         case MT_RBRC:
         case MT_RPRN:
@@ -639,40 +658,7 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case MT_S:
-        case MT_D:
-        case MT_F:
-        case MT_C:
-        case MT_N:
-        case MT_J:
-        case MT_K:
-        case MT_L:
-
-        case MTA_R:
-        case MTA_T:
-        case MTA_S:
-        case MTA_W:
-        case MTA_P:
-        case MTA_H:
-        case MTA_E:
-        case MTA_I:
-
-        case MT_RBRC:
-        case MT_RPRN:
-        case MT_LPRN:
-        case MT_UNDS:
-
-        case MT_PLUS:
-        case MT_MINS:
-        case MT_EQL:
-        case MT_COMM:
-
-        case TAB_SFT:
-        default:
-            return true;
-            // Immediately select the hold action when another key is tapped.
-    }
+    return true;
 }
 
 uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
@@ -699,25 +685,11 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
 
 bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
                      uint16_t other_keycode, keyrecord_t* other_record) {
-    switch (tap_hold_keycode) {
-        case MT_S:
-        case MT_D:
-        case MT_F:
-        case MT_C:
-        case MT_N:
-        case MT_J:
-        case MT_K:
-        case MT_L:
+    if (is_hrm(tap_hold_keycode)) {
+        return achordion_opposite_hands(tap_hold_record, other_record);
+    }
 
-        case MTA_R:
-        case MTA_T:
-        case MTA_S:
-        case MTA_W:
-        case MTA_P:
-        case MTA_H:
-        case MTA_E:
-        case MTA_I:
-        
+    switch (tap_hold_keycode) {
         case CS_RT2:
 
         case TAB_SFT:
@@ -1016,7 +988,6 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
 
 uint16_t last_key = KC_NO;
 uint16_t last_key_2 = KC_NO;
-uint16_t last_key_3 = KC_NO;
 
 void update_last_key(uint16_t new_keycode) {
     last_key_2 = last_key;
@@ -1036,10 +1007,9 @@ void rollback_last_key(void) {
     last_key = last_key_2;
 }
 
-bool process_magic(uint16_t keycode, keyrecord_t* record) {
+bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     if (!is_magic(keycode) && !is_bspc(keycode) && !is_spc(keycode)) {
         char_count = 1;
-        return true;
     }
 
     if (is_spc(keycode)) {
@@ -1048,7 +1018,6 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
-
     if (is_bspc(keycode)) {
         if (record->tap.count && record->event.pressed) {
             rollback_last_key();
@@ -1061,7 +1030,30 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
+    return true;
+}
 
+void send_the(bool space) {
+    if (space) {
+        tap_code(KC_SPC);
+    }
+
+    if (shifted()) {
+        const uint8_t mods = get_mods();
+        add_mods(MOD_MASK_SHIFT);
+        tap_code(KC_T);
+        del_mods(MOD_MASK_SHIFT);
+        tap_code(KC_H);
+        tap_code(KC_E);
+        set_mods(mods);
+    } else {
+        SEND_STRING("the");
+    }
+
+    update_last_keys(KC_E, 3);
+}
+
+bool process_magic(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_LT2) {
         if (!record->tap.count && record->event.pressed) {
             layer_on(_EDIT);
@@ -1099,12 +1091,12 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_Y: SEND_STRING(/*y*/"ou"); update_last_keys(KC_U, 2); break;
                 case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_E, 3); break;
                 case KC_A: SEND_STRING(/*a*/"nd"); update_last_keys(KC_D, 2); break;
-                case KC_I: SEND_STRING(/*i*/"ng"); update_last_keys(KC_G, 2); break;
+                case KC_I: SEND_STRING(/*i*/"on"); update_last_keys(KC_N, 2); break;
                 case KC_K: SEND_STRING(/*k*/"ey"); update_last_keys(KC_Y, 2); break;
 
                 case KC_SPC: SEND_STRING("and"); update_last_keys(KC_D, 3); break;
-                case KC_DOT: SEND_STRING("com"); update_last_keys(KC_D, 3); break;
                 case KC_COMM: SEND_STRING(" and"); update_last_keys(KC_D, 3); break;
+                case KC_DOT: SEND_STRING("com"); update_last_keys(KC_D, 3); break;
 
                 default: tap_code(last_key); char_count = 1; break;
             }
@@ -1141,9 +1133,9 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_V: SEND_STRING(/*v*/"er"); update_last_keys(KC_R, 2); break;
                 case KC_W: SEND_STRING(/*w*/"ith"); update_last_keys(KC_H, 3); break;
 
-                case KC_SPC: SEND_STRING("the"); update_last_keys(KC_E, 3); break;
+                case KC_SPC: send_the(false); update_last_keys(KC_E, 3); break;
+                case KC_COMM: SEND_STRING(" but"); update_last_keys(KC_E, 3); break;
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_M, 3); break;
-                case KC_COMM: SEND_STRING(" the"); update_last_keys(KC_E, 3); break;
 
                 default: tap_code(last_key); char_count = 1; break;
             }
@@ -1522,6 +1514,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_select_word(keycode, record, SELECT)) { return false; }
     if (!process_vol_repeat(keycode, record)) { return false; }
     if (!process_clock(keycode, record)) { return false; }
+    if (!process_key_tracking(keycode, record)) { return false; }
     if (!process_magic(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
     if (!process_lingering_mods(keycode, record)) { return false; }

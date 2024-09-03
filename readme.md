@@ -42,7 +42,7 @@ Right hand overrides and combos/other:
 |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- |
 | Prev  | `J`   | `Y`  | `H`   | `I`  | `A`  | `K`  |
-| Magic | `UST` | `OU` | `ERE` | `NG` | `ND` | `EY` |
+| Magic | `UST` | `OU` | `ERE` | `ON` | `ND` | `EY` |
 
 (Other right hand keys are repeated.)
 
@@ -72,7 +72,7 @@ Other:
 |     |     |     |
 | --- | --- | --- |
 | `⎵`   | `,`    | `.`   |
-| `THE` | `⎵THE` | `COM` |
+| `THE` | `⎵BUT` | `COM` |
 
 ---
 
