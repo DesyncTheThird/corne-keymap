@@ -6,8 +6,8 @@
 ---
 # Features
 
-- Common symbols and punctuation accessible through combos with many duplicated on both sides; combos trigger through most layers.
-- `Repeat` key on right thumb, `Magic` key on left thumb.
+- Base layer is a magic modded [graphite](https://github.com/rdavison/graphite-layout) layout.
+- Many common symbols and punctuation are accessible through combos.
 - Home block mods on main layer.
 - [Achordion](https://getreuer.info/posts/keyboards/achordion/index.html) enabled with opposite hand triggers and typing streak detection for home block mod and `Repeat`/`Magic` layer-tap safety.
 - Control key overrides for easier left-hand only use; overrides disabled on home block mods.
@@ -17,6 +17,8 @@
 
 
 ## Dynamic Keys
+
+![Base](images/base.png?raw=true)
 
 `Repeat` and `Magic` are dynamic keys that return different outputs depending on the previous key.
 
@@ -124,22 +126,23 @@ Key on utility layer available to change both OLEDs to static images.
 (Press `Esc`, `;`, and `#` to access Touhou layer and to see funky Cirno fumo on right OLED.)
 
 ---
-- `Line` combos add empty lines above/below current position;
+- `Del` combo presses `LCTL`+`BSPC`;
 - `Join` combo joins current line to following line with space between;
-- `Del` combos delete leftwards, current word, and rightwards.
+- `Line` combo adds a new line below the current position.
+
 
 # Layers
 ### Base
 ![Base](images/base.png?raw=true)
 Base layer alphas is a slightly modified graphite layout, with home block mods, and magic/repeat keys on middle thumb keys.
 
-I find it difficult to press upper row keys with my pinkies and end up alt fingering them with my ring fingers, which introduces some SFBs (`BL`, `BR`) with the default Graphite layout. So, `J` and `B` have been moved off the outer top row; `B` has also been placed next to `C` to make the common `B_C` string not a skipgram. (Also, I don't like `E` on the ring finger, so `HEIA` is used over `HAEI`.)
+I find it difficult to press upper row keys with my pinkies and end up alt fingering them with my ring fingers, which introduces some SFBs (`BL`, `BR`) with the default Graphite layout. So, `J` and `B` have been moved off the outer top row; `B` has also been placed next to `C` to make the common `B_C` string not a skipgram. Also, I don't like `E` on the ring finger, so `HEIA` is used over `HAEI`.
 
 > ℹ️ Note that this keymap internally uses the QWERTY layer for combos, so this Base layer can be modified easily without needing any changes to combo code. 
 > 
 > ⚠️ However, per-key mod-taps settings and Achordion will still need to be handled separately if home block mods are changed.
 
-`Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together or omitted, as they accessible from combos near or on the home row. `Hash` is included on base layer as I use it as a (La)TeX snippet trigger/leader key.
+`Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together or omitted, as they accessible from combos near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a (La)TeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/leader key.
 
 `Tab` is on right hand to reduce left hand contortions and to keep it on home row. `Tab` key also functions as `RShift` when held. `New Sentence` macro sends a dot, a space, then sets a one shot shift.
 
