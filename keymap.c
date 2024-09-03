@@ -91,10 +91,6 @@ enum custom_keycodes {
 
     // Combos
     CM_MOUSE,
-    
-    CM_SPC_1,
-    CM_SPC_2,
-    CM_SPC_3,
 
     CM_BSPC_1,
     CM_BSPC_2,
@@ -426,14 +422,6 @@ bool is_magic(uint16_t keycode) {
 
 bool is_bspc(uint16_t keycode) {
     if ((keycode == CS_RT1) || (keycode == KC_BSPC)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool is_spc(uint16_t keycode) {
-    if ((keycode == CS_LT1) || (keycode == KC_SPC)) {
         return true;
     } else {
         return false;
@@ -795,9 +783,16 @@ enum combo_events {
     SEMICOLON,
     AMPERSAND,
 
+    SPC_0,
     SPC_1,
     SPC_2,
     SPC_3,
+    SPC_4,
+    SPC_5,
+    SPC_6,
+    SPC_7,
+    SPC_8,
+    SPC_9,
 
     BSPC_1,
     BSPC_2,
@@ -837,9 +832,16 @@ const uint16_t PROGMEM r_minus[]        = {MT_J, MT_K, COMBO_END};
 const uint16_t PROGMEM semicolon[]      = {MT_J, KC_I, COMBO_END};
 const uint16_t PROGMEM exclamation[]    = {KC_I, MT_L, COMBO_END};
 
-const uint16_t PROGMEM spc_1[]          = {CS_LT1, MT_F, COMBO_END};
+const uint16_t PROGMEM spc_0[]          = {CS_LT1, KC_A, COMBO_END};
+const uint16_t PROGMEM spc_1[]          = {CS_LT1, MT_S, COMBO_END};
 const uint16_t PROGMEM spc_2[]          = {CS_LT1, MT_D, COMBO_END};
-const uint16_t PROGMEM spc_3[]          = {CS_LT1, MT_S, COMBO_END};
+const uint16_t PROGMEM spc_3[]          = {CS_LT1, MT_F, COMBO_END};
+const uint16_t PROGMEM spc_4[]          = {CS_LT1, KC_Z, COMBO_END};
+const uint16_t PROGMEM spc_5[]          = {CS_LT1, KC_X, COMBO_END};
+const uint16_t PROGMEM spc_6[]          = {CS_LT1, MT_C, COMBO_END};
+const uint16_t PROGMEM spc_7[]          = {CS_LT1, KC_W, COMBO_END};
+const uint16_t PROGMEM spc_8[]          = {CS_LT1, KC_E, COMBO_END};
+const uint16_t PROGMEM spc_9[]          = {CS_LT1, KC_R, COMBO_END};
 
 const uint16_t PROGMEM bspc_1[]         = {CS_RT1, MT_J, COMBO_END};
 const uint16_t PROGMEM bspc_2[]         = {CS_RT1, MT_K, COMBO_END};
@@ -859,9 +861,17 @@ combo_t key_combos[] = {
     [MOUSE]         = COMBO(mouse,         CM_MOUSE),
     [MOUSE2]        = COMBO(mouse2,        CM_MOUSE),
 
-    [SPC_1]         = COMBO(spc_1,         CM_SPC_1),
-    [SPC_2]         = COMBO(spc_2,         CM_SPC_2),
-    [SPC_3]         = COMBO(spc_3,         CM_SPC_3),
+    [SPC_0]         = COMBO(spc_0,         KC_0),
+    [SPC_1]         = COMBO(spc_1,         KC_1),
+    [SPC_2]         = COMBO(spc_2,         KC_2),
+    [SPC_3]         = COMBO(spc_3,         KC_3),
+    [SPC_4]         = COMBO(spc_4,         KC_4),
+    [SPC_5]         = COMBO(spc_5,         KC_5),
+    [SPC_6]         = COMBO(spc_6,         KC_6),
+    [SPC_7]         = COMBO(spc_7,         KC_7),
+    [SPC_8]         = COMBO(spc_8,         KC_8),
+    [SPC_9]         = COMBO(spc_9,         KC_9),
+    
     [BSPC_1]        = COMBO(bspc_1,        CM_BSPC_1),
     [BSPC_2]        = COMBO(bspc_2,        CM_BSPC_2),
     [BSPC_3]        = COMBO(bspc_3,        CM_BSPC_3),
@@ -928,9 +938,16 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
 // 50ms default
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
+        case SPC_0:
         case SPC_1:
         case SPC_2:
         case SPC_3:
+        case SPC_4:
+        case SPC_5:
+        case SPC_6:
+        case SPC_7:
+        case SPC_8:
+        case SPC_9:
 
         case BSPC_1:
         case BSPC_2:
@@ -1008,16 +1025,38 @@ void rollback_last_key(void) {
 }
 
 bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
-    if (!is_magic(keycode) && !is_bspc(keycode) && !is_spc(keycode)) {
+    // Ignore tracking if ctrl is on and reset rollback counter
+    if (ctrl_on()) {
         char_count = 1;
+        return true;
     }
 
-    if (is_spc(keycode)) {
+    // Track alpha keys
+    if (is_alpha(keycode)) {
+        update_last_key(keycode);
+        return true;
+    }
+    // Track mod taps
+    if (is_hrm(keycode)) {
+        update_last_key(QK_MOD_TAP_GET_TAP_KEYCODE(keycode));
+        return true;
+    }
+
+    // Track spaces
+    if (keycode == CS_LT1) {
         if (record->tap.count && record->event.pressed) {
             update_last_key(KC_SPC);
         }
         return true;
     }
+    if (keycode == KC_SPC) {
+        if (record->event.pressed) {
+            update_last_key(KC_SPC);
+        }
+        return true;
+    }
+
+    // Handle deletes
     if (is_bspc(keycode)) {
         if (record->tap.count && record->event.pressed) {
             rollback_last_key();
@@ -1030,6 +1069,9 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
+    
+    // Reset rollback counter on any other keypress
+    char_count = 1;
     return true;
 }
 
@@ -1063,6 +1105,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         if (record->tap.count && record->event.pressed) {
             if (IS_LAYER_ON(_QWERTY)|| IS_LAYER_ON(_BASIC)) {
                 tap_code(last_key);
+                update_last_key(last_key);
                 return false;
             }
 
@@ -1111,6 +1154,12 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
             layer_off(_PROGRAM);
         }
         if (record->tap.count && record->event.pressed) {
+            if (IS_LAYER_ON(_QWERTY)|| IS_LAYER_ON(_BASIC)) {
+                tap_code(last_key);
+                update_last_key(last_key);
+                return false;
+            }
+
             switch (last_key) {
                 // Right hand keys
                 case KC_J: SEND_STRING(/*j*/"ect"); update_last_keys(KC_T, 3); break;
@@ -2095,32 +2144,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        // Combo actions
-        case CM_SPC_3:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_1);
-                set_mods(mods);
-            }
-            break;
-        case CM_SPC_2:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_2);
-                set_mods(mods);
-            }
-            break;
-        case CM_SPC_1:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_3);
-                set_mods(mods);
-            }
-            break;
-            
+        // Combo actions            
         case CM_BSPC_1:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -2149,158 +2173,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 tap_code(KC_END);
                 tap_code(KC_ENT);
                 set_mods(mods);
-            }
-            break;
-
-        // =====================================================================
-        // Repeat key
-        // =====================================================================
-
-        case KC_A:
-        // case MT_A:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_A);
-            }
-            break;
-        case KC_B:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_B);
-            }
-            break;
-        case KC_C:
-        case MT_C:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_C);
-            }
-            break;
-        case KC_D:
-        case MT_D:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_D);
-            }
-            break;
-        case KC_E:
-        case MTA_E:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_E);
-            }
-            break;
-        case KC_F:
-        case MT_F:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_F);
-            }
-            break;
-        case KC_G:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_G);
-            }
-            break;
-        case KC_H:
-        case MTA_H:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_H);
-            }
-            break;
-        case KC_I:
-        case MTA_I:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_I);
-            }
-            break;
-        case KC_J:
-        case MT_J:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_J);
-            }
-            break;
-        case KC_K:
-        case MT_K:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_K);
-            }
-            break;
-        case KC_L:
-        case MT_L:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_L);
-            }
-            break;
-        case KC_M:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_M);
-            }
-            break;
-        case KC_N:
-        case MT_N:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_N);
-            }
-            break;
-        case KC_O:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_O);
-            }
-            break;
-        case KC_P:
-        case MTA_P:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_P);
-            }
-            break;
-        case KC_Q:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_Q);
-            }
-            break;
-        case KC_R:
-        case MTA_R:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_R);
-            }
-            break;
-        case KC_S:
-        case MT_S:
-        case MTA_S:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_S);
-            }
-            break;
-        case KC_T:
-        case MTA_T:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_T);
-            }
-            break;
-        case KC_U:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_U);
-            }
-            break;
-        case KC_V:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_V);
-            }
-            break;
-        case KC_W:
-        case MTA_W:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_W);
-            }
-            break;
-        case KC_X:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_X);
-            }
-            break;
-        case KC_Y:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_Y);
-            }
-            break;
-        case KC_Z:
-            if (record->event.pressed && !ctrl_on()) {
-                update_last_key(KC_Z);
             }
             break;
     }

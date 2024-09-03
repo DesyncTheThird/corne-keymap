@@ -102,7 +102,7 @@ Duplicated keys are not tracked:
 
 For longer magic outputs, (e.g. `W -> WITH`) there is a short window (default 500ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
 
-
+On QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality.
 
 ## OLEDs
 (128x64 OLEDs)
@@ -126,6 +126,7 @@ Key on utility layer available to change both OLEDs to static images.
 (Press `Esc`, `;`, and `#` to access Touhou layer and to see funky Cirno fumo on right OLED.)
 
 ---
+- Number combos on left hand are not all shown on picture to reduce clutter; these fill out an entire number grid in the same layout as the Data layer, with `0` on the home row pinky.
 - `Del` combo presses `LCTL`+`BSPC`;
 - `Join` combo joins current line to following line with space between;
 - `Line` combo adds a new line below the current position.
