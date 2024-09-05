@@ -428,6 +428,14 @@ bool is_bspc(uint16_t keycode) {
     }
 }
 
+bool is_spc(uint16_t keycode) {
+    if ((keycode == CS_RT1) || (keycode == KC_SPC)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 
 
 //==============================================================================
@@ -1030,6 +1038,7 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         char_count = 1;
         return true;
     }
+    
 
     // Track alpha keys
     if (is_alpha(keycode)) {
@@ -1057,8 +1066,20 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     }
 
     // Handle deletes
-    if (is_bspc(keycode)) {
+    if (keycode == CS_RT1) {
         if (record->tap.count && record->event.pressed) {
+            rollback_last_key();
+            if (!shifted() && !ctrl_on()) {
+                for (int i = 1; i < char_count; i++) {
+                    tap_code(KC_BSPC);
+                }
+            }
+        char_count = 1;
+        }
+        return true;
+    }
+    if (keycode == KC_BSPC) {
+        if (record->event.pressed) {
             rollback_last_key();
             if (!shifted() && !ctrl_on()) {
                 for (int i = 1; i < char_count; i++) {
@@ -1071,7 +1092,9 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     }
     
     // Reset rollback counter on any other keypress
-    char_count = 1;
+    if (!(is_bspc(keycode) || is_spc(keycode) || is_alpha(keycode) || is_hrm(keycode) || is_magic(keycode))) {
+        char_count = 1;
+    }
     return true;
 }
 
@@ -1115,7 +1138,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_L: tap_code(KC_R); update_last_key(KC_R); break;
                 case KC_D: tap_code(KC_T); update_last_key(KC_T); break;
                 case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
-                case KC_B: tap_code(KC_S); update_last_key(KC_S); break;
+                case KC_B: SEND_STRING(/*b*/"ecause "); update_last_keys(KC_SPC, 7); break;
 
                 case KC_N: SEND_STRING(/*n*/"ion"); update_last_keys(KC_N, 3); break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
@@ -1177,7 +1200,6 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_P: tap_code(KC_H); update_last_key(KC_H); break;
 
                 // Left hand overrides
-                case KC_B: SEND_STRING(/*b*/"ecause"); update_last_keys(KC_E, 6); break;
                 case KC_Q: tap_code(KC_U); update_last_key(KC_U); break;
                 case KC_V: SEND_STRING(/*v*/"er"); update_last_keys(KC_R, 2); break;
                 case KC_W: SEND_STRING(/*w*/"ith"); update_last_keys(KC_H, 3); break;
@@ -1560,13 +1582,13 @@ void user_config_sync_handler(uint8_t initiator2target_buffer_size, const void* 
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_achordion(keycode, record)) { return false; }
-    if (!process_select_word(keycode, record, SELECT)) { return false; }
-    if (!process_vol_repeat(keycode, record)) { return false; }
-    if (!process_clock(keycode, record)) { return false; }
     if (!process_key_tracking(keycode, record)) { return false; }
     if (!process_magic(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
     if (!process_lingering_mods(keycode, record)) { return false; }
+    if (!process_select_word(keycode, record, SELECT)) { return false; }
+    if (!process_vol_repeat(keycode, record)) { return false; }
+    if (!process_clock(keycode, record)) { return false; }
     
     switch (keycode) {
 
