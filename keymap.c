@@ -642,7 +642,7 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
         // case CS_RT2:
         case CS_RT3:
  
-        case CS_AL1:
+        // case CS_AL1:
         case CS_AL2:
         case CS_AL3:
             // Immediately select the hold action when another key is pressed.
@@ -667,7 +667,7 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
         // case CS_RT2:
         case CS_RT3:
 
-        case CS_AL1:
+        // case CS_AL1:
         case CS_AL2:
         case CS_AL3:
         
@@ -687,6 +687,7 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
 
     switch (tap_hold_keycode) {
         case CS_RT2:
+        case CS_AL1:
 
         case TAB_SFT:
             return achordion_opposite_hands(tap_hold_record, other_record);
