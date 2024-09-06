@@ -1167,7 +1167,6 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_J: SEND_STRING(/*j*/"ust"); update_last_keys(KC_T, 3); break;
                 case KC_Y: SEND_STRING(/*y*/"ou"); update_last_keys(KC_U, 2); break;
                 case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_E, 3); break;
-                case KC_A: SEND_STRING(/*a*/"nd"); update_last_keys(KC_D, 2); break;
                 case KC_I: SEND_STRING(/*i*/"on"); update_last_keys(KC_N, 2); break;
                 case KC_K: SEND_STRING(/*k*/"ey"); update_last_keys(KC_Y, 2); break;
 

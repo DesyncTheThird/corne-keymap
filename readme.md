@@ -39,10 +39,10 @@ Left hand keys:
 | Magic | `N` | `R` | `T` | `S` | `ECAUSE⎵` | `ION` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `ER` |
 
 Right hand overrides and combos/other:
-|     |     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `Y`  | `H`   | `I`  | `A`  | `K`  |
-| Magic | `UST` | `OU` | `ERE` | `ON` | `ND` | `EY` |
+|     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- |
+| Prev  | `J`   | `Y`  | `H`   | `I`  | `K`  |
+| Magic | `UST` | `OU` | `ERE` | `ON` | `EY` |
 
 (Other right hand keys are repeated.)
 
