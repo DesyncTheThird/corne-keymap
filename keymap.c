@@ -1,4 +1,5 @@
 #include QMK_KEYBOARD_H
+#include "print.h"
 
 // #include "ps2_mouse.h"
 // #include "ps2.h"
@@ -323,7 +324,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     
     [_UTILITY] = LAYOUT( //12
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           ALTTAB, CLOCKUP, CS_VALD, CS_VOLU, CS_VALU, CS_RGBN,                      CS_BOOT,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_DEL,
+           ALTTAB, CLOCKUP, CS_VALD, CS_VOLU, CS_VALU, CS_RGBN,                      CS_BOOT,   KC_F7,   KC_F8,   KC_F9,  KC_F10, DB_TOGG,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, CLOCKDN, KC_MPRV, CS_VOLD, KC_MNXT,    BASE,                        BASIC,   KC_F1,   KC_F2,   KC_F3,  KC_F11, TAB_SFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -1021,6 +1022,11 @@ void update_last_key(uint16_t new_keycode) {
     last_key = new_keycode;
 
     char_count = 1;
+
+    dprintf("updated keys!\n");
+    dprintf("last_key:   %d\n", last_key);
+    dprintf("last_key_2: %d\n", last_key_2);
+    dprintf("char_count: %d\n", char_count);
 }
 
 void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
@@ -1028,10 +1034,18 @@ void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
     last_key = new_keycode;
 
     char_count = new_count;
+    dprintf("updated multiple keys!\n");
+    dprintf("last_key:   %d\n", last_key);
+    dprintf("last_key_2: %d\n", last_key_2);
+    dprintf("char_count: %d\n", char_count);
 }
 
 void rollback_last_key(void) {
     last_key = last_key_2;
+    dprintf("rolled back!\n");
+    dprintf("last_key:   %d\n", last_key);
+    dprintf("last_key_2: %d\n", last_key_2);
+    dprintf("char_count: %d\n", char_count);
 }
 
 bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
@@ -1044,12 +1058,16 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
 
     // Track alpha keys
     if (is_alpha(keycode)) {
-        update_last_key(keycode);
+        if (record->event.pressed) {
+            update_last_key(keycode);
+        }
         return true;
     }
     // Track mod taps
     if (is_hrm(keycode)) {
-        update_last_key(QK_MOD_TAP_GET_TAP_KEYCODE(keycode));
+        if (record->tap.count && record->event.pressed) {
+            update_last_key(QK_MOD_TAP_GET_TAP_KEYCODE(keycode));
+        }
         return true;
     }
 
