@@ -49,8 +49,8 @@ Right hand overrides and combos/other:
 Other:
 |     |     |     |
 | --- | --- | --- |
-| `⎵`   | `,`    | `.`   |
-| `THE` | `⎵AND` | `COM` |
+| `⎵`/`Non-alpha` | `,`    | `.`   |
+| `OSM Shift`     | `⎵AND` | `COM` |
 
 ### Repeat Key
 
@@ -71,8 +71,8 @@ Left hand overrides:
 Other:
 |     |     |     |
 | --- | --- | --- |
-| `⎵`   | `,`    | `.`   |
-| `THE` | `⎵BUT` | `COM` |
+| `⎵`/`Non-alpha` | `,`    | `.`   |
+| `THE`           | `⎵BUT` | `COM` |
 
 ---
 
@@ -100,7 +100,9 @@ Duplicated keys are not tracked:
 >
 > `a b c [BSPC] [Rep]` produces `a b b` (`Rep` returns previous tracked key `b`).
 
-For longer magic outputs, (e.g. `W -> WITH`) there is a short window (default 500ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
+For longer magic outputs, (e.g. `W -> WITH`) there is a short window (default 1000ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
+
+After 1000ms of no keyboard input, both dynamic keys will reset to the `⎵`/`Non-alpha` state, i.e., `OSM Shift`/`THE`.
 
 On QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality.
 
