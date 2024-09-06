@@ -525,6 +525,8 @@ static bool alt_tab_active = false;
 static bool oled_timeout = false;
 
 uint8_t char_count = 1;
+uint16_t last_key = KC_NO;
+uint16_t last_key_2 = KC_NO;
 
 void matrix_scan_user(void) {
     achordion_task();
@@ -552,8 +554,10 @@ void matrix_scan_user(void) {
             alt_tab_active = false;
         }
     }
-    if (last_input_activity_elapsed() > 500) {
+    if (last_input_activity_elapsed() > 1000) {
         char_count = 1;
+        last_key = KC_NO;
+        last_key_2 = KC_NO;
     }
     if (last_input_activity_elapsed() > 15000) {
         time_setting = 0;
@@ -1012,9 +1016,6 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
 // Repeat and Magic key
 //==============================================================================
 
-uint16_t last_key = KC_NO;
-uint16_t last_key_2 = KC_NO;
-
 void update_last_key(uint16_t new_keycode) {
     last_key_2 = last_key;
     last_key = new_keycode;
@@ -1055,13 +1056,20 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     // Track spaces
     if (keycode == CS_LT1) {
         if (record->tap.count && record->event.pressed) {
-            update_last_key(KC_SPC);
+            update_last_key(KC_NO);
         }
         return true;
     }
     if (keycode == KC_SPC) {
         if (record->event.pressed) {
-            update_last_key(KC_SPC);
+            update_last_key(KC_NO);
+        }
+        return true;
+    }
+    // and enter
+    if (keycode == KC_ENT) {
+        if (record->event.pressed) {
+            update_last_key(KC_NO);
         }
         return true;
     }
@@ -1092,9 +1100,11 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
     
-    // Reset rollback counter on any other keypress
+    // Reset rollback counter and recorded key on any other keypress
     if (!(is_bspc(keycode) || is_spc(keycode) || is_alpha(keycode) || is_hrm(keycode) || is_magic(keycode))) {
         char_count = 1;
+        last_key = KC_NO;
+        last_key_2 = KC_NO;
     }
     return true;
 }
@@ -1161,7 +1171,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_I: SEND_STRING(/*i*/"on"); update_last_keys(KC_N, 2); break;
                 case KC_K: SEND_STRING(/*k*/"ey"); update_last_keys(KC_Y, 2); break;
 
-                case KC_SPC: send_the(false); update_last_keys(KC_D, 3); break;
+                case KC_NO: set_oneshot_mods(MOD_BIT(KC_LSFT)); update_last_key(KC_NO); break;
                 case KC_COMM: SEND_STRING(" and"); update_last_keys(KC_D, 3); break;
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_D, 3); break;
 
@@ -1205,7 +1215,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_V: SEND_STRING(/*v*/"er"); update_last_keys(KC_R, 2); break;
                 case KC_W: SEND_STRING(/*w*/"ith"); update_last_keys(KC_H, 3); break;
 
-                case KC_SPC: send_the(false); update_last_keys(KC_E, 3); break;
+                case KC_NO: send_the(false); update_last_keys(KC_E, 3); break;
                 case KC_COMM: SEND_STRING(" but"); update_last_keys(KC_E, 3); break;
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_M, 3); break;
 
@@ -2398,7 +2408,14 @@ void render_layer(void) {
 
 
 
-
+bool oneshot_shift_on = false;
+void oneshot_mods_changed_user(uint8_t mods) {
+    if (mods & MOD_MASK_SHIFT) {
+        oneshot_shift_on = true;
+    } else {
+        oneshot_shift_on = false;
+    }
+}
 
 void render_locking_key_state(led_t led_usb_state) {
     if (led_usb_state.caps_lock) {
@@ -2482,7 +2499,7 @@ void render_modifier_state(uint8_t line) {
         oled_write_char(164,false);
     }
     oled_set_cursor(4,line);
-    if (get_mods() & MOD_MASK_SHIFT) {
+    if ((get_mods() & MOD_MASK_SHIFT) || oneshot_shift_on) {
         oled_write_char(141,false);
         oled_write_char(142,false);
         oled_set_cursor(4,line+1);
