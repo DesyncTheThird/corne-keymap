@@ -1056,17 +1056,17 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     // Track spaces
     if (keycode == CS_LT1) {
         if (record->tap.count && record->event.pressed) {
-            update_last_key(KC_NO);
+            update_last_key(KC_SPC);
         }
         return true;
     }
     if (keycode == KC_SPC) {
         if (record->event.pressed) {
-            update_last_key(KC_NO);
+            update_last_key(KC_SPC);
         }
         return true;
     }
-    // and enter
+    // Track enter key
     if (keycode == KC_ENT) {
         if (record->event.pressed) {
             update_last_key(KC_NO);
@@ -1125,8 +1125,6 @@ void send_the(bool space) {
     } else {
         SEND_STRING("the");
     }
-
-    update_last_keys(KC_E, 3);
 }
 
 bool process_magic(uint16_t keycode, keyrecord_t* record) {
@@ -1170,7 +1168,8 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_I: SEND_STRING(/*i*/"on"); update_last_keys(KC_N, 2); break;
                 case KC_K: SEND_STRING(/*k*/"ey"); update_last_keys(KC_Y, 2); break;
 
-                case KC_NO: set_oneshot_mods(MOD_BIT(KC_LSFT)); update_last_key(KC_NO); break;
+                case KC_NO: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
+                case KC_SPC: send_the(false); update_last_keys(KC_E, 3); break;
                 case KC_COMM: SEND_STRING(" and"); update_last_keys(KC_D, 3); break;
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_D, 3); break;
 
@@ -1214,7 +1213,8 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_V: SEND_STRING(/*v*/"er"); update_last_keys(KC_R, 2); break;
                 case KC_W: SEND_STRING(/*w*/"ith"); update_last_keys(KC_H, 3); break;
 
-                case KC_NO: send_the(false); update_last_keys(KC_E, 3); break;
+                case KC_NO:
+                case KC_SPC: send_the(false); update_last_keys(KC_E, 3); break;
                 case KC_COMM: SEND_STRING(" but"); update_last_keys(KC_E, 3); break;
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_M, 3); break;
 

@@ -47,10 +47,10 @@ Right hand overrides and combos/other:
 (Other right hand keys are repeated.)
 
 Other:
-|     |     |     |
-| --- | --- | --- |
-| `⎵`/`Non-alpha` | `,`    | `.`   |
-| `OSM Shift`     | `⎵AND` | `COM` |
+|     |     |     |     |
+| --- | --- | --- | --- |
+| `⎵`   | `Non-alpha` | `,`    | `.`   |
+| `THE` | `OSM Shift` | `⎵AND` | `COM` |
 
 ### Repeat Key
 
@@ -69,10 +69,10 @@ Left hand overrides:
 (Other left hand keys are repeated.)
 
 Other:
-|     |     |     |
-| --- | --- | --- |
-| `⎵`/`Non-alpha` | `,`    | `.`   |
-| `THE`           | `⎵BUT` | `COM` |
+|     |     |     |     |
+| --- | --- | --- | --- |
+| `⎵`  | `Non-alpha` | `,`    | `.`   |
+| `THE`| `THE`       | `⎵BUT` | `COM` |
 
 ---
 
