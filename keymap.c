@@ -973,6 +973,8 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
 
         case L_EXPONENT:
         case R_EXPONENT:
+        case L_MINUS:
+        case R_MINUS:
             return 15;
 
         case MOUSE:
@@ -980,7 +982,7 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
             return 75;
 
         default:
-            return 25;
+            return 20;
     }
 }
 
