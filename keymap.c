@@ -1169,7 +1169,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_L: tap_code(KC_R); update_last_key(KC_R); break;
                 case KC_D: tap_code(KC_T); update_last_key(KC_T); break;
                 case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
-                case KC_B: SEND_STRING(/*b*/"ecause "); update_last_keys(KC_SPC, 7); break;
+                case KC_B: tap_code(KC_S); update_last_key(KC_S); break;
 
                 case KC_N: SEND_STRING(/*n*/"ion"); update_last_keys(KC_N, 3); break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;

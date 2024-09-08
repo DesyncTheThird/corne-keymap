@@ -35,8 +35,8 @@ Letters on opposite hand that are not commonly repeated (i.e. `I`, `Q`) are over
 Left hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `Z` | `L` | `D` | `C` | `B`       | `N`   | `R` | `T`   | `S` | `G` | `Q` | `X` | `M`   | `W` | `V`  |
-| Magic | `N` | `R` | `T` | `S` | `ECAUSE⎵` | `ION` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `ER` |
+| Prev  | `Z` | `L` | `D` | `C` | `B` | `N`   | `R` | `T`   | `S` | `G` | `Q` | `X` | `M`   | `W` | `V`  |
+| Magic | `N` | `R` | `T` | `S` | `S` | `ION` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `ER` |
 
 Right hand overrides and combos/other:
 |     |     |     |     |     |     |
