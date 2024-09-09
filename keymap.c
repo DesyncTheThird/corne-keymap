@@ -5,10 +5,10 @@
 // #include "ps2.h"
 
 enum corne_layers {
+    _BASIC,
     _QWERTY,
     _BASE,
     _CONTROL,
-    _BASIC,
     _STENO,
     _DATA,
     _PROGRAM,
@@ -96,12 +96,7 @@ enum custom_keycodes {
     CM_BSPC_1,
     CM_BSPC_2,
     CM_BSPC_3,
-
-    CM_1,
-    CM_2,
-    CM_3,
 };
-
 
 
 
@@ -178,6 +173,17 @@ enum custom_keycodes {
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+    [_BASIC] = LAYOUT( //3
+      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+           KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, CS_HASH,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN,  KC_TAB,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    KC_C,    KC_V,                         KC_B,    KC_N,    KC_M, COM_DOT, QUE_EXL, KC_QUOT,
+      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                               CS_LT3,  CS_LT2,  KC_SPC,     CS_RT1,  CS_RT2,  CS_RT3
+                                          //`--------------------------'  `--------------------------'
+    ), 
     [_QWERTY] = LAYOUT( //0
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, CS_HASH,
@@ -211,18 +217,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
           _______,    REDO,    UNDO,     CUT,    COPY,   PASTE,                         BOLD, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______, _______, _______
-                                          //`--------------------------'  `--------------------------'
-    ),
-
-    [_BASIC] = LAYOUT( //3
-      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, CS_HASH,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN,  KC_TAB,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    KC_C,    KC_V,                         KC_B,    KC_N,    KC_M, COM_DOT, QUE_EXL, KC_QUOT,
-      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -823,48 +817,48 @@ const uint16_t PROGMEM mouse[]          = {KC_SCLN, QUE_EXL, COMBO_END};
 const uint16_t PROGMEM mouse2[]         = {TAB_SFT, KC_QUOT, COMBO_END};
 
 const uint16_t PROGMEM l_exponent[]     = {KC_W, KC_E, COMBO_END};
-const uint16_t PROGMEM l_comma[]        = {MT_D, MT_C, COMBO_END};
-const uint16_t PROGMEM l_dot[]          = {MT_S, MT_D, COMBO_END};
-const uint16_t PROGMEM l_underscore[]   = {KC_X, MT_C, COMBO_END};
-const uint16_t PROGMEM l_asterisk[]     = {MT_F, KC_V, COMBO_END};
+const uint16_t PROGMEM l_comma[]        = {KC_D, KC_C, COMBO_END};
+const uint16_t PROGMEM l_dot[]          = {KC_S, KC_D, COMBO_END};
+const uint16_t PROGMEM l_underscore[]   = {KC_X, KC_C, COMBO_END};
+const uint16_t PROGMEM l_asterisk[]     = {KC_F, KC_V, COMBO_END};
 const uint16_t PROGMEM l_equals[]       = {KC_E, KC_R, COMBO_END};
-const uint16_t PROGMEM l_plus[]         = {MT_F, KC_G, COMBO_END};
-const uint16_t PROGMEM l_minus[]        = {MT_D, MT_F, COMBO_END};
+const uint16_t PROGMEM l_plus[]         = {KC_F, KC_G, COMBO_END};
+const uint16_t PROGMEM l_minus[]        = {KC_D, KC_F, COMBO_END};
 
-const uint16_t PROGMEM ampersand[]      = {MT_S, KC_E, COMBO_END};
-const uint16_t PROGMEM colon[]          = {KC_E, MT_F, COMBO_END};
+const uint16_t PROGMEM ampersand[]      = {KC_S, KC_E, COMBO_END};
+const uint16_t PROGMEM colon[]          = {KC_E, KC_F, COMBO_END};
 
 const uint16_t PROGMEM r_exponent[]     = {KC_I, KC_O, COMBO_END};
-const uint16_t PROGMEM r_comma[]        = {MT_N, MT_K, COMBO_END};
-const uint16_t PROGMEM r_dot[]          = {MT_K, MT_L, COMBO_END};
-const uint16_t PROGMEM r_underscore[]   = {MT_N, KC_M, COMBO_END};
-const uint16_t PROGMEM r_asterisk[]     = {KC_B, MT_J, COMBO_END};
+const uint16_t PROGMEM r_comma[]        = {KC_N, KC_K, COMBO_END};
+const uint16_t PROGMEM r_dot[]          = {KC_K, KC_L, COMBO_END};
+const uint16_t PROGMEM r_underscore[]   = {KC_N, KC_M, COMBO_END};
+const uint16_t PROGMEM r_asterisk[]     = {KC_B, KC_J, COMBO_END};
 const uint16_t PROGMEM r_equals[]       = {KC_U, KC_I, COMBO_END};
-const uint16_t PROGMEM r_plus[]         = {KC_H, MT_J, COMBO_END};
-const uint16_t PROGMEM r_minus[]        = {MT_J, MT_K, COMBO_END};
+const uint16_t PROGMEM r_plus[]         = {KC_H, KC_J, COMBO_END};
+const uint16_t PROGMEM r_minus[]        = {KC_J, KC_K, COMBO_END};
 
-const uint16_t PROGMEM semicolon[]      = {MT_J, KC_I, COMBO_END};
-const uint16_t PROGMEM exclamation[]    = {KC_I, MT_L, COMBO_END};
+const uint16_t PROGMEM semicolon[]      = {KC_J, KC_I, COMBO_END};
+const uint16_t PROGMEM exclamation[]    = {KC_I, KC_L, COMBO_END};
 
-const uint16_t PROGMEM spc_0[]          = {CS_LT1, KC_A, COMBO_END};
-const uint16_t PROGMEM spc_1[]          = {CS_LT1, MT_S, COMBO_END};
-const uint16_t PROGMEM spc_2[]          = {CS_LT1, MT_D, COMBO_END};
-const uint16_t PROGMEM spc_3[]          = {CS_LT1, MT_F, COMBO_END};
-const uint16_t PROGMEM spc_4[]          = {CS_LT1, KC_Z, COMBO_END};
-const uint16_t PROGMEM spc_5[]          = {CS_LT1, KC_X, COMBO_END};
-const uint16_t PROGMEM spc_6[]          = {CS_LT1, MT_C, COMBO_END};
-const uint16_t PROGMEM spc_7[]          = {CS_LT1, KC_W, COMBO_END};
-const uint16_t PROGMEM spc_8[]          = {CS_LT1, KC_E, COMBO_END};
-const uint16_t PROGMEM spc_9[]          = {CS_LT1, KC_R, COMBO_END};
+const uint16_t PROGMEM spc_0[]          = {KC_SPC, KC_A, COMBO_END};
+const uint16_t PROGMEM spc_1[]          = {KC_SPC, KC_S, COMBO_END};
+const uint16_t PROGMEM spc_2[]          = {KC_SPC, KC_D, COMBO_END};
+const uint16_t PROGMEM spc_3[]          = {KC_SPC, KC_F, COMBO_END};
+const uint16_t PROGMEM spc_4[]          = {KC_SPC, KC_Z, COMBO_END};
+const uint16_t PROGMEM spc_5[]          = {KC_SPC, KC_X, COMBO_END};
+const uint16_t PROGMEM spc_6[]          = {KC_SPC, KC_C, COMBO_END};
+const uint16_t PROGMEM spc_7[]          = {KC_SPC, KC_W, COMBO_END};
+const uint16_t PROGMEM spc_8[]          = {KC_SPC, KC_E, COMBO_END};
+const uint16_t PROGMEM spc_9[]          = {KC_SPC, KC_R, COMBO_END};
 
-const uint16_t PROGMEM bspc_1[]         = {CS_RT1, MT_J, COMBO_END};
-const uint16_t PROGMEM bspc_2[]         = {CS_RT1, MT_K, COMBO_END};
-const uint16_t PROGMEM bspc_3[]         = {CS_RT1, MT_L, COMBO_END};
+const uint16_t PROGMEM bspc_1[]         = {CS_RT1, KC_J, COMBO_END};
+const uint16_t PROGMEM bspc_2[]         = {CS_RT1, KC_K, COMBO_END};
+const uint16_t PROGMEM bspc_3[]         = {CS_RT1, KC_L, COMBO_END};
 
 const uint16_t PROGMEM num_1[]          = {KC_Q, KC_A, COMBO_END};
-const uint16_t PROGMEM num_2[]          = {KC_W, MT_S, COMBO_END};
-const uint16_t PROGMEM num_3[]          = {KC_E, MT_D, COMBO_END};
-const uint16_t PROGMEM num_4[]          = {KC_R, MT_F, COMBO_END};
+const uint16_t PROGMEM num_2[]          = {KC_W, KC_S, COMBO_END};
+const uint16_t PROGMEM num_3[]          = {KC_E, KC_D, COMBO_END};
+const uint16_t PROGMEM num_4[]          = {KC_R, KC_F, COMBO_END};
 const uint16_t PROGMEM num_5[]          = {KC_T, KC_G, COMBO_END};
 
 combo_t key_combos[] = {
@@ -1706,23 +1700,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case BASE:
             if (record->event.pressed) {
-                if (IS_LAYER_ON(_BASIC)) {
-                    layer_off(_BASIC);
-                } else if (IS_LAYER_ON(_BASE)) {
-                    layer_on(_QWERTY);
-                    layer_off(_BASE);
-                } else {
-                    layer_on(_BASE);
+                if (IS_LAYER_ON(_QWERTY)) {  // QWERTY -> BASE
                     layer_off(_QWERTY);
+                    layer_on(_BASE);
+                } else if (IS_LAYER_ON(_BASE)) {  // BASE -> QWERTY
+                    layer_off(_BASE);
+                    layer_on(_QWERTY);
+                } else {  // BASIC -> QWERTY
+                    // layer_off(_BASIC);
+                    layer_on(_QWERTY);
                 }
             }
             break;
         case BASIC:
             if (record->event.pressed) {
-                if (IS_LAYER_ON(_BASIC)) {
-                    layer_off(_BASIC);
-                } else {
-                    layer_on(_BASIC);
+                if (IS_LAYER_ON(_QWERTY)) { // QWERTY -> BASIC
+                    layer_off(_QWERTY);
+                    // layer_on(_BASIC);
+                } else if (IS_LAYER_ON(_BASE)) { // BASE -> BASIC
+                    layer_off(_BASE);
+                    // layer_on(_BASIC);
+                } else { // BASIC -> BASE
+                    // layer_off(_BASIC);
+                    layer_on(_BASE);
                 }
             }
             break;
@@ -2380,8 +2380,6 @@ void render_mode(void) {
         oled_write_P(PSTR(" Numpad\n"), false);
     } else if (IS_LAYER_ON(_TOUHOU)) {
         oled_write_P(PSTR(" Touhou\n"), false);
-    } else if (IS_LAYER_ON(_BASIC)) {
-        oled_write_P(PSTR(" Basic\n"), false);
     } else if (IS_LAYER_ON(_STENO)) {
         oled_write_P(PSTR(" Steno.\n"), false);
     } else if (IS_LAYER_ON(_QWERTY)) {
@@ -2389,7 +2387,7 @@ void render_mode(void) {
     } else if (IS_LAYER_ON(_BASE)) {
         oled_write_P(PSTR(" Base\n"), false);
     } else {
-        oled_write_P(PSTR(" REEEE\n"), false);
+        oled_write_P(PSTR(" Basic\n"), false);
     }
 }
 
