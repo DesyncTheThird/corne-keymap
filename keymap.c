@@ -811,10 +811,10 @@ enum combo_events {
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
 const uint16_t PROGMEM touhou[]         = {KC_P, CS_HASH, KC_ESC, COMBO_END};
-const uint16_t PROGMEM steno[]          = {KC_P, CS_HASH, KC_SCLN, TAB_SFT, COMBO_END};
+const uint16_t PROGMEM steno[]          = {KC_P, CS_HASH, KC_SCLN, KC_TAB, COMBO_END};
 const uint16_t PROGMEM numpad[]         = {KC_O, KC_P, CS_HASH, COMBO_END};
 const uint16_t PROGMEM mouse[]          = {KC_SCLN, QUE_EXL, COMBO_END};
-const uint16_t PROGMEM mouse2[]         = {TAB_SFT, KC_QUOT, COMBO_END};
+const uint16_t PROGMEM mouse2[]         = {KC_TAB, KC_QUOT, COMBO_END};
 
 const uint16_t PROGMEM l_exponent[]     = {KC_W, KC_E, COMBO_END};
 const uint16_t PROGMEM l_comma[]        = {KC_D, KC_C, COMBO_END};
