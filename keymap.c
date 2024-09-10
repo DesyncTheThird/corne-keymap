@@ -1707,7 +1707,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                     layer_off(_BASE);
                     layer_on(_QWERTY);
                 } else {  // BASIC -> QWERTY
-                    // layer_off(_BASIC);
+                    layer_off(_BASIC);
                     layer_on(_QWERTY);
                 }
             }
@@ -1716,12 +1716,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (IS_LAYER_ON(_QWERTY)) { // QWERTY -> BASIC
                     layer_off(_QWERTY);
-                    // layer_on(_BASIC);
+                    layer_on(_BASIC);
                 } else if (IS_LAYER_ON(_BASE)) { // BASE -> BASIC
                     layer_off(_BASE);
-                    // layer_on(_BASIC);
+                    layer_on(_BASIC);
                 } else { // BASIC -> BASE
-                    // layer_off(_BASIC);
+                    layer_off(_BASIC);
                     layer_on(_BASE);
                 }
             }
