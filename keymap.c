@@ -697,13 +697,15 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
     }
 }
 
-uint16_t achordion_streak_chord_timeout(
-    uint16_t tap_hold_keycode, uint16_t next_keycode) {
+uint16_t achordion_streak_chord_timeout( uint16_t tap_hold_keycode, uint16_t next_keycode) {
     uint8_t mod = mod_config(QK_MOD_TAP_GET_MODS(tap_hold_keycode));
-    if (((mod & MOD_LSFT) != 0) || ((mod & MOD_RSFT) != 0)) {
-        return 100;
+    if ((next_keycode == CS_LCTL) || (next_keycode == KC_LCTL) || (next_keycode == KC_LSFT) || (next_keycode == TAB_SFT)) {
+        return 0;
     }
     if (is_magic(tap_hold_keycode)) {
+        return 75;
+    }
+    if (((mod & MOD_LSFT) != 0) || ((mod & MOD_RSFT) != 0)) {
         return 100;
     }
     return 250;
