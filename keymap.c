@@ -514,7 +514,7 @@ bool is_spc(uint16_t keycode) {
 // Timers
 //==============================================================================
 
-#define IDLE_TIMEOUT 10000
+#define IDLE_TIMEOUT 1000 * 60 * 5
 
 static bool alt_tab_active = false;
 static bool oled_timeout = false;
@@ -534,12 +534,8 @@ void matrix_scan_user(void) {
     // }
 
     if (get_highest_layer(layer_state) == _NUMPAD) {
-        if (last_input_activity_elapsed() > IDLE_TIMEOUT) {
+        if (last_input_activity_elapsed() > IDLE_TIMEOUT) { // Layer timeout
             layer_off(_NUMPAD);
-        }
-    }
-    if (get_highest_layer(layer_state) == _TOUHOU) {
-        if (last_input_activity_elapsed() > 900000) { //15 minute time out
             layer_off(_TOUHOU);
         }
     }
@@ -549,12 +545,12 @@ void matrix_scan_user(void) {
             alt_tab_active = false;
         }
     }
-    if (last_input_activity_elapsed() > 1000) {
+    if (last_input_activity_elapsed() > 500) { // Reset magic keys
         char_count = 1;
         last_key = KC_NO;
         last_key_2 = KC_NO;
     }
-    if (last_input_activity_elapsed() > 15000) {
+    if (last_input_activity_elapsed() > 15000) { // OLED timeout
         time_setting = 0;
         oled_timeout = true;
     } else {
