@@ -1173,7 +1173,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_X: tap_code(KC_C); update_last_key(KC_C) ;break;
                 case KC_M: SEND_STRING(/*m*/"ent"); update_last_keys(KC_T, 3); break;
                 case KC_W: tap_code(KC_S); update_last_key(KC_S); break;
-                case KC_V: SEND_STRING(/*v*/"er"); update_last_keys(KC_R, 2); break;
+                case KC_V: tap_code(KC_S); update_last_key(KC_S); break;
 
                 // Right hand overrides
                 case KC_J: SEND_STRING(/*j*/"ust"); update_last_keys(KC_T, 3); break;

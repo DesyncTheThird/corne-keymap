@@ -35,8 +35,8 @@ Letters on opposite hand that are not commonly repeated (i.e. `I`, `Q`) are over
 Left hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `Z` | `L` | `D` | `C` | `B` | `N`   | `R` | `T`   | `S` | `G` | `Q` | `X` | `M`   | `W` | `V`  |
-| Magic | `N` | `R` | `T` | `S` | `S` | `ION` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `ER` |
+| Prev  | `Z` | `L` | `D` | `C` | `B` | `N`   | `R` | `T`   | `S` | `G` | `Q` | `X` | `M`   | `W` | `V` |
+| Magic | `N` | `R` | `T` | `S` | `S` | `ION` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
 
 Right hand overrides and combos/other:
 |     |     |     |     |     |     |
@@ -49,8 +49,8 @@ Right hand overrides and combos/other:
 Other:
 |     |     |     |     |
 | --- | --- | --- | --- |
-| `⎵`   | `Non-alpha` | `,`    | `.`   |
-| `THE` | `OSM Shift` | `⎵AND` | `COM` |
+| `Non-alpha` | `⎵`   | `,`    | `.`   |
+| `OSM Shift` | `THE` | `⎵AND` | `COM` |
 
 ### Repeat Key
 
@@ -71,8 +71,8 @@ Left hand overrides:
 Other:
 |     |     |     |     |
 | --- | --- | --- | --- |
-| `⎵`  | `Non-alpha` | `,`    | `.`   |
-| `THE`| `THE`       | `⎵BUT` | `COM` |
+| `Non-alpha` | `⎵`   | `,`    | `.`   |
+| `THE`       | `THE` | `⎵BUT` | `COM` |
 
 ---
 
@@ -102,7 +102,7 @@ Duplicated keys are not tracked:
 
 For longer magic outputs, (e.g. `W -> WITH`) there is a short window (default 500ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
 
-After 1000ms of no keyboard input, both dynamic keys will reset to the `⎵`/`Non-alpha` state, i.e., `OSM Shift`/`THE`.
+After a short duration (default 500ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state, i.e., `OSM Shift`/`THE`.
 
 On QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality.
 
@@ -111,7 +111,7 @@ On QWERTY and Basic modes, both dynamic keys are overridden to only have repeat 
 ### Right:
 - Default layer and layer stack display;
 - Menu key swaps layer stack to layout display;
-- Clock -- time is set manually using keys on utility layer and doesn't require software on host (persists through sleep events);
+- Clock — time is set manually using keys on utility layer and doesn't require software on host (persists through sleep events);
 - Custom locking key, modifier, and mute state indicators.
 
 ### Left:
