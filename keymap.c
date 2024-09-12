@@ -104,9 +104,9 @@ enum custom_keycodes {
 #define MT_S LGUI_T(KC_S)
 #define MT_D LALT_T(KC_D)
 #define MT_F LSFT_T(KC_F)
-#define MT_C LCTL_T(KC_C)
+#define MT_V LCTL_T(KC_V)
 
-#define MT_N RCTL_T(KC_N)
+#define MT_M RCTL_T(KC_M)
 #define MT_J RSFT_T(KC_J)
 #define MT_K LALT_T(KC_K)
 #define MT_L RGUI_T(KC_L)
@@ -179,7 +179,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_BSLS,    KC_Z,    KC_X,    KC_C,    KC_V,                         KC_B,    KC_N,    KC_M, COM_DOT, QUE_EXL, KC_QUOT,
+          KC_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_DOT, QUE_EXL, NEWSENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  KC_SPC,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -190,7 +190,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_A,    MT_S,    MT_D,    MT_F,    KC_G,                         KC_H,    MT_J,    MT_K,    MT_L, KC_SCLN, TAB_SFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, CS_BSLS,    KC_Z,    KC_X,    MT_C,    KC_V,                         KC_B,    MT_N,    KC_M, COM_DOT, QUE_EXL, KC_QUOT,
+          CS_LCTL,    KC_Z,    KC_X,    KC_C,    MT_V,    KC_B,                         KC_N,    MT_M, KC_QUOT, COM_DOT, QUE_EXL, NEWSENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -387,8 +387,8 @@ bool is_hrm(uint16_t keycode) {
         case MT_S:
         case MT_D:
         case MT_F:
-        case MT_C:
-        case MT_N:
+        case MT_V:
+        case MT_M:
         case MT_J:
         case MT_K:
         case MT_L:
@@ -812,13 +812,13 @@ const uint16_t PROGMEM touhou[]         = {KC_P, CS_HASH, KC_ESC, COMBO_END};
 const uint16_t PROGMEM steno[]          = {KC_P, CS_HASH, KC_SCLN, KC_TAB, COMBO_END};
 const uint16_t PROGMEM numpad[]         = {KC_O, KC_P, CS_HASH, COMBO_END};
 const uint16_t PROGMEM mouse[]          = {KC_SCLN, QUE_EXL, COMBO_END};
-const uint16_t PROGMEM mouse2[]         = {KC_TAB, KC_QUOT, COMBO_END};
+const uint16_t PROGMEM mouse2[]         = {KC_TAB, NEWSENT, COMBO_END};
 
 const uint16_t PROGMEM l_exponent[]     = {KC_W, KC_E, COMBO_END};
-const uint16_t PROGMEM l_comma[]        = {KC_D, KC_C, COMBO_END};
+const uint16_t PROGMEM l_comma[]        = {KC_D, KC_V, COMBO_END};
 const uint16_t PROGMEM l_dot[]          = {KC_S, KC_D, COMBO_END};
-const uint16_t PROGMEM l_underscore[]   = {KC_X, KC_C, COMBO_END};
-const uint16_t PROGMEM l_asterisk[]     = {KC_F, KC_V, COMBO_END};
+const uint16_t PROGMEM l_underscore[]   = {KC_C, KC_V, COMBO_END};
+const uint16_t PROGMEM l_asterisk[]     = {KC_F, KC_B, COMBO_END};
 const uint16_t PROGMEM l_equals[]       = {KC_E, KC_R, COMBO_END};
 const uint16_t PROGMEM l_plus[]         = {KC_F, KC_G, COMBO_END};
 const uint16_t PROGMEM l_minus[]        = {KC_D, KC_F, COMBO_END};
@@ -827,10 +827,10 @@ const uint16_t PROGMEM ampersand[]      = {KC_S, KC_E, COMBO_END};
 const uint16_t PROGMEM colon[]          = {KC_E, KC_F, COMBO_END};
 
 const uint16_t PROGMEM r_exponent[]     = {KC_I, KC_O, COMBO_END};
-const uint16_t PROGMEM r_comma[]        = {KC_N, KC_K, COMBO_END};
+const uint16_t PROGMEM r_comma[]        = {KC_M, KC_K, COMBO_END};
 const uint16_t PROGMEM r_dot[]          = {KC_K, KC_L, COMBO_END};
-const uint16_t PROGMEM r_underscore[]   = {KC_N, KC_M, COMBO_END};
-const uint16_t PROGMEM r_asterisk[]     = {KC_B, KC_J, COMBO_END};
+const uint16_t PROGMEM r_underscore[]   = {KC_M, KC_QUOT, COMBO_END};
+const uint16_t PROGMEM r_asterisk[]     = {KC_N, KC_J, COMBO_END};
 const uint16_t PROGMEM r_equals[]       = {KC_U, KC_I, COMBO_END};
 const uint16_t PROGMEM r_plus[]         = {KC_H, KC_J, COMBO_END};
 const uint16_t PROGMEM r_minus[]        = {KC_J, KC_K, COMBO_END};
@@ -842,9 +842,9 @@ const uint16_t PROGMEM spc_0[]          = {KC_SPC, KC_A, COMBO_END};
 const uint16_t PROGMEM spc_1[]          = {KC_SPC, KC_S, COMBO_END};
 const uint16_t PROGMEM spc_2[]          = {KC_SPC, KC_D, COMBO_END};
 const uint16_t PROGMEM spc_3[]          = {KC_SPC, KC_F, COMBO_END};
-const uint16_t PROGMEM spc_4[]          = {KC_SPC, KC_Z, COMBO_END};
-const uint16_t PROGMEM spc_5[]          = {KC_SPC, KC_X, COMBO_END};
-const uint16_t PROGMEM spc_6[]          = {KC_SPC, KC_C, COMBO_END};
+const uint16_t PROGMEM spc_4[]          = {KC_SPC, KC_X, COMBO_END};
+const uint16_t PROGMEM spc_5[]          = {KC_SPC, KC_C, COMBO_END};
+const uint16_t PROGMEM spc_6[]          = {KC_SPC, KC_V, COMBO_END};
 const uint16_t PROGMEM spc_7[]          = {KC_SPC, KC_W, COMBO_END};
 const uint16_t PROGMEM spc_8[]          = {KC_SPC, KC_E, COMBO_END};
 const uint16_t PROGMEM spc_9[]          = {KC_SPC, KC_R, COMBO_END};
