@@ -27,9 +27,9 @@ enum custom_keycodes {
 
     REP,
     MAGIC,
-    ALTTAB,
     NEWSENT,
 
+    ALTTAB,
     BASIC,
     BASE,
     MENU,
@@ -49,6 +49,7 @@ enum custom_keycodes {
     CLOCKUP,
     CLOCKDN,
     CLOCKNX,
+
     OLEDSAV,
 
     // Custom Symbols
@@ -84,7 +85,6 @@ enum custom_keycodes {
     CS_QUES,
     CS_SCLN,
 
-    
     // Home block mods
     CS_RBRC,
     CS_RPRN,
@@ -2234,6 +2234,31 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 //==============================================================================
 // OLED
 //==============================================================================
+
+//------------
+// WPM
+//------------
+
+bool wpm_keycode_user(uint16_t keycode) {
+    if ((keycode >= QK_MOD_TAP && keycode <= QK_MOD_TAP_MAX) || (keycode >= QK_LAYER_TAP && keycode <= QK_LAYER_TAP_MAX) || (keycode >= QK_MODS && keycode <= QK_MODS_MAX)) {
+        keycode = keycode & 0xFF;
+    } else if (keycode > 0xFF) {
+        keycode = 0;
+    }
+    
+    switch (keycode) {
+        case KC_A ... KC_0:
+        case KC_TAB ... KC_NUBS:
+        case COM_DOT ... CS_LPRN:
+        case MAGIC:
+        case REP:
+        case NEWSENT:
+            return true;
+    }
+
+    return false;
+}
+
 
 void render_wpm(void) {
     uint8_t n = get_current_wpm();

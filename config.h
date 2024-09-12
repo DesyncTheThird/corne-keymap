@@ -14,6 +14,11 @@
 
 
 
+#define WPM_SAMPLE_SECONDS 10
+#define WPM_SAMPLE_PERIODS 50
+#define WPM_LAUNCH_CONTROL
+
+
 // #define OLED_SCROLL_TIMEOUT 0
 // #define OLED_TIMEOUT 10000
 /*
