@@ -22,9 +22,9 @@
 
 `Repeat` and `Magic` are dynamic keys that return different outputs depending on the previous key.
 
-Despite the names, both keys have both magic and repeat functionality: default behaviour is to repeat keys on opposite hand and (generally) swap first and second row keys on same hand. This eliminates many SFBs, turning them into alternations for repeated keys and rolls for many other SFBs.
+Despite the names, both keys have both magic and repeat functionality: default behaviour is to (generally) repeat keys on opposite hand and (generally) swap first and second row keys on same hand. This eliminates many SFBs, turning them into alternations for repeated keys and rolls for many other SFBs.
 
-The most common use case for the same hand behaviour is for the vowel block on the right side, turning the `OE`, `EO`, `IU`, and `UI` SFBs into rolls; as well as the various index finger SFBs on both sides (i.e., in the words `T[YP]E`, `[SC]IENCE`, `[PH]ONE`, `[HY]PHEN` or `H[YP]HEN`, etc.).
+The most common use case for the swapping-rows behaviour is for the vowel block on the right side, turning the `OE`, `EO`, `IU`, and `UI` SFBs into rolls and alternations; as well as the various index finger SFBs on both sides (i.e., in the words `T[YP]E`, `[SC]IENCE`, `[HY][PH]EN`, etc.).
 
 Letters on opposite hand that are not commonly repeated (i.e. `I`, `Q`) are overridden and instead return common n-grams.
 
@@ -39,10 +39,10 @@ Left hand keys:
 | Magic | `N` | `R` | `T` | `S` | `S` | `ION` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
 
 Right hand overrides and combos/other:
-|     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `Y`  | `H`   | `I`  | `K`  |
-| Magic | `UST` | `OU` | `ERE` | `ON` | `EY` |
+|     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Prev  | `J`   | `Y`  | `O` | `H`   | `E` | `I`  | `K`  |
+| Magic | `UST` | `OU` | `E` | `ERE` | `O` | `ON` | `EY` |
 
 (Other right hand keys are repeated.)
 
@@ -58,7 +58,7 @@ Right hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Prev   | `J`   | `F` | `O` | `U` | `Y` | `H` | `E` | `I` | `A` | `K` | `P` |
-| Repeat | `ECT` | `Y` | `E` | `I` | `P` | `Y` | `O` | `U` | `U` | `Y` | `Y` |
+| Repeat | `ECT` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `U` | `Y` | `Y` |
 
 Left hand overrides:
 |     |     |     |     |
