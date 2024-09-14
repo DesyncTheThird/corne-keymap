@@ -38,6 +38,8 @@ enum custom_keycodes {
     CS_HOME,
 
     MUTE,
+    MUTE_L,
+    MUTE_R,
     CS_VOLD,
     CS_VOLU,
 
@@ -324,7 +326,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, CLOCKNX, OLEDSAV,    MUTE, KC_SCRL,    MENU,                      CS_RGBT,   KC_F4,   KC_F5,   KC_F6,  KC_F12,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              KC_MSTP,    MUTE, KC_MPLY,    KC_MPLY,    MUTE, KC_MSTP
+                                              KC_MSTP,  MUTE_L, KC_MPLY,    KC_MPLY,  MUTE_R, KC_MSTP
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -360,6 +362,8 @@ uint8_t menu = 0;
 
 bool static_display = false;
 
+bool left_active = false;
+bool right_active = false;
 bool muted = false;
 
 uint8_t set_rgb_mode = 5;
@@ -1176,7 +1180,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_V: tap_code(KC_S); update_last_key(KC_S); break;
 
                 // Right hand overrides
-                case KC_J: SEND_STRING(/*j*/"ust"); update_last_keys(KC_T, 3); break;
+                case KC_J: SEND_STRING(/*j*/"ect"); update_last_keys(KC_T, 3); break;
                 case KC_Y: SEND_STRING(/*y*/"ou"); update_last_keys(KC_U, 2); break;
                 case KC_O: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_E, 3); break;
@@ -1210,7 +1214,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
 
             switch (last_key) {
                 // Right hand keys
-                case KC_J: SEND_STRING(/*j*/"ect"); update_last_keys(KC_T, 3); break;
+                case KC_J: SEND_STRING(/*j*/"ust"); update_last_keys(KC_T, 3); break;
                 case KC_F: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_O: tap_code(KC_O); update_last_key(KC_E); break;
                 case KC_U: tap_code(KC_I); update_last_key(KC_I); break;
@@ -1619,18 +1623,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
 
         // =====================================================================
+        // Layer-taps
+        // =====================================================================
+
+        case CS_LT3:
+            if (record->event.pressed) {
+                left_active = true;
+            } else {
+                left_active = false;
+            }
+            return true;
+        case CS_RT3:
+            if (record->event.pressed) {
+                right_active = true;
+            } else {
+                right_active = false;
+            }
+            return true;
+
+
+        // =====================================================================
         // Misc control
         // =====================================================================
             
-        case MENU:
-            if (record->event.pressed) {
-                if (menu == 0) {
-                    menu = 1;
-                } else if (menu == 1) {
-                    menu = 0;
-                }
-            }
-            break;
 
         case MUTE:
             if (record->event.pressed) {
@@ -1638,6 +1653,34 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 muted = !muted;
             } else {
                 unregister_code(KC_MUTE);
+            }
+            break;
+
+        case MUTE_L:
+            if (record->event.pressed && right_active) {
+                register_code(KC_MUTE);
+                muted = !muted;
+            } else {
+                unregister_code(KC_MUTE);
+            }
+            break;
+
+        case MUTE_R:
+            if (record->event.pressed && left_active) {
+                register_code(KC_MUTE);
+                muted = !muted;
+            } else {
+                unregister_code(KC_MUTE);
+            }
+            break;
+
+        case MENU:
+            if (record->event.pressed) {
+                if (menu == 0) {
+                    menu = 1;
+                } else if (menu == 1) {
+                    menu = 0;
+                }
             }
             break;
 
@@ -2050,7 +2093,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         // Edit layer
         case MT_RBRC:
-        {
             if (!record->tap.count && record->event.pressed) {
                 register_mods(MOD_BIT(KC_RCTL));
             } else {
@@ -2063,10 +2105,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             return false;
-        }
-            break;
+
         case MT_RPRN:
-        {
             if (!record->tap.count && record->event.pressed) {
                 register_mods(MOD_BIT(KC_RSFT));
             } else {
@@ -2079,11 +2119,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             return false;
-        }
-            break;
 
         case MT_LPRN:
-        {
             if (!record->tap.count && record->event.pressed) {
                 register_mods(MOD_BIT(KC_LALT));
             } else {
@@ -2096,11 +2133,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             return false;
-        }
-            break;
 
         case MT_UNDS:
-        {
             if (!record->tap.count && record->event.pressed) {
                 register_mods(MOD_BIT(KC_RGUI));
             } else {
@@ -2113,14 +2147,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             return false;
-        }
-            break;
 
 
 
         // Data layer
         case MT_COMM:
-        {
             if (!record->tap.count && record->event.pressed) {
                 register_mods(MOD_BIT(KC_LCTL));
             } else {
@@ -2133,10 +2164,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             return false;
-        }
-            break;
+
         case MT_EQL:
-        {
             if (!record->tap.count && record->event.pressed) {
                 register_mods(MOD_BIT(KC_LSFT));
             } else {
@@ -2149,11 +2178,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             return false;
-        }
-            break;
 
         case MT_MINS:
-        {
             if (!record->tap.count && record->event.pressed) {
                 register_mods(MOD_BIT(KC_LALT));
             } else {
@@ -2166,11 +2192,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             return false;
-        }
-            break;
 
         case MT_PLUS:
-        {
             if (!record->tap.count && record->event.pressed) {
                 register_mods(MOD_BIT(KC_LGUI));
             } else {
@@ -2183,8 +2206,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             return false;
-        }
-            break;
 
         // =====================================================================
         // Combos

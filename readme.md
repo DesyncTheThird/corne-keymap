@@ -42,7 +42,7 @@ Right hand overrides and combos/other:
 |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Prev  | `J`   | `Y`  | `O` | `H`   | `E` | `I`  | `K`  |
-| Magic | `UST` | `OU` | `E` | `ERE` | `O` | `ON` | `EY` |
+| Magic | `ECT` | `OU` | `E` | `ERE` | `O` | `ON` | `EY` |
 
 (Other right hand keys are repeated.)
 
@@ -58,7 +58,7 @@ Right hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Prev   | `J`   | `F` | `O` | `U` | `Y` | `H` | `E` | `I` | `A` | `K` | `P` |
-| Repeat | `ECT` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `U` | `Y` | `Y` |
+| Repeat | `UST` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `U` | `Y` | `Y` |
 
 Left hand overrides:
 |     |     |     |     |
