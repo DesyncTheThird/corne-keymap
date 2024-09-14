@@ -1216,12 +1216,12 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 // Right hand keys
                 case KC_J: SEND_STRING(/*j*/"ust"); update_last_keys(KC_T, 3); break;
                 case KC_F: tap_code(KC_Y); update_last_key(KC_Y); break;
-                case KC_O: tap_code(KC_O); update_last_key(KC_E); break;
+                case KC_O: tap_code(KC_O); update_last_key(KC_O); break;
                 case KC_U: tap_code(KC_I); update_last_key(KC_I); break;
 
                 case KC_Y: tap_code(KC_P); update_last_key(KC_P); break;
                 case KC_H: tap_code(KC_Y); update_last_key(KC_Y); break;
-                case KC_E: tap_code(KC_E); update_last_key(KC_O); break;
+                case KC_E: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_I: tap_code(KC_U); update_last_key(KC_U); break;
                 case KC_A: tap_code(KC_U); update_last_key(KC_U); break;
 
@@ -1619,7 +1619,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_select_word(keycode, record, SELECT)) { return false; }
     if (!process_vol_repeat(keycode, record)) { return false; }
     if (!process_clock(keycode, record)) { return false; }
-    
+
     switch (keycode) {
 
         // =====================================================================
