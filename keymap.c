@@ -549,7 +549,7 @@ void matrix_scan_user(void) {
             alt_tab_active = false;
         }
     }
-    if (last_input_activity_elapsed() > 500) { // Reset magic keys
+    if (last_input_activity_elapsed() > 750) { // Reset magic keys
         char_count = 1;
         last_key = KC_NO;
         last_key_2 = KC_NO;
@@ -963,6 +963,8 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         case BSPC_2:
         case BSPC_3:
 
+        case L_COMMA:
+        case R_COMMA:
         case L_UNDERSCORE:
         case R_UNDERSCORE:
             return 30;

@@ -100,9 +100,9 @@ Duplicated keys are not tracked:
 >
 > `a b c [BSPC] [Rep]` produces `a b b` (`Rep` returns previous tracked key `b`).
 
-For longer magic outputs, (e.g. `W -> WITH`) there is a short window (default 500ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
+For longer magic outputs, (e.g. `W -> WITH`) there is a short window (default 750ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
 
-After a short duration (default 500ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state, i.e., `OSM Shift`/`THE`.
+After a short duration (default 750ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state, i.e., `OSM Shift`/`THE`.
 
 On QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality.
 
@@ -147,7 +147,7 @@ I find it difficult to press upper row keys with my pinkies and end up alt finge
 
 `Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together or omitted, as they accessible from combos near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a (La)TeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/leader key.
 
-`Tab` is on right hand to reduce left hand contortions and to keep it on home row. `Tab` key also functions as `RShift` when held. `New Sentence` macro sends a dot, a space, then sets a one shot shift.
+`Tab` is on right hand to reduce left hand contortions and to keep it on home row. `Tab` key also functions as `RShift` when held. `New Sentence` macro sends a dot, a space, then sets a one shot shift. The `LCTL` key also sets a one shot mod for the `Backspace` key only to allow for faster usage while typing.
 
 ### Data
 ![Data](images/data.png?raw=true)
