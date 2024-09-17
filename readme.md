@@ -96,10 +96,6 @@ Alpha keys pressed while the control modifier is active are not tracked:
 >
 > `a b c [BSPC] [Rep]` produces `a b b` (`Rep` returns previous tracked key `b`).
 
-Duplicated keys are not tracked for the purposes of this backtracking:
-
-> `a b c c c c [BSPC] [Rep]` produces `a b c c c b` (`Rep` returns previous distinct tracked key `b`).
-
 For longer magic outputs, (e.g. `W -> WITH`) there is also a short window (default 750ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
 
 After a short duration (default 750ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state, i.e., `OSM Shift`/`THE`.
