@@ -1187,11 +1187,11 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_O: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_E, 3); break;
                 case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
-                case KC_I: SEND_STRING(/*i*/"on"); update_last_keys(KC_N, 2); break;
+                case KC_I: SEND_STRING(/*i*/"um"); update_last_keys(KC_N, 2); break;
                 case KC_K: SEND_STRING(/*k*/"ey"); update_last_keys(KC_Y, 2); break;
 
-                case KC_NO: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
-                case KC_SPC: send_the(false); update_last_keys(KC_E, 3); break;
+                case KC_NO:
+                case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
                 case KC_COMM: SEND_STRING(" and"); update_last_keys(KC_D, 3); break;
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_D, 3); break;
 
