@@ -42,15 +42,15 @@ Right hand overrides and combos/other:
 |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Prev  | `J`   | `Y`  | `O` | `H`   | `E` | `I`  | `K`  |
-| Magic | `ECT` | `OU` | `E` | `ERE` | `O` | `ON` | `EY` |
+| Magic | `ECT` | `OU` | `E` | `ERE` | `O` | `UM` | `EY` |
 
 (Other right hand keys are repeated.)
 
 Other:
 |     |     |     |     |
 | --- | --- | --- | --- |
-| `Non-alpha` | `⎵`   | `,`    | `.`   |
-| `OSM Shift` | `THE` | `⎵AND` | `COM` |
+| `Non-alpha` | `⎵`         | `,`     | `.`   |
+| `OSM Shift` | `OSM Shift` | `⎵AND⎵` | `COM` |
 
 ### Repeat Key
 
@@ -71,8 +71,8 @@ Left hand overrides:
 Other:
 |     |     |     |     |
 | --- | --- | --- | --- |
-| `Non-alpha` | `⎵`   | `,`    | `.`   |
-| `THE`       | `THE` | `⎵BUT` | `COM` |
+| `Non-alpha` | `⎵`   | `,`     | `.`   |
+| `THE`       | `THE` | `⎵BUT⎵` | `COM` |
 
 ---
 
