@@ -63,8 +63,8 @@ Right hand keys:
 Left hand overrides:
 |     |     |     |     |
 | --- | --- | --- | --- |
-| Prev   | `Q` | `V`  | `W`   |
-| Repeat | `U` | `ER` | `ITH` |
+| Prev   | `Q`  | `V`  | `W`   |
+| Repeat | `UI` | `ER` | `ITH` |
 
 (Other left hand keys are repeated.)
 
@@ -96,9 +96,9 @@ Alpha keys pressed while the control modifier is active are not tracked:
 >
 > `a b c [BSPC] [Rep]` produces `a b b` (`Rep` returns previous tracked key `b`).
 
-For longer magic outputs, (e.g. `W -> WITH`) there is also a short window (default 750ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
+For longer magic outputs, (e.g. `W -> WITH`) there is also a short window (default 500ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
 
-After a short duration (default 750ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state, i.e., `OSM Shift`/`THE`.
+After a short duration (default 1000ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state, i.e., `OSM Shift`/`THE`.
 
 On QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality.
 

@@ -549,8 +549,10 @@ void matrix_scan_user(void) {
             alt_tab_active = false;
         }
     }
-    if (last_input_activity_elapsed() > 750) { // Reset magic keys
+    if (last_input_activity_elapsed() > 500) { // Reset delete tracking
         char_count = 1;
+    }
+    if (last_input_activity_elapsed() > 1000) { // Reset magic keys
         last_key = KC_NO;
         last_key_2 = KC_NO;
     }
@@ -1154,6 +1156,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         } else {
             layer_off(_EDIT);
         }
+
         if (record->tap.count && record->event.pressed) {
             if (IS_LAYER_ON(_QWERTY)|| IS_LAYER_ON(_BASIC)) {
                 tap_code(last_key);
@@ -1207,6 +1210,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         } else {
             layer_off(_PROGRAM);
         }
+
         if (record->tap.count && record->event.pressed) {
             if (IS_LAYER_ON(_QWERTY)|| IS_LAYER_ON(_BASIC)) {
                 tap_code(last_key);
@@ -1231,7 +1235,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_P: tap_code(KC_H); update_last_key(KC_H); break;
 
                 // Left hand overrides
-                case KC_Q: tap_code(KC_U); update_last_key(KC_U); break;
+                case KC_Q: SEND_STRING(/*q*/"ui"); update_last_keys(KC_I, 2); break;
                 case KC_V: SEND_STRING(/*v*/"er"); update_last_keys(KC_R, 2); break;
                 case KC_W: SEND_STRING(/*w*/"ith"); update_last_keys(KC_H, 3); break;
 
