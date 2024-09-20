@@ -38,17 +38,17 @@ Left hand keys:
 | Prev  | `Z` | `L` | `D` | `C` | `B` | `N`   | `R` | `T`   | `S` | `G` | `Q` | `X` | `M`   | `W` | `V` |
 | Magic | `N` | `R` | `T` | `S` | `S` | `'T⎵` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
 
-Right hand overrides and combos/other:
-|     |     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `Y`  | `U` | `H`   | `I`  | `K`  |
-| Magic | `ECT` | `OU` | `A` | `ERE` | `ON` | `EY` |
+Right hand overrides:
+|     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Prev  | `J`   | `Y`  | `O` | `U` | `H`   | `E` | `I`  | `K`  |
+| Magic | `ECT` | `OU` | `O` | `A` | `ERE` | `E` | `ON` | `EY` |
 
 (Other right hand keys are repeated.)
 
 Other:
-|     |     |     |     |
-| --- | --- | --- | --- |
+|     |     |     |     |     |
+| --- | --- | --- | --- | --- |
 | `Non-alpha` | `⎵`         | `,`     | `.`   | `'`   |
 | `OSM Shift` | `OSM Shift` | `⎵AND⎵` | `COM` | `LL⎵` |
 
@@ -69,14 +69,14 @@ Left hand overrides:
 (Other left hand keys are repeated.)
 
 Other:
-|     |     |     |     |
-| --- | --- | --- | --- |
+|     |     |     |     |     |
+| --- | --- | --- | --- | --- |
 | `Non-alpha` | `⎵`   | `,`     | `.`   | `'`   |
 | `THE`       | `THE` | `⎵BUT⎵` | `COM` | `LL⎵` |
 
 ---
 
-Only alpha keys are tracked:
+Only the keys listed above are tracked (including those from combos); any other key is ignored:
 
 > `a 1 [Rep]` produces `a 1 a`.
 
@@ -86,19 +86,23 @@ Modifiers are not tracked (but the dynamic keys may be modified):
 >
 >` a [Shift] [Magic] [Release shift] ` produces `a A`.
 
-Alpha keys pressed while the control modifier is active are not tracked:
+Any keys pressed while the control modifier is active are not tracked:
 
 > `a [CTRL] b [Release CTRL] [Magic]` produces `a ^b a`.
 
-`Backspace` reverts the tracked key to the previous distinct key:
+`Backspace` reverts the tracked key to the previous key:
 
 > `a b c [Rep]` produces `a b c c` (`Rep` returns `c`);
 >
 > `a b c [BSPC] [Rep]` produces `a b b` (`Rep` returns previous tracked key `b`).
 
+Note that this feature only tracks one key into the past.
+
 For longer dynamic outputs, (e.g. `W -> WITH`) there is also a short window (default 500ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
 
-After a short duration (default 1000ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state, i.e., `OSM Shift`/`THE`.
+After a short duration (default 1000ms) of no keyboard input , both dynamic keys will reset to the `Non-alpha` state, i.e., `OSM Shift`/`THE`.
+
+After longer `Magic` outputs, i.e. those that commonly end words, the `Rep` key will output `Space` to avoid SFBs on the left thumb for word breaks.
 
 On QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality.
 

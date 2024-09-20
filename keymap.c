@@ -411,6 +411,8 @@ bool is_hrm(uint16_t keycode) {
     }
 }
 
+bool repeat_spc = false;
+
 bool is_magic(uint16_t keycode) {
     if ((keycode == CS_LT2) || (keycode == CS_RT2)) {
         return true;
@@ -1051,6 +1053,11 @@ void rollback_last_key(void) {
 }
 
 bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
+    // Reset repeat space override if any non-magic key is pressed
+    if (!is_magic(keycode)) {
+        repeat_spc = false;
+    }
+
     // Ignore tracking if ctrl is on and reset rollback counter
     if (ctrl_on()) {
         char_count = 1;
@@ -1085,6 +1092,7 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
+
     // Track enter key
     if (keycode == KC_ENT) {
         if (record->event.pressed) {
@@ -1183,6 +1191,22 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 return false;
             }
 
+            // Override
+            switch (last_key) {
+                case KC_T:
+                case KC_M:
+                case KC_J:
+                case KC_Y:
+                case KC_H:
+                case KC_I:
+                case KC_K:
+                case KC_DOT:
+                    repeat_spc = true;
+                    break;
+                default:
+                    repeat_spc = false;
+            }
+
             switch (last_key) {
                 // Left hand keys
                 case KC_Z: tap_code(KC_N); update_last_key(KC_N); break;
@@ -1206,7 +1230,9 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 // Right hand overrides
                 case KC_J: SEND_STRING(/*j*/"ect"); update_last_keys(KC_T, 3); break;
                 case KC_Y: SEND_STRING(/*y*/"ou"); update_last_keys(KC_U, 2); break;
+                case KC_O: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_U: tap_code(KC_A); update_last_key(KC_A); break;
+                case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
                 case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_E, 3); break;
                 case KC_I: SEND_STRING(/*i*/"on"); update_last_keys(KC_N, 2); break;
                 case KC_K: SEND_STRING(/*k*/"ey"); update_last_keys(KC_Y, 2); break;
@@ -1214,7 +1240,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_NO:
                 case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
                 case KC_COMM: SEND_STRING(" and "); update_last_keys(KC_SPC, 4); break;
-                case KC_DOT: SEND_STRING("com"); update_last_keys(KC_D, 3); break;
+                case KC_DOT: SEND_STRING("com"); update_last_keys(KC_NO, 3); break;
                 case KC_QUOT: SEND_STRING("ll "); update_last_keys(KC_SPC, 3); break;
 
                 default: tap_code(last_key); update_last_key(last_key); break;
@@ -1231,6 +1257,13 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         }
 
         if (record->tap.count && record->event.pressed) {
+            if (repeat_spc) {
+                tap_code(KC_SPC);
+                update_last_key(KC_SPC);
+                repeat_spc = false;
+                return false;
+            }
+
             if (IS_LAYER_ON(_QWERTY)|| IS_LAYER_ON(_BASIC)) {
                 tap_code(last_key);
                 update_last_key(last_key);
@@ -1241,12 +1274,12 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 // Right hand keys
                 case KC_J: SEND_STRING(/*j*/"ust"); update_last_keys(KC_T, 3); break;
                 case KC_F: tap_code(KC_Y); update_last_key(KC_Y); break;
-                case KC_O: tap_code(KC_E); update_last_key(KC_E); break;
+                case KC_O: tap_code(KC_O); update_last_key(KC_O); break;
                 case KC_U: tap_code(KC_I); update_last_key(KC_I); break;
 
                 case KC_Y: tap_code(KC_P); update_last_key(KC_P); break;
                 case KC_H: tap_code(KC_Y); update_last_key(KC_Y); break;
-                case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
+                case KC_E: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_I: tap_code(KC_U); update_last_key(KC_U); break;
                 case KC_A: tap_code(KC_U); update_last_key(KC_U); break;
 
@@ -1261,7 +1294,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_NO:
                 case KC_SPC: send_the(false); update_last_keys(KC_E, 3); break;
                 case KC_COMM: SEND_STRING(" but "); update_last_keys(KC_SPC, 4); break;
-                case KC_DOT: SEND_STRING("com"); update_last_keys(KC_M, 3); break;
+                case KC_DOT: SEND_STRING("com"); update_last_keys(KC_NO, 3); break;
                 case KC_QUOT: SEND_STRING("ll "); update_last_keys(KC_SPC, 3); break;
 
                 default: tap_code(last_key); update_last_key(last_key); break;
