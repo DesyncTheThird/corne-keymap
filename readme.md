@@ -36,21 +36,21 @@ Left hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Prev  | `Z` | `L` | `D` | `C` | `B` | `N`   | `R` | `T`   | `S` | `G` | `Q` | `X` | `M`   | `W` | `V` |
-| Magic | `N` | `R` | `T` | `S` | `S` | `ION` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
+| Magic | `N` | `R` | `T` | `S` | `S` | `'T⎵` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
 
 Right hand overrides and combos/other:
-|     |     |     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `Y`  | `O` | `H`   | `E` | `I`  | `K`  |
-| Magic | `ECT` | `OU` | `E` | `ERE` | `O` | `UM` | `EY` |
+|     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- |
+| Prev  | `J`   | `Y`  | `U` | `H`   | `I`  | `K`  |
+| Magic | `ECT` | `OU` | `A` | `ERE` | `ON` | `EY` |
 
 (Other right hand keys are repeated.)
 
 Other:
 |     |     |     |     |
 | --- | --- | --- | --- |
-| `Non-alpha` | `⎵`         | `,`     | `.`   |
-| `OSM Shift` | `OSM Shift` | `⎵AND⎵` | `COM` |
+| `Non-alpha` | `⎵`         | `,`     | `.`   | `'`   |
+| `OSM Shift` | `OSM Shift` | `⎵AND⎵` | `COM` | `LL⎵` |
 
 ### Repeat Key
 
@@ -71,8 +71,8 @@ Left hand overrides:
 Other:
 |     |     |     |     |
 | --- | --- | --- | --- |
-| `Non-alpha` | `⎵`   | `,`     | `.`   |
-| `THE`       | `THE` | `⎵BUT⎵` | `COM` |
+| `Non-alpha` | `⎵`   | `,`     | `.`   | `'`   |
+| `THE`       | `THE` | `⎵BUT⎵` | `COM` | `LL⎵` |
 
 ---
 
@@ -96,7 +96,7 @@ Alpha keys pressed while the control modifier is active are not tracked:
 >
 > `a b c [BSPC] [Rep]` produces `a b b` (`Rep` returns previous tracked key `b`).
 
-For longer magic outputs, (e.g. `W -> WITH`) there is also a short window (default 500ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
+For longer dynamic outputs, (e.g. `W -> WITH`) there is also a short window (default 500ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
 
 After a short duration (default 1000ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state, i.e., `OSM Shift`/`THE`.
 

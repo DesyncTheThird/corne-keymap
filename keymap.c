@@ -1056,7 +1056,6 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         char_count = 1;
         return true;
     }
-    
 
     // Track alpha keys
     if (is_alpha(keycode)) {
@@ -1090,6 +1089,26 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     if (keycode == KC_ENT) {
         if (record->event.pressed) {
             update_last_key(KC_NO);
+        }
+        return true;
+    }
+
+    // Track punctuation
+    if (keycode == KC_COMM || keycode == CS_COMM) {
+        if (record->event.pressed) {
+            update_last_key(KC_COMM);
+        }
+        return true;
+    }
+    if (keycode == KC_DOT || keycode == CS_DOT) {
+        if (record->event.pressed) {
+            update_last_key(KC_DOT);
+        }
+        return true;
+    }
+    if (keycode == KC_QUOT || keycode == CS_QUOT) {
+        if (record->event.pressed) {
+            update_last_key(KC_QUOT);
         }
         return true;
     }
@@ -1172,7 +1191,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
                 case KC_B: tap_code(KC_S); update_last_key(KC_S); break;
 
-                case KC_N: SEND_STRING(/*n*/"ion"); update_last_keys(KC_N, 3); break;
+                case KC_N: SEND_STRING(/*n*/"'t "); update_last_keys(KC_SPC, 3); break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
                 case KC_T: SEND_STRING(/*t*/"ion"); update_last_keys(KC_N, 3); break;
                 case KC_S: tap_code(KC_C); update_last_key(KC_C); break;
@@ -1187,16 +1206,16 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 // Right hand overrides
                 case KC_J: SEND_STRING(/*j*/"ect"); update_last_keys(KC_T, 3); break;
                 case KC_Y: SEND_STRING(/*y*/"ou"); update_last_keys(KC_U, 2); break;
-                case KC_O: tap_code(KC_E); update_last_key(KC_E); break;
+                case KC_U: tap_code(KC_A); update_last_key(KC_A); break;
                 case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_E, 3); break;
-                case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
-                case KC_I: SEND_STRING(/*i*/"um"); update_last_keys(KC_N, 2); break;
+                case KC_I: SEND_STRING(/*i*/"on"); update_last_keys(KC_N, 2); break;
                 case KC_K: SEND_STRING(/*k*/"ey"); update_last_keys(KC_Y, 2); break;
 
                 case KC_NO:
                 case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
-                case KC_COMM: SEND_STRING(" and "); update_last_keys(KC_D, 4); break;
+                case KC_COMM: SEND_STRING(" and "); update_last_keys(KC_SPC, 4); break;
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_D, 3); break;
+                case KC_QUOT: SEND_STRING("ll "); update_last_keys(KC_SPC, 3); break;
 
                 default: tap_code(last_key); update_last_key(last_key); break;
             }
@@ -1222,12 +1241,12 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 // Right hand keys
                 case KC_J: SEND_STRING(/*j*/"ust"); update_last_keys(KC_T, 3); break;
                 case KC_F: tap_code(KC_Y); update_last_key(KC_Y); break;
-                case KC_O: tap_code(KC_O); update_last_key(KC_O); break;
+                case KC_O: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_U: tap_code(KC_I); update_last_key(KC_I); break;
 
                 case KC_Y: tap_code(KC_P); update_last_key(KC_P); break;
                 case KC_H: tap_code(KC_Y); update_last_key(KC_Y); break;
-                case KC_E: tap_code(KC_E); update_last_key(KC_E); break;
+                case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
                 case KC_I: tap_code(KC_U); update_last_key(KC_U); break;
                 case KC_A: tap_code(KC_U); update_last_key(KC_U); break;
 
@@ -1241,8 +1260,9 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
 
                 case KC_NO:
                 case KC_SPC: send_the(false); update_last_keys(KC_E, 3); break;
-                case KC_COMM: SEND_STRING(" but "); update_last_keys(KC_E, 4); break;
+                case KC_COMM: SEND_STRING(" but "); update_last_keys(KC_SPC, 4); break;
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_M, 3); break;
+                case KC_QUOT: SEND_STRING("ll "); update_last_keys(KC_SPC, 3); break;
 
                 default: tap_code(last_key); update_last_key(last_key); break;
             }
@@ -1989,7 +2009,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 del_mods(MOD_MASK_SHIFT);
                 tap_code(KC_DOT);
                 set_mods(mods);
-                update_last_key(KC_DOT);
             }
             break;
         case CS_COMM:
@@ -1998,7 +2017,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 del_mods(MOD_MASK_SHIFT);
                 tap_code(KC_COMM);
                 set_mods(mods);
-                update_last_key(KC_COMM);
             }
             break;
         case CS_QUES:
