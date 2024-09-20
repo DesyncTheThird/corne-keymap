@@ -415,6 +415,7 @@ bool repeat_spc = false;
 uint8_t char_count = 1;
 uint16_t last_key = KC_NO;
 uint16_t last_key_2 = KC_NO;
+uint16_t last_key_3 = KC_NO;
 
 bool is_magic(uint16_t keycode) {
     if ((keycode == CS_LT2) || (keycode == CS_RT2)) {
@@ -556,6 +557,7 @@ void matrix_scan_user(void) {
     if (last_input_activity_elapsed() > 1000) { // Reset magic keys
         last_key = KC_NO;
         last_key_2 = KC_NO;
+        last_key_3 = KC_NO;
     }
     if (last_input_activity_elapsed() > 15000) { // OLED timeout
         time_setting = 0;
@@ -1021,6 +1023,7 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
 //==============================================================================
 
 void update_last_key(uint16_t new_keycode) {
+    last_key_3 = last_key_2;
     last_key_2 = last_key;
     last_key = new_keycode;
 
@@ -1029,10 +1032,12 @@ void update_last_key(uint16_t new_keycode) {
     dprintf("updated keys!\n");
     dprintf("last_key:   %d\n", last_key);
     dprintf("last_key_2: %d\n", last_key_2);
+    dprintf("last_key_3: %d\n", last_key_3);
     dprintf("char_count: %d\n", char_count);
 }
 
 void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
+    last_key_3 = last_key_2;
     last_key_2 = last_key;
     last_key = new_keycode;
 
@@ -1040,14 +1045,17 @@ void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
     dprintf("updated multiple keys!\n");
     dprintf("last_key:   %d\n", last_key);
     dprintf("last_key_2: %d\n", last_key_2);
+    dprintf("last_key_3: %d\n", last_key_3);
     dprintf("char_count: %d\n", char_count);
 }
 
 void rollback_last_key(void) {
     last_key = last_key_2;
+    last_key_2 = last_key_3;
     dprintf("rolled back!\n");
     dprintf("last_key:   %d\n", last_key);
     dprintf("last_key_2: %d\n", last_key_2);
+    dprintf("last_key_3: %d\n", last_key_3);
     dprintf("char_count: %d\n", char_count);
 }
 

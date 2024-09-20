@@ -97,7 +97,7 @@ Any keys pressed while the control modifier is active are not tracked:
 >
 > `a b c [BSPC] [Rep]` produces `a b b` (`Rep` returns previous tracked key `b`).
 
-Note that this feature only tracks one key into the past.
+Note that this feature only tracks two keys into the past.
 
 For longer dynamic outputs, (e.g. `W -> WITH`) there is also a short window (default 500ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
 
