@@ -412,6 +412,9 @@ bool is_hrm(uint16_t keycode) {
 }
 
 bool repeat_spc = false;
+uint8_t char_count = 1;
+uint16_t last_key = KC_NO;
+uint16_t last_key_2 = KC_NO;
 
 bool is_magic(uint16_t keycode) {
     if ((keycode == CS_LT2) || (keycode == CS_RT2)) {
@@ -524,10 +527,6 @@ bool is_spc(uint16_t keycode) {
 
 static bool alt_tab_active = false;
 static bool oled_timeout = false;
-
-uint8_t char_count = 1;
-uint16_t last_key = KC_NO;
-uint16_t last_key_2 = KC_NO;
 
 void matrix_scan_user(void) {
     achordion_task();

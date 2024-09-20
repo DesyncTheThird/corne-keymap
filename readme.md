@@ -75,6 +75,7 @@ Other:
 | `THE`       | `THE` | `⎵BUT⎵` | `COM` | `LL⎵` |
 
 ---
+### Details
 
 Only the keys listed above are tracked (including those from combos); any other key is ignored:
 
@@ -100,7 +101,7 @@ Note that this feature only tracks one key into the past.
 
 For longer dynamic outputs, (e.g. `W -> WITH`) there is also a short window (default 500ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
 
-After a short duration (default 1000ms) of no keyboard input , both dynamic keys will reset to the `Non-alpha` state, i.e., `OSM Shift`/`THE`.
+After a short duration (default 1000ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state, i.e., `OSM Shift`/`THE`.
 
 After longer `Magic` outputs, i.e. those that commonly end words, the `Rep` key will output `Space` to avoid SFBs on the left thumb for word breaks.
 
