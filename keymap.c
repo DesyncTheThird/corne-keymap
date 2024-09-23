@@ -2143,6 +2143,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case NEWSENT:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
+                clear_oneshot_mods();
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING(". ");
                 set_mods(mods);
