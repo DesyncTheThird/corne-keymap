@@ -813,6 +813,9 @@ enum combo_events {
     BSPC_2,
     BSPC_3,
 
+    ENTER,
+    NEW,
+
     COMBO_LENGTH
 };
 uint16_t COMBO_LEN = COMBO_LENGTH;
@@ -862,58 +865,64 @@ const uint16_t PROGMEM bspc_1[]         = {CS_RT1, KC_J, COMBO_END};
 const uint16_t PROGMEM bspc_2[]         = {CS_RT1, KC_K, COMBO_END};
 const uint16_t PROGMEM bspc_3[]         = {CS_RT1, KC_L, COMBO_END};
 
-const uint16_t PROGMEM num_1[]          = {KC_Q, KC_A, COMBO_END};
-const uint16_t PROGMEM num_2[]          = {KC_W, KC_S, COMBO_END};
-const uint16_t PROGMEM num_3[]          = {KC_E, KC_D, COMBO_END};
-const uint16_t PROGMEM num_4[]          = {KC_R, KC_F, COMBO_END};
-const uint16_t PROGMEM num_5[]          = {KC_T, KC_G, COMBO_END};
+const uint16_t PROGMEM enter[]          = {KC_S, KC_F, COMBO_END};
+const uint16_t PROGMEM new[]          = {KC_J, KC_L, COMBO_END};
+
+// const uint16_t PROGMEM num_1[]          = {KC_Q, KC_A, COMBO_END};
+// const uint16_t PROGMEM num_2[]          = {KC_W, KC_S, COMBO_END};
+// const uint16_t PROGMEM num_3[]          = {KC_E, KC_D, COMBO_END};
+// const uint16_t PROGMEM num_4[]          = {KC_R, KC_F, COMBO_END};
+// const uint16_t PROGMEM num_5[]          = {KC_T, KC_G, COMBO_END};
 
 combo_t key_combos[] = {
     [TOUHOU]        = COMBO_ACTION(touhou),
     [STENO]         = COMBO_ACTION(steno),
     [NUMPAD]        = COMBO_ACTION(numpad),
 
-    [MOUSE]         = COMBO(mouse,         CM_MOUSE),
-    [MOUSE2]        = COMBO(mouse2,        CM_MOUSE),
+    [MOUSE]         = COMBO(mouse,          CM_MOUSE),
+    [MOUSE2]        = COMBO(mouse2,         CM_MOUSE),
 
-    [SPC_0]         = COMBO(spc_0,         KC_0),
-    [SPC_1]         = COMBO(spc_1,         KC_1),
-    [SPC_2]         = COMBO(spc_2,         KC_2),
-    [SPC_3]         = COMBO(spc_3,         KC_3),
-    [SPC_4]         = COMBO(spc_4,         KC_4),
-    [SPC_5]         = COMBO(spc_5,         KC_5),
-    [SPC_6]         = COMBO(spc_6,         KC_6),
-    [SPC_7]         = COMBO(spc_7,         KC_7),
-    [SPC_8]         = COMBO(spc_8,         KC_8),
-    [SPC_9]         = COMBO(spc_9,         KC_9),
+    [SPC_0]         = COMBO(spc_0,          KC_0),
+    [SPC_1]         = COMBO(spc_1,          KC_1),
+    [SPC_2]         = COMBO(spc_2,          KC_2),
+    [SPC_3]         = COMBO(spc_3,          KC_3),
+    [SPC_4]         = COMBO(spc_4,          KC_4),
+    [SPC_5]         = COMBO(spc_5,          KC_5),
+    [SPC_6]         = COMBO(spc_6,          KC_6),
+    [SPC_7]         = COMBO(spc_7,          KC_7),
+    [SPC_8]         = COMBO(spc_8,          KC_8),
+    [SPC_9]         = COMBO(spc_9,          KC_9),
     
-    [BSPC_1]        = COMBO(bspc_1,        CM_BSPC_1),
-    [BSPC_2]        = COMBO(bspc_2,        CM_BSPC_2),
-    [BSPC_3]        = COMBO(bspc_3,        CM_BSPC_3),
+    [BSPC_1]        = COMBO(bspc_1,         CM_BSPC_1),
+    [BSPC_2]        = COMBO(bspc_2,         CM_BSPC_2),
+    [BSPC_3]        = COMBO(bspc_3,         CM_BSPC_3),
     
-    [L_EXPONENT]    = COMBO(l_exponent,    CS_CIRC),
-    [L_COMMA]       = COMBO(l_comma,       CS_COMM),
-    [L_DOT]         = COMBO(l_dot,         CS_DOT),
-    [L_UNDERSCORE]  = COMBO(l_underscore,  CS_UNDS),
-    [L_ASTERISK]    = COMBO(l_asterisk,    CS_ASTR),
-    [L_EQUALS]      = COMBO(l_equals,      CS_EQL),
-    [L_PLUS]        = COMBO(l_plus,        CS_PLUS),
-    [L_MINUS]       = COMBO(l_minus,       CS_MINS),
+    [L_EXPONENT]    = COMBO(l_exponent,     CS_CIRC),
+    [L_COMMA]       = COMBO(l_comma,        CS_COMM),
+    [L_DOT]         = COMBO(l_dot,          CS_DOT),
+    [L_UNDERSCORE]  = COMBO(l_underscore,   CS_UNDS),
+    [L_ASTERISK]    = COMBO(l_asterisk,     CS_ASTR),
+    [L_EQUALS]      = COMBO(l_equals,       CS_EQL),
+    [L_PLUS]        = COMBO(l_plus,         CS_PLUS),
+    [L_MINUS]       = COMBO(l_minus,        CS_MINS),
     
-    [AMPERSAND]     = COMBO(ampersand,     CS_AMPR),
-    [COLON]         = COMBO(colon,         CS_COLN),
+    [AMPERSAND]     = COMBO(ampersand,      CS_AMPR),
+    [COLON]         = COMBO(colon,          CS_COLN),
     
-    [R_EXPONENT]    = COMBO(r_exponent,    CS_CIRC),
-    [R_COMMA]       = COMBO(r_comma,       CS_COMM),
-    [R_DOT]         = COMBO(r_dot,         CS_DOT),
-    [R_UNDERSCORE]  = COMBO(r_underscore,  CS_UNDS),
-    [R_ASTERISK]    = COMBO(r_asterisk,    CS_ASTR),
-    [R_EQUALS]      = COMBO(r_equals,      CS_EQL),
-    [R_PLUS]        = COMBO(r_plus,        CS_PLUS),
-    [R_MINUS]       = COMBO(r_minus,       CS_MINS),
+    [R_EXPONENT]    = COMBO(r_exponent,     CS_CIRC),
+    [R_COMMA]       = COMBO(r_comma,        CS_COMM),
+    [R_DOT]         = COMBO(r_dot,          CS_DOT),
+    [R_UNDERSCORE]  = COMBO(r_underscore,   CS_UNDS),
+    [R_ASTERISK]    = COMBO(r_asterisk,     CS_ASTR),
+    [R_EQUALS]      = COMBO(r_equals,       CS_EQL),
+    [R_PLUS]        = COMBO(r_plus,         CS_PLUS),
+    [R_MINUS]       = COMBO(r_minus,        CS_MINS),
 
-    [SEMICOLON]     = COMBO(semicolon,     CS_SCLN),
-    [EXCLAMATION]   = COMBO(exclamation,   CS_EXLM),
+    [SEMICOLON]     = COMBO(semicolon,      CS_SCLN),
+    [EXCLAMATION]   = COMBO(exclamation,    CS_EXLM),
+
+    [ENTER]         = COMBO(enter,          KC_ENT),
+    [NEW]           = COMBO(new,            NEWSENT),
 };
 
 
@@ -1105,7 +1114,6 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
-    
 
     // Track enter key
     if (keycode == KC_ENT) {
