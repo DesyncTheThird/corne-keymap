@@ -1101,7 +1101,7 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     }
     if (keycode == NEWSENT) {
         if (record->event.pressed) {
-            update_last_keys(KC_SPC, 3);
+            update_last_keys(KC_SPC, 2);
         }
         return true;
     }
