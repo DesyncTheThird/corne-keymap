@@ -1099,6 +1099,13 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
+    if (keycode == NEWSENT) {
+        if (record->event.pressed) {
+            update_last_keys(KC_SPC, 3);
+        }
+        return true;
+    }
+    
 
     // Track enter key
     if (keycode == KC_ENT) {
@@ -2148,7 +2155,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 SEND_STRING(". ");
                 set_mods(mods);
                 add_oneshot_mods(MOD_BIT(KC_LSFT));
-                update_last_key(KC_SPC);
             }
             break;
 
