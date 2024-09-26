@@ -1213,12 +1213,12 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 return false;
             }
 
-            // Override
+            // Override space
             switch (last_key) {
+                case KC_N:
                 case KC_T:
                 case KC_M:
                 case KC_J:
-                case KC_Y:
                 case KC_H:
                 case KC_I:
                 case KC_K:
@@ -1237,7 +1237,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
                 case KC_B: tap_code(KC_S); update_last_key(KC_S); break;
 
-                case KC_N: SEND_STRING(/*n*/"'t "); update_last_keys(KC_SPC, 3); break;
+                case KC_N: SEND_STRING(/*n*/"'t"); update_last_keys(KC_T, 2); break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
                 case KC_T: SEND_STRING(/*t*/"ion"); update_last_keys(KC_N, 3); break;
                 case KC_S: tap_code(KC_C); update_last_key(KC_C); break;
@@ -1251,7 +1251,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
 
                 // Right hand overrides
                 case KC_J: SEND_STRING(/*j*/"ect"); update_last_keys(KC_T, 3); break;
-                case KC_Y: SEND_STRING(/*y*/"ou"); update_last_keys(KC_U, 2); break;
+                case KC_Y: tap_code(KC_P); update_last_key(KC_P); break;
                 case KC_O: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_U: tap_code(KC_A); update_last_key(KC_A); break;
                 case KC_E: tap_code(KC_O); update_last_key(KC_O); break;

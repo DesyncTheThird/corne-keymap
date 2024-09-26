@@ -22,11 +22,11 @@
 
 `Repeat` and `Magic` are dynamic keys that return different outputs depending on the previous key.
 
-Despite the names, both keys have both magic and repeat functionality: default behaviour is to (generally) repeat keys on opposite hand and (generally) swap first and second row keys on same hand. This eliminates many SFBs, turning them into alternations for repeated keys and rolls for many other SFBs.
+As the name suggests, the Repeat key (generally) repeats the last key pressed; the Magic key (generally) swaps the first and second rows, along with various keys on the index columns. This eliminates many SFBs and double-taps, turning them into alternations and rolls.
 
-The most common use case for the swapping-rows behaviour is for the vowel block on the right side, turning the `OE`, `EO`, `IU`, and `UI` SFBs into rolls and alternations; as well as the various index finger SFBs on both sides (i.e., in the words `T[YP]E`, `[SC]IENCE`, `[HY][PH]EN`, etc.).
+The most common use-case for the swapping-rows behaviour is for the vowel block on the right side, turning the `OE`, `EO`, `IU`, and `UI` SFBs into rolls and alternations; as well as elimination various index finger SFBs on both sides (i.e., in the words `T[YP]E`, `[SC]IENCE`, `[HY][PH]EN`, etc.).
 
-Letters on opposite hand that are not commonly repeated (i.e. `I`, `Q`) are overridden and instead return common n-grams.
+Letters that are not commonly repeated (i.e. `I`, `U`, `A`, `Q`) are overridden and instead return common n-grams.
 
 
 
@@ -41,8 +41,8 @@ Left hand keys:
 Right hand overrides:
 |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `Y`  | `O` | `U` | `H`   | `E` | `I`  | `K`  |
-| Magic | `ECT` | `OU` | `O` | `A` | `ERE` | `E` | `ON` | `EY` |
+| Prev  | `J`   | `Y` | `O` | `U` | `H`   | `E` | `I`  | `K`  |
+| Magic | `ECT` | `P` | `E` | `A` | `ERE` | `O` | `ON` | `EY` |
 
 (Other right hand keys are repeated.)
 
@@ -129,10 +129,14 @@ Key on utility layer available to change both OLEDs to static images.
 (Press `Esc`, `;`, and `#` to access Touhou layer and to see funky Cirno fumo on right OLED.)
 
 ---
-- Number combos on left hand are not all shown on picture to reduce clutter; these fill out an entire number grid in the same layout as the Data layer, with `0` on the home row pinky.
-- `Del` combo presses `LCTL`+`BSPC`;
-- `Join` combo joins current line to following line with space between;
+- Common punctuation is accessible from combos on or near home row;
+- Mouse emulation layer accessible on pinky key combos to allow mouse control without moving from home row.
+- Uncommon locking layers (numpad/steno) also accessible from large combos;
+- `New` combo presses `DOT`, `SPC`, then sets a one shot shift (same as `Newsent` key);- `Del` combo presses `LCTL`+`BSPC`;
+- `Join` combo joins current line to following line (with space between);
 - `Line` combo adds a new line below the current position.
+- Number combos on left hand are not all shown on picture to reduce clutter; these fill out an entire number grid in the same layout as the Data layer, with `0` on the home row pinky.
+
 
 
 # Layers
