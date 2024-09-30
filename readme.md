@@ -146,7 +146,7 @@ Base layer alphas is a slightly modified graphite layout, with home block mods, 
 
 I find it difficult to press upper row keys with my pinkies and end up alt fingering them with my ring fingers, which introduces some SFBs (`BL`, `BR`) with the default Graphite layout. So, `J` and `B` have been moved off the outer top row; `B` has also been placed next to `C` to make the common `B_C` string not a skipgram. Also, I don't like `E` on the ring finger, so `HEIA` is used over `HAEI`.
 
-> ℹ️ Note that this keymap internally uses the QWERTY layer for combos, so this Base layer can be modified easily without needing any changes to combo code. 
+> ℹ️ Note that this keymap internally uses a QWERTY layer (specifically, the `_BASIC` layer) for combos, so this Base layer can be modified easily without needing any changes to combo code. 
 > 
 > ⚠️ However, per-key mod-taps settings and Achordion will still need to be handled separately if home block mods are changed.
 
@@ -218,4 +218,44 @@ Overrides activate only from left hand control key; home block mods are unaffect
 
 Accessible with `Base` key on Utility layer, or `Basic` to also disable home block mods and `Space` layer-tap (for games).
 
-> ⚠️ Modifying this layer will also require changing mod-tap and combo code.
+> ⚠️ Modifying the _BASIC layer will also require changing mod-tap and combo code.
+
+
+
+# Building
+
+1. Set up a [local installation of QMK](https://docs.qmk.fm/newbs).
+
+2. Clone this repository into `qmk_firmware\keyboards\crkbd\keymaps`.
+
+   ```sh
+   git clone https://github.com/DesyncTheThird/corne-keymap qmk_firmware\keyboards\crkbd\keymaps\desync
+   ```
+
+3. Install the `achordion` feature as per step 4 in [these instructions](https://getreuer.info/posts/keyboards/achordion/index.html#add-achordion-to-your-keymap).
+
+   That is, in the cloned directory (i.e. the one containing `keymap.c`), add an new subdirectory called `features`, and copy [achordion.h](https://raw.githubusercontent.com/getreuer/qmk-keymap/main/features/achordion.h) and [achordion.c](https://raw.githubusercontent.com/getreuer/qmk-keymap/main/features/achordion.c) there.
+
+4. Build the keymap from the [QMK CLI](https://docs.qmk.fm/cli#qmk-cli) with:
+
+   ```sh
+   qmk compile -c -kb crkbd -km desync
+   ```
+
+   Note, however:
+
+> ⚠️ Unmodified, this keymap will not fit on most AVR MCUs (and in fact may fail to compile in some cases due to overflowing 8-bit integers).
+
+For reference, my compiled uf2 file is 212kB (accurate as of commit [`4454bdd`](https://github.com/DesyncTheThird/corne-keymap/tree/4454bddad15e8470a2e288703569bdf98fe6e41c)), though you should be able to save a significant amount of space by removing various OLED animations, deleting unused layers (along with the associated OLED layout `PROGMEM`), and disabling additional RGB animations (the `CS_RGBN` key will need to be updated in this case).
+
+See [here](https://docs.qmk.fm/squeezing_avr) for more ways to save space. (Most space-saving `rules.mk` and `config.h` options have already been enabled; only modify those files if you have disabled additional features in `keymap.c`.)
+
+> ℹ️ I recommend using an RP2040 or another ARM MCU with more space. (Plus, they're generally cheaper and faster than AVR pro-micros.)
+
+5. To use a drop-in replacement controller, additionally use a [converter](https://docs.qmk.fm/feature_converters#supported-converters) flag: `-e CONVERT_TO=<converter>`.
+
+   For instance, I use a (non-Sparkfun) RP2040 controller, so my full build command is:
+
+   ```sh
+   qmk compile -c -kb crkbd -km desync -e CONVERT_TO=rp2040_ce
+   ```
