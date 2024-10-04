@@ -35,14 +35,14 @@ Letters that are not commonly repeated (i.e. `I`, `U`, `A`, `Q`) are overridden 
 Left hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `Z` | `L` | `D` | `C` | `B` | `N`   | `R` | `T`   | `S` | `G` | `Q` | `X` | `M`   | `W` | `V` |
-| Magic | `N` | `R` | `T` | `S` | `S` | `'T⎵` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
+| Prev  | `Z` | `L` | `D` | `C` | `B` | `N`  | `R` | `T`   | `S` | `G` | `Q` | `X` | `M`   | `W` | `V` |
+| Magic | `N` | `R` | `T` | `S` | `S` | `'T` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
 
 Right hand overrides:
-|     |     |     |     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `Y` | `O` | `U` | `H`   | `E` | `I`  | `K`  |
-| Magic | `ECT` | `P` | `E` | `A` | `ERE` | `O` | `ON` | `EY` |
+|     |     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  | `K`  | `P` |
+| Magic | `ECT` | `E` | `A` | `P` | `ERE` | `O` | `ON` | `EY` | `H` |
 
 (Other right hand keys are repeated.)
 
@@ -58,7 +58,7 @@ Right hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Prev   | `J`   | `F` | `O` | `U` | `Y` | `H` | `E` | `I` | `A` | `K` | `P` |
-| Repeat | `UST` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `U` | `Y` | `Y` |
+| Repeat | `UST` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `U` | `Y` | `P` |
 
 Left hand overrides:
 |     |     |     |     |
@@ -152,7 +152,9 @@ I find it difficult to press upper row keys with my pinkies and end up alt finge
 
 `Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together or omitted, as they accessible from combos near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a (La)TeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/leader key.
 
-`Tab` is on right hand to reduce left hand contortions and to keep it on home row. `Tab` key also functions as `RShift` when held. `New Sentence` macro sends a dot, a space, then sets a one shot shift. The `LCTL` key also sets a one shot mod for the `Backspace` key only to allow for faster usage while typing.
+`Tab` is on right hand to reduce left hand contortions and to keep it on home row. `Tab` key also functions as `RShift` when held. `New Sentence` macro sends a dot, a space, then sets a one shot shift.
+
+The `LCTL` key also sets a weak one shot `ctrl` modifier for the `Backspace` key only to allow for faster usage while typing. The one shot modifier lingers for 500ms and is removed on any other keypress (without being applied).
 
 ### Data
 ![Data](images/data.png?raw=true)
