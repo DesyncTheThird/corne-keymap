@@ -1795,6 +1795,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 oled_disable = !oled_disable;
             }
+            break;
 
         case BASE:
             if (record->event.pressed) {
