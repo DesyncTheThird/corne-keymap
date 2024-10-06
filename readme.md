@@ -132,10 +132,11 @@ Key on utility layer available to change both OLEDs to static images.
 - Common punctuation is accessible from combos on or near home row;
 - Mouse emulation layer accessible on pinky key combos to allow mouse control without moving from home row.
 - Uncommon locking layers (numpad/steno) also accessible from large combos;
-- `New` combo presses `DOT`, `SPC`, then sets a one shot shift (same as `Newsent` key);- `Del` combo presses `LCTL`+`BSPC`;
-- `Join` combo joins current line to following line (with space between);
-- `Line` combo adds a new line below the current position.
-- Number combos on left hand are not all shown on picture to reduce clutter; these fill out an entire number grid in the same layout as the Data layer, with `0` on the home row pinky.
+- `New` combo presses `DOT`, `SPC`, then sets a one shot shift (same as `Newsent` key);
+- `Del` combo deletes the current word;
+- `<<` combo presses `M4` (`Back`); `>>` combo presses `M5` (`Forward`);
+- `Join` combo joins current line to following line with space between; does not add space if shifted;
+- `Line` combos adds new lines above/below the current position.
 
 
 
@@ -188,15 +189,17 @@ Program layer optimised for c programming, with comparison operators as inward r
 
 ### Utility
 ![Utility](images/utility.png?raw=true)
-Layer is accessible using either outer thumb key (XOR). Media control, RGB, and OLED control on left hand, and function keys on right hand.
+Utility layer containing media control, RGB controls, OLED controls, function keys, and debug functions. Layer is accessible using either outer thumb key (XOR).
+
+The `Mute` thumb keys only activate on the hand opposite to the one holding the layer key to avoid accidental activations.
 
 `Base` swaps default layer to QWERTY layout; `Basic` swaps default layer to QWERTY layout with home block mods and `Space` layer-tap disabled (useful for games).
 
 `Clock` keys set the OLED clock. `OLED Static` disables animations and changes OLEDs to static images. `OLED Menu` toggles between layer stack view and layout display on right OLED.
 
-`Alt Tab` holds `LAlt` on first press and taps `Tab`; `LAlt` is released when layer key is released.
+`Alt Tab` key holds `LAlt` and taps `Tab` on first press; taps `Tab` on subsequent presses; `LAlt` is released when layer key is released.
 
-Tap the `Boot/Reboot` key to reboot keyboard, and hold for one second to enter bootloader.
+Tap the `Reboot` key to reboot keyboard; hold for one second to enter bootloader.
 
 
 

@@ -53,6 +53,7 @@ enum custom_keycodes {
     CLOCKNX,
 
     OLEDSAV,
+    OLEDTOG,
 
     // Custom Symbols
     COM_DOT,
@@ -95,9 +96,11 @@ enum custom_keycodes {
     // Combos
     CM_MOUSE,
 
-    CM_BSPC_1,
-    CM_BSPC_2,
-    CM_BSPC_3,
+    DELWORD,
+
+    SPC_DN,
+    JOIN,
+    SPC_UP,
 };
 
 
@@ -284,7 +287,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_MOUSE] = LAYOUT( //9
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, XXXXXXX, KC_BTN4,   MS_UP, KC_BTN5,  KC_TAB,                      _______, _______, _______, _______, _______, _______,
+          _______, XXXXXXX, MS_BTN4,   MS_UP, MS_BTN5,  KC_TAB,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, XXXXXXX, MS_LEFT, MS_DOWN, MS_RGHT,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -320,11 +323,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     
     [_UTILITY] = LAYOUT( //12
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           ALTTAB, CLOCKUP, CS_VALD, CS_VOLU, CS_VALU, CS_RGBN,                      CS_BOOT,   KC_F7,   KC_F8,   KC_F9,  KC_F10, DB_TOGG,
+           ALTTAB, CLOCKUP, CS_VALD, CS_VOLU, CS_VALU, OLEDSAV,                      CS_RGBN,   KC_F7,   KC_F8,   KC_F9,  KC_F10, CS_BOOT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CLOCKDN, KC_MPRV, CS_VOLD, KC_MNXT,    BASE,                        BASIC,   KC_F1,   KC_F2,   KC_F3,  KC_F11, TAB_SFT,
+          _______, CLOCKDN, KC_MPRV, CS_VOLD, KC_MNXT,    BASE,                        BASIC,   KC_F1,   KC_F2,   KC_F3,  KC_F11, DB_TOGG,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CLOCKNX, OLEDSAV,    MUTE, KC_SCRL,    MENU,                      CS_RGBT,   KC_F4,   KC_F5,   KC_F6,  KC_F12,  KC_ENT,
+          _______, CLOCKNX, OLEDTOG,    MUTE, KC_SCRL,    MENU,                      CS_RGBT,   KC_F4,   KC_F5,   KC_F6,  KC_F12,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               KC_MSTP,  MUTE_L, KC_MPLY,    KC_MPLY,  MUTE_R, KC_MSTP
                                           //`--------------------------'  `--------------------------'
@@ -528,6 +531,7 @@ bool is_spc(uint16_t keycode) {
 
 static bool alt_tab_active = false;
 static bool oled_timeout = false;
+static bool oled_disable = false;
 
 void matrix_scan_user(void) {
     achordion_task();
@@ -798,16 +802,9 @@ enum combo_events {
     SEMICOLON,
     AMPERSAND,
 
-    SPC_0,
     SPC_1,
     SPC_2,
     SPC_3,
-    SPC_4,
-    SPC_5,
-    SPC_6,
-    SPC_7,
-    SPC_8,
-    SPC_9,
 
     BSPC_1,
     BSPC_2,
@@ -850,23 +847,16 @@ const uint16_t PROGMEM r_minus[]        = {KC_J, KC_K, COMBO_END};
 const uint16_t PROGMEM semicolon[]      = {KC_J, KC_I, COMBO_END};
 const uint16_t PROGMEM exclamation[]    = {KC_I, KC_L, COMBO_END};
 
-const uint16_t PROGMEM spc_0[]          = {KC_SPC, KC_A, COMBO_END};
-const uint16_t PROGMEM spc_1[]          = {KC_SPC, KC_S, COMBO_END};
+const uint16_t PROGMEM spc_3[]          = {KC_SPC, KC_S, COMBO_END};
 const uint16_t PROGMEM spc_2[]          = {KC_SPC, KC_D, COMBO_END};
-const uint16_t PROGMEM spc_3[]          = {KC_SPC, KC_F, COMBO_END};
-const uint16_t PROGMEM spc_4[]          = {KC_SPC, KC_X, COMBO_END};
-const uint16_t PROGMEM spc_5[]          = {KC_SPC, KC_C, COMBO_END};
-const uint16_t PROGMEM spc_6[]          = {KC_SPC, KC_V, COMBO_END};
-const uint16_t PROGMEM spc_7[]          = {KC_SPC, KC_W, COMBO_END};
-const uint16_t PROGMEM spc_8[]          = {KC_SPC, KC_E, COMBO_END};
-const uint16_t PROGMEM spc_9[]          = {KC_SPC, KC_R, COMBO_END};
+const uint16_t PROGMEM spc_1[]          = {KC_SPC, KC_F, COMBO_END};
 
 const uint16_t PROGMEM bspc_1[]         = {CS_RT1, KC_J, COMBO_END};
 const uint16_t PROGMEM bspc_2[]         = {CS_RT1, KC_K, COMBO_END};
 const uint16_t PROGMEM bspc_3[]         = {CS_RT1, KC_L, COMBO_END};
 
 const uint16_t PROGMEM enter[]          = {KC_S, KC_F, COMBO_END};
-const uint16_t PROGMEM new[]          = {KC_J, KC_L, COMBO_END};
+const uint16_t PROGMEM new[]            = {KC_J, KC_L, COMBO_END};
 
 // const uint16_t PROGMEM num_1[]          = {KC_Q, KC_A, COMBO_END};
 // const uint16_t PROGMEM num_2[]          = {KC_W, KC_S, COMBO_END};
@@ -882,20 +872,13 @@ combo_t key_combos[] = {
     [MOUSE]         = COMBO(mouse,          CM_MOUSE),
     [MOUSE2]        = COMBO(mouse2,         CM_MOUSE),
 
-    [SPC_0]         = COMBO(spc_0,          KC_0),
-    [SPC_1]         = COMBO(spc_1,          KC_1),
-    [SPC_2]         = COMBO(spc_2,          KC_2),
-    [SPC_3]         = COMBO(spc_3,          KC_3),
-    [SPC_4]         = COMBO(spc_4,          KC_4),
-    [SPC_5]         = COMBO(spc_5,          KC_5),
-    [SPC_6]         = COMBO(spc_6,          KC_6),
-    [SPC_7]         = COMBO(spc_7,          KC_7),
-    [SPC_8]         = COMBO(spc_8,          KC_8),
-    [SPC_9]         = COMBO(spc_9,          KC_9),
+    [SPC_3]         = COMBO(spc_3,          MS_BTN4),
+    [SPC_2]         = COMBO(spc_2,          DELWORD),
+    [SPC_1]         = COMBO(spc_1,          MS_BTN5),
     
-    [BSPC_1]        = COMBO(bspc_1,         CM_BSPC_1),
-    [BSPC_2]        = COMBO(bspc_2,         CM_BSPC_2),
-    [BSPC_3]        = COMBO(bspc_3,         CM_BSPC_3),
+    [BSPC_1]        = COMBO(bspc_1,         SPC_UP),
+    [BSPC_2]        = COMBO(bspc_2,         JOIN),
+    [BSPC_3]        = COMBO(bspc_3,         SPC_DN),
     
     [L_EXPONENT]    = COMBO(l_exponent,     CS_CIRC),
     [L_COMMA]       = COMBO(l_comma,        CS_COMM),
@@ -962,16 +945,9 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
 // 50ms default
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
-        case SPC_0:
-        case SPC_1:
-        case SPC_2:
         case SPC_3:
-        case SPC_4:
-        case SPC_5:
-        case SPC_6:
-        case SPC_7:
-        case SPC_8:
-        case SPC_9:
+        case SPC_2:
+        case SPC_1:
 
         case BSPC_1:
         case BSPC_2:
@@ -1681,6 +1657,7 @@ void render_clock(uint8_t shift, uint8_t line) {
 typedef struct _master_to_slave_t {
     bool static_display_sync :1;
     bool oled_timeout_sync :1;
+    bool oled_disable_sync :1;
 } master_to_slave_t;
 
 master_to_slave_t sync_data;
@@ -1770,18 +1747,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        case CS_VALU:
-            if (record->event.pressed) {
-                rgb_matrix_increase_val_noeeprom();
-            }
-            break;
-
-        case CS_VALD:
-            if (record->event.pressed) {
-                rgb_matrix_decrease_val_noeeprom();
-            }
-            break;
-
         case CS_RGBN:
             if (record->event.pressed) {
                 if (shifted()) {
@@ -1826,6 +1791,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 }
             }
             break;
+        case OLEDTOG:
+            if (record->event.pressed) {
+                oled_disable = !oled_disable;
+            }
 
         case BASE:
             if (record->event.pressed) {
@@ -2302,18 +2271,28 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 layer_off(_MOUSE);
             }
             break;
-
-        // Combo actions            
-        case CM_BSPC_1:
+        case DELWORD:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_CSAG);
+                tap_code(KC_RGHT);
                 add_mods(MOD_MASK_CTRL);
-                tap_code(KC_BSPC);
+                tap_code(KC_LEFT);
+                tap_code(KC_DEL);
                 set_mods(mods);
             }
             break;
-        case CM_BSPC_2:
+        case SPC_UP:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code(KC_HOME);
+                tap_code(KC_ENT);
+                tap_code(KC_UP);
+                set_mods(mods);
+            }
+            break;
+        case JOIN:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_CSAG);
@@ -2321,11 +2300,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 add_mods(MOD_MASK_CTRL);
                 tap_code(KC_DEL);
                 del_mods(MOD_MASK_CTRL);
-                tap_code(KC_SPC);
+                if (shifted()) {
+                    /*intentionally blank*/ ;
+                } else {
+                    tap_code(KC_SPC);
+                }
                 set_mods(mods);
             }
             break;
-        case CM_BSPC_3:
+        case SPC_DN:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_CSAG);
@@ -2444,7 +2427,7 @@ void render_logo_minor(bool can_be_major) {
 
 
 void render_draw(void) {
-    if (sync_data.oled_timeout_sync) {
+    if (sync_data.oled_timeout_sync || sync_data.oled_disable_sync) {
         return;
     }
     
@@ -2506,10 +2489,12 @@ void render_linebreak(void) {
 }
 
 void render_mode(void) {
-    if (IS_LAYER_ON(_NUMPAD)) {
-        oled_write_P(PSTR(" Numpad\n"), false);
-    } else if (IS_LAYER_ON(_TOUHOU)) {
+    if (IS_LAYER_ON(_TOUHOU)) {
         oled_write_P(PSTR(" Touhou\n"), false);
+    } else if (IS_LAYER_ON(_NUMPAD)) {
+        oled_write_P(PSTR(" Numpad\n"), false);
+    } else if (IS_LAYER_ON(_MOUSE)) {
+        oled_write_P(PSTR(" Mouse\n"), false);
     } else if (IS_LAYER_ON(_STENO)) {
         oled_write_P(PSTR(" Steno.\n"), false);
     } else if (IS_LAYER_ON(_QWERTY)) {
@@ -2766,7 +2751,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
 
 bool oled_task_user(void) {
-    if (oled_timeout) {
+    if (oled_timeout || oled_disable) {
         oled_off();
         return false;
     }
@@ -2955,7 +2940,7 @@ void housekeeping_task_user(void) {
         static uint32_t last_sync = 0;
         if (timer_elapsed32(last_sync) > 500) { // Interact with slave every 500ms
             // master_to_slave_t m2s = { .static_display_sync = static_display };
-            master_to_slave_t m2s = { .static_display_sync = static_display, .oled_timeout_sync = oled_timeout };
+            master_to_slave_t m2s = { .static_display_sync = static_display, .oled_timeout_sync = oled_timeout, .oled_disable_sync = oled_disable };
             if (transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s)) {
                 last_sync = timer_read32();
             } else {
@@ -2968,7 +2953,7 @@ void housekeeping_task_user(void) {
         } else {
             // render_draw();
         }
-        if (sync_data.oled_timeout_sync) { 
+        if (sync_data.oled_timeout_sync || sync_data.oled_disable_sync) { 
             oled_off();
         } else {
             oled_on();
