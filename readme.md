@@ -149,9 +149,9 @@ I find it difficult to press upper row keys with my pinkies and end up alt finge
 
 > ℹ️ Note that this keymap internally uses a QWERTY layer (specifically, the `_BASIC` layer) for combos, so this Base layer can be modified easily without needing any changes to combo code. 
 > 
-> ⚠️ However, per-key mod-taps settings and Achordion will still need to be handled separately if home block mods are changed.
+> ⚠️ However, per-key mod-tap settings and Achordion will still need to be handled separately if home block mods are changed.
 
-`Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together or omitted, as they accessible from combos near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a (La)TeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/leader key.
+`Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together or omitted, as they accessible from combos near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a (La)TeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/(reverse) leader key.
 
 `Tab` is on right hand to reduce left hand contortions and to keep it on home row. `Tab` key also functions as `RShift` when held. `New Sentence` macro sends a dot, a space, then sets a one shot shift.
 
