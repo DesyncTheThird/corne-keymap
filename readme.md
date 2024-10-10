@@ -6,7 +6,7 @@
 ---
 # Features
 
-- Base layer is a magic modded [graphite](https://github.com/rdavison/graphite-layout) layout.
+- Base layer is a magic modded [graphite](https://github.com/rdavison/graphite-layout)/[gallium](https://github.com/GalileoBlues/Gallium) layout.
 - Many common symbols and punctuation are accessible through combos.
 - Home block mods on main layer.
 - [Achordion](https://getreuer.info/posts/keyboards/achordion/index.html) enabled with opposite hand triggers and typing streak detection for home block mod and `Repeat`/`Magic` layer-tap safety.
