@@ -42,7 +42,7 @@ Right hand overrides:
 |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  | `K`  | `P` |
-| Magic | `ECT` | `E` | `A` | `P` | `ERE` | `O` | `ON` | `EY` | `H` |
+| Magic | `ECT` | `E` | `I` | `P` | `ERE` | `O` | `ON` | `EY` | `H` |
 
 (Other right hand keys are repeated.)
 
@@ -58,7 +58,7 @@ Right hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Prev   | `J`   | `F` | `O` | `U` | `Y` | `H` | `E` | `I` | `A` | `K` | `P` |
-| Repeat | `UST` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `U` | `Y` | `P` |
+| Repeat | `UST` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `A` | `Y` | `P` |
 
 Left hand overrides:
 |     |     |     |     |
@@ -72,7 +72,7 @@ Other:
 |     |     |     |     |     |
 | --- | --- | --- | --- | --- |
 | `Non-alpha` | `⎵`   | `,`     | `.`   | `'`   |
-| `THE`       | `THE` | `⎵BUT⎵` | `COM` | `LL⎵` |
+| `THE`       | `THE` | `⎵BUT⎵` | `COM` | `RE⎵` |
 
 ---
 ### Details
@@ -103,7 +103,7 @@ For longer dynamic outputs, (e.g. `W -> WITH`) there is also a short window (def
 
 After a short duration (default 1000ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state, i.e., `OSM Shift`/`THE`.
 
-After longer `Magic` outputs, i.e. those that commonly end words, the `Rep` key will output `Space` to avoid SFBs on the left thumb for word breaks.
+After longer `Magic` outputs and those that output `S` (i.e. outputs that commonly end words), the `Rep` key will output `Space` to avoid SFBs on the left thumb for word breaks.
 
 On QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality.
 

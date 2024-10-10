@@ -1202,6 +1202,12 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_I:
                 case KC_K:
                 case KC_DOT:
+
+                case KC_C:
+                case KC_B:
+                case KC_G:
+                case KC_W:
+                case KC_V:
                     repeat_spc = true;
                     break;
                 default:
@@ -1232,7 +1238,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_J: SEND_STRING(/*j*/"ect"); update_last_keys(KC_T, 3); break;
                 case KC_F: tap_code(KC_F); update_last_key(KC_F); break;
                 case KC_O: tap_code(KC_E); update_last_key(KC_E); break;
-                case KC_U: tap_code(KC_A); update_last_key(KC_A); break;
+                case KC_U: tap_code(KC_I); update_last_key(KC_I); break;
                 case KC_Y: tap_code(KC_P); update_last_key(KC_P); break;
                 case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_E, 3); break;
                 case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
@@ -1284,7 +1290,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_H: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_E: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_I: tap_code(KC_U); update_last_key(KC_U); break;
-                case KC_A: tap_code(KC_U); update_last_key(KC_U); break;
+                case KC_A: tap_code(KC_A); update_last_key(KC_A); break;
 
                 case KC_K: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_P: tap_code(KC_P); update_last_key(KC_P); break;
@@ -1298,7 +1304,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_SPC: send_the(false); update_last_keys(KC_E, 3); break;
                 case KC_COMM: SEND_STRING(" but "); update_last_keys(KC_SPC, 4); break;
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_NO, 3); break;
-                case KC_QUOT: SEND_STRING("ll "); update_last_keys(KC_SPC, 3); break;
+                case KC_QUOT: SEND_STRING("re "); update_last_keys(KC_SPC, 3); break;
 
                 default: tap_code(last_key); update_last_key(last_key); break;
             }
