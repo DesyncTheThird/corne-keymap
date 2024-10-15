@@ -281,7 +281,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, KC_PSCR, KC_PGUP, KC_PGDN, KC_CAPS,  SELECT,                        CS_GT, MT_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______, C(KC_BSPC),    KC_0,  KC_SPC
+                                              _______, _______, _______,    KC_BSPC,    KC_0,  KC_SPC
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -1244,7 +1244,6 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
                 case KC_I: SEND_STRING(/*i*/"on"); update_last_keys(KC_N, 2); break;
                 case KC_K: SEND_STRING(/*k*/"ey"); update_last_keys(KC_Y, 2); break;
-                case KC_P: tap_code(KC_H); update_last_key(KC_H); break;
 
                 case KC_NO:
                 case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
@@ -1293,10 +1292,9 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_A: tap_code(KC_A); update_last_key(KC_A); break;
 
                 case KC_K: tap_code(KC_Y); update_last_key(KC_Y); break;
-                case KC_P: tap_code(KC_P); update_last_key(KC_P); break;
+                case KC_P: tap_code(KC_H); update_last_key(KC_H); break;
 
                 // Left hand overrides
-                case KC_Q: SEND_STRING(/*q*/"ui"); update_last_keys(KC_I, 2); break;
                 case KC_V: SEND_STRING(/*v*/"er"); update_last_keys(KC_R, 2); break;
                 case KC_W: SEND_STRING(/*w*/"ith"); update_last_keys(KC_H, 3); break;
 

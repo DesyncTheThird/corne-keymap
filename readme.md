@@ -26,7 +26,7 @@ As the name suggests, the Repeat key (generally) repeats the last key pressed; t
 
 The most common use-case for the swapping-rows behaviour is for the vowel block on the right side, turning the `OE`, `EO`, `IU`, and `UI` SFBs into rolls and alternations; as well as elimination various index finger SFBs on both sides (i.e., in the words `T[YP]E`, `[SC]IENCE`, `[HY][PH]EN`, etc.).
 
-Letters that are not commonly repeated (i.e. `I`, `U`, `A`, `Q`) are overridden and instead return common n-grams.
+Letters that are not commonly repeated (i.e. `I`, `U`, `A`) are overridden and instead return common n-grams. (Some letters uncommonly repeated in prose are still common in LaTeX commands and have not been replaced.)
 
 
 
@@ -39,10 +39,10 @@ Left hand keys:
 | Magic | `N` | `R` | `T` | `S` | `S` | `'T` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
 
 Right hand overrides:
-|     |     |     |     |     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  | `K`  | `P` |
-| Magic | `ECT` | `E` | `I` | `P` | `ERE` | `O` | `ON` | `EY` | `H` |
+|     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  | `K`  |
+| Magic | `ECT` | `E` | `I` | `P` | `ERE` | `O` | `ON` | `EY` |
 
 (Other right hand keys are repeated.)
 
@@ -58,13 +58,13 @@ Right hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Prev   | `J`   | `F` | `O` | `U` | `Y` | `H` | `E` | `I` | `A` | `K` | `P` |
-| Repeat | `UST` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `A` | `Y` | `P` |
+| Repeat | `UST` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `A` | `Y` | `H` |
 
 Left hand overrides:
-|     |     |     |     |
-| --- | --- | --- | --- |
-| Prev   | `Q`  | `V`  | `W`   |
-| Repeat | `UI` | `ER` | `ITH` |
+|     |     |     |
+| --- | --- | --- |
+| Prev   | `V`  | `W`   |
+| Repeat | `ER` | `ITH` |
 
 (Other left hand keys are repeated.)
 
