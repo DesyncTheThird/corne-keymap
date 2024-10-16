@@ -810,7 +810,7 @@ enum combo_events {
     BSPC_2,
     BSPC_3,
 
-    ENTER,
+    CAPS,
     NEW,
 
     COMBO_LENGTH
@@ -855,7 +855,7 @@ const uint16_t PROGMEM bspc_1[]         = {CS_RT1, KC_J, COMBO_END};
 const uint16_t PROGMEM bspc_2[]         = {CS_RT1, KC_K, COMBO_END};
 const uint16_t PROGMEM bspc_3[]         = {CS_RT1, KC_L, COMBO_END};
 
-const uint16_t PROGMEM enter[]          = {KC_S, KC_F, COMBO_END};
+const uint16_t PROGMEM caps[]           = {KC_S, KC_F, COMBO_END};
 const uint16_t PROGMEM new[]            = {KC_J, KC_L, COMBO_END};
 
 // const uint16_t PROGMEM num_1[]          = {KC_Q, KC_A, COMBO_END};
@@ -904,7 +904,7 @@ combo_t key_combos[] = {
     [SEMICOLON]     = COMBO(semicolon,      CS_SCLN),
     [EXCLAMATION]   = COMBO(exclamation,    CS_EXLM),
 
-    [ENTER]         = COMBO(enter,          KC_ENT),
+    [CAPS]          = COMBO(caps,           KC_CAPS),
     [NEW]           = COMBO(new,            NEWSENT),
 };
 
@@ -953,7 +953,7 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         case BSPC_2:
         case BSPC_3:
         
-        case ENTER:
+        case CAPS:
         case NEW:
 
         case L_COMMA:
@@ -1040,6 +1040,7 @@ void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
 void rollback_last_key(void) {
     last_key = last_key_2;
     last_key_2 = last_key_3;
+    last_key_3 = KC_NO;
     dprintf("rolled back!\n");
     dprintf("last_key:   %d\n", last_key);
     dprintf("last_key_2: %d\n", last_key_2);
