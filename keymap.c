@@ -205,7 +205,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,    KC_Z,    KC_L,    KC_D,    KC_C,    KC_B,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A, TAB_SFT,
+          TAB_SFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A, TAB_SFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           CS_LCTL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, KC_QUOT, COM_DOT, QUE_EXL, NEWSENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -245,7 +245,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, CS_TILD, CS_ASTR,  CS_DOT, MT_COMM, CS_POUN,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______,    KC_BSPC,  CS_AL1, CS_SLSH
+                                              _______, _______, _______,    _______,  CS_AL1, CS_SLSH
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -653,6 +653,8 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
         // case CS_AL1:
         case CS_AL2:
         case CS_AL3:
+        
+        case TAB_SFT:
             // Immediately select the hold action when another key is pressed.
             return true;
         default:
@@ -680,6 +682,7 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
         case CS_AL3:
         
         case CS_BOOT:
+        case TAB_SFT:
             return 0;
 
         default:
@@ -697,7 +700,6 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
         case CS_RT2:
         case CS_AL1:
 
-        case TAB_SFT:
             return achordion_opposite_hands(tap_hold_record, other_record);
         
         case CS_LT2:
@@ -1195,7 +1197,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
 
             // Override space
             switch (last_key) {
-                case KC_N:
+                // case KC_N:
                 case KC_T:
                 case KC_M:
                 case KC_J:
@@ -1223,12 +1225,12 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
                 case KC_B: tap_code(KC_S); update_last_key(KC_S); break;
 
-                case KC_N: SEND_STRING(/*n*/"'t"); update_last_keys(KC_T, 2); break;
+                case KC_N: SEND_STRING(/*n*/"'t "); update_last_keys(KC_SPC, 3); break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
                 case KC_T: SEND_STRING(/*t*/"ion"); update_last_keys(KC_N, 3); break;
                 case KC_S: tap_code(KC_C); update_last_key(KC_C); break;
                 case KC_G: tap_code(KC_S); update_last_key(KC_S); break;
-                
+
                 case KC_Q: tap_code(KC_U); update_last_key(KC_U); break;
                 case KC_X: tap_code(KC_C); update_last_key(KC_C) ;break;
                 case KC_M: SEND_STRING(/*m*/"ent"); update_last_keys(KC_T, 3); break;
