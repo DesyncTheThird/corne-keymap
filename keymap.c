@@ -812,8 +812,8 @@ enum combo_events {
     BSPC_2,
     BSPC_3,
 
-    CAPS,
-    NEW,
+    L_NEW,
+    R_NEW,
 
     COMBO_LENGTH
 };
@@ -857,8 +857,8 @@ const uint16_t PROGMEM bspc_1[]         = {CS_RT1, KC_J, COMBO_END};
 const uint16_t PROGMEM bspc_2[]         = {CS_RT1, KC_K, COMBO_END};
 const uint16_t PROGMEM bspc_3[]         = {CS_RT1, KC_L, COMBO_END};
 
-const uint16_t PROGMEM caps[]           = {KC_S, KC_F, COMBO_END};
-const uint16_t PROGMEM new[]            = {KC_J, KC_L, COMBO_END};
+const uint16_t PROGMEM l_new[]          = {KC_X, KC_C, COMBO_END};
+const uint16_t PROGMEM r_new[]          = {KC_QUOT, COM_DOT, COMBO_END};
 
 // const uint16_t PROGMEM num_1[]          = {KC_Q, KC_A, COMBO_END};
 // const uint16_t PROGMEM num_2[]          = {KC_W, KC_S, COMBO_END};
@@ -906,8 +906,8 @@ combo_t key_combos[] = {
     [SEMICOLON]     = COMBO(semicolon,      CS_SCLN),
     [EXCLAMATION]   = COMBO(exclamation,    CS_EXLM),
 
-    [CAPS]          = COMBO(caps,           KC_CAPS),
-    [NEW]           = COMBO(new,            NEWSENT),
+    [L_NEW]         = COMBO(r_new,          NEWSENT),
+    [R_NEW]         = COMBO(l_new,          NEWSENT),
 };
 
 
@@ -955,8 +955,8 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         case BSPC_2:
         case BSPC_3:
         
-        case CAPS:
-        case NEW:
+        case L_NEW:
+        case R_NEW:
 
         case L_COMMA:
         case R_COMMA:
