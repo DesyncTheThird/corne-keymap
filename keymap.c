@@ -1154,9 +1154,7 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     // Reset rollback counter and recorded key on any other keypress
     if (!(is_bspc(keycode) || is_spc(keycode) || is_alpha(keycode) || is_hrm(keycode) || is_magic(keycode) || keycode == KC_LSFT)) {
         if (record->event.pressed) {
-            char_count = 1;
-            last_key = KC_NO;
-            last_key_2 = KC_NO;
+            update_last_key(KC_NO);
         }
     }
     return true;
