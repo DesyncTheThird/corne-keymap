@@ -992,14 +992,36 @@ bool get_combo_must_tap(uint16_t index, combo_t *combo) {
 
 bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode, keyrecord_t *record) {
     switch (combo_index) {
+        // Layer switching combos always trigger
         case TOUHOU:
         case MOUSE:
         case MOUSE2:
         case STENO:
         case NUMPAD:
             return true;
+
+        // Disable only left hand combos on Edit layer
+        case L_EXPONENT:
+        case L_COMMA:
+        case L_DOT:
+        case L_UNDERSCORE:
+        case L_ASTERISK:
+        case L_EQUALS:
+        case L_PLUS:
+        case L_MINUS:
+        case AMPERSAND:
+        case COLON:
+        case L_NEW:
+            if (layer_state_is(_EDIT)) {
+                return false;
+            }
+
+        // Disable combos on some layers
         default:
-            if (!(layer_state_is(_BASIC) || layer_state_is(_TOUHOU) || layer_state_is(_MOUSE) || layer_state_is(_STENO))) {
+            if (!(layer_state_is(_BASIC)
+               || layer_state_is(_TOUHOU)
+               || layer_state_is(_MOUSE)
+               || layer_state_is(_STENO))) {
                 return true;
             }
     }
