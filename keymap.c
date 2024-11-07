@@ -149,9 +149,9 @@ enum custom_keycodes {
 #define CS_RT3 LT(_UTILITY,KC_SLSH)
 
 #define CS_AL1 LT(_DATA,KC_0)
-#define CS_AL2 LT(_EDIT,KC_0)
-#define CS_AL3 LT(_EDIT,CS_BSLS)
-#define CS_AL4 LT(_EDIT,CS_SCLN)
+#define CS_AL2 LT(_EDIT_OVERLAY,KC_0)
+#define CS_AL3 LT(_EDIT_OVERLAY,CS_BSLS)
+#define CS_AL4 LT(_EDIT_OVERLAY,CS_SCLN)
 
 // Custom tap-hold keys
 #define CS_BOOT LT(0,KC_ESC)
@@ -760,6 +760,34 @@ bool achordion_eager_mod(uint8_t mod) {
 }
 
 bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
+    if (keycode == CS_AL1) {
+        if (!record->tap.count && record->event.pressed) {
+            layer_on(_DATA);
+        } else {
+            layer_off(_DATA);
+        }
+        if (record->tap.count && record->event.pressed) {
+            const uint8_t mods = get_mods();
+            del_mods(MOD_MASK_SHIFT);
+            tap_code(KC_0);
+            set_mods(mods);
+        }
+        return false;
+    }
+    if (keycode == CS_AL2) {
+        if (!record->tap.count && record->event.pressed) {
+            layer_on(_EDIT_OVERLAY);
+        } else {
+            layer_off(_EDIT_OVERLAY);
+        }
+        if (record->tap.count && record->event.pressed) {
+            const uint8_t mods = get_mods();
+            del_mods(MOD_MASK_SHIFT);
+            tap_code(KC_0);
+            set_mods(mods);
+        }
+        return false;
+    }
     if (keycode == CS_AL3) {
         if (!record->tap.count && record->event.pressed) {
             layer_on(_EDIT_OVERLAY);
