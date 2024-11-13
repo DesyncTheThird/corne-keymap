@@ -433,7 +433,7 @@ bool is_hrm(uint16_t keycode) {
     }
 }
 
-bool repeat_spc = false;
+bool magic_override = false;
 uint8_t char_count = 1;
 uint16_t last_key = KC_NO;
 uint16_t last_key_2 = KC_NO;
@@ -1130,7 +1130,7 @@ void rollback_last_key(void) {
 bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     // Reset repeat space override if any non-magic key is pressed
     if (!is_magic(keycode)) {
-        repeat_spc = false;
+        magic_override = false;
     }
 
     // Ignore tracking if ctrl is on and reset rollback counter
@@ -1237,24 +1237,6 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-void send_the(bool space) {
-    if (space) {
-        tap_code(KC_SPC);
-    }
-
-    if (shifted()) {
-        const uint8_t mods = get_mods();
-        add_mods(MOD_MASK_SHIFT);
-        tap_code(KC_T);
-        del_mods(MOD_MASK_SHIFT);
-        tap_code(KC_H);
-        tap_code(KC_E);
-        set_mods(mods);
-    } else {
-        SEND_STRING("the");
-    }
-}
-
 bool process_magic(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_LT2) {
         if (!record->tap.count && record->event.pressed) {
@@ -1270,27 +1252,8 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 return false;
             }
 
-            // Override space
-            switch (last_key) {
-                // case KC_N:
-                case KC_T:
-                case KC_M:
-                case KC_J:
-                case KC_H:
-                case KC_I:
-                case KC_DOT:
-
-                case KC_C:
-                case KC_B:
-                case KC_G:
-                case KC_W:
-                case KC_V:
-                    repeat_spc = true;
-                    break;
-                default:
-                    repeat_spc = false;
-            }
-
+            magic_override = true;
+            
             switch (last_key) {
                 // Left hand keys
                 case KC_Z: tap_code(KC_N); update_last_key(KC_N); break;
@@ -1342,10 +1305,10 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         }
 
         if (record->tap.count && record->event.pressed) {
-            if (repeat_spc) {
+            if (magic_override) {
                 tap_code(KC_SPC);
                 update_last_key(KC_SPC);
-                repeat_spc = false;
+                magic_override = false;
                 return false;
             }
 
@@ -1376,7 +1339,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_W: SEND_STRING(/*w*/"ith"); update_last_keys(KC_H, 3); break;
 
                 case KC_NO:
-                case KC_SPC: send_the(false); update_last_keys(KC_E, 3); break;
+                case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
                 case KC_COMM: SEND_STRING(" but "); update_last_keys(KC_SPC, 4); break;
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_NO, 3); break;
                 case KC_QUOT: SEND_STRING("re "); update_last_keys(KC_SPC, 3); break;
