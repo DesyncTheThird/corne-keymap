@@ -123,6 +123,24 @@ This feature is also reused to rollback various macro outputs in a single keypre
 
 
 
+
+
+## Steno-lite
+
+The `Magic` and `Repeat` keys are also used in "steno-lite" combos, which output words or word fragments. Any of these combos can be triggered by pressing `Magic` *or* `Repeat`, along with the specified combo keys listed below:
+
+|     |     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Combo  | `T`   | `A`   | `TH`   | `TI`   | `H`    | `HA`   | `W`    | `Y`   | `S`    |
+| Output | `the` | `and` | `that` | `this` | `here` | `have` | `with` | `you` | `some` |
+
+|     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Combo  | `WH`   | `B`   | `WI`    | `J`    | `M`    | `I`   | `E`    | `F`    |
+| Output | `what` | `but` | `which` | `just` | `ment` | `ing` | `ever` | `from` |
+
+
+
 ## OLEDs
 (128x64 OLEDs)
 ### Right:

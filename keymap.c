@@ -1147,7 +1147,7 @@ combo_t key_combos[] = {
 
     [L_NEW]         = COMBO(r_new,          NEWSENT),
     [R_NEW]         = COMBO(l_new,          NEWSENT),
-
+    
     // Steno-lite
     [STR_THE]       = COMBO_ACTION(str_the),
     [STR_AND]       = COMBO_ACTION(str_and),
@@ -1166,8 +1166,8 @@ combo_t key_combos[] = {
     [STR_JUST]      = COMBO_ACTION(str_just),
     [STR_MENT]      = COMBO_ACTION(str_ment),
     [STR_ING]       = COMBO_ACTION(str_ing),
-    [STR_THE]       = COMBO_ACTION(str_the),
 
+    [STL_THE]       = COMBO_ACTION(str_the),
     [STL_AND]       = COMBO_ACTION(stl_and),
     [STL_THAT]      = COMBO_ACTION(stl_that),
     [STL_THIS]      = COMBO_ACTION(stl_this),
