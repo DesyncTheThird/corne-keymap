@@ -980,6 +980,45 @@ enum combo_events {
     BSPC_2,
     BSPC_3,
 
+    L_NEW,
+    R_NEW,
+
+    // Steno-lite
+    STL_THE,
+    STR_THE,
+    STL_AND,
+    STR_AND,
+    STL_THAT,
+    STR_THAT,
+    STL_THIS,
+    STR_THIS,
+    STL_HERE,
+    STR_HERE,
+    STL_HAVE,
+    STR_HAVE,
+    STL_WITH,
+    STR_WITH,
+    STL_YOU,
+    STR_YOU,
+    STL_EVER,
+    STR_EVER,
+    STL_FROM,
+    STR_FROM,
+    STL_SOME,
+    STR_SOME,
+    STL_WHAT,
+    STR_WHAT,
+    STL_BUT,
+    STR_BUT,
+    STL_WHICH,
+    STR_WHICH,
+    STL_JUST,
+    STR_JUST,
+    STL_MENT,
+    STR_MENT,
+    STL_ING,
+    STR_ING,
+
     COMBO_LENGTH
 };
 uint16_t COMBO_LEN = COMBO_LENGTH;
@@ -1028,6 +1067,44 @@ const uint16_t PROGMEM bspc_3[]         = {CS_RT1, KC_L, COMBO_END};
 // const uint16_t PROGMEM num_4[]          = {KC_R, KC_F, COMBO_END};
 // const uint16_t PROGMEM num_5[]          = {KC_T, KC_G, COMBO_END};
 
+
+// Steno-lite
+const uint16_t PROGMEM str_the[]        = {CS_RT2, KC_D,          COMBO_END}; //T
+const uint16_t PROGMEM str_and[]        = {CS_RT2, KC_SCLN,       COMBO_END}; //A
+const uint16_t PROGMEM str_that[]       = {CS_RT2, KC_D, KC_J,    COMBO_END}; //TH
+const uint16_t PROGMEM str_this[]       = {CS_RT2, KC_D, KC_L,    COMBO_END}; //TI
+const uint16_t PROGMEM str_here[]       = {CS_RT2, KC_J,          COMBO_END}; //H
+const uint16_t PROGMEM str_have[]       = {CS_RT2, KC_J, KC_SCLN, COMBO_END}; //HA
+const uint16_t PROGMEM str_with[]       = {CS_RT2, KC_V,          COMBO_END}; //W
+const uint16_t PROGMEM str_you[]        = {CS_RT2, KC_H,          COMBO_END}; //Y
+const uint16_t PROGMEM str_ever[]       = {CS_RT2, KC_K,          COMBO_END}; //E
+const uint16_t PROGMEM str_from[]       = {CS_RT2, KC_U,          COMBO_END}; //F
+const uint16_t PROGMEM str_some[]       = {CS_RT2, KC_F,          COMBO_END}; //S
+const uint16_t PROGMEM str_what[]       = {CS_RT2, KC_V, KC_J,    COMBO_END}; //WH
+const uint16_t PROGMEM str_but[]        = {CS_RT2, KC_T,          COMBO_END}; //B
+const uint16_t PROGMEM str_which[]      = {CS_RT2, KC_V, KC_L,    COMBO_END}; //WI
+const uint16_t PROGMEM str_just[]       = {CS_RT2, KC_Y,          COMBO_END}; //J
+const uint16_t PROGMEM str_ment[]       = {CS_RT2, KC_C,          COMBO_END}; //M
+const uint16_t PROGMEM str_ing[]        = {CS_RT2, KC_L,          COMBO_END}; //I
+
+const uint16_t PROGMEM stl_the[]        = {CS_LT2, KC_D,          COMBO_END}; //T
+const uint16_t PROGMEM stl_and[]        = {CS_LT2, KC_SCLN,       COMBO_END}; //A
+const uint16_t PROGMEM stl_that[]       = {CS_LT2, KC_D, KC_J,    COMBO_END}; //TH
+const uint16_t PROGMEM stl_this[]       = {CS_LT2, KC_D, KC_L,    COMBO_END}; //TI
+const uint16_t PROGMEM stl_here[]       = {CS_LT2, KC_J,          COMBO_END}; //H
+const uint16_t PROGMEM stl_have[]       = {CS_LT2, KC_J, KC_SCLN, COMBO_END}; //HA
+const uint16_t PROGMEM stl_with[]       = {CS_LT2, KC_V,          COMBO_END}; //W
+const uint16_t PROGMEM stl_you[]        = {CS_LT2, KC_H,          COMBO_END}; //Y
+const uint16_t PROGMEM stl_ever[]       = {CS_LT2, KC_K,          COMBO_END}; //E
+const uint16_t PROGMEM stl_from[]       = {CS_LT2, KC_U,          COMBO_END}; //F
+const uint16_t PROGMEM stl_some[]       = {CS_LT2, KC_F,          COMBO_END}; //S
+const uint16_t PROGMEM stl_what[]       = {CS_LT2, KC_V, KC_J,    COMBO_END}; //WH
+const uint16_t PROGMEM stl_but[]        = {CS_LT2, KC_T,          COMBO_END}; //B
+const uint16_t PROGMEM stl_which[]      = {CS_LT2, KC_V, KC_L,    COMBO_END}; //WI
+const uint16_t PROGMEM stl_just[]       = {CS_LT2, KC_Y,          COMBO_END}; //J
+const uint16_t PROGMEM stl_ment[]       = {CS_LT2, KC_C,          COMBO_END}; //M
+const uint16_t PROGMEM stl_ing[]        = {CS_LT2, KC_L,          COMBO_END}; //I
+
 combo_t key_combos[] = {
     [TOUHOU]        = COMBO_ACTION(touhou),
     [STENO]         = COMBO_ACTION(steno),
@@ -1070,6 +1147,43 @@ combo_t key_combos[] = {
 
     [L_NEW]         = COMBO(r_new,          NEWSENT),
     [R_NEW]         = COMBO(l_new,          NEWSENT),
+
+    // Steno-lite
+    [STR_THE]       = COMBO_ACTION(str_the),
+    [STR_AND]       = COMBO_ACTION(str_and),
+    [STR_THAT]      = COMBO_ACTION(str_that),
+    [STR_THIS]      = COMBO_ACTION(str_this),
+    [STR_HERE]      = COMBO_ACTION(str_here),
+    [STR_HAVE]      = COMBO_ACTION(str_have),
+    [STR_WITH]      = COMBO_ACTION(str_with),
+    [STR_YOU]       = COMBO_ACTION(str_you),
+    [STR_EVER]      = COMBO_ACTION(str_ever),
+    [STR_FROM]      = COMBO_ACTION(str_from),
+    [STR_SOME]      = COMBO_ACTION(str_some),
+    [STR_WHAT]      = COMBO_ACTION(str_what),
+    [STR_BUT]       = COMBO_ACTION(str_but),
+    [STR_WHICH]     = COMBO_ACTION(str_which),
+    [STR_JUST]      = COMBO_ACTION(str_just),
+    [STR_MENT]      = COMBO_ACTION(str_ment),
+    [STR_ING]       = COMBO_ACTION(str_ing),
+    [STR_THE]       = COMBO_ACTION(str_the),
+
+    [STL_AND]       = COMBO_ACTION(stl_and),
+    [STL_THAT]      = COMBO_ACTION(stl_that),
+    [STL_THIS]      = COMBO_ACTION(stl_this),
+    [STL_HERE]      = COMBO_ACTION(stl_here),
+    [STL_HAVE]      = COMBO_ACTION(stl_have),
+    [STL_WITH]      = COMBO_ACTION(stl_with),
+    [STL_YOU]       = COMBO_ACTION(stl_you),
+    [STL_EVER]      = COMBO_ACTION(stl_ever),
+    [STL_FROM]      = COMBO_ACTION(stl_from),
+    [STL_SOME]      = COMBO_ACTION(stl_some),
+    [STL_WHAT]      = COMBO_ACTION(stl_what),
+    [STL_BUT]       = COMBO_ACTION(stl_but),
+    [STL_WHICH]     = COMBO_ACTION(stl_which),
+    [STL_JUST]      = COMBO_ACTION(stl_just),
+    [STL_MENT]      = COMBO_ACTION(stl_ment),
+    [STL_ING]       = COMBO_ACTION(stl_ing),
 };
 
 
@@ -1101,6 +1215,170 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 } else {
                     layer_on(_STENO);
                 }
+            }
+            break;
+
+        // Steno-lite
+        case STL_THE:
+        case STR_THE:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_T);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("he");
+                set_mods(mods);
+            }
+            break;
+        case STL_AND:
+        case STR_AND:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_A);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("nd");
+                set_mods(mods);
+            }
+            break;
+        case STL_THAT:
+        case STR_THAT:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_T);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("hat");
+                set_mods(mods);
+            }
+            break;
+        case STL_THIS:
+        case STR_THIS:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_T);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("his");
+                set_mods(mods);
+            }
+            break;
+        case STL_HERE:
+        case STR_HERE:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_H);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("ere");
+                set_mods(mods);
+            }
+            break;
+        case STL_HAVE:
+        case STR_HAVE:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_H);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("ave");
+                set_mods(mods);
+            }
+            break;
+        case STL_WITH:
+        case STR_WITH:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_W);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("ith");
+                set_mods(mods);
+            }
+            break;
+        case STL_YOU:
+        case STR_YOU:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_Y);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("ou");
+                set_mods(mods);
+            }
+            break;
+        case STL_EVER:
+        case STR_EVER:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_E);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("ver");
+                set_mods(mods);
+            }
+            break;
+        case STL_FROM:
+        case STR_FROM:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_F);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("rom");
+                set_mods(mods);
+            }
+            break;
+        case STL_SOME:
+        case STR_SOME:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_S);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("ome");
+                set_mods(mods);
+            }
+            break;
+        case STL_WHAT:
+        case STR_WHAT:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_W);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("hat");
+                set_mods(mods);
+            }
+            break;
+        case STL_BUT:
+        case STR_BUT:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_B);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("ut");
+                set_mods(mods);
+            }
+            break;
+        case STL_WHICH:
+        case STR_WHICH:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_W);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("hich");
+                set_mods(mods);
+            }
+            break;
+        case STL_JUST:
+        case STR_JUST:
+            if (pressed) {
+                const uint8_t mods = get_mods();
+                tap_code(KC_J);
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING("ust");
+                set_mods(mods);
+            }
+            break;
+        case STL_MENT:
+        case STR_MENT:
+            if (pressed) {
+                SEND_STRING("ment");
+            }
+            break;
+        case STL_ING:
+        case STR_ING:
+            if (pressed) {
+                SEND_STRING("ing");
             }
             break;
     }
@@ -1135,6 +1413,10 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         case MOUSE:
         case MOUSE2:
             return 75;
+
+        // Steno-lite combos
+        case STL_THE ... STR_ING:
+            return 50;
 
         default:
             return 20;
