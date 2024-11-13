@@ -1189,6 +1189,11 @@ combo_t key_combos[] = {
 
 void process_combo_event(uint16_t combo_index, bool pressed) {
     switch(combo_index) {
+        case STL_THE ... STR_ING:
+            magic_override = true;
+    }
+
+    switch(combo_index) {
         case TOUHOU:
             if (pressed) {
                 menu = 1;
