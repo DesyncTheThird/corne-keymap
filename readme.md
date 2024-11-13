@@ -41,8 +41,8 @@ Left hand keys:
 Right hand overrides:
 |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  | `K`  |
-| Magic | `ECT` | `E` | `I` | `P` | `ERE` | `O` | `ON` | `EY` |
+| Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  | `P` |
+| Magic | `ECT` | `E` | `I` | `P` | `ERE` | `O` | `ON` | `Y` |
 
 (Other right hand keys are repeated.)
 
