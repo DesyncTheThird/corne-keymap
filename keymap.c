@@ -1441,6 +1441,14 @@ bool get_combo_must_tap(uint16_t index, combo_t *combo) {
 
 bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode, keyrecord_t *record) {
     switch (combo_index) {
+        // Steno combos
+        case STL_THE ... STR_ING:
+            if (ctrl_on()) {
+                return false;
+            } else {
+                return true;
+            }
+
         // Layer switching combos always trigger
         case TOUHOU:
         case MOUSE:
