@@ -984,6 +984,7 @@ enum combo_events {
     R_NEW,
 
     // Steno-lite
+    STENO_START,
     STL_THE,
     STR_THE,
     STL_AND,
@@ -1018,6 +1019,7 @@ enum combo_events {
     STR_MENT,
     STL_ING,
     STR_ING,
+    STENO_END,
 
     COMBO_LENGTH
 };
@@ -1189,7 +1191,7 @@ combo_t key_combos[] = {
 
 void process_combo_event(uint16_t combo_index, bool pressed) {
     switch(combo_index) {
-        case STL_THE ... STR_ING:
+        case STENO_START ... STENO_END:
             magic_override = true;
     }
 
@@ -1420,7 +1422,7 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
             return 75;
 
         // Steno-lite combos
-        case STL_THE ... STR_ING:
+        case STENO_START ... STENO_END:
             return 50;
 
         default:
