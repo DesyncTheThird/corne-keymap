@@ -1276,14 +1276,13 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
 
                 // Right hand overrides
                 case KC_J: SEND_STRING(/*j*/"ect"); update_last_keys(KC_T, 3); break;
-                case KC_F: tap_code(KC_F); update_last_key(KC_F); break;
+                case KC_F: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_O: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_U: tap_code(KC_I); update_last_key(KC_I); break;
                 case KC_Y: tap_code(KC_P); update_last_key(KC_P); break;
                 case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_E, 3); break;
                 case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
                 case KC_I: SEND_STRING(/*i*/"on"); update_last_keys(KC_N, 2); break;
-                case KC_P: tap_code(KC_Y); update_last_key(KC_Y); break;
 
                 case KC_NO:
                 case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
@@ -1321,7 +1320,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
             switch (last_key) {
                 // Right hand keys
                 case KC_J: SEND_STRING(/*j*/"ust"); update_last_keys(KC_T, 3); break;
-                case KC_F: tap_code(KC_Y); update_last_key(KC_Y); break;
+                case KC_F: tap_code(KC_F); update_last_key(KC_F); break;
                 case KC_O: tap_code(KC_O); update_last_key(KC_O); break;
                 case KC_U: tap_code(KC_I); update_last_key(KC_I); break;
 
