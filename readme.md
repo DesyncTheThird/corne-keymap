@@ -8,9 +8,9 @@
 
 - Base layer is a magic modded [graphite](https://github.com/rdavison/graphite-layout)/[gallium](https://github.com/GalileoBlues/Gallium) layout.
 - Many common symbols and punctuation are accessible through combos.
-- Home block mods on main layer.
-- [Achordion](https://getreuer.info/posts/keyboards/achordion/index.html) enabled with opposite hand triggers and typing streak detection for home block mod and `Repeat`/`Magic` layer-tap safety.
-- Control key overrides for easier left-hand only use; overrides disabled on home block mods.
+- Home row mods on main layer.
+- [Achordion](https://getreuer.info/posts/keyboards/achordion/index.html) enabled with opposite hand triggers and typing streak detection for home row mod and `Repeat`/`Magic` layer-tap safety.
+- Control key overrides for easier left-hand only use; overrides disabled on home row mods.
 - Mouse emulation accessible on pinky key combo; movement keys in same position as arrow keys on navigation layer, scrolling underneath in vim layout.
 - Numpad and Steno (GeminiPR) layers accessible through combos.
 
@@ -141,17 +141,19 @@ Key on utility layer available to change both OLEDs to static images.
 # Layers
 ### Base
 ![Base](images/base.png?raw=true)
-Base layer alphas is a slightly modified graphite layout, with home block mods, and magic/repeat keys on middle thumb keys.
+Base layer alphas is a slightly modified graphite layout, with home row mods, and magic/repeat keys on middle thumb keys.
 
 I find it difficult to press upper row keys with my pinkies and end up alt fingering them with my ring fingers, which introduces some SFBs (`BL`, `BR`) with the default Graphite layout. So, `J` and `B` have been moved off the outer top row; `B` has also been placed next to `C` to make the common `B_C` string not a skipgram. Also, I don't like `E` on the ring finger, so `HEIA` is used over `HAEI`.
 
 > ℹ️ Note that this keymap internally uses a QWERTY layer (specifically, the `_BASIC` layer) for combos, so this Base layer can be modified easily without needing any changes to combo code. 
 > 
-> ⚠️ However, per-key mod-tap settings and Achordion will still need to be handled separately if home block mods are changed.
+> ⚠️ However, per-key mod-tap settings and Achordion will still need to be handled separately if home row mods are changed.
 
 `Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together or omitted, as they accessible from combos near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a (La)TeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/(reverse) leader key.
 
-`Tab` is on right hand to reduce left hand contortions and to keep it on home row. `Tab` key also functions as `RShift` when held. `New Sentence` macro sends a dot, a space, then sets a one shot shift.
+A copy of `Tab` is placed on the right hand to reduce left hand contortions. The two `Tab` keys also function as `LShift` and `RShift` when held.
+
+`New Sentence` macro sends a dot, a space, then sets a one shot shift.
 
 The `LCTL` key also sets a weak one shot `ctrl` modifier for the `Backspace` key only to allow for faster usage while typing. The one shot modifier lingers for 500ms and is removed on any other keypress (without being applied).
 
@@ -191,7 +193,7 @@ Utility layer containing media control, RGB controls, OLED controls, function ke
 
 The `Mute` thumb keys only activate on the hand opposite to the one holding the layer key to avoid accidental activations.
 
-`Base` swaps default layer to QWERTY layout; `Basic` swaps default layer to QWERTY layout with home block mods and `Space` layer-tap disabled (useful for games).
+`Base` swaps default layer to QWERTY layout; `Basic` swaps default layer to QWERTY layout with home row mods and `Space` layer-tap disabled (useful for games).
 
 `Clock` keys set the OLED clock. `OLED Static` disables animations and changes OLEDs to static images. `OLED Menu` toggles between layer stack view and layout display on right OLED.
 
@@ -211,7 +213,7 @@ Mouse emulation accessible on pinky key combo to allow mouse movement without mo
 ![Control](images/control.png?raw=true)
 Control key overrides with QWERTY-esque layout for easier left-hand only use. (I usually don't remember which *letter* does what command, only which key *position*.)
 
-Overrides activate only from left hand control key; home block mods are unaffected, so intentional letter controls can be used in two-hand usage.
+Overrides activate only from left hand control key; home row mods are unaffected, so intentional letter controls can be used in two-hand usage.
 
 
 
@@ -219,7 +221,7 @@ Overrides activate only from left hand control key; home block mods are unaffect
 ### QWERTY
 ![QWERTY](images/qwerty.png?raw=true)
 
-Accessible with `Base` key on Utility layer, or `Basic` to also disable home block mods and `Space` layer-tap (for games).
+Accessible with `Base` key on Utility layer, or `Basic` to also disable home row mods and `Space` layer-tap (for games).
 
 > ⚠️ Modifying the _BASIC layer will also require changing mod-tap and combo code.
 
