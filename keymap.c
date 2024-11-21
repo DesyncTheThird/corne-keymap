@@ -109,22 +109,22 @@ enum custom_keycodes {
 // Home row mods
 #define MT_A LGUI_T(KC_A)
 #define MT_S LALT_T(KC_S)
-#define MT_D LSFT_T(KC_D)
-#define MT_F LCTL_T(KC_F)
+#define MT_D LCTL_T(KC_D)
+#define MT_F LSFT_T(KC_F)
 
-#define MT_J RCTL_T(KC_J)
-#define MT_K RSFT_T(KC_K)
+#define MT_J RSFT_T(KC_J)
+#define MT_K RCTL_T(KC_K)
 #define MT_L LALT_T(KC_L)
 #define MT_SCLN RGUI_T(KC_SCLN)
 
 // Alt layout home row mods
 #define MTA_N LGUI_T(KC_N)
 #define MTA_R LALT_T(KC_R)
-#define MTA_T LSFT_T(KC_T)
-#define MTA_S LCTL_T(KC_S)
+#define MTA_T LCTL_T(KC_T)
+#define MTA_S LSFT_T(KC_S)
 
-#define MTA_H RCTL_T(KC_H)
-#define MTA_E RSFT_T(KC_E)
+#define MTA_H RSFT_T(KC_H)
+#define MTA_E RCTL_T(KC_E)
 #define MTA_I LALT_T(KC_I)
 #define MTA_A RGUI_T(KC_A)
 
@@ -139,8 +139,8 @@ enum custom_keycodes {
 #define MT_MINS LT(0,CS_MINS)
 #define MT_EQL  LT(0,CS_EQL)
 
-#define MT_1 RCTL_T(KC_1)
-#define MT_2 RSFT_T(KC_2)
+#define MT_1 RSFT_T(KC_1)
+#define MT_2 RCTL_T(KC_2)
 #define MT_3 LALT_T(KC_3)
 
 // Layer keys
@@ -2228,9 +2228,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case MT_LPRN:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RSFT));
+                register_mods(MOD_BIT(KC_RCTL));
             } else {
-                unregister_mods(MOD_BIT(KC_RSFT));
+                unregister_mods(MOD_BIT(KC_RCTL));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -2242,9 +2242,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case MT_RPRN:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RCTL));
+                register_mods(MOD_BIT(KC_RSFT));
             } else {
-                unregister_mods(MOD_BIT(KC_RCTL));
+                unregister_mods(MOD_BIT(KC_RSFT));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -2287,9 +2287,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case MT_MINS:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LSFT));
+                register_mods(MOD_BIT(KC_LCTL));
             } else {
-                unregister_mods(MOD_BIT(KC_LSFT));
+                unregister_mods(MOD_BIT(KC_LCTL));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -2301,9 +2301,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case MT_EQL:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LCTL));
+                register_mods(MOD_BIT(KC_LSFT));
             } else {
-                unregister_mods(MOD_BIT(KC_LCTL));
+                unregister_mods(MOD_BIT(KC_LSFT));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
