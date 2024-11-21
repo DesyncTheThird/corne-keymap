@@ -10,11 +10,10 @@ enum corne_layers {
     _BASE,
     _CONTROL,
     _STENO,
-    _EDIT,
     _DATA,
     _PROGRAM,
     _SYMBOL,
-    _EDIT_OVERLAY,
+    _EDIT,
     _MOUSE,
     // _MOUSE_BTN,
     _NUMPAD,
@@ -153,9 +152,8 @@ enum custom_keycodes {
 #define CS_RT3 LT(_UTILITY,KC_SLSH)
 
 #define CS_AL1 LT(_DATA,KC_0)
-#define CS_AL2 LT(_EDIT_OVERLAY,KC_0)
-#define CS_AL3 LT(_EDIT_OVERLAY,CS_BSLS)
-#define CS_AL4 LT(_EDIT_OVERLAY,CS_SCLN)
+#define CS_AL2 LT(_EDIT,KC_0)
+#define CS_AL3 LT(_EDIT,CS_BSLS)
 
 // Custom tap-hold keys
 #define CS_BOOT LT(0,KC_ESC)
@@ -245,18 +243,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_EDIT] = LAYOUT( //8
-      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, KC_PAUS, CS_HOME,   KC_UP,  CS_END,  KC_TAB,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______,  KC_INS, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, CS_EXLM, TABRSFT,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, KC_PSCR, KC_PGUP, KC_PGDN, KC_CAPS,  SELECT,                        CS_GT, MT_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
-      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______,    _______,  CS_AL1,  KC_SPC
-                                          //`--------------------------'  `--------------------------'
-    ),
-
     [_DATA] = LAYOUT( //5
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9, CS_SCLN,  KC_DEL,
@@ -265,7 +251,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, CS_TILD, CS_ASTR,  CS_DOT, CS_COMM, CS_POUN,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______,    KC_BSPC,  CS_AL2, CS_SLSH
+                                              _______, _______, _______,    KC_BSPC,  CS_AL1, CS_SLSH
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -277,7 +263,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, CS_TILD, CS_COLN,  CS_DOT, CS_COMM, CS_UNDS,                        CS_GT, KC_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              CS_SLSH,  CS_AL3,  KC_SPC,    _______, _______, _______
+                                              CS_SLSH,  CS_AL2,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -289,7 +275,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, CS_TILD, CS_ASTR, CS_SLSH, CS_HASH, CS_AMPR,                        CS_GT, KC_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              CS_UNDS,  CS_AL4,  KC_SPC,    _______, _______, _______
+                                              CS_UNDS,  CS_AL3,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -615,7 +601,6 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case CS_AL1:
         case CS_AL2:
         case CS_AL3:
-        case CS_AL4:
 
         case MT_RPRN:
         case MT_LPRN:
@@ -682,9 +667,8 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
         case CS_RT3:
  
         // case CS_AL1:
-        // case CS_AL2:
+        case CS_AL2:
         case CS_AL3:
-        case CS_AL4:
         
         case TABLSFT:
         case TABRSFT:
@@ -711,9 +695,8 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
         case CS_RT3:
 
         // case CS_AL1:
-        // case CS_AL2:
+        case CS_AL2:
         case CS_AL3:
-        case CS_AL4:
         
         case CS_BOOT:
         case TABLSFT:
@@ -733,9 +716,6 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
 
     switch (tap_hold_keycode) {
         case CS_AL1:
-            return !achordion_opposite_hands(tap_hold_record, other_record);
-            
-        case CS_AL2:
         case CS_RT2:
             return achordion_opposite_hands(tap_hold_record, other_record);
 
@@ -777,9 +757,9 @@ bool achordion_eager_mod(uint8_t mod) {
 bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_AL1) {
         if (!record->tap.count && record->event.pressed) {
-            layer_on(_DATA);
+            layer_on(_EDIT);
         } else {
-            layer_off(_DATA);
+            layer_off(_EDIT);
         }
         if (record->tap.count && record->event.pressed) {
             const uint8_t mods = get_mods();
@@ -791,9 +771,9 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
     }
     if (keycode == CS_AL2) {
         if (!record->tap.count && record->event.pressed) {
-            layer_on(_EDIT_OVERLAY);
+            layer_on(_EDIT);
         } else {
-            layer_off(_EDIT_OVERLAY);
+            layer_off(_EDIT);
         }
         if (record->tap.count && record->event.pressed) {
             const uint8_t mods = get_mods();
@@ -805,28 +785,14 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
     }
     if (keycode == CS_AL3) {
         if (!record->tap.count && record->event.pressed) {
-            layer_on(_EDIT_OVERLAY);
+            layer_on(_EDIT);
         } else {
-            layer_off(_EDIT_OVERLAY);
+            layer_off(_EDIT);
         }
         if (record->tap.count && record->event.pressed) {
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_SHIFT);
             tap_code16(KC_NUBS);
-            set_mods(mods);
-        }
-        return false;
-    }
-    if (keycode == CS_AL4) {
-        if (!record->tap.count && record->event.pressed) {
-            layer_on(_EDIT_OVERLAY);
-        } else {
-            layer_off(_EDIT_OVERLAY);
-        }
-        if (record->tap.count && record->event.pressed) {
-            const uint8_t mods = get_mods();
-            del_mods(MOD_MASK_SHIFT);
-            tap_code16(KC_SCLN);
             set_mods(mods);
         }
         return false;
@@ -1077,7 +1043,7 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
         case AMPERSAND:
         case COLON:
         case L_NEW:
-            if (layer_state_is(_EDIT) || layer_state_is(_EDIT_OVERLAY)) { 
+            if (layer_state_is(_EDIT)) { 
                 return false;
             }
 
@@ -2560,11 +2526,6 @@ void render_mode(void) {
 }
 
 void render_layer(void) {
-    if (IS_LAYER_ON(_EDIT) || IS_LAYER_ON(_EDIT_OVERLAY)) {
-        oled_write_P(PSTR(">Edit\n"), false);
-    } else {
-        oled_write_P(PSTR(" Edit\n"), false);
-    }
     if (IS_LAYER_ON(_DATA)) {
         oled_write_P(PSTR(">Data\n"), false);
     } else {
@@ -2579,6 +2540,11 @@ void render_layer(void) {
         oled_write_P(PSTR(">Program\n"), false);
     } else {
         oled_write_P(PSTR(" Program\n"), false);
+    }
+    if (IS_LAYER_ON(_EDIT)) {
+        oled_write_P(PSTR(">Edit\n"), false);
+    } else {
+        oled_write_P(PSTR(" Edit\n"), false);
     }
     // if (IS_LAYER_ON(_MOUSE) || IS_LAYER_ON(_MOUSE_BTN)) {
     if (IS_LAYER_ON(_MOUSE)) {
@@ -2747,10 +2713,6 @@ void render_layout(void) {
         case _STENO:
             oled_write_raw_P(menu_layout_steno, frame_size);
             break;
-        case _EDIT:
-        case _EDIT_OVERLAY:
-            oled_write_raw_P(menu_layout_edit, frame_size);
-            break;
         case _DATA:
             oled_write_raw_P(menu_layout_data, frame_size);
             break;
@@ -2759,6 +2721,9 @@ void render_layout(void) {
             break;
         case _PROGRAM:
             oled_write_raw_P(menu_layout_program, frame_size);
+            break;
+        case _EDIT:
+            oled_write_raw_P(menu_layout_edit, frame_size);
             break;
         case _UTILITY:
             oled_write_raw_P(menu_layout_utility, frame_size);
@@ -2850,7 +2815,6 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                 rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _EDIT:
-            case _EDIT_OVERLAY:
                 underglow_hsv = (HSV){ 0, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
                 rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
