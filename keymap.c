@@ -106,34 +106,35 @@ enum custom_keycodes {
 
 
 
-// Home block mods
-#define MT_S LGUI_T(KC_S)
-#define MT_D LALT_T(KC_D)
-#define MT_F LSFT_T(KC_F)
-#define MT_V LCTL_T(KC_V)
+// Home row mods
+#define MT_A LGUI_T(KC_A)
+#define MT_S LALT_T(KC_S)
+#define MT_D LSFT_T(KC_D)
+#define MT_F LCTL_T(KC_F)
 
-#define MT_M RCTL_T(KC_M)
-#define MT_J RSFT_T(KC_J)
-#define MT_K LALT_T(KC_K)
-#define MT_L RGUI_T(KC_L)
+#define MT_J RCTL_T(KC_J)
+#define MT_K RSFT_T(KC_K)
+#define MT_L LALT_T(KC_L)
+#define MT_SCLN RGUI_T(KC_SCLN)
 
-// Alt layout home block mods
-#define MTA_R LGUI_T(KC_R)
-#define MTA_T LALT_T(KC_T)
-#define MTA_S LSFT_T(KC_S)
-#define MTA_W LCTL_T(KC_W)
+// Alt layout home row mods
+#define MTA_N LGUI_T(KC_N)
+#define MTA_R LALT_T(KC_R)
+#define MTA_T LSFT_T(KC_T)
+#define MTA_S LCTL_T(KC_S)
 
-#define MTA_P RCTL_T(KC_P)
-#define MTA_H RSFT_T(KC_H)
-#define MTA_E LALT_T(KC_E)
-#define MTA_I RGUI_T(KC_I)
+#define MTA_H RCTL_T(KC_H)
+#define MTA_E RSFT_T(KC_E)
+#define MTA_I LALT_T(KC_I)
+#define MTA_A RGUI_T(KC_A)
 
-// Symbol home block mods
-#define MT_RBRC LT(0,CS_RBRC)
-#define MT_RPRN LT(0,CS_RPRN)
-#define MT_LPRN LT(0,CS_LPRN)
+// Symbol home row mods
+#define MT_EXLM LT(0,CS_EXLM)
 #define MT_UNDS LT(0,CS_UNDS)
+#define MT_LPRN LT(0,CS_LPRN)
+#define MT_RPRN LT(0,CS_RPRN)
 
+#define MT_CIRC LT(0,CS_CIRC)
 #define MT_PLUS LT(0,CS_PLUS)
 #define MT_MINS LT(0,CS_MINS)
 #define MT_EQL  LT(0,CS_EQL)
@@ -197,9 +198,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT,    KC_A,    MT_S,    MT_D,    MT_F,    KC_G,                         KC_H,    MT_J,    MT_K,    MT_L, KC_SCLN, TABRSFT,
+          KC_LSFT,    MT_A,    MT_S,    MT_D,    MT_F,    KC_G,                         KC_H,    MT_J,    MT_K,    MT_L, MT_SCLN, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Z,    KC_X,    KC_C,    MT_V,    KC_B,                         KC_N,    MT_M, KC_QUOT, COM_DOT, QUE_EXL, NEWSENT,
+          CS_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_DOT, QUE_EXL, NEWSENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -209,9 +210,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,    KC_Z,    KC_L,    KC_D,    KC_C,    KC_B,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          TABLSFT,    KC_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,    KC_A, TABRSFT,
+          TABLSFT,   MTA_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,   MTA_A, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Q,    KC_X,    KC_M,   MTA_W,    KC_V,                         KC_K,   MTA_P, KC_QUOT, COM_DOT, QUE_EXL, NEWSENT,
+          CS_LCTL,    KC_Q,    KC_X,    KC_M,    KC_W,    KC_V,                         KC_K,    KC_P, KC_QUOT, COM_DOT, QUE_EXL, NEWSENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -257,9 +258,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CS_CIRC, MT_PLUS, MT_MINS,  MT_EQL, CS_PIPE,                        CS_LT,    KC_1,    KC_2,    KC_3, CS_EXLM, TABRSFT,
+          _______, MT_CIRC, MT_PLUS, MT_MINS,  MT_EQL, CS_PIPE,                        CS_LT,    KC_1,    KC_2,    KC_3, CS_EXLM, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CS_TILD, CS_ASTR,  CS_DOT, MT_COMM, CS_POUN,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
+          _______, CS_TILD, CS_ASTR,  CS_DOT, CS_COMM, CS_POUN,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    KC_BSPC,  CS_AL2, CS_SLSH
                                           //`--------------------------'  `--------------------------'
@@ -289,15 +290,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_EDIT_OVERLAY] = LAYOUT( //8
+    [_EDIT] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, KC_PAUS, CS_HOME,   KC_UP,  CS_END,  KC_TAB,                      _______, _______, _______, _______, _______, _______,
+          _______, KC_PAUS, CS_HOME,   KC_UP,  CS_END,  KC_TAB,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______,  KC_INS, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
+          _______,  KC_INS, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_EXLM, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, KC_PSCR, KC_PGUP, KC_PGDN, KC_CAPS,  SELECT,                      _______, _______, _______, _______, _______, _______,
+          _______, KC_PSCR, KC_PGUP, KC_PGDN, KC_CAPS,  SELECT,                        CS_GT, KC_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______,    _______, _______,  KC_SPC
+                                              _______, _______, _______,    _______,    KC_0,  KC_SPC
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -372,7 +373,7 @@ uint8_t time_setting = 0;
 uint8_t min = 0;
 uint8_t hrs = 0;
 uint8_t sec = 0;
-
+ 
 // uint8_t t_min = 0;
 // uint8_t t_hrs = 0;
 // uint8_t t_sec = 0;
@@ -410,23 +411,23 @@ bool is_alpha(uint16_t keycode) {
 
 bool is_hrm(uint16_t keycode) {
     switch (keycode) {
+        case MT_A:
         case MT_S:
         case MT_D:
         case MT_F:
-        case MT_V:
-        case MT_M:
         case MT_J:
         case MT_K:
         case MT_L:
+        case MT_SCLN:
 
+        case MTA_N:
         case MTA_R:
         case MTA_T:
         case MTA_S:
-        case MTA_W:
-        case MTA_P:
         case MTA_H:
         case MTA_E:
         case MTA_I:
+        case MTA_A:
             return true;
         default:
             return false;
@@ -613,15 +614,15 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case CS_AL3:
         case CS_AL4:
 
-        case MT_RBRC:
         case MT_RPRN:
         case MT_LPRN:
         case MT_UNDS:
+        case MT_EXLM:
 
+        case MT_CIRC:
         case MT_PLUS:
         case MT_MINS:
         case MT_EQL:
-        case MT_COMM:
 
         case TABLSFT:
         case TABRSFT:
@@ -642,18 +643,24 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case CS_RT3:
 
         // Shift mod-taps
-        case MTA_S:
-        case MTA_H:
+        case MT_D:
+        case MT_K:
+        case MTA_T:
+        case MTA_E:
             return 150;
 
         // Alt mod-taps
-        case MTA_T:
-        case MTA_E:
+        case MT_S:
+        case MT_L:
+        case MTA_R:
+        case MTA_I:
             return 225;
 
         // GUI mod-taps
-        case MTA_R:
-        case MTA_I:
+        case MT_A:
+        case MT_SCLN:
+        case MTA_N:
+        case MTA_A:
             return 250;
 
         default:
@@ -2188,53 +2195,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         // =====================================================================
 
         // Edit layer
-        case MT_RBRC:
+        case MT_EXLM:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RCTL));
+                register_mods(MOD_BIT(KC_RGUI));
             } else {
-                unregister_mods(MOD_BIT(KC_RCTL));
+                unregister_mods(MOD_BIT(KC_RGUI));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_RBRC);
-                set_mods(mods);
-            }
-            return false;
-
-        case MT_RPRN:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RSFT));
-            } else {
-                unregister_mods(MOD_BIT(KC_RSFT));
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_RPRN);
-                set_mods(mods);
-            }
-            return false;
-
-        case MT_LPRN:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LALT));
-            } else {
-                unregister_mods(MOD_BIT(KC_LALT));
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_LPRN);
+                tap_code16(KC_EXLM);
                 set_mods(mods);
             }
             return false;
 
         case MT_UNDS:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RGUI));
+                register_mods(MOD_BIT(KC_LALT));
             } else {
-                unregister_mods(MOD_BIT(KC_RGUI));
+                unregister_mods(MOD_BIT(KC_LALT));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -2244,42 +2223,70 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
 
-
-
-        // Data layer
-        case MT_COMM:
+        case MT_LPRN:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LCTL));
+                register_mods(MOD_BIT(KC_RSFT));
             } else {
-                unregister_mods(MOD_BIT(KC_LCTL));
+                unregister_mods(MOD_BIT(KC_RSFT));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_COMM);
+                tap_code16(KC_LPRN);
                 set_mods(mods);
             }
             return false;
 
-        case MT_EQL:
+        case MT_RPRN:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LSFT));
+                register_mods(MOD_BIT(KC_RCTL));
             } else {
-                unregister_mods(MOD_BIT(KC_LSFT));
+                unregister_mods(MOD_BIT(KC_RCTL));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_EQL);
+                tap_code16(KC_RPRN);
+                set_mods(mods);
+            }
+            return false;
+
+
+
+        // Data layer
+        case MT_CIRC:
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_BIT(KC_LGUI));
+            } else {
+                unregister_mods(MOD_BIT(KC_LGUI));
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_CIRC);
+                set_mods(mods);
+            }
+            return false;
+
+        case MT_PLUS:
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_BIT(KC_LALT));
+            } else {
+                unregister_mods(MOD_BIT(KC_LALT));
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_PLUS);
                 set_mods(mods);
             }
             return false;
 
         case MT_MINS:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LALT));
+                register_mods(MOD_BIT(KC_LSFT));
             } else {
-                unregister_mods(MOD_BIT(KC_LALT));
+                unregister_mods(MOD_BIT(KC_LSFT));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -2289,16 +2296,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
 
-        case MT_PLUS:
+        case MT_EQL:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LGUI));
+                register_mods(MOD_BIT(KC_LCTL));
             } else {
-                unregister_mods(MOD_BIT(KC_LGUI));
+                unregister_mods(MOD_BIT(KC_LCTL));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_PLUS);
+                tap_code(KC_EQL);
                 set_mods(mods);
             }
             return false;
