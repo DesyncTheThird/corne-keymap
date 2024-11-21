@@ -1264,7 +1264,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
                 case KC_COMM: SEND_STRING(" and "); update_last_keys(KC_SPC, 4); break;
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_NO, 3); break;
-                case KC_QUOT: SEND_STRING("ll "); update_last_keys(KC_SPC, 3); break;
+                case KC_QUOT: SEND_STRING("ve "); update_last_keys(KC_SPC, 3); break;
 
                 default: tap_code(last_key); update_last_key(last_key); break;
             }

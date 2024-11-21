@@ -50,7 +50,7 @@ Other:
 |     |     |     |     |     |
 | --- | --- | --- | --- | --- |
 | `Non-alpha` | `⎵`         | `,`     | `.`   | `'`   |
-| `OSM Shift` | `OSM Shift` | `⎵AND⎵` | `COM` | `LL⎵` |
+| `OSM Shift` | `OSM Shift` | `⎵AND⎵` | `COM` | `VE⎵` |
 
 ### Repeat Key
 
