@@ -2652,32 +2652,32 @@ void render_modifier_state(uint8_t line) {
         oled_write_char(164,false);
     }
     oled_set_cursor(4,line);
-    if ((get_mods() & MOD_MASK_SHIFT) || oneshot_shift_on) {
-        oled_write_char(141,false);
-        oled_write_char(142,false);
-        oled_set_cursor(4,line+1);
-        oled_write_char(173,false);
-        oled_write_char(174,false);
-    } else {
-        oled_write_char(133,false);
-        oled_write_char(134,false);
-        oled_set_cursor(4,line+1);
-        oled_write_char(165,false);
-        oled_write_char(166,false);
-    }
-    oled_set_cursor(6,line);
     if (get_mods() & MOD_MASK_CTRL) {
         oled_write_char(143,false);
         oled_write_char(144,false);
-        oled_set_cursor(6,line+1);
+        oled_set_cursor(4,line+1);
         oled_write_char(175,false);
         oled_write_char(176,false);
     } else {
         oled_write_char(135,false);
         oled_write_char(136,false);
-        oled_set_cursor(6,line+1);
+        oled_set_cursor(4,line+1);
         oled_write_char(167,false);
         oled_write_char(168,false);
+    }
+    oled_set_cursor(6,line);
+    if ((get_mods() & MOD_MASK_SHIFT) || oneshot_shift_on) {
+        oled_write_char(141,false);
+        oled_write_char(142,false);
+        oled_set_cursor(6,line+1);
+        oled_write_char(173,false);
+        oled_write_char(174,false);
+    } else {
+        oled_write_char(133,false);
+        oled_write_char(134,false);
+        oled_set_cursor(6,line+1);
+        oled_write_char(165,false);
+        oled_write_char(166,false);
     }
     oled_set_cursor(8,line);
     oled_write_char(145,false);
