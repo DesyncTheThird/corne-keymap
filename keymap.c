@@ -152,8 +152,8 @@ enum custom_keycodes {
 #define CS_RT3 LT(_UTILITY,KC_SLSH)
 
 #define CS_AL1 LT(_DATA,KC_0)
-#define CS_AL2 LT(_EDIT,KC_0)
-#define CS_AL3 LT(_EDIT,CS_BSLS)
+#define CS_AL2 LT(_EDIT,CS_BSLS)
+#define CS_AL3 LT(_EDIT,CS_SCLN)
 
 // Custom tap-hold keys
 #define CS_BOOT LT(0,KC_ESC)
@@ -778,7 +778,7 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
         if (record->tap.count && record->event.pressed) {
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_SHIFT);
-            tap_code(KC_0);
+            tap_code16(KC_NUBS);
             set_mods(mods);
         }
         return false;
@@ -792,7 +792,7 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
         if (record->tap.count && record->event.pressed) {
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_SHIFT);
-            tap_code16(KC_NUBS);
+            tap_code(KC_SCLN);
             set_mods(mods);
         }
         return false;
