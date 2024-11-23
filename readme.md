@@ -39,10 +39,10 @@ Left hand keys:
 | Magic | `N` | `R` | `T` | `S` | `S` | `'T` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
 
 Right hand overrides:
-|     |     |     |     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `F` | `O` | `U` | `Y` | `H`   | `E` | `I`  |
-| Magic | `ECT` | `Y` | `E` | `I` | `P` | `ERE` | `O` | `ON` |
+|     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  |
+| Magic | `ECT` | `E` | `I` | `P` | `ERE` | `O` | `ON` |
 
 (Other right hand keys are repeated.)
 
@@ -58,7 +58,7 @@ Right hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Prev   | `J`   | `F` | `O` | `U` | `Y` | `H` | `E` | `I` | `A` | `K` | `P` |
-| Repeat | `UST` | `F` | `O` | `I` | `P` | `Y` | `E` | `U` | `A` | `Y` | `H` |
+| Repeat | `UST` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `A` | `Y` | `H` |
 
 Left hand overrides:
 |     |     |     |
@@ -69,10 +69,10 @@ Left hand overrides:
 (Other left hand keys are repeated.)
 
 Other:
-|     |     |     |     |     |
-| --- | --- | --- | --- | --- |
+|     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- |
 | `Magic` | `Non-alpha` | `⎵`   | `,`     | `.`   | `'`   |
-| `⎵`     |`OSM Shift` | `THE` | `⎵BUT⎵` | `COM` | `RE⎵` |
+| `⎵`     | `THE`       | `THE` | `⎵BUT⎵` | `COM` | `RE⎵` |
 
 ---
 ### Details
