@@ -1225,6 +1225,7 @@ void send_the(void) {
     } else {
         SEND_STRING("the");
     }
+    update_last_key(KC_E);
 }
 
 bool process_magic(uint16_t keycode, keyrecord_t* record) {
