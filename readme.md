@@ -239,7 +239,7 @@ Accessible with `Base` key on Utility layer, or `Basic` to also disable home row
 
 3. Install the `achordion` feature as per step 4 in [these instructions](https://getreuer.info/posts/keyboards/achordion/index.html#add-achordion-to-your-keymap).
 
-   That is, in the cloned directory (i.e. the one containing `keymap.c`), add an new subdirectory called `features`, and copy [achordion.h](https://raw.githubusercontent.com/getreuer/qmk-keymap/main/features/achordion.h) and [achordion.c](https://raw.githubusercontent.com/getreuer/qmk-keymap/main/features/achordion.c) there.
+   That is, in the cloned directory (i.e. the one containing `keymap.c`), add a new subdirectory called `features`, and copy [achordion.h](https://raw.githubusercontent.com/getreuer/qmk-keymap/main/features/achordion.h) and [achordion.c](https://raw.githubusercontent.com/getreuer/qmk-keymap/main/features/achordion.c) there.
 
 4. Build the keymap from the [QMK CLI](https://docs.qmk.fm/cli#qmk-cli) with:
 
