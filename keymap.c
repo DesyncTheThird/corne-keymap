@@ -281,7 +281,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, KC_PAUS, CS_HOME,   KC_UP,  CS_END,  KC_TAB,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
+          _______, KC_PAUS, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______,  KC_INS, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_EXLM, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -293,7 +293,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_MOUSE] = LAYOUT( //9
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, XXXXXXX, MS_BTN4,   MS_UP, MS_BTN5,  KC_TAB,                      _______, _______, _______, _______, _______, _______,
+          _______, XXXXXXX, MS_BTN4,   MS_UP, MS_BTN5, QK_LLCK,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, XXXXXXX, MS_LEFT, MS_DOWN, MS_RGHT,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -1232,7 +1232,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_LT2) {
         if (!record->tap.count && record->event.pressed) {
             layer_on(_EDIT);
-        } else {
+        } else if (!is_layer_locked(_EDIT)) {
             layer_off(_EDIT);
         }
 
@@ -1884,7 +1884,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-
         // =====================================================================
         // Custom symbol handling
         // =====================================================================
@@ -2300,7 +2299,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CM_MOUSE:
             if (record->event.pressed) {
                 layer_on(_MOUSE);
-            } else {
+            } else if (!is_layer_locked(_MOUSE)) {
                 layer_off(_MOUSE);
             }
             break;
