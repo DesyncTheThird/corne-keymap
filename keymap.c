@@ -667,8 +667,8 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
         case CS_RT3:
  
         // case CS_AL1:
-        case CS_AL2:
-        case CS_AL3:
+        // case CS_AL2:
+        // case CS_AL3:
         
         case TABLSFT:
         case TABRSFT:
