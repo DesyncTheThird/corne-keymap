@@ -1231,6 +1231,7 @@ void send_the(void) {
 bool process_magic(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_LT2) {
         if (!record->tap.count && record->event.pressed) {
+            layer_lock_off(_EDIT);
             layer_on(_EDIT);
         } else if (!is_layer_locked(_EDIT)) {
             layer_off(_EDIT);
@@ -2298,6 +2299,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case CM_MOUSE:
             if (record->event.pressed) {
+                layer_lock_off(_MOUSE);
                 layer_on(_MOUSE);
             } else if (!is_layer_locked(_MOUSE)) {
                 layer_off(_MOUSE);
