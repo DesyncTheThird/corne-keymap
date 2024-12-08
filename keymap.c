@@ -2738,6 +2738,9 @@ void render_layout(void) {
         case _EDIT:
             oled_write_raw_P(menu_layout_edit, frame_size);
             break;
+        case _MOUSE:
+            oled_write_raw_P(menu_layout_mouse, frame_size);
+            break;
         case _UTILITY:
             oled_write_raw_P(menu_layout_utility, frame_size);
             break;
