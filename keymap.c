@@ -1122,9 +1122,20 @@ void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
 }
 
 void rollback_last_key(void) {
+    if (!shifted() && !ctrl_on()) {
+        if ((last_key == CS_CBRS || last_key == CS_PRNS || last_key == CS_BRCS) && (char_count == 2)) {
+            tap_code(KC_RGHT);
+        }
+        for (int i = 1; i < char_count; i++) {
+            tap_code(KC_BSPC);
+        }
+    }
+    char_count = 1;
+
     last_key = last_key_2;
     last_key_2 = last_key_3;
     last_key_3 = KC_NO;
+
     dprintf("rolled back!\n");
     dprintf("last_key:   %d\n", last_key);
     dprintf("last_key_2: %d\n", last_key_2);
@@ -1207,28 +1218,24 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
 
+    // Track bracket macros
+    if (keycode == CS_CBRS || keycode == CS_PRNS || keycode == CS_BRCS) {
+        if (record->event.pressed) {
+            update_last_keys(keycode, 2);
+        }
+        return true;
+    }
+
     // Handle deletes
     if (keycode == CS_RT1) {
         if (record->tap.count && record->event.pressed) {
             rollback_last_key();
-            if (!shifted() && !ctrl_on()) {
-                for (int i = 1; i < char_count; i++) {
-                    tap_code(KC_BSPC);
-                }
-            }
-        char_count = 1;
         }
         return true;
     }
     if (keycode == KC_BSPC) {
         if (record->event.pressed) {
             rollback_last_key();
-            if (!shifted() && !ctrl_on()) {
-                for (int i = 1; i < char_count; i++) {
-                    tap_code(KC_BSPC);
-                }
-            }
-        char_count = 1;
         }
         return true;
     }
