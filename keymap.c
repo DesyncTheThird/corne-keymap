@@ -88,6 +88,11 @@ enum custom_keycodes {
     CS_QUES,
     CS_SCLN,
 
+    // Bracket macros
+    CS_CBRS,
+    CS_PRNS,
+    CS_BRCS,
+
     // Home block mods
     CS_RBRC,
     CS_RPRN,
@@ -128,7 +133,7 @@ enum custom_keycodes {
 #define MTA_A RGUI_T(KC_A)
 
 // Symbol home row mods
-#define MT_EXLM LT(0,CS_EXLM)
+#define MT_TILD LT(0,CS_TILD)
 #define MT_UNDS LT(0,CS_UNDS)
 #define MT_LPRN LT(0,CS_LPRN)
 #define MT_RPRN LT(0,CS_RPRN)
@@ -141,6 +146,11 @@ enum custom_keycodes {
 #define MT_1 RSFT_T(KC_1)
 #define MT_2 RCTL_T(KC_2)
 #define MT_3 LALT_T(KC_3)
+
+#define MT_PIPE LGUI_T(KC_PIPE)
+#define MT_COLN LALT_T(KC_COLN)
+#define MT_DOT LCTL_T(KC_DOT)
+#define MT_COMM LSFT_T(KC_COMM)
 
 // Layer keys
 #define CS_LT3 LT(_UTILITY,KC_ENT)
@@ -247,9 +257,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, MT_CIRC, MT_PLUS, MT_MINS,  MT_EQL, CS_PIPE,                        CS_LT,    MT_1,    MT_2,    MT_3, MT_EXLM, TABRSFT,
+          _______, MT_PIPE, MT_COLN,  MT_DOT, MT_COMM,  CS_DLR,                        CS_LT,    MT_1,    MT_2,    MT_3, MT_TILD, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CS_TILD, CS_ASTR,  CS_DOT, CS_COMM, CS_POUN,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
+          _______, CS_TILD, CS_CBRS, CS_PRNS, CS_BRCS, CS_POUN,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    KC_BSPC,  CS_AL1, CS_SLSH
                                           //`--------------------------'  `--------------------------'
@@ -259,9 +269,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,---------------------------------------------------.
            KC_GRV, CS_PERC, CS_ASTR,  CS_DLR, CS_AMPR, CS_CIRC,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_EXLM, TABRSFT,
+          _______, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CS_TILD, CS_COLN,  CS_DOT, CS_COMM, CS_UNDS,                        CS_GT, KC_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
+          _______, CS_TILD, CS_COLN,  CS_DOT, CS_COMM, CS_UNDS,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               CS_SLSH,  CS_AL2,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -271,9 +281,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_GRV, CS_PERC, CS_EXLM, CS_DQUO,  CS_DLR, CS_COLN,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CS_CIRC, CS_PLUS, CS_MINS,  CS_EQL, CS_PIPE,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_EXLM, TABRSFT,
+          _______, CS_CIRC, CS_PLUS, CS_MINS,  CS_EQL, CS_PIPE,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CS_TILD, CS_ASTR, CS_SLSH, CS_HASH, CS_AMPR,                        CS_GT, KC_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
+          _______, CS_TILD, CS_ASTR, CS_SLSH, CS_HASH, CS_AMPR,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               CS_UNDS,  CS_AL3,  KC_SPC,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -283,9 +293,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, KC_PAUS, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______,  KC_INS, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_EXLM, TABRSFT,
+          _______,  KC_INS, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, KC_PSCR, KC_PGUP, KC_PGDN, KC_CAPS,  SELECT,                        CS_GT, KC_RBRC, KC_LBRC, CS_TILD, CS_QUES,  KC_ENT,
+          _______, KC_PSCR, KC_PGUP, KC_PGDN, KC_CAPS,  SELECT,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______,    KC_0,  KC_SPC
                                           //`--------------------------'  `--------------------------'
@@ -417,6 +427,25 @@ bool is_hrm(uint16_t keycode) {
         case MTA_E:
         case MTA_I:
         case MTA_A:
+
+        // case MT_TILD:
+        // case MT_UNDS:
+        // case MT_LPRN:
+        // case MT_RPRN:
+
+        // case MT_CIRC:
+        // case MT_PLUS:
+        // case MT_MINS:
+        // case MT_EQL:
+
+        // case MT_1:
+        // case MT_2:
+        // case MT_3:
+
+        // case MT_PIPE:
+        // case MT_COLN:
+        // case MT_DOT:
+        // case MT_COMM:
             return true;
         default:
             return false;
@@ -605,7 +634,7 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case MT_RPRN:
         case MT_LPRN:
         case MT_UNDS:
-        case MT_EXLM:
+        case MT_TILD:
 
         case MT_CIRC:
         case MT_PLUS:
@@ -1738,6 +1767,53 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return true;
 
+        // =====================================================================
+        // Macros
+        // =====================================================================
+
+        case NEWSENT:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                clear_oneshot_mods();
+                del_mods(MOD_MASK_SHIFT);
+                SEND_STRING(". ");
+                set_mods(mods);
+                add_oneshot_mods(MOD_BIT(KC_LSFT));
+            }
+            break;
+
+        case CS_CBRS:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CS);
+                tap_code16(KC_LCBR);
+                tap_code16(KC_RCBR);
+                tap_code(KC_LEFT);
+                set_mods(mods);
+            }
+            break;
+
+        case CS_PRNS:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CS);
+                tap_code16(KC_LPRN);
+                tap_code16(KC_RPRN);
+                tap_code(KC_LEFT);
+                set_mods(mods);
+            }
+            break;
+
+        case CS_BRCS:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CS);
+                tap_code(KC_LBRC);
+                tap_code(KC_RBRC);
+                tap_code(KC_LEFT);
+                set_mods(mods);
+            }
+            break;
 
         // =====================================================================
         // Misc control
@@ -1981,7 +2057,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
-                tap_code16(S(KC_NUHS));
+                tap_code16(LSFT(KC_NUHS));
                 set_mods(mods);
             }
             break;
@@ -2162,23 +2238,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        case NEWSENT:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                clear_oneshot_mods();
-                del_mods(MOD_MASK_SHIFT);
-                SEND_STRING(". ");
-                set_mods(mods);
-                add_oneshot_mods(MOD_BIT(KC_LSFT));
-            }
-            break;
-
         // =====================================================================
         // Mod-taps
         // =====================================================================
 
         // Edit layer
-        case MT_EXLM:
+        case MT_TILD:
             if (!record->tap.count && record->event.pressed) {
                 register_mods(MOD_BIT(KC_RGUI));
             } else {
@@ -2187,7 +2252,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_EXLM);
+                tap_code16(KC_TILD);
                 set_mods(mods);
             }
             return false;
@@ -2289,6 +2354,60 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
                 tap_code(KC_EQL);
+                set_mods(mods);
+            }
+            return false;
+
+        
+        case MT_PIPE:
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_BIT(KC_LGUI));
+            } else {
+                unregister_mods(MOD_BIT(KC_LGUI));
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(LSFT(KC_NUHS));
+                set_mods(mods);
+            }
+            return false;
+        case MT_COLN:
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_BIT(KC_LGUI));
+            } else {
+                unregister_mods(MOD_BIT(KC_LGUI));
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_COLN);
+                set_mods(mods);
+            }
+            return false;
+        case MT_DOT:
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_BIT(KC_LCTL));
+            } else {
+                unregister_mods(MOD_BIT(KC_LCTL));
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_DOT);
+                set_mods(mods);
+            }
+            return false;
+        case MT_COMM:
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_BIT(KC_LSFT));
+            } else {
+                unregister_mods(MOD_BIT(KC_LSFT));
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_COMM);
                 set_mods(mods);
             }
             return false;
