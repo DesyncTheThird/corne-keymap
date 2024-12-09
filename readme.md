@@ -99,11 +99,19 @@ Any keys pressed while the control modifier is active are not tracked. This does
 
 Note that this feature only tracks two keys into the past.
 
-For longer dynamic outputs, (e.g. `W -> WITH`) there is also a short window (default 500ms) in which `Backspace` will delete the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`). Pressing any other key will instantly close this window.
-
 After a short duration (default 1000ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state.
 
 On QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality.
+
+### Rollbacks
+
+For longer dynamic key outputs, (e.g. `W -> WITH`) there is also a short window (default 500ms) in which `Backspace` will delete ("rollback") the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`).
+
+Pressing any other key will instantly close this window.
+
+This feature is also reused to rollback various macro outputs.
+
+> ℹ️ You can hook into this feature with the `process_key_tracking` and `rollback_last_key` functions.
 
 ## OLEDs
 (128x64 OLEDs)
@@ -159,7 +167,9 @@ The `LCTL` key also sets a weak one shot `ctrl` modifier for the `Backspace` key
 
 ### Data
 ![Data](images/data.png?raw=true)
-Number grid with `1`, `2`, and `3` on right hand home row, along with arithmetic and numerical symbols on left hand, sharing locations from `Symbol` and `Program` layers.
+Number grid with `1`, `2`, and `3` on right hand home row, along with common numerical separators on left hand, sharing similar layout to `Symbol` and `Program` layers.
+
+The bracket macros `{}`, `()`, `[]` sends the listed brackets, then taps `Left`, placing the cursor between the two brackets. These macros also interact properly with the rollback feature.
 
 Function keys also available for left hand only usage.
 
