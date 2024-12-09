@@ -101,17 +101,19 @@ Note that this feature only tracks two keys into the past.
 
 After a short duration (default 1000ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state.
 
-On QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality.
+In QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality.
 
-### Rollbacks
+## Rollbacks
 
-For longer dynamic key outputs, (e.g. `W -> WITH`) there is also a short window (default 500ms) in which `Backspace` will delete ("rollback") the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`).
+For longer dynamic key outputs (e.g. `W -> WITH`), there is a short window (default 500ms) in which `Backspace` will delete ("rollback") the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`).
 
 Pressing any other key will instantly close this window.
 
-This feature is also reused to rollback various macro outputs.
+This feature is also reused to rollback various macro outputs in a single keypress.
 
 > ℹ️ You can hook into this feature with the `process_key_tracking` and `rollback_last_key` functions.
+
+
 
 ## OLEDs
 (128x64 OLEDs)
