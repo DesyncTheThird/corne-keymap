@@ -251,7 +251,7 @@ Accessible with `Base` key on Utility layer, or `Basic` to also disable home row
 
 > ⚠️ Unmodified, this keymap will not fit on most AVR MCUs (and in fact may fail to compile in some cases due to overflowing 8-bit integers).
 
-For reference, my compiled uf2 file is 212kB (accurate as of commit [`4454bdd`](https://github.com/DesyncTheThird/corne-keymap/tree/4454bddad15e8470a2e288703569bdf98fe6e41c)), though you should be able to save a significant amount of space by removing various OLED animations, deleting unused layers (along with the associated OLED layout `PROGMEM`), and disabling additional RGB animations (the `CS_RGBN` key will need to be updated in this case).
+For reference, my compiled uf2 file is 218kB (accurate as of commit [`972be81`](https://github.com/DesyncTheThird/corne-keymap/tree/972be8199a39604a71828d9c83535090095b7b2f)), though you should be able to save a significant amount of space by removing various OLED animations, deleting unused layers (along with the associated OLED layout `PROGMEM`), and disabling additional RGB animations (the `CS_RGBN` key will need to be updated in this case).
 
 See [here](https://docs.qmk.fm/squeezing_avr) for more ways to save space. (Most space-saving `rules.mk` and `config.h` options have already been enabled; only modify those files if you have disabled additional features in `keymap.c`.)
 
