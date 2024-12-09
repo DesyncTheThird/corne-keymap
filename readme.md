@@ -24,9 +24,9 @@
 
 As the name suggests, the Repeat key repeats the last key pressed; while the Magic key swaps the first and second rows, along with various keys on the index columns (with some exceptions, listed below). This eliminates many SFBs and double-taps, turning them into alternations and rolls.
 
-The most common use-case for the swapping-rows behaviour is for the vowel block on the right side, turning the `OE`, `EO`, `IU`, and `UI` SFBs into rolls and alternations; as well as elimination various index finger SFBs on both sides (i.e., in the words `T[YP]E`, `[SC]IENCE`, `[HY][PH]EN`, etc.).
+The most common use-case for the swapping-rows behaviour is for the vowel block on the right side, turning the `OE`, `EO`, `IU`, and `UI` SFBs into rolls and alternations; as well as eliminating various index finger SFBs on both sides (i.e., in the words `T[YP]E`, `[SC]IENCE`, `[HYP]HEN`, etc.).
 
-Letters that are not commonly repeated (i.e. `I`, `U`, `A`) are overridden and instead return common n-grams. (Some letters uncommonly repeated in prose are still common in LaTeX commands and have not been replaced.)
+Letters that are not commonly repeated (i.e. `I`, `U`, `A`) are overridden and instead return common n-grams. (Some letters uncommonly repeated in prose are still common in LaTeX commands and have not been overridden.)
 
 
 
@@ -102,6 +102,8 @@ Note that this feature only tracks two keys into the past.
 After a short duration (default 1000ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state.
 
 In QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality.
+
+
 
 ## Rollbacks
 
