@@ -395,6 +395,9 @@ uint8_t set_rgb_mode = 5;
 
 bool ctrl_linger = false;
 
+bool left_eager_shift_on = false;
+bool right_eager_shift_on = false;
+
 bool ctrl_on(void) {
     return ((get_mods() & MOD_BIT(KC_LCTL)) == MOD_BIT(KC_LCTL) || (get_mods() & MOD_BIT(KC_RCTL)) == MOD_BIT(KC_RCTL));
 }
@@ -1745,6 +1748,31 @@ void user_config_sync_handler(uint8_t initiator2target_buffer_size, const void* 
 //==============================================================================
 // Events
 //==============================================================================
+bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) {
+        case TABLSFT:
+            if (record->event.pressed && !(get_mods() & MOD_BIT(KC_LSFT))) {
+                register_mods(MOD_BIT(KC_LSFT));
+                dprintf("Eager left shift on\n");
+                dprintf("mods: %d\n", get_mods());
+                dprintf("shift: %d\n", MOD_BIT(KC_LSFT));
+                left_eager_shift_on = true;
+            }
+            break;
+        case TABRSFT:
+            if (record->event.pressed && !(get_mods() & MOD_BIT(KC_RSFT))) {
+                register_mods(MOD_BIT(KC_RSFT));
+                dprintf("Eager right shift on\n");
+                dprintf("mods: %d\n", get_mods());
+                dprintf("shift: %d\n", MOD_BIT(KC_RSFT));
+                right_eager_shift_on = true;
+            }
+            break;
+    }
+    return true;
+}
+
+
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_achordion(keycode, record)) { return false; }
@@ -1952,7 +1980,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->tap.count && record->event.pressed) {
                 soft_reset_keyboard();
             }
-            break;
+            return false;
 
         case CS_END:
             if (record->event.pressed) {
@@ -1970,6 +1998,34 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             break;
+
+        
+        case TABLSFT:
+            if (!record->tap.count && !record->event.pressed) {
+                unregister_mods(MOD_BIT(KC_LSFT));
+            }
+            if (record->tap.count && record->event.pressed) {
+                if (left_eager_shift_on) {
+                    dprint("Eager left shift off\n");
+                    unregister_mods(MOD_BIT(KC_LSFT));
+                }
+                tap_code(KC_TAB);
+            }
+            left_eager_shift_on = false;
+            return false;
+        case TABRSFT:
+            if (!record->tap.count && !record->event.pressed) {
+                unregister_mods(MOD_BIT(KC_RSFT));
+            }
+            if (record->tap.count && record->event.pressed) {
+                if (right_eager_shift_on) {
+                    dprint("Eager right shift off\n");
+                    unregister_mods(MOD_BIT(KC_RSFT));
+                }
+                tap_code(KC_TAB);
+            }
+            right_eager_shift_on = false;
+            return false;
 
         // =====================================================================
         // Custom symbol handling
@@ -2556,6 +2612,7 @@ void render_text_major(void) {
 }
 
 
+
 #define BIAS 2
 void render_text_minor(bool can_be_major) {
     clean_frame = rand() % 2;
@@ -2587,6 +2644,7 @@ void render_logo_minor(bool can_be_major) {
 
     render_logo_major();
 }
+
 
 
 void render_draw(void) {
@@ -2641,9 +2699,6 @@ void render_draw(void) {
         major = frame_count > 5;
     }
 }
-
-
-
 
 
 
@@ -2839,7 +2894,9 @@ void render_modifier_state(uint8_t line) {
 }
 
 
+
 #include "menu.c"
+
 
 
 void render_layout(void) {
@@ -2890,13 +2947,12 @@ void render_status(void) {
     } else if (menu == 1) {
         render_layout();
     }
-    
+
     oled_set_cursor(0,0);
     oled_write_ln_P(PSTR("Mode:"), false); // 1
     render_mode(); // 1
 
     render_linebreak(); // 1
-
 
 
 
@@ -2935,6 +2991,7 @@ bool oled_task_user(void) {
     }
     return false;
 }
+
 
 
 //==============================================================================
@@ -2996,7 +3053,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         }
     }
 
-    
+
     // if (get_mods() == 0) {
     //     rgb_matrix_sethsv_noeeprom(255,255,225);
     // } else {
@@ -3078,6 +3135,8 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     }
     return state;
 }
+
+
 
 // =============================================================================
 // 
