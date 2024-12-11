@@ -1304,7 +1304,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
                 case KC_B: tap_code(KC_S); update_last_key(KC_S); break;
 
-                case KC_N: SEND_STRING(/*n*/"'t "); update_last_keys(KC_SPC, 3); break;
+                case KC_N: SEND_STRING(/*n*/"'t "); update_last_keys(KC_SPC, 3); magic_override = false; break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
                 case KC_T: SEND_STRING(/*t*/"ion"); update_last_keys(KC_N, 3); break;
                 case KC_S: tap_code(KC_C); update_last_key(KC_C); break;
@@ -1327,9 +1327,9 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
 
                 case KC_NO:
                 case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); magic_override = false; break;
-                case KC_COMM: SEND_STRING(" and "); update_last_keys(KC_SPC, 4); break;
+                case KC_COMM: SEND_STRING(" and "); update_last_keys(KC_SPC, 4); magic_override = false; break;
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_NO, 3); break;
-                case KC_QUOT: SEND_STRING("ve "); update_last_keys(KC_SPC, 3); break;
+                case KC_QUOT: SEND_STRING("ve "); update_last_keys(KC_SPC, 3); magic_override = false; break;
 
                 default: tap_code(last_key); update_last_key(last_key); break;
             }
