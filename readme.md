@@ -77,7 +77,7 @@ Other:
 ---
 ### Details
 
-Only the keys listed above are tracked (including those from combos). Pressing any other key resets the key to the default `Non-Alpha` state (i.e. `OSM Shift`).
+Only the keys listed above are tracked (including those from combos). Pressing any other key resets the key to the default `Non-Alpha` state (i.e. `OSM Shift`/`THE`).
 
 > `a 1 [Rep]` produces `a 1 the`.
 

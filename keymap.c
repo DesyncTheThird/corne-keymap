@@ -1204,6 +1204,14 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
 
+    // Handle Tab-Shift keys
+    if (keycode == TABLSFT || keycode == TABRSFT) {
+        if (record->tap.count && record->event.pressed) {
+            update_last_key(KC_SPC);
+        }
+        return true;
+    }
+
     // Track punctuation
     if (keycode == KC_COMM || keycode == CS_COMM) {
         if (record->event.pressed) {
@@ -1267,7 +1275,7 @@ void send_the(void) {
     } else {
         SEND_STRING("the");
     }
-    update_last_key(KC_E);
+    update_last_keys(KC_E,3);
 }
 
 bool process_magic(uint16_t keycode, keyrecord_t* record) {
