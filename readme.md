@@ -219,7 +219,9 @@ Tap the `Reboot` key to reboot keyboard; hold for one second to enter bootloader
 
 ### Mouse
 ![Mouse](images/mouse.png?raw=true)
-Mouse emulation accessible on pinky key combo to allow mouse movement without moving from home row. Override cursor/scroll speed with right thumb keys.
+Mouse emulation accessible on pinky key combo to allow mouse movement without moving from home row. A mirrored left hand combo is also available, intended to be used with the layer lock feature.
+
+Cursor/scroll speed may be overridden with right thumb keys for higher speed or finer control.
 
 
 

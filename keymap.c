@@ -889,7 +889,7 @@ const uint16_t PROGMEM touhou[]         = {KC_P, CS_HASH, KC_ESC, COMBO_END};
 const uint16_t PROGMEM steno[]          = {KC_P, CS_HASH, KC_SCLN, KC_TAB, COMBO_END};
 const uint16_t PROGMEM numpad[]         = {KC_O, KC_P, CS_HASH, COMBO_END};
 const uint16_t PROGMEM mouse[]          = {KC_SCLN, QUE_EXL, COMBO_END};
-const uint16_t PROGMEM mouse2[]         = {KC_TAB, NEWSENT, COMBO_END};
+const uint16_t PROGMEM mouse2[]         = {KC_A, KC_Z, COMBO_END};
 
 const uint16_t PROGMEM l_exponent[]     = {KC_W, KC_E, COMBO_END};
 const uint16_t PROGMEM l_comma[]        = {KC_D, KC_V, COMBO_END};
@@ -2527,12 +2527,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 add_mods(MOD_MASK_CTRL);
                 tap_code(KC_DEL);
                 del_mods(MOD_MASK_CTRL);
+                set_mods(mods);
                 if (shifted()) {
                     /*intentionally blank*/ ;
                 } else {
                     tap_code(KC_SPC);
                 }
-                set_mods(mods);
             }
             break;
         case SPC_DN:
