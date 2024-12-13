@@ -384,12 +384,12 @@ uint8_t menu = 0;
 
 bool static_display = false;
 
-// static uint16_t boot_anim_timer = 0;
-// static bool boot_anim_run = false;
-
 bool left_active = false;
 bool right_active = false;
 bool muted = false;
+
+uint16_t boot_timer;
+bool boot = false;
 
 uint8_t set_rgb_mode = 5;
 
@@ -579,6 +579,10 @@ static bool oled_disable = false;
 
 void matrix_scan_user(void) {
     achordion_task();
+
+    if (timer_elapsed(boot_timer) > 7560) {
+        boot = false;
+    }
 
     // if (mh_auto_buttons_timer && (timer_elapsed(mh_auto_buttons_timer) > MH_AUTO_BUTTONS_TIMEOUT)) {
     //     if (!tp_buttons) {
@@ -1107,11 +1111,11 @@ void update_last_key(uint16_t new_keycode) {
 
     char_count = 1;
 
-    dprintf("updated keys!\n");
-    dprintf("last_key:   %d\n", last_key);
-    dprintf("last_key_2: %d\n", last_key_2);
-    dprintf("last_key_3: %d\n", last_key_3);
-    dprintf("char_count: %d\n", char_count);
+    // dprintf("updated keys!\n");
+    // dprintf("last_key:   %d\n", last_key);
+    // dprintf("last_key_2: %d\n", last_key_2);
+    // dprintf("last_key_3: %d\n", last_key_3);
+    // dprintf("char_count: %d\n", char_count);
 }
 
 void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
@@ -1120,11 +1124,11 @@ void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
     last_key = new_keycode;
 
     char_count = new_count;
-    dprintf("updated multiple keys!\n");
-    dprintf("last_key:   %d\n", last_key);
-    dprintf("last_key_2: %d\n", last_key_2);
-    dprintf("last_key_3: %d\n", last_key_3);
-    dprintf("char_count: %d\n", char_count);
+    // dprintf("updated multiple keys!\n");
+    // dprintf("last_key:   %d\n", last_key);
+    // dprintf("last_key_2: %d\n", last_key_2);
+    // dprintf("last_key_3: %d\n", last_key_3);
+    // dprintf("char_count: %d\n", char_count);
 }
 
 void rollback_last_key(void) {
@@ -1142,11 +1146,11 @@ void rollback_last_key(void) {
     last_key_2 = last_key_3;
     last_key_3 = KC_NO;
 
-    dprintf("rolled back!\n");
-    dprintf("last_key:   %d\n", last_key);
-    dprintf("last_key_2: %d\n", last_key_2);
-    dprintf("last_key_3: %d\n", last_key_3);
-    dprintf("char_count: %d\n", char_count);
+    // dprintf("rolled back!\n");
+    // dprintf("last_key:   %d\n", last_key);
+    // dprintf("last_key_2: %d\n", last_key_2);
+    // dprintf("last_key_3: %d\n", last_key_3);
+    // dprintf("char_count: %d\n", char_count);
 }
 
 bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
@@ -1751,7 +1755,7 @@ void user_config_sync_handler(uint8_t initiator2target_buffer_size, const void* 
     if (initiator2target_buffer_size == sizeof(master_to_slave_t)) {
         memcpy(&sync_data, initiator2target_buffer, initiator2target_buffer_size);
     }
-}
+}   
 
 //==============================================================================
 // Events
@@ -1762,8 +1766,6 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed && !(get_mods() & MOD_BIT(KC_LSFT))) {
                 register_mods(MOD_BIT(KC_LSFT));
                 dprintf("Eager left shift on\n");
-                dprintf("mods: %d\n", get_mods());
-                dprintf("shift: %d\n", MOD_BIT(KC_LSFT));
                 left_eager_shift_on = true;
             }
             break;
@@ -1771,8 +1773,6 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed && !(get_mods() & MOD_BIT(KC_RSFT))) {
                 register_mods(MOD_BIT(KC_RSFT));
                 dprintf("Eager right shift on\n");
-                dprintf("mods: %d\n", get_mods());
-                dprintf("shift: %d\n", MOD_BIT(KC_RSFT));
                 right_eager_shift_on = true;
             }
             break;
@@ -1905,19 +1905,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CS_RGBN:
             if (record->event.pressed) {
                 if (shifted()) {
-                    if (set_rgb_mode < 6) {
+                    if (set_rgb_mode < 7) {
                         set_rgb_mode += 1;
                     } else {
-                        set_rgb_mode = 2;
+                        set_rgb_mode = 3;
                     }
                 } else {
-                    if (set_rgb_mode > 2) {
+                    if (set_rgb_mode > 3) {
                         set_rgb_mode -= 1;
                     } else {
-                        set_rgb_mode = 6;
+                        set_rgb_mode = 7;
                     }
                 }
-                rgb_matrix_mode(set_rgb_mode);
+                dprintf("rgb_mode: %d\n", set_rgb_mode);
+                rgb_matrix_mode_noeeprom(set_rgb_mode);
             }
             break;
 
@@ -3007,60 +3008,62 @@ bool oled_task_user(void) {
 //==============================================================================
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-    // Layers on underglow
+    // int arrows[4] = { 17, 19, 16, 11 };
+    int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
+    
+    // HSV arrow_hsv = (HSV){ 169, 255, 255 };
+    // RGB arrow_rgb = hsv_to_rgb(arrow_hsv);
+
     HSV underglow_hsv = (HSV){ 0, 0, 0 };
     RGB underglow_rgb = hsv_to_rgb(underglow_hsv);
-    for (uint8_t i = 27; i < 33; i++) {
+
+    for (uint8_t i = 0; i < 12; i++) {
         switch (get_highest_layer(layer_state|default_layer_state)) {
             case _PROGRAM:
                 underglow_hsv = (HSV){ 85, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
-                rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-                rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+                rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _DATA:
                 underglow_hsv = (HSV){ 127, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
-                rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-                rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+                rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _EDIT:
                 underglow_hsv = (HSV){ 0, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
-                rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-                rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+                rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _SYMBOL:
                 underglow_hsv = (HSV){ 169, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
-                rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-                rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+                rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _MOUSE:
                 underglow_hsv = (HSV){ 222, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
-                rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-                rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+                rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _NUMPAD:
                 underglow_hsv = (HSV){ 43, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
-                rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-                rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+                rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
             case _UTILITY:
                 underglow_hsv = (HSV){ 201, 255, 255 };
                 underglow_rgb = hsv_to_rgb(underglow_hsv);
-                rgb_matrix_set_color(i, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-                rgb_matrix_set_color(i-27, underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+                rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
                 break;
-            case _BASIC:
             case _TOUHOU:
+                // for (uint8_t i = 0; i < 4; i++) {
+                //     rgb_matrix_set_color(arrows[i], arrow_rgb.r, arrow_rgb.g, arrow_rgb.b);
+                // }
+                // break;
+            case _BASIC:
             default:
                 break;
         }
     }
-
 
     // if (get_mods() == 0) {
     //     rgb_matrix_sethsv_noeeprom(255,255,225);
@@ -3118,28 +3121,28 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
     return false;
 }
-//     ,-----------------------.
-//      36, 37, 44, 45, 50, 51, 
-//     |---+---+---+---+---+---|
-//      35, 38, 43, 46, 49, 52,
-//     |---+---+---+---+---+---|
-//      34, 39, 42, 47, 48, 53
-// |---+---+---+---+---+---+---|
-//   33, 40, 41
-// `-----------'
-// Underglow: 27-32
-
+//  ,-----------------------.           ,-----------------------.
+//    24, 23, 18, 17, 10, 09,             36, 37, 44, 45, 50, 51, 
+//  |---+---+---+---+---+---|           |---+---+---+---+---+---|
+//    25, 22, 19, 16, 11, 08,             35, 38, 43, 46, 49, 52,
+//  |---+---+---+---+---+---|           |---+---+---+---+---+---|
+//    26, 21, 20, 15, 12, 07,             34, 39, 42, 47, 48, 53,
+//  |---+---+---+---+---+---+---|   |---+---+---+---+---+---+---|
+//                    14, 13, 06,     33, 40, 41
+//                  `-----------'   `-----------'
+// Underglow:            00 - 05      27 - 32
 
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    if (IS_LAYER_ON_STATE(state, _BASIC) || IS_LAYER_ON_STATE(state, _QWERTY)) {
-        rgb_matrix_set_speed_noeeprom(48);
-        rgb_matrix_mode_noeeprom(RGB_MATRIX_RAINBOW_PINWHEELS);
-        rgb_matrix_sethsv_noeeprom(255,225,255);
+    if (boot) {
+        return state;
+    }
+    if (IS_LAYER_ON_STATE(state, _BASIC) || IS_LAYER_ON_STATE(state, _QWERTY) || IS_LAYER_ON_STATE(state, _TOUHOU)) {
+        rgb_matrix_sethsv_noeeprom(127,255,255);
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
     } else if (IS_LAYER_ON_STATE(state, _BASE)) {
-        rgb_matrix_set_speed_noeeprom(64);
-        rgb_matrix_mode_noeeprom(set_rgb_mode);
         rgb_matrix_sethsv_noeeprom(255,255,255);
+        rgb_matrix_mode_noeeprom(set_rgb_mode);
     }
     return state;
 }
@@ -3150,20 +3153,40 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 // 
 // =============================================================================
 
+uint32_t boot_animation_fade(uint32_t trigger_time, void* cb_arg) {
+    static int fade = 0;
+    rgb_matrix_sethsv_noeeprom(255, 255, fade);
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE);
+    fade += 5;
+    if (fade > 255) {
+        return 0;
+    }
+    return 100;
+}
+
 void keyboard_post_init_user(void) {
+    boot_timer = timer_read();
+    boot = true;
+    layer_move(_BASE);
+
+    // Debug options
     debug_enable = true;
     // debug_matrix = true;
     // debug_keyboard = true;
-    debug_mouse = true;
-    rgb_matrix_set_speed_noeeprom(64);
-    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE);
-    rgb_matrix_sethsv_noeeprom(255,255,255);
+    // debug_mouse = true;
 
+    // Boot animation
+    rgb_matrix_set_speed_noeeprom(64);
+    rgb_matrix_sethsv_noeeprom(255,255,255);
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_BAND_VAL);
+
+    defer_exec(5000, boot_animation_fade, NULL);
+
+    // Clock
     defer_exec(clock_callback(0,NULL), clock_callback, NULL);
 
+    // OLED sync
     transaction_register_rpc(USER_SYNC_A, user_config_sync_handler);
-
-    layer_move(_BASE);
 }
 
 void housekeeping_task_user(void) {
