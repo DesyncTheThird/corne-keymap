@@ -163,7 +163,7 @@ I find it difficult to press upper row keys with my pinkies and end up alt finge
 
 `Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together or omitted, as they accessible from combos near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a (La)TeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/(reverse) leader key.
 
-A copy of `Tab` is placed on the right hand to reduce left hand contortions. The two `Tab` keys also function as `LShift` and `RShift` when held.
+A copy of `Tab` is placed on the right hand to reduce left hand contortions. The two `Tab` keys also function as `LShift` and `RShift` when held. The shift modifiers are applied eagerly on keydown to improve interaction with pointing devices; these eager shift modifiers do not overwrite home row mods, so you can still shift-tab with one hand.
 
 `New Sentence` macro sends a dot, a space, then sets a one shot shift.
 

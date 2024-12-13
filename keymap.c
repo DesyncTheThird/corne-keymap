@@ -580,7 +580,7 @@ static bool oled_disable = false;
 void matrix_scan_user(void) {
     achordion_task();
 
-    if (timer_elapsed(boot_timer) > 7560) {
+    if (timer_elapsed(boot_timer) > 5000) {
         boot = false;
     }
 
@@ -3008,6 +3008,10 @@ bool oled_task_user(void) {
 //==============================================================================
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    if (boot) {
+        return false;
+    }
+
     // int arrows[4] = { 17, 19, 16, 11 };
     int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
     
@@ -3157,11 +3161,18 @@ uint32_t boot_animation_fade(uint32_t trigger_time, void* cb_arg) {
     static int fade = 0;
     rgb_matrix_sethsv_noeeprom(255, 255, fade);
     rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE);
-    fade += 5;
-    if (fade > 255) {
-        return 0;
+    if (fade < 64) {
+        fade += 2;
+        return 50;
+    } else if (fade < 127) {
+        fade += 2;
+        return 100;
+    } else if (fade < 256) {
+        fade += 1;
+        return 100;
     }
-    return 100;
+
+    return 0;
 }
 
 void keyboard_post_init_user(void) {
