@@ -164,6 +164,7 @@ enum custom_keycodes {
 #define CS_AL1 LT(_DATA,KC_0)
 #define CS_AL2 LT(_EDIT,CS_BSLS)
 #define CS_AL3 LT(_EDIT,CS_SCLN)
+#define CS_AL4 LT(_EDIT,KC_SPC)
 
 // Custom tap-hold keys
 #define CS_BOOT LT(0,KC_ESC)
@@ -288,7 +289,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, CS_TILD, CS_ASTR, CS_SLSH, CS_HASH, CS_COLN,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              CS_UNDS,  CS_AL3,  KC_SPC,    _______, _______, _______
+                                              CS_UNDS,  CS_AL3,  CS_AL4,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -640,6 +641,7 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case CS_AL1:
         case CS_AL2:
         case CS_AL3:
+        case CS_AL4:
 
         case MT_RPRN:
         case MT_LPRN:
@@ -708,6 +710,7 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
         // case CS_AL1:
         // case CS_AL2:
         // case CS_AL3:
+        // case CS_AL4:
         
         case TABLSFT:
         case TABRSFT:
@@ -736,6 +739,7 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
         // case CS_AL1:
         case CS_AL2:
         case CS_AL3:
+        case CS_AL4:
         
         case CS_BOOT:
         case TABLSFT:
