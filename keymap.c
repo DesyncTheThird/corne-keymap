@@ -2331,7 +2331,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_TILD);
+                tap_code16(LSFT(KC_NUHS));
                 set_mods(mods);
             }
             return false;
