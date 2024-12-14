@@ -3167,7 +3167,7 @@ uint32_t boot_animation_fade(uint32_t trigger_time, void* cb_arg) {
     } else if (fade < 127) {
         fade += 2;
         return 100;
-    } else if (fade < 256) {
+    } else if (fade < 255) {
         fade += 1;
         return 100;
     }
@@ -3191,7 +3191,7 @@ void keyboard_post_init_user(void) {
     rgb_matrix_sethsv_noeeprom(255,255,255);
     rgb_matrix_mode_noeeprom(RGB_MATRIX_BAND_VAL);
 
-    defer_exec(5000, boot_animation_fade, NULL);
+    defer_exec(5200, boot_animation_fade, NULL);
 
     // Clock
     defer_exec(clock_callback(0,NULL), clock_callback, NULL);
