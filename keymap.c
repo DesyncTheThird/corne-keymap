@@ -1747,6 +1747,7 @@ void render_clock(uint8_t shift, uint8_t line) {
 #include "transactions.h"
 
 typedef struct _master_to_slave_t {
+    // bool boot_sync :1;
     bool static_display_sync :1;
     bool oled_timeout_sync :1;
     bool oled_disable_sync :1;
@@ -3012,9 +3013,9 @@ bool oled_task_user(void) {
 //==============================================================================
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-    if (boot) {
-        return false;
-    }
+    // if (boot || sync_data.boot_sync) {
+    //     return false;
+    // }
 
     // int arrows[4] = { 17, 19, 16, 11 };
     int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
@@ -3207,9 +3208,13 @@ void keyboard_post_init_user(void) {
 void housekeeping_task_user(void) {
     if (is_keyboard_master()) {
         static uint32_t last_sync = 0;
-        if (timer_elapsed32(last_sync) > 500) { // Interact with slave every 500ms
-            // master_to_slave_t m2s = { .static_display_sync = static_display };
-            master_to_slave_t m2s = { .static_display_sync = static_display, .oled_timeout_sync = oled_timeout, .oled_disable_sync = oled_disable };
+        if (timer_elapsed32(last_sync) > 250) { // Interact with slave every 250ms
+            master_to_slave_t m2s = {
+                // .boot_sync = boot,
+                .static_display_sync = static_display,
+                .oled_timeout_sync = oled_timeout,
+                .oled_disable_sync = oled_disable,
+                };
             if (transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s)) {
                 last_sync = timer_read32();
             } else {
