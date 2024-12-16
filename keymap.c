@@ -102,6 +102,7 @@ enum custom_keycodes {
     CM_MOUSE,
 
     DELWORD,
+    CTLBSPC,
 
     SPC_DN,
     JOIN,
@@ -889,6 +890,8 @@ enum combo_events {
     L_NEW,
     R_NEW,
 
+    BACKSPACE,
+
     COMBO_LENGTH
 };
 uint16_t COMBO_LEN = COMBO_LENGTH;
@@ -933,6 +936,8 @@ const uint16_t PROGMEM bspc_3[]         = {CS_RT1, KC_L, COMBO_END};
 
 const uint16_t PROGMEM l_new[]          = {KC_X, KC_C, COMBO_END};
 const uint16_t PROGMEM r_new[]          = {KC_QUOT, COM_DOT, COMBO_END};
+
+const uint16_t PROGMEM backspace[]      = {KC_SPC, CS_RT1, COMBO_END};
 
 // const uint16_t PROGMEM num_1[]          = {KC_Q, KC_A, COMBO_END};
 // const uint16_t PROGMEM num_2[]          = {KC_W, KC_S, COMBO_END};
@@ -982,6 +987,8 @@ combo_t key_combos[] = {
 
     [L_NEW]         = COMBO(r_new,          NEWSENT),
     [R_NEW]         = COMBO(l_new,          NEWSENT),
+
+    [BACKSPACE]     = COMBO(backspace,      CTLBSPC),
 };
 
 
@@ -2512,6 +2519,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 add_mods(MOD_MASK_CTRL);
                 tap_code(KC_LEFT);
                 tap_code(KC_DEL);
+                set_mods(mods);
+            }
+            break;
+        case CTLBSPC:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                add_mods(MOD_MASK_CTRL);
+                tap_code(KC_BSPC);
                 set_mods(mods);
             }
             break;
