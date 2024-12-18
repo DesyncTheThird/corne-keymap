@@ -161,7 +161,7 @@ I find it difficult to press upper row keys with my pinkies and end up alt finge
 > 
 > ⚠️ However, per-key mod-tap settings and Achordion will still need to be handled separately if home row mods are changed.
 
-`Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together or omitted, as they accessible from combos near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a (La)TeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/(reverse) leader key.
+`Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together or omitted, as they accessible from combos near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a LaTeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/(reverse) leader key.
 
 A copy of `Tab` is placed on the right hand to reduce left hand contortions. The two `Tab` keys also function as `LShift` and `RShift` when held. The shift modifiers are applied eagerly on keydown to improve interaction with pointing devices; these eager shift modifiers do not overwrite home row mods, so you can still shift-tab with one hand.
 
@@ -172,6 +172,8 @@ The `LCTL` key also sets a weak one shot `ctrl` modifier for the `Backspace` key
 ### Data
 ![Data](images/data.png?raw=true)
 Number grid with `1`, `2`, and `3` on right hand home row, along with common numerical separators on left hand, sharing similar layout to `Symbol` and `Program` layers.
+
+Arithmetic symbols on right hand share positions with combos, `-` not included as it is a home row combo; `@` is also available on this layer as many email handles end with numbers, and also because I use it as a leader key for LaTeX commands.
 
 The bracket macros `{}`, `()`, `[]` sends the listed brackets, then taps `Left`, placing the cursor between the two brackets. These macros also interact properly with the rollback feature.
 
@@ -191,13 +193,18 @@ Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}
 
 ### Symbol
 ![Symbol](images/symbol.png?raw=true)
-Symbol layout optimised for (La)TeX editing with many common strings as inward rolls on left hand, e.g.; `<-`, `<=`, `->`, `>=`, `|->`, `<-`, `~>`, `:-`, `&=`, etc. (Intended to be used with [snippet extensions](https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17).) Brackets on right hand as above.
+Symbol layout optimised for (La)TeX editing with many common strings as inward rolls on left hand, e.g.; `<-`, `<=`, `->`, `>=`, `|->`, `<-`, `~>`, `|>`, `:=`, `:-`, `&=`, etc. (Intended to be used with [snippet extensions](https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17).) Brackets on right hand as above.
 
 
 
 ### Program
 ![Program](images/program.png?raw=true)
-Program layer optimised for c programming, with comparison operators as inward rolls, logical/bitwise operators symbols grouped on index finger, etc. Brackets on right hand as above.
+Program layer optimised for programming (mostly C and Python). Inward rolls include:
+- comparison operators: `!=`, `>=`, `<=` on home row;
+- arithmetic assignment operators: `^=`, `+=`, `-=`, `*=`, `/=` above and below home row.
+Bitwise operator symbols are grouped on the inner index column. Holding shift while pressing `&` or `|` will send the respective symbol twice, i.e. as logical operators.
+
+Brackets on right hand as above.
 
 
 
