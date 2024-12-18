@@ -2473,9 +2473,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             return false;
         case MT_COLN:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LGUI));
+                register_mods(MOD_BIT(KC_LALT));
             } else {
-                unregister_mods(MOD_BIT(KC_LGUI));
+                unregister_mods(MOD_BIT(KC_LALT));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
