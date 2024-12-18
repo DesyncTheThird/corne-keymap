@@ -58,8 +58,9 @@ enum custom_keycodes {
     // Custom Symbols
     COM_DOT,
     QUE_EXL,
-    MINS_AT,
     APO_QUO,
+    CS_CONJ,
+    CS_DISJ,
 
     CS_COLN,
     CS_UNDS,
@@ -89,6 +90,7 @@ enum custom_keycodes {
     CS_SCLN,
 
     // Bracket macros
+    CS_NORM,
     CS_CBRS,
     CS_PRNS,
     CS_BRCS,
@@ -134,6 +136,7 @@ enum custom_keycodes {
 #define MTA_A RGUI_T(KC_A)
 
 // Symbol home row mods
+
 #define MT_TILD LT(0,CS_TILD)
 #define MT_UNDS LT(0,CS_UNDS)
 #define MT_LPRN LT(0,CS_LPRN)
@@ -147,6 +150,7 @@ enum custom_keycodes {
 #define MT_1 RSFT_T(KC_1)
 #define MT_2 RCTL_T(KC_2)
 #define MT_3 LALT_T(KC_3)
+#define MT_0 LGUI_T(KC_0)
 
 #define MT_PIPE LGUI_T(KC_PIPE)
 #define MT_COLN LALT_T(KC_COLN)
@@ -259,11 +263,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_DATA] = LAYOUT( //5
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9, CS_SCLN,  KC_DEL,
+          _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, MT_PIPE, MT_COLN,  MT_DOT, MT_COMM,  CS_DLR,                        CS_LT,    MT_1,    MT_2,    MT_3, MT_TILD, TABRSFT,
+          _______, MT_PIPE, MT_COLN,  MT_DOT, MT_COMM, CS_PERC,                      CS_PLUS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CS_TILD, CS_CBRS, CS_PRNS, CS_BRCS, CS_POUN,                        CS_GT,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
+          _______, CS_NORM, CS_CBRS, CS_PRNS, CS_BRCS, CS_POUN,                      CS_ASTR,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    KC_BSPC,  CS_AL1, CS_SLSH
                                           //`--------------------------'  `--------------------------'
@@ -271,7 +275,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_SYMBOL] = LAYOUT( //6
       //,-----------------------------------------------------.                    ,---------------------------------------------------.
-           KC_GRV, CS_PERC, CS_ASTR,  CS_DLR, CS_AMPR, CS_CIRC,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
+           KC_GRV,  CS_DLR, CS_EXLM, CS_DQUO, CS_AMPR, CS_CIRC,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -283,11 +287,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_PROGRAM] = LAYOUT( //7
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_GRV, CS_PERC, CS_EXLM, CS_DQUO,  CS_DLR, CS_AMPR,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
+           KC_GRV, CS_PERC, CS_MINS, CS_PLUS,  CS_DLR, CS_CONJ,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CS_CIRC, CS_PLUS, CS_MINS,  CS_EQL, CS_PIPE,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
+          _______, CS_EXLM,   CS_LT,   CS_GT,  CS_EQL, CS_DISJ,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CS_TILD, CS_ASTR, CS_SLSH, CS_HASH, CS_COLN,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
+          _______, CS_CIRC, CS_SLSH, CS_ASTR, CS_HASH, CS_TILD,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               CS_UNDS,  CS_AL3, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -448,6 +452,7 @@ bool is_hrm(uint16_t keycode) {
         // case MT_1:
         // case MT_2:
         // case MT_3:
+        // case MT_0:
 
         // case MT_PIPE:
         // case MT_COLN:
@@ -466,30 +471,20 @@ uint16_t last_key_2 = KC_NO;
 uint16_t last_key_3 = KC_NO;
 
 bool is_magic(uint16_t keycode) {
-    if ((keycode == CS_LT2) || (keycode == CS_RT2)) {
-        return true;
-    } else {
-        return false;
-    }
+    return ((keycode == CS_LT2) || (keycode == CS_RT2));
 }
 
 bool is_bspc(uint16_t keycode) {
-    if ((keycode == CS_RT1) || (keycode == KC_BSPC)) {
-        return true;
-    } else {
-        return false;
-    }
+    return ((keycode == CS_RT1) || (keycode == KC_BSPC));
 }
 
 bool is_spc(uint16_t keycode) {
-    if ((keycode == CS_RT1) || (keycode == KC_SPC)) {
-        return true;
-    } else {
-        return false;
-    }
+    return ((keycode == CS_RT1) || (keycode == KC_SPC));
 }
 
-
+bool is_bracket_macro(uint16_t keycode) {
+    return (keycode >= CS_NORM && keycode <= CS_BRCS);
+}
 
 //==============================================================================
 // Trackpoint
@@ -1153,8 +1148,8 @@ void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
 }
 
 void rollback_last_key(void) {
-    if (!shifted() && !ctrl_on()) {
-        if ((last_key == CS_CBRS || last_key == CS_PRNS || last_key == CS_BRCS) && (char_count == 2)) {
+    if (!ctrl_on()) {
+        if (is_bracket_macro(last_key) && (char_count == 2)) {
             tap_code(KC_RGHT);
         }
         for (int i = 1; i < char_count; i++) {
@@ -1193,7 +1188,8 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
-    // Track mod taps
+
+    // Track mod-taps
     if (is_hrm(keycode)) {
         if (record->tap.count && record->event.pressed) {
             update_last_key(QK_MOD_TAP_GET_TAP_KEYCODE(keycode));
@@ -1258,7 +1254,13 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     }
 
     // Track bracket macros
-    if (keycode == CS_CBRS || keycode == CS_PRNS || keycode == CS_BRCS) {
+    if (is_bracket_macro(keycode)) {
+        if (record->event.pressed) {
+            update_last_keys(keycode, 2);
+        }
+        return true;
+    }
+    if (keycode == CS_CONJ || keycode == CS_DISJ) {
         if (record->event.pressed) {
             update_last_keys(keycode, 2);
         }
@@ -1278,9 +1280,9 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
-    
+
     // Reset rollback counter and recorded key on any other keypress
-    if (!(is_bspc(keycode) || is_spc(keycode) || is_alpha(keycode) || is_hrm(keycode) || is_magic(keycode) || keycode == KC_LSFT)) {
+    if (!(is_bspc(keycode) || is_spc(keycode) || is_alpha(keycode) || is_hrm(keycode) || is_magic(keycode) || is_bracket_macro(keycode) || keycode == KC_LSFT)) {
         if (record->event.pressed) {
             update_last_key(KC_NO);
         }
@@ -1852,6 +1854,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
+        case CS_NORM:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CS);
+                tap_code16(LSFT(KC_NUBS));
+                tap_code16(LSFT(KC_NUBS));
+                tap_code(KC_LEFT);
+                set_mods(mods);
+            }
+            break;
+
         case CS_CBRS:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -2059,6 +2072,92 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             right_eager_shift_on = false;
             return false;
+
+        // =====================================================================
+        // Custom shifts
+        // =====================================================================
+
+        case COM_DOT:
+            if (record->event.pressed) {
+                if (shifted()) {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code(KC_DOT);
+                    set_mods(mods);
+                } else {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code(KC_COMM);
+                    set_mods(mods);
+                }
+            }
+            break;
+
+        case QUE_EXL:
+            if (record->event.pressed) {
+                if (shifted()) {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code16(KC_EXLM);
+                    set_mods(mods);
+                } else {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code16(KC_QUES);
+                    set_mods(mods);
+                }
+            }
+            break;
+
+        case APO_QUO:
+            if (record->event.pressed) {
+                if (shifted()) {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code16(KC_AT);
+                    set_mods(mods);
+                } else {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code16(KC_QUOT);
+                    set_mods(mods);
+                }
+            }
+            break;
+
+        case CS_CONJ:
+            if (record->event.pressed) {
+                if (shifted()) {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(KC_AMPR);
+                    tap_code16(KC_AMPR);
+                    set_mods(mods);
+                } else {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code16(KC_AMPR);
+                    set_mods(mods);
+                }
+            }
+            break;
+
+        case CS_DISJ:
+            if (record->event.pressed) {
+                if (shifted()) {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LSFT(KC_NUBS));
+                    tap_code16(LSFT(KC_NUBS));
+                    set_mods(mods);
+                } else {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    tap_code16(LSFT(KC_NUBS));
+                    set_mods(mods);
+                }
+            }
+            break;
 
         // =====================================================================
         // Custom symbol handling
@@ -2270,70 +2369,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 del_mods(MOD_MASK_SHIFT);
                 tap_code(KC_SCLN);
                 set_mods(mods);
-            }
-            break;
-
-        case COM_DOT:
-            if (record->event.pressed) {
-                if (shifted()) {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    tap_code(KC_DOT);
-                    set_mods(mods);
-                } else {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    tap_code(KC_COMM);
-                    set_mods(mods);
-                }
-            }
-            break;
-
-        case QUE_EXL:
-            if (record->event.pressed) {
-                if (shifted()) {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_EXLM);
-                    set_mods(mods);
-                } else {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_QUES);
-                    set_mods(mods);
-                }
-            }
-            break;
-
-        case APO_QUO:
-            if (record->event.pressed) {
-                if (shifted()) {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_AT);
-                    set_mods(mods);
-                } else {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_QUOT);
-                    set_mods(mods);
-                }
-            }
-            break;
-
-        case MINS_AT:
-            if (record->event.pressed) {
-                if (shifted()) {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_DQUO);
-                    set_mods(mods);
-                } else {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    tap_code(KC_MINS);
-                    set_mods(mods);
-                }
             }
             break;
 
