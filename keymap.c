@@ -162,10 +162,9 @@ enum custom_keycodes {
 #define CS_RT2 LT(_PROGRAM,REP)
 #define CS_RT3 LT(_UTILITY,KC_SLSH)
 
-#define CS_AL1 LT(_DATA,KC_0)
+#define CS_AL1 LT(_PROGRAM,KC_0)
 #define CS_AL2 LT(_EDIT,CS_BSLS)
 #define CS_AL3 LT(_EDIT,CS_SCLN)
-#define CS_AL4 LT(_EDIT,KC_SPC)
 
 // Custom tap-hold keys
 #define CS_BOOT LT(0,KC_ESC)
@@ -290,7 +289,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, CS_TILD, CS_ASTR, CS_SLSH, CS_HASH, CS_COLN,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              CS_UNDS,  CS_AL3,  CS_AL4,    _______, _______, _______
+                                              CS_UNDS,  CS_AL3, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -642,7 +641,6 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case CS_AL1:
         case CS_AL2:
         case CS_AL3:
-        case CS_AL4:
 
         case MT_RPRN:
         case MT_LPRN:
@@ -711,7 +709,6 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
         // case CS_AL1:
         // case CS_AL2:
         // case CS_AL3:
-        // case CS_AL4:
         
         case TABLSFT:
         case TABRSFT:
@@ -740,7 +737,6 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
         // case CS_AL1:
         case CS_AL2:
         case CS_AL3:
-        case CS_AL4:
         
         case CS_BOOT:
         case TABLSFT:
@@ -799,49 +795,63 @@ bool achordion_eager_mod(uint8_t mod) {
 }
 
 bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
-    if (keycode == CS_AL1) {
-        if (!record->tap.count && record->event.pressed) {
-            layer_on(_EDIT);
-        } else {
-            layer_off(_EDIT);
-        }
-        if (record->tap.count && record->event.pressed) {
-            const uint8_t mods = get_mods();
-            del_mods(MOD_MASK_SHIFT);
-            tap_code(KC_0);
-            set_mods(mods);
-        }
-        return false;
+    switch (keycode) {
+        case CS_LT1:
+            if (!record->tap.count && record->event.pressed) {
+                layer_on(_DATA);
+                update_tri_layer(_DATA, _PROGRAM, _EDIT);
+            } else {
+                layer_off(_DATA);
+                update_tri_layer(_DATA, _PROGRAM, _EDIT);
+            }
+            if (record->tap.count && record->event.pressed) {
+                tap_code(KC_SPC);
+            }
+            return false;
+        case CS_AL1:
+            if (!record->tap.count && record->event.pressed) {
+                layer_on(_PROGRAM);
+                update_tri_layer(_DATA, _PROGRAM, _EDIT);
+            } else {
+                layer_off(_PROGRAM);
+                update_tri_layer(_DATA, _PROGRAM, _EDIT);
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_0);
+                set_mods(mods);
+            }
+            return false;
+        case CS_AL2:
+            if (!record->tap.count && record->event.pressed) {
+                layer_on(_EDIT);
+            } else {
+                layer_off(_EDIT);
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_NUBS);
+                set_mods(mods);
+            }
+            return false;
+        case CS_AL3:
+            if (!record->tap.count && record->event.pressed) {
+                layer_on(_EDIT);
+            } else {
+                layer_off(_EDIT);
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code(KC_SCLN);
+                set_mods(mods);
+            }
+            return false;
+        default:
+            return true;
     }
-    if (keycode == CS_AL2) {
-        if (!record->tap.count && record->event.pressed) {
-            layer_on(_EDIT);
-        } else {
-            layer_off(_EDIT);
-        }
-        if (record->tap.count && record->event.pressed) {
-            const uint8_t mods = get_mods();
-            del_mods(MOD_MASK_SHIFT);
-            tap_code16(KC_NUBS);
-            set_mods(mods);
-        }
-        return false;
-    }
-    if (keycode == CS_AL3) {
-        if (!record->tap.count && record->event.pressed) {
-            layer_on(_EDIT);
-        } else {
-            layer_off(_EDIT);
-        }
-        if (record->tap.count && record->event.pressed) {
-            const uint8_t mods = get_mods();
-            del_mods(MOD_MASK_SHIFT);
-            tap_code(KC_SCLN);
-            set_mods(mods);
-        }
-        return false;
-    }
-    return true;
 }
 
 //==============================================================================
@@ -1355,8 +1365,10 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_RT2) {
         if (!record->tap.count && record->event.pressed) {
             layer_on(_PROGRAM);
+            update_tri_layer(_DATA, _PROGRAM, _EDIT);
         } else {
             layer_off(_PROGRAM);
+            update_tri_layer(_DATA, _PROGRAM, _EDIT);
         }
 
         if (record->tap.count && record->event.pressed) {
