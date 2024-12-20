@@ -3049,6 +3049,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 
 bool oled_task_user(void) {
     if (oled_timeout || oled_disable) {
+        oled_clear();
         oled_off();
         return false;
     }
@@ -3061,7 +3062,6 @@ bool oled_task_user(void) {
     } else {
         if (static_display || sync_data.static_display_sync) {
             /* intentionally blank */;
-            // oled_write_raw_P(static_left, frame_size);
         } else {
             render_draw();
         }
