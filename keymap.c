@@ -3194,7 +3194,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     return false;
 }
 //  ,-----------------------.           ,-----------------------.
-//    24, 23, 18, 17, 10, 09,             36, 37, 44, 45, 50, 51, 
+//    24, 23, 18, 17, 10, 09,             36, 37, 44, 45, 50, 51,
 //  |---+---+---+---+---+---|           |---+---+---+---+---+---|
 //    25, 22, 19, 16, 11, 08,             35, 38, 43, 46, 49, 52,
 //  |---+---+---+---+---+---|           |---+---+---+---+---+---|
@@ -3209,8 +3209,11 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     if (boot) {
         return state;
     }
-    if (IS_LAYER_ON_STATE(state, _BASIC) || IS_LAYER_ON_STATE(state, _QWERTY) || IS_LAYER_ON_STATE(state, _TOUHOU)) {
+    if (IS_LAYER_ON_STATE(state, _BASIC) || IS_LAYER_ON_STATE(state, _TOUHOU)) {
         rgb_matrix_sethsv_noeeprom(127,255,255);
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
+    } else if (IS_LAYER_ON_STATE(state, _QWERTY)) {
+        rgb_matrix_sethsv_noeeprom(255,255,255);
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
     } else if (IS_LAYER_ON_STATE(state, _BASE)) {
         rgb_matrix_sethsv_noeeprom(255,255,255);
