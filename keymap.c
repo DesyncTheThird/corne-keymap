@@ -3300,3 +3300,27 @@ void housekeeping_task_user(void) {
         }
     }
 }
+
+void oled_render_boot(bool bootloader) {
+    oled_clear();
+    if (bootloader) {
+        oled_write_raw_P(bootloader_oled, frame_size);
+    } else {
+    oled_write_P(PSTR("Rebooting"), false);
+    }
+    oled_render_dirty(true);
+}
+
+bool shutdown_user(bool jump_to_bootloader) {
+    oled_render_boot(jump_to_bootloader);
+    if (jump_to_bootloader) {
+        rgb_matrix_set_color_all(RGB_OFF);
+        int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
+        for (uint8_t i = 0; i < 12; i++) {
+            RGB underglow_rgb  = hsv_to_rgb((HSV){ 255, 255, 255 });
+            rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+        }
+    }
+    rgb_matrix_update_pwm_buffers();
+    return false;
+}
