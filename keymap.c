@@ -1329,7 +1329,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_L: tap_code(KC_R); update_last_key(KC_R); break;
                 case KC_D: tap_code(KC_T); update_last_key(KC_T); break;
                 case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
-                case KC_B: tap_code(KC_S); update_last_key(KC_S); break;
+                case KC_B: SEND_STRING(/*b*/"ecause "); update_last_keys(KC_SPC, 7); magic_override = false; break;
 
                 case KC_N: SEND_STRING(/*n*/"'t "); update_last_keys(KC_SPC, 3); magic_override = false; break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
@@ -1351,6 +1351,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_E, 3); break;
                 case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
                 case KC_I: SEND_STRING(/*i*/"on"); update_last_keys(KC_N, 2); break;
+                case KC_A: SEND_STRING(/*a*/"nd "); update_last_keys(KC_SPC, 3); magic_override = false; break;
 
                 case KC_NO:
                 case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); magic_override = false; break;

@@ -35,14 +35,14 @@ Letters that are not commonly repeated (i.e. `I`, `U`, `A`) are overridden and i
 Left hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `Z` | `L` | `D` | `C` | `B` | `N`  | `R` | `T`   | `S` | `G` | `Q` | `X` | `M`   | `W` | `V` |
-| Magic | `N` | `R` | `T` | `S` | `S` | `'T` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
+| Prev  | `Z` | `L` | `D` | `C` | `B`       | `N`  | `R` | `T`   | `S` | `G` | `Q` | `X` | `M`   | `W` | `V` |
+| Magic | `N` | `R` | `T` | `S` | `ECAUSE⎵` | `'T` | `L` | `ION` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
 
 Right hand overrides:
-|     |     |     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  |
-| Magic | `ECT` | `E` | `I` | `P` | `ERE` | `O` | `ON` |
+|     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  | `A`   |
+| Magic | `ECT` | `E` | `I` | `P` | `ERE` | `O` | `ON` | `ND⎵` |
 
 (Other right hand keys are repeated.)
 
@@ -71,13 +71,15 @@ Left hand overrides:
 Other:
 |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- |
-| `Magic` | `Non-alpha` | `⎵`   | `,`     | `.`   | `'`   |
+| `Magic`* | `Non-alpha` | `⎵`   | `,`     | `.`   | `'`   |
 | `⎵`     | `THE`       | `THE` | `⎵BUT⎵` | `COM` | `RE⎵` |
+
+*Unless the previous magic output already ended with a space, in which case the repeat key will default to the `Non-alpha` state.
 
 ---
 ### Details
 
-Only the keys listed above are tracked (including those from combos). Pressing any other key resets the key to the default `Non-Alpha` state (i.e. `OSM Shift`/`THE`).
+Only the keys listed above are tracked (including those from combos). Pressing any other key resets the key to the default `Non-alpha` state (i.e. `OSM Shift`/`THE`).
 
 > `a 1 [Rep]` produces `a 1 the`.
 
