@@ -170,6 +170,8 @@ enum custom_keycodes {
 #define CS_AL2 LT(_EDIT,CS_BSLS)
 #define CS_AL3 LT(_EDIT,CS_SCLN)
 
+#define LCTL_0 LCTL_T(KC_0)
+
 // Custom tap-hold keys
 #define CS_BOOT LT(0,KC_ESC)
 #define TABLSFT LSFT_T(KC_TAB)
@@ -305,7 +307,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, KC_PSCR, KC_PGUP, KC_PGDN, KC_CAPS,  SELECT,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______,    _______,    KC_0,  KC_SPC
+                                              _______, _______, _______,    _______,  LCTL_0,  KC_SPC
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -649,6 +651,8 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 
         case TABLSFT:
         case TABRSFT:
+
+        case LCTL_0:
             return 0;
         default:
             return TAPPING_TERM;
@@ -732,10 +736,12 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
         // case CS_AL1:
         case CS_AL2:
         case CS_AL3:
-        
+
         case CS_BOOT:
         case TABLSFT:
         case TABRSFT:
+
+        case LCTL_0:
             return 0;
 
         default:
@@ -1224,8 +1230,8 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
-
-    // Handle Tab-Shift keys
+    
+    // Handle tap action of Tab-Shift keys
     if (keycode == TABLSFT || keycode == TABRSFT) {
         if (record->tap.count && record->event.pressed) {
             update_last_key(KC_SPC);
