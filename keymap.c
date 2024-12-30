@@ -1,5 +1,6 @@
 #include QMK_KEYBOARD_H
 #include "print.h"
+#include "quadrant.h"
 
 // #include "ps2_mouse.h"
 // #include "ps2.h"
@@ -335,9 +336,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_MOUSE] = LAYOUT( //9
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NXT_TAB, MS_BTN4,   MS_UP, MS_BTN5, QK_LLCK,                      _______, _______, _______, _______, _______, _______,
+          _______, NXT_TAB, MSQ_DNC,   MSQ_U, MSQ_RST, QK_LLCK,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, PRV_TAB, MS_LEFT, MS_DOWN, MS_RGHT,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
+          _______, PRV_TAB,   MSQ_L,   MSQ_D,   MSQ_R,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LCTL, MS_WHLL, MS_WHLU, MS_WHLD, MS_WHLR,  KC_ENT,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -1910,6 +1911,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_vol_repeat(keycode, record)) { return false; }
     if (!process_clock(keycode, record)) { return false; }
 
+    if (layer_state_is(_MOUSE)) {
+      if (process_quadrant(keycode, record) == false) {
+            return false;
+        }
+    }
+
     switch (keycode) {
 
         // =====================================================================
@@ -3456,6 +3463,7 @@ void keyboard_post_init_user(void) {
 
     // OLED sync
     transaction_register_rpc(USER_SYNC_A, user_config_sync_handler);
+    quadrant_cursor_init();
 }
 
 void housekeeping_task_user(void) {

@@ -5,6 +5,10 @@ WPM_ENABLE = yes
 SRC += features/achordion.c
 COMBO_ENABLE = yes
 
+DIGITIZER_ENABLE = yes
+SRC += quadrant.c
+
+
 DEFERRED_EXEC_ENABLE = yes
 # KEY_OVERRIDE_ENABLE = yes
 
