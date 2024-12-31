@@ -152,6 +152,35 @@ Key on utility layer available to change both OLEDs to static images.
 
 
 
+# ⚠️ Experimental Features
+Various additional experimental features that have not yet been incorporated into the main keymap may be found on various branches. Current features in development:
+
+### [Steno-lite](https://github.com/DesyncTheThird/corne-keymap/tree/steno-lite)
+This feature adds a selection of combos that output common words or word fragments.
+
+Any of these combos can be triggered by pressing `Magic` *or* `Repeat`, along with the specified combo keys listed below:
+
+|     |     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Combo  | `T`   | `A`   | `TH`   | `TI`   | `H`    | `HA`   | `W`    | `Y`   | `S`    |
+| Output | `the` | `and` | `that` | `this` | `here` | `have` | `with` | `you` | `some` |
+
+|     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Combo  | `WH`   | `B`   | `WI`    | `J`    | `M`    | `I`   | `E`    | `F`    |
+| Output | `what` | `but` | `which` | `just` | `ment` | `ing` | `ever` | `from` |
+
+### [Quadrant-based mouse keys](https://github.com/DesyncTheThird/corne-keymap/tree/quad-mousekeys)
+Based on qmk/qmk_firmware#24760, this feature uses the digitiser support to move the mouse pointer to absolute positions rather than relative ones as per the built-in mouse keys feature as follows: the screen is divided up into a quadrants; pressing one of the directional keys snaps the pointer to the centre of that quadrant, and then the grid is rescaled to the quadrant; then, movement can be repeated within the quadrant.
+
+The original thread uses 8 directional keys and shrinks the grid uniformly in every direction, but I found the diagonal keys difficult to use. This version instead only allows four directional keys, and tracks the vertical and horizontal scales separately; pressing up will snap the pointer upwards and reduce the vertical scale, but leave the horizontal scale unchanged, and vice versa; moving along the same axis twice will reduce the scale in both directions. I find this version more intuitive to use as it more closely matches the standard inverted-T key layout, where you alternate between directions to move diagonally.
+
+Due to the digitiser feature mapping outputs to the whole virtual desktop, it does not interact well with multiple monitors, as the minimum step size becomes much too large; furthermore, the digitiser feature can also attempt to place the cursor offscreen if the virtual desktop is not a rectangle, which is especially prominent if the monitors have different orientations or unusual positionings. However, on single monitors, this feature has the potential to be much faster than using standard mouse keys.
+
+I currently keep a copy of this fork on my offside half, so I can swap to it when not at my desktop by plugging in the other side of the split. In the future, I may add the ability to toggle between the two modes in the main keymap.
+
+
+
 # Layers
 ### Base
 ![Base](images/base.png?raw=true)
