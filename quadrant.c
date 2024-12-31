@@ -41,13 +41,13 @@ quadrant_cursor_t quadrant_cursor_direction(quadrant_cursor_t cursor, int8_t del
         new_scale_x = cursor.scale_x * RESCALE_FACTOR;
         new_scale_y = cursor.scale_y * RESCALE_FACTOR;
     } else if (axis == x) {
-        new_x = cursor.x * cursor.scale_x * (float)(delta) * MOVE_FACTOR;
+        new_x = cursor.x + (float)(delta) * MOVE_FACTOR * cursor.scale_x;
         new_y = cursor.y;
         new_scale_x = cursor.scale_x * RESCALE_FACTOR;
         new_scale_y = cursor.scale_y;
     } else {
         new_x = cursor.x;
-        new_y = cursor.y * cursor.scale_y * (float)(delta) * MOVE_FACTOR;
+        new_y = cursor.y + (float)(delta) * MOVE_FACTOR * cursor.scale_y;
         new_scale_x = cursor.scale_x;
         new_scale_y = cursor.scale_y * RESCALE_FACTOR;
     }
@@ -93,32 +93,32 @@ uint32_t quadrant_animation(uint32_t trigger_time, void *cb_arg) {
     }
     uint8_t step = (timer_read() - quadrant_animation_start) / ANIMATION_STEP;
     int8_t delta;
-    bool is_x;
+    axis_t axis;
     switch (step) {
         case 0:
         case 4:
             delta = -1;
-            is_x = false;
+            axis = y;
             break;
         case 1:
             delta = 1;
-            is_x = true;
+            axis = x;
             break;
         case 2:
             delta = 1;
-            is_x = false;
+            axis = y;
             break;
         case 3:
             delta = -1;
-            is_x = true;
+            axis = x;
             break;
         default:
             delta = 0;
-            is_x = false;
+            axis = centre;
             quadrant_animation_start = 0;
             break;
     }
-    quadrant_cursor_t animation_cursor = quadrant_cursor_direction(quadrant_cursor, delta, is_x);
+    quadrant_cursor_t animation_cursor = quadrant_cursor_direction(quadrant_cursor, delta, axis);
     digitizer_set_position(animation_cursor.x, animation_cursor.y);
     return ANIMATION_SLEEP;
 }
@@ -140,19 +140,19 @@ bool process_quadrant(uint16_t keycode, keyrecord_t *record) {
                 return true;
 
             case MSQ_U:
-                quadrant_cursor = quadrant_cursor_direction(quadrant_cursor, -1, false);
+                quadrant_cursor = quadrant_cursor_direction(quadrant_cursor, -1, y);
                 break;
             case MSQ_D:
-                quadrant_cursor = quadrant_cursor_direction(quadrant_cursor, 1, false);
+                quadrant_cursor = quadrant_cursor_direction(quadrant_cursor, 1, y);
                 break;
             case MSQ_L:
-                quadrant_cursor = quadrant_cursor_direction(quadrant_cursor, -1, true);
+                quadrant_cursor = quadrant_cursor_direction(quadrant_cursor, -1, x);
                 break;
             case MSQ_R:
-                quadrant_cursor = quadrant_cursor_direction(quadrant_cursor, 1, true);
+                quadrant_cursor = quadrant_cursor_direction(quadrant_cursor, 1, x);
                 break;
             case MSQ_C:
-                quadrant_cursor = quadrant_cursor_direction(quadrant_cursor, 0, false);
+                quadrant_cursor = quadrant_cursor_direction(quadrant_cursor, 0, centre);
                 break;
             default:
                 msq = false;
