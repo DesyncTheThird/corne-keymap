@@ -8,12 +8,15 @@ typedef struct {
 } quadrant_cursor_t;
 static quadrant_cursor_t quadrant_cursor;
 static uint16_t quadrant_animation_start;
+static axis_t prev_axis = centre;
 
 void quadrant_cursor_init(void) {
     quadrant_cursor.x = 0.5;
     quadrant_cursor.y = 0.5;
     quadrant_cursor.scale_x = 0.5;
     quadrant_cursor.scale_y = 0.5;
+    prev_axis = centre;
+
 }
 
 quadrant_cursor_t make_quadrant_cursor(float x, float y, float scale_x, float scale_y) {
@@ -25,38 +28,36 @@ quadrant_cursor_t make_quadrant_cursor(float x, float y, float scale_x, float sc
     return cursor;
 }
 
-static bool prev_is_x = false;
-
-quadrant_cursor_t quadrant_cursor_direction(quadrant_cursor_t cursor, int8_t delta, bool is_x) {
+quadrant_cursor_t quadrant_cursor_direction(quadrant_cursor_t cursor, int8_t delta, axis_t axis) {
     float new_x;
     float new_y;
     float new_scale_x;
     float new_scale_y;
 
     // Center key
-    if (delta == 0) {
+    if (axis == centre) {
         new_x = cursor.x;
         new_y = cursor.y;
         new_scale_x = cursor.scale_x * RESCALE_FACTOR;
         new_scale_y = cursor.scale_y * RESCALE_FACTOR;
-    } else if (is_x) {
-        new_x = cursor.x * (float)(delta) * MOVE_FACTOR;
+    } else if (axis == x) {
+        new_x = cursor.x * cursor.scale_x * (float)(delta) * MOVE_FACTOR;
         new_y = cursor.y;
         new_scale_x = cursor.scale_x * RESCALE_FACTOR;
         new_scale_y = cursor.scale_y;
     } else {
         new_x = cursor.x;
-        new_y = cursor.y * (float)(delta) * MOVE_FACTOR;
+        new_y = cursor.y * cursor.scale_y * (float)(delta) * MOVE_FACTOR;
         new_scale_x = cursor.scale_x;
         new_scale_y = cursor.scale_y * RESCALE_FACTOR;
     }
 
-    // If same axis is repeated, shrink both scales
-    if (is_x == prev_is_x) {
+    // If same axis is repeated, shrink both scales instead
+    if (axis == prev_axis) {
         new_scale_x = cursor.scale_x * RESCALE_FACTOR;
         new_scale_y = cursor.scale_y * RESCALE_FACTOR;
     }
-    prev_is_x = is_x;
+    prev_axis = axis;
 
     cursor = make_quadrant_cursor(
         new_x,
@@ -91,32 +92,33 @@ uint32_t quadrant_animation(uint32_t trigger_time, void *cb_arg) {
         return 0;
     }
     uint8_t step = (timer_read() - quadrant_animation_start) / ANIMATION_STEP;
-    int8_t dx, dy;
+    int8_t delta;
+    bool is_x;
     switch (step) {
         case 0:
         case 4:
-            dx = 0;
-            dy = -1;
+            delta = -1;
+            is_x = false;
             break;
         case 1:
-            dx = 1;
-            dy = 0;
+            delta = 1;
+            is_x = true;
             break;
         case 2:
-            dx = 0;
-            dy = 1;
+            delta = 1;
+            is_x = false;
             break;
         case 3:
-            dx = -1;
-            dy = 0;
+            delta = -1;
+            is_x = true;
             break;
         default:
-            dx = 0;
-            dy = 0;
+            delta = 0;
+            is_x = false;
             quadrant_animation_start = 0;
             break;
     }
-    quadrant_cursor_t animation_cursor = quadrant_cursor_direction(quadrant_cursor, dx, dy);
+    quadrant_cursor_t animation_cursor = quadrant_cursor_direction(quadrant_cursor, delta, is_x);
     digitizer_set_position(animation_cursor.x, animation_cursor.y);
     return ANIMATION_SLEEP;
 }
@@ -157,14 +159,13 @@ bool process_quadrant(uint16_t keycode, keyrecord_t *record) {
                 break;
         }
     } else {
-      msq = false;
+        msq = false;
     }
 
     if (msq) {
         quadrant_animation_start = 0;
         digitizer_in_range_on();
         digitizer_set_position(quadrant_cursor.x, quadrant_cursor.y);
-        // uprintf("Cursor: x=%u, y=%u scale=%u\n", quadrant_cursor.x, quadrant_cursor.y, (uint16_t)(quadrant_cursor.scale * 1000));
         return false;
     }
     return true;
