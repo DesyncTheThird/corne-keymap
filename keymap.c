@@ -114,6 +114,9 @@ enum custom_keycodes {
     WORDPRN,
     WORDBRC,
     DELLINE,
+    
+    SH_HOME,
+    SH_END,
 };
 
 
@@ -320,7 +323,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT_OVERLAY] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, _______, _______, _______, _______, _______,                      _______, WORDCBR, WORDPRN, WORDBRC, _______, _______,
+          _______, _______, SH_HOME, _______,  SH_END, _______,                      _______, WORDCBR, WORDPRN, WORDBRC, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, _______, _______, _______, _______, _______,                      _______, DELLEFT,  SELECT, DELRGHT, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -1351,6 +1354,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         } else if (!is_layer_locked(_EDIT)) {
             layer_off(_EDIT);
             layer_off(_EDIT_OVERLAY);
+            del_mods(MOD_BIT(KC_RCTL));
         }
 
         if (record->tap.count && record->event.pressed) {
@@ -1938,6 +1942,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
+        // Edit overlay keys
         case WORDCBR:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -1988,6 +1993,34 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             break;
+
+        case DELLEFT:
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_BIT(KC_RSFT));
+            } else {
+                unregister_mods(MOD_BIT(KC_RSFT));
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code16(LCTL(KC_BSPC));
+                set_mods(mods);
+            }
+            return false;
+
+        case DELRGHT:
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_BIT(KC_RALT));
+            } else {
+                unregister_mods(MOD_BIT(KC_RALT));
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code16(LCTL(KC_DEL));
+                set_mods(mods);
+            }
+            return false;
 
         // =====================================================================
         // Misc control
@@ -2132,6 +2165,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_CTRL);
                 tap_code(KC_HOME);
+                set_mods(mods);
+            }
+            break;
+
+        case SH_END:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CTRL);
+                tap_code16(LSFT(KC_END));
+                set_mods(mods);
+            }
+            break;
+        case SH_HOME:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CTRL);
+                tap_code16(LSFT(KC_HOME));
                 set_mods(mods);
             }
             break;
@@ -2637,35 +2687,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
                 tap_code(KC_COMM);
-                set_mods(mods);
-            }
-            return false;
-
-        // Edit overlay
-
-        case DELLEFT:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RSFT));
-            } else {
-                unregister_mods(MOD_BIT(KC_RSFT));
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code16(LCTL(KC_BSPC));
-                set_mods(mods);
-            }
-            return false;
-        case DELRGHT:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RALT));
-            } else {
-                unregister_mods(MOD_BIT(KC_RALT));
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code16(LCTL(KC_DEL));
                 set_mods(mods);
             }
             return false;
