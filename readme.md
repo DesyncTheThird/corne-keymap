@@ -218,7 +218,7 @@ Navigation/editing keys on left hand and paired delimiters and common symbol com
 
 Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `?()`; right hand also duplicated on Symbol and Program layers.
 
-`Select` macro by [Getreuer](https://getreuer.info/posts/keyboards/select-word/index.html) selects the current word and extends selection by one word per subsequent press; holding shift selects/extends selection by lines instead.
+Activating both `Data` and `Program` layers will activate the `Edit` layer on top to allow for quick navigation. This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
 
 
@@ -263,11 +263,28 @@ Cursor/scroll speed may be overridden with right thumb keys for higher speed or 
 
 
 
-### Control
-![Control](images/control.png?raw=true)
-Control key overrides with QWERTY-esque layout for easier left-hand only use. (I usually don't remember which *letter* does what command, only which key *position*.)
+# Overlay Layers
 
-Overrides activate only from left hand control key; home row mods are unaffected, so intentional letter controls can be used in two-hand usage.
+### Control Overlay
+![Control](images/control.png?raw=true)
+Control key overrides with QWERTY-esque layout for easier left-hand only use. (I usually don't remember which *letter* does what command, only which key *position*, particularly for graphical and editing software)
+
+Overrides activate only from left hand control key; home row mods are unaffected, so ntentional letter controls can be used in two-hand usage.
+
+
+
+### Edit Overlay
+![Edit Overlay](images/edit_overlay.png?raw=true)
+Activating both `Edit` and `Program` layers will activate the `Edit Overlay` layer on top. This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue. 
+
+This layer contains useful macros for text selection and deletion:
+- The three macros at the top enclose the current word with the listed brackets.
+- `DelLeft` and `DelRight` delete the previous/forward chararcters in current word.
+- `Select` macro by [Getreuer](https://getreuer.info/posts/keyboards/select-word/index.html) selects the current word and extends selection by one word per subsequent press; holding shift selects/extends selection by lines instead.
+- `DelLine` deletes the current line.
+- `DelWord` deletes the current word.
+
+The `LCTL` modifier is also held while this layer is active, and the `LSFT` modifier is additionally held for the `Home` and `End` keys.
 
 
 
