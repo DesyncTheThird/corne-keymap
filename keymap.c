@@ -104,7 +104,6 @@ enum custom_keycodes {
     CM_MOUSE,
 
     DELWORD,
-    CTLBSPC,
 
     SPC_DN,
     JOIN,
@@ -839,8 +838,10 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
             return false;
         case CS_AL3:
             if (!record->tap.count && record->event.pressed) {
+                add_mods(MOD_BIT(KC_LCTL));
                 layer_on(_EDIT);
             } else {
+                del_mods(MOD_BIT(KC_LCTL));
                 layer_off(_EDIT);
             }
             if (record->tap.count && record->event.pressed) {
@@ -874,9 +875,9 @@ enum combo_events {
     L_PLUS,
     L_EQUALS,
     L_MINUS,
-
-    EXCLAMATION,
+    L_NEW,
     COLON,
+    AMPERSAND,
 
     R_EXPONENT,
     R_COMMA,
@@ -886,9 +887,9 @@ enum combo_events {
     R_PLUS,
     R_EQUALS,
     R_MINUS,
-
+    R_NEW,
+    EXCLAMATION,
     SEMICOLON,
-    AMPERSAND,
 
     SPC_1,
     SPC_2,
@@ -897,11 +898,6 @@ enum combo_events {
     BSPC_1,
     BSPC_2,
     BSPC_3,
-
-    L_NEW,
-    R_NEW,
-
-    BACKSPACE,
 
     COMBO_LENGTH
 };
@@ -921,7 +917,7 @@ const uint16_t PROGMEM l_asterisk[]     = {KC_F, KC_B, COMBO_END};
 const uint16_t PROGMEM l_equals[]       = {KC_E, KC_R, COMBO_END};
 const uint16_t PROGMEM l_plus[]         = {KC_F, KC_G, COMBO_END};
 const uint16_t PROGMEM l_minus[]        = {KC_D, KC_F, COMBO_END};
-
+const uint16_t PROGMEM l_new[]          = {KC_X, KC_C, COMBO_END};
 const uint16_t PROGMEM ampersand[]      = {KC_S, KC_E, COMBO_END};
 const uint16_t PROGMEM colon[]          = {KC_E, KC_F, COMBO_END};
 
@@ -933,7 +929,7 @@ const uint16_t PROGMEM r_asterisk[]     = {KC_N, KC_J, COMBO_END};
 const uint16_t PROGMEM r_equals[]       = {KC_U, KC_I, COMBO_END};
 const uint16_t PROGMEM r_plus[]         = {KC_H, KC_J, COMBO_END};
 const uint16_t PROGMEM r_minus[]        = {KC_J, KC_K, COMBO_END};
-
+const uint16_t PROGMEM r_new[]          = {KC_QUOT, COM_DOT, COMBO_END};
 const uint16_t PROGMEM semicolon[]      = {KC_J, KC_I, COMBO_END};
 const uint16_t PROGMEM exclamation[]    = {KC_I, KC_L, COMBO_END};
 
@@ -944,11 +940,6 @@ const uint16_t PROGMEM spc_1[]          = {KC_SPC, KC_F, COMBO_END};
 const uint16_t PROGMEM bspc_1[]         = {CS_RT1, KC_J, COMBO_END};
 const uint16_t PROGMEM bspc_2[]         = {CS_RT1, KC_K, COMBO_END};
 const uint16_t PROGMEM bspc_3[]         = {CS_RT1, KC_L, COMBO_END};
-
-const uint16_t PROGMEM l_new[]          = {KC_X, KC_C, COMBO_END};
-const uint16_t PROGMEM r_new[]          = {KC_QUOT, COM_DOT, COMBO_END};
-
-const uint16_t PROGMEM backspace[]      = {KC_SPC, CS_RT1, COMBO_END};
 
 // const uint16_t PROGMEM num_1[]          = {KC_Q, KC_A, COMBO_END};
 // const uint16_t PROGMEM num_2[]          = {KC_W, KC_S, COMBO_END};
@@ -998,8 +989,6 @@ combo_t key_combos[] = {
 
     [L_NEW]         = COMBO(r_new,          NEWSENT),
     [R_NEW]         = COMBO(l_new,          NEWSENT),
-
-    [BACKSPACE]     = COMBO(backspace,      CTLBSPC),
 };
 
 
@@ -1262,16 +1251,17 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     // Track bracket macros
     if (is_bracket_macro(keycode)) {
         if (record->event.pressed) {
-            update_last_keys(keycode, 2);
+            update_last_keys(KC_NO, 2);
         }
         return true;
     }
-    if (keycode == CS_CONJ || keycode == CS_DISJ) {
-        if (record->event.pressed) {
-            update_last_keys(keycode, 2);
-        }
-        return true;
-    }
+    // Logic symbols tracked in normal key processing due to variable ouput length
+    // if (keycode == CS_CONJ || keycode == CS_DISJ) {
+    //     if (record->event.pressed) {
+    //         update_last_keys(KC_NO, 2);
+    //     }
+    //     return true;
+    // }
 
     // Handle deletes
     if (keycode == CS_RT1) {
@@ -2136,15 +2126,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (shifted()) {
                     const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_CSAG);
+                    del_mods(MOD_MASK_SHIFT);
                     tap_code16(KC_AMPR);
                     tap_code16(KC_AMPR);
                     set_mods(mods);
+                    update_last_keys(KC_NO, 2);
                 } else {
                     const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_SHIFT);
                     tap_code16(KC_AMPR);
                     set_mods(mods);
+                    update_last_key(KC_NO);
                 }
             }
             break;
@@ -2153,15 +2145,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (shifted()) {
                     const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_CSAG);
+                    del_mods(MOD_MASK_SHIFT);
                     tap_code16(LSFT(KC_NUBS));
                     tap_code16(LSFT(KC_NUBS));
                     set_mods(mods);
+                    update_last_key(KC_NO);
                 } else {
                     const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_SHIFT);
                     tap_code16(LSFT(KC_NUBS));
                     set_mods(mods);
+                    update_last_keys(KC_NO, 2);
                 }
             }
             break;
@@ -2573,15 +2567,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 add_mods(MOD_MASK_CTRL);
                 tap_code(KC_LEFT);
                 tap_code(KC_DEL);
-                set_mods(mods);
-            }
-            break;
-        case CTLBSPC:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                add_mods(MOD_MASK_CTRL);
-                tap_code(KC_BSPC);
                 set_mods(mods);
             }
             break;
