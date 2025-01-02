@@ -2928,8 +2928,6 @@ void render_mode(void) {
         oled_write_P(PSTR(" Touhou\n"), false);
     } else if (IS_LAYER_ON(_NUMPAD)) {
         oled_write_P(PSTR(" Numpad\n"), false);
-    } else if (IS_LAYER_ON(_EDIT_OVERLAY)) {
-        oled_write_P(PSTR(" Macros\n"), false);
     } else if (IS_LAYER_ON(_STENO)) {
         oled_write_P(PSTR(" Steno.\n"), false);
     } else if (IS_LAYER_ON(_QWERTY)) {
@@ -3142,6 +3140,9 @@ void render_layout(void) {
             break;
         case _EDIT:
             oled_write_raw_P(menu_layout_edit, frame_size);
+            break;
+        case _EDIT_OVERLAY:
+            oled_write_raw_P(menu_layout_edit_overlay, frame_size);
             break;
         case _MOUSE:
             oled_write_raw_P(menu_layout_mouse, frame_size);
