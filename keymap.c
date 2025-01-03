@@ -498,6 +498,10 @@ bool is_magic(uint16_t keycode) {
     return ((keycode == CS_LT2) || (keycode == CS_RT2));
 }
 
+bool is_layer_tap(uint16_t keycode) {
+    return (keycode == CS_AL1 || keycode == CS_AL2 || keycode == CS_AL3 || keycode == CS_AL4);
+}
+
 bool is_bspc(uint16_t keycode) {
     return ((keycode == CS_RT1) || (keycode == KC_BSPC));
 }
@@ -508,6 +512,10 @@ bool is_spc(uint16_t keycode) {
 
 bool is_bracket_macro(uint16_t keycode) {
     return (keycode >= CS_NORM && keycode <= CS_BRCS);
+}
+
+bool is_bracket_wrap_macro(uint16_t keycode) {
+    return (keycode >= WORDCBR && keycode <= WORDBRC);
 }
 
 //==============================================================================
@@ -623,7 +631,7 @@ void matrix_scan_user(void) {
             alt_tab_active = false;
         }
     }
-    if (last_input_activity_elapsed() > 500) { // Reset delete tracking
+    if (last_input_activity_elapsed() > 500) { // Reset key tracking
         char_count = 1;
     }
     if (last_input_activity_elapsed() > 1000) { // Reset magic keys
@@ -1188,25 +1196,47 @@ void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
 }
 
 void rollback_last_key(void) {
-    if (!ctrl_on()) {
-        if (is_bracket_macro(last_key) && (char_count == 2)) {
-            tap_code(KC_RGHT);
-        }
-        for (int i = 1; i < char_count; i++) {
-            tap_code(KC_BSPC);
-        }
-    }
     char_count = 1;
 
     last_key = last_key_2;
     last_key_2 = last_key_3;
     last_key_3 = KC_NO;
-
     // dprintf("rolled back!\n");
     // dprintf("last_key:   %d\n", last_key);
     // dprintf("last_key_2: %d\n", last_key_2);
     // dprintf("last_key_3: %d\n", last_key_3);
     // dprintf("char_count: %d\n", char_count);
+}
+
+bool process_rollback(void) {
+    if (ctrl_on()) {
+        rollback_last_key();
+        return true;
+    }
+
+    if (is_bracket_wrap_macro(last_key) && (char_count == 2)) {
+        dprint("Rolled back bracket wrap macro");
+        const uint8_t mods = get_mods();
+        del_mods(MOD_MASK_CSAG);
+        tap_code(KC_BSPC);
+        tap_code16(LCTL(KC_LEFT));
+        tap_code(KC_BSPC);
+        tap_code16(LCTL(KC_RGHT));
+        set_mods(mods);
+        rollback_last_key();
+        return false;
+    }
+
+    if (is_bracket_macro(last_key) && (char_count == 2)) {
+        tap_code(KC_RGHT);
+    }
+
+    for (int i = 1; i < char_count; i++) {
+        tap_code(KC_BSPC);
+    }
+    rollback_last_key();
+
+    return true;
 }
 
 bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
@@ -1215,8 +1245,15 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         magic_override = false;
     }
 
-    // Ignore tracking if ctrl is on and reset rollback counter
-    if (ctrl_on()) {
+    // Ignore tracking if layer tap key is held
+    if (is_layer_tap(keycode)) {
+        if (!record->tap.count && record->event.pressed) {
+            return true;
+        }
+    }
+
+    // Ignore tracking if ctrl is on (apart from edit overlay layer) and reset rollback counter
+    if (ctrl_on() && IS_LAYER_OFF(_EDIT_OVERLAY)) {
         char_count = 1;
         return true;
     }
@@ -1294,30 +1331,27 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     }
 
     // Track bracket macros
-    if (is_bracket_macro(keycode)) {
+    if (is_bracket_macro(keycode) || is_bracket_wrap_macro(keycode)) {
         if (record->event.pressed) {
-            update_last_keys(KC_NO, 2);
+            update_last_keys(keycode, 2);
         }
         return true;
     }
     // Logic symbols tracked in normal key processing due to variable ouput length
-    // if (keycode == CS_CONJ || keycode == CS_DISJ) {
-    //     if (record->event.pressed) {
-    //         update_last_keys(KC_NO, 2);
-    //     }
-    //     return true;
-    // }
+    if (keycode == CS_CONJ || keycode == CS_DISJ) {
+        return true;
+    }
 
     // Handle deletes
     if (keycode == CS_RT1) {
         if (record->tap.count && record->event.pressed) {
-            rollback_last_key();
+            return process_rollback();
         }
         return true;
     }
     if (keycode == KC_BSPC) {
         if (record->event.pressed) {
-            rollback_last_key();
+            return process_rollback();
         }
         return true;
     }
@@ -1829,7 +1863,7 @@ void user_config_sync_handler(uint8_t initiator2target_buffer_size, const void* 
     if (initiator2target_buffer_size == sizeof(master_to_slave_t)) {
         memcpy(&sync_data, initiator2target_buffer, initiator2target_buffer_size);
     }
-}   
+}
 
 //==============================================================================
 // Events
@@ -1839,14 +1873,14 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
         case TABLSFT:
             if (record->event.pressed && !(get_mods() & MOD_BIT(KC_LSFT))) {
                 register_mods(MOD_BIT(KC_LSFT));
-                dprintf("Eager left shift on\n");
+                // dprintf("Eager left shift on\n");
                 left_eager_shift_on = true;
             }
             break;
         case TABRSFT:
             if (record->event.pressed && !(get_mods() & MOD_BIT(KC_RSFT))) {
                 register_mods(MOD_BIT(KC_RSFT));
-                dprintf("Eager right shift on\n");
+                // dprintf("Eager right shift on\n");
                 right_eager_shift_on = true;
             }
             break;

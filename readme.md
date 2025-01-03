@@ -277,8 +277,8 @@ Overrides activate only from left hand control key; home row mods are unaffected
 ![Edit Overlay](images/edit_overlay.png?raw=true)
 Activating the `Program` layer while on the `Edit` layer will activate the `Edit Overlay` layer on top (of the `Edit` layer). This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue. 
 
-This layer contains useful macros for text selection and deletion:
-- The three macros at the top enclose the current word with the listed brackets.
+This layer contains macros useful for text selection and deletion:
+- The three macros at the top enclose the current word with the listed brackets. These macros also interoperate with the rollback feature.
 - `DelLeft` and `DelRight` delete the previous/forward chararcters in current word.
 - `Select` macro by [Getreuer](https://getreuer.info/posts/keyboards/select-word/index.html) selects the current word and extends selection by one word per subsequent press; holding shift selects/extends selection by lines instead.
 - `DelLine` deletes the current line.
