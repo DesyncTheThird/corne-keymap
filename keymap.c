@@ -1368,6 +1368,7 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
 void send_the(void) {
     if (shifted()) {
         const uint8_t mods = get_mods();
+        del_mods(MOD_MASK_CSAG);
         add_mods(MOD_MASK_SHIFT);
         tap_code(KC_T);
         del_mods(MOD_MASK_SHIFT);
@@ -1392,9 +1393,12 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         }
 
         if (record->tap.count && record->event.pressed) {
+            const uint8_t mods = get_mods();
+            del_mods(MOD_MASK_CTRL);
             if (IS_LAYER_ON(_QWERTY)|| IS_LAYER_ON(_BASIC)) {
                 tap_code(last_key);
                 update_last_key(last_key);
+                set_mods(mods);
                 return false;
             }
 
@@ -1438,6 +1442,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
 
                 default: tap_code(last_key); update_last_key(last_key); break;
             }
+            set_mods(mods);
         }
         return false;
     }
@@ -1456,16 +1461,20 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         }
 
         if (record->tap.count && record->event.pressed) {
+            const uint8_t mods = get_mods();
+            del_mods(MOD_MASK_CTRL);
             if (magic_override) {
                 tap_code(KC_SPC);
                 update_last_key(KC_SPC);
                 magic_override = false;
+                set_mods(mods);
                 return false;
             }
 
             if (IS_LAYER_ON(_QWERTY)|| IS_LAYER_ON(_BASIC)) {
                 tap_code(last_key);
                 update_last_key(last_key);
+                set_mods(mods);
                 return false;
             }
 
@@ -1497,8 +1506,9 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
 
                 default: tap_code(last_key); update_last_key(last_key); break;
             }
-            return false;
+            set_mods(mods);
         }
+        return false;
     }
 
     return true;
