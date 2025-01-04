@@ -114,7 +114,6 @@ uint32_t quadrant_animation(uint32_t trigger_time, void *cb_arg) {
             break;
         default:
             delta = 0;
-            axis = centre;
             quadrant_animation_start = 0;
             break;
     }
@@ -130,7 +129,7 @@ bool process_quadrant(uint16_t keycode, keyrecord_t *record) {
             case MSQ_RST:
                 quadrant_cursor_init();
                 break;
-            case MSQ_LOCAL:
+            case MSQ_LOC:
                 quadrant_cursor.scale_x = QUADRANT_SCALE_LOCAL;
                 quadrant_cursor.scale_y = QUADRANT_SCALE_LOCAL;
                 break;

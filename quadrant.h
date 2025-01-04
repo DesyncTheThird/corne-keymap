@@ -9,7 +9,7 @@
 
 enum quadrant_keycodes {
     MSQ_RST = MS_ACL0,
-    MSQ_LOCAL = MS_ACL1,
+    MSQ_LOC = MS_ACL1,
     MSQ_DNC = MS_ACL2,
 
     MSQ_U = MS_UP,
