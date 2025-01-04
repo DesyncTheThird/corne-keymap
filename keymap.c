@@ -1330,15 +1330,21 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
 
-    // Track bracket macros
+    // Track various macros
     if (is_bracket_macro(keycode) || is_bracket_wrap_macro(keycode)) {
         if (record->event.pressed) {
             update_last_keys(keycode, 2);
         }
         return true;
     }
-    // Logic symbols tracked in normal key processing due to variable ouput length
     if (keycode == CS_CONJ || keycode == CS_DISJ) {
+        if (record->event.pressed) {
+            if (shifted()) {
+                update_last_keys(KC_NO, 2);
+            } else {
+                update_last_key(KC_NO);
+            }
+        }
         return true;
     }
 
@@ -2316,39 +2322,31 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case CS_CONJ:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
                 if (shifted()) {
-                    const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_CSAG);
                     tap_code16(KC_AMPR);
                     tap_code16(KC_AMPR);
-                    set_mods(mods);
-                    update_last_keys(KC_NO, 2);
                 } else {
-                    const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_CSAG);
                     tap_code16(KC_AMPR);
-                    set_mods(mods);
-                    update_last_key(KC_NO);
                 }
+                set_mods(mods);
             }
             break;
 
         case CS_DISJ:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
                 if (shifted()) {
-                    const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_CSAG);
                     tap_code16(LSFT(KC_NUBS));
                     tap_code16(LSFT(KC_NUBS));
-                    set_mods(mods);
-                    update_last_key(KC_NO);
                 } else {
-                    const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_CSAG);
                     tap_code16(LSFT(KC_NUBS));
-                    set_mods(mods);
-                    update_last_keys(KC_NO, 2);
                 }
+                set_mods(mods);
             }
             break;
 
