@@ -873,11 +873,11 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
         case CS_AL3:
             if (!record->tap.count && record->event.pressed) {
                 layer_on(_EDIT);
-                add_mods(MOD_BIT(KC_RCTL));
+                register_mods(MOD_BIT(KC_RCTL));
                 update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
             } else {
                 layer_off(_EDIT);
-                del_mods(MOD_BIT(KC_RCTL));
+                unregister_mods(MOD_BIT(KC_RCTL));
                 update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
             }
             if (record->tap.count && record->event.pressed) {
@@ -890,11 +890,11 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
         case CS_AL4:
             if (!record->tap.count && record->event.pressed) {
                 layer_on(_PROGRAM);
-                add_mods(MOD_BIT(KC_RCTL));
+                register_mods(MOD_BIT(KC_RCTL));
                 update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
             } else {
                 layer_off(_PROGRAM);
-                del_mods(MOD_BIT(KC_RCTL));
+                unregister_mods(MOD_BIT(KC_RCTL));
                 update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
             }
             if (record->tap.count && record->event.pressed) {
@@ -1389,7 +1389,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         } else if (!is_layer_locked(_EDIT)) {
             layer_off(_EDIT);
             layer_off(_EDIT_OVERLAY);
-            del_mods(MOD_BIT(KC_RCTL));
+            unregister_mods(MOD_BIT(KC_RCTL));
         }
 
         if (record->tap.count && record->event.pressed) {
@@ -1457,7 +1457,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 update_tri_layer(_DATA, _PROGRAM, _EDIT);
             }
             layer_off(_EDIT_OVERLAY);
-            del_mods(MOD_BIT(KC_RCTL));
+            unregister_mods(MOD_BIT(KC_RCTL));
         }
 
         if (record->tap.count && record->event.pressed) {
