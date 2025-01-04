@@ -4,18 +4,22 @@
 <img src="./images/left.gif" height="225"> <img src="./images/right.jpg" height="225"> <img src="./images/base display.png" height="225"> <img src="./images/edit display.png" height="225"> <img src="./images/waves.png" height="225"> <img src="./images/four-byte-burger.png" height="225">
 
 ---
-# Features
 
-- Base layer is a magic modded [graphite](https://github.com/rdavison/graphite-layout)/[gallium](https://github.com/GalileoBlues/Gallium) layout.
-- Many common symbols and punctuation are accessible through combos.
-- Home row mods on main layer.
+# Overview
+
+- [Base layer](#base) is a [magic](#dynamic-keys) modded [graphite](https://github.com/rdavison/graphite-layout)/[gallium](https://github.com/GalileoBlues/Gallium) layout. ([Alternative base layers](#alt-base-layer) available.)
+- Many common symbols and punctuation are accessible through [combos](#combos).
+- Home row mods selectively available on most layers.
 - [Achordion](https://getreuer.info/posts/keyboards/achordion/index.html) enabled with opposite hand triggers and typing streak detection for home row mod and `Repeat`/`Magic` layer-tap safety.
-- Control key overrides for easier left-hand only use; overrides disabled on home row mods.
-- Mouse emulation accessible on pinky key combo; movement keys in same position as arrow keys on navigation layer, scrolling underneath in vim layout.
-- Numpad and Steno (GeminiPR) layers accessible through combos.
+- [Rollback feature](#rollbacks) for magic outputs and macros.
+- [Mouse emulation](#mouse) accessible on pinky key combo; movement keys in same position as arrow keys on navigation layer, scrolling underneath in vim arrow layout.
+- Media control on [Utility layer](#utility).
+- [Control key overrides](#control-overlay) for easier left-hand only use; overrides disabled on home row mods.
+- Locking numpad and Steno (GeminiPR) layers accessible through combos.
 
 
 
+# Features
 ## Dynamic Keys
 
 ![Base](images/base.png?raw=true)
@@ -204,7 +208,7 @@ The `LCTL` key also sets a weak one shot `ctrl` modifier for the `Backspace` key
 ![Data](images/data.png?raw=true)
 Number grid with `1`, `2`, and `3` on right hand home row, along with common numerical separators on left hand, sharing similar layout to `Symbol` and `Program` layers.
 
-Arithmetic symbols on right hand share positions with combos, `-` not included as it is a home row combo; `@` is also available on this layer as many email handles end with numbers, and also because I use it as a leader key for LaTeX commands.
+Arithmetic symbols on right hand share positions with combos, `-` not included as it is a home row combo; `@` is also available on this layer as many email handles end with numbers, and also because I use it as a leader key for LaTeX commands; and `~` is available for git commands.
 
 The bracket macros `{}`, `()`, `[]` sends the listed brackets, then taps `Left`, placing the cursor between the two brackets. These macros also interact properly with the rollback feature.
 
@@ -219,6 +223,8 @@ Navigation/editing keys on left hand and paired delimiters and common symbol com
 Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `?()`; right hand also duplicated on Symbol and Program layers.
 
 Activating both `Data` and `Program` layers will activate the `Edit` layer on top to allow for quick navigation. This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
+
+See also the [Edit Overlay](#edit-overlay).
 
 
 
@@ -243,7 +249,7 @@ Brackets on right hand as above.
 ![Utility](images/utility.png?raw=true)
 Utility layer containing media control, RGB controls, OLED controls, function keys, and debug functions. Layer is accessible using either outer thumb key (XOR).
 
-The `Mute` thumb keys only activate on the hand opposite to the one holding the layer key to avoid accidental activations.
+The `Mute` thumb keys only activate on the hand opposite to the one holding the layer key to avoid accidental activations. The `Volume Up/Down` keys are macros that rapidly and repeatedly send the volume control keycodes for smooth volume control; holding shift sends the keycodes only once for finer control.
 
 `Base` swaps default layer to QWERTY layout; `Basic` swaps default layer to QWERTY layout with home row mods and `Space` layer-tap disabled (useful for games).
 
@@ -279,9 +285,9 @@ Activating the `Program` layer while on the `Edit` layer will activate the `Edit
 
 This layer contains macros useful for text selection and deletion:
 - The three macros at the top enclose the current word with the listed brackets. These macros also interoperate with the rollback feature.
-- `DelLeft` and `DelRight` delete the previous/forward chararcters in current word.
+- The left and right `Del` macros delete the previous/forward chararcters in current word.
 - `Select` macro by [Getreuer](https://getreuer.info/posts/keyboards/select-word/index.html) selects the current word and extends selection by one word per subsequent press; holding shift selects/extends selection by lines instead.
-- `DelLine` deletes the current line.
+- `< Del >` deletes the current line.
 - `DelWord` deletes the current word.
 
 The `LCTL` modifier is also held while this layer is active, and the `LSFT` modifier is additionally held for the `Home` and `End` keys.
@@ -335,3 +341,6 @@ See [here](https://docs.qmk.fm/squeezing_avr) for more ways to save space. (Most
    ```sh
    qmk compile -c -kb crkbd -km desync -e CONVERT_TO=rp2040_ce
    ```
+
+6. OS Setup:
+   - Regional layout: English (United Kingdom)
