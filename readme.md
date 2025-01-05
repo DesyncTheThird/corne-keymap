@@ -53,22 +53,22 @@ Right hand overrides:
 Other:
 |     |     |     |     |     |
 | --- | --- | --- | --- | --- |
-| `Non-alpha` | `⎵`         | `,`     | `.`   | `'`   |
-| `OSM Shift` | `OSM Shift` | `⎵AND⎵` | `COM` | `VE⎵` |
+| `Non-alpha` | `⎵`         | `,`     | `.`             | `'`   |
+| `OSM Shift` | `OSM Shift` | `⎵AND⎵` | `⎵`+`OSM Shift` | `VE⎵` |
 
 ### Repeat Key
 
 Right hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev   | `J`   | `F` | `O` | `U` | `Y` | `H` | `E` | `I` | `A` | `K` | `P` |
-| Repeat | `UST` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `A` | `Y` | `H` |
+| Prev   | `J`   | `F` | `O` | `U` | `Y` | `H` | `E` | `I` | `A`   | `K` | `P` |
+| Repeat | `UST` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `ND⎵` | `Y` | `H` |
 
 Left hand overrides:
-|     |     |     |
-| --- | --- | --- |
-| Prev   | `V`  | `W`   |
-| Repeat | `ER` | `ITH` |
+|     |     |     |     |
+| --- | --- | --- | --- |
+| Prev   | `X`  | `V`  | `W`   |
+| Repeat | `ES` | `ER` | `ITH` |
 
 (Other left hand keys are repeated.)
 
@@ -76,9 +76,9 @@ Other:
 |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- |
 | `Magic`* | `Non-alpha` | `⎵`   | `,`     | `.`   | `'`   |
-| `⎵`     | `THE`       | `THE` | `⎵BUT⎵` | `COM` | `RE⎵` |
+| `⎵`      | `THE`       | `THE` | `⎵BUT⎵` | `COM` | `RE⎵` |
 
-*Unless the previous magic output already ended with a space, in which case the repeat key will default to the `Non-alpha` state.
+*Unless the previous magic output already ended with a space, in which case the repeat key will default to the `Non-alpha` state; or if the previous magic output was a basic repeat (`F`, `K`, and `P`), in which case the repeat key will treat the magic key as an ordinary alpha key.
 
 ---
 ### Details

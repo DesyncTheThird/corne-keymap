@@ -1387,6 +1387,12 @@ void send_the(void) {
     update_last_keys(KC_E,3);
 }
 
+void start_sentence(void) {
+    tap_code(KC_SPC);
+    set_oneshot_mods(MOD_BIT(KC_LSFT));
+    update_last_key(KC_SPC);
+}
+
 bool process_magic(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_LT2) {
         if (!record->tap.count && record->event.pressed) {
@@ -1443,10 +1449,10 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_NO:
                 case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); magic_override = false; break;
                 case KC_COMM: SEND_STRING(" and "); update_last_keys(KC_SPC, 4); magic_override = false; break;
-                case KC_DOT: SEND_STRING("com"); update_last_keys(KC_NO, 3); break;
+                case KC_DOT: start_sentence(); magic_override = false; break;
                 case KC_QUOT: SEND_STRING("ve "); update_last_keys(KC_SPC, 3); magic_override = false; break;
 
-                default: tap_code(last_key); update_last_key(last_key); break;
+                default: tap_code(last_key); update_last_key(last_key); magic_override = false; break;
             }
             set_mods(mods);
         }
@@ -1495,12 +1501,13 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_H: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_E: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_I: tap_code(KC_U); update_last_key(KC_U); break;
-                case KC_A: tap_code(KC_A); update_last_key(KC_A); break;
+                case KC_A: SEND_STRING("nd "); update_last_keys(KC_SPC, 3); break;
 
                 case KC_K: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_P: tap_code(KC_H); update_last_key(KC_H); break;
 
                 // Left hand overrides
+                case KC_X: SEND_STRING(/*x*/"es"); update_last_keys(KC_S, 2); break;
                 case KC_V: SEND_STRING(/*v*/"er"); update_last_keys(KC_R, 2); break;
                 case KC_W: SEND_STRING(/*w*/"ith"); update_last_keys(KC_H, 3); break;
 
