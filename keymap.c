@@ -1604,6 +1604,7 @@ bool process_lingering_mods(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 ctrl_linger = true;
                 defer_exec(500, ctrl_linger_callback, NULL);
+                clear_oneshot_mods();
             }
             return true;
         }

@@ -129,9 +129,9 @@ timeout managed manually in keymap instead.
 #undef MOUSEKEY_MOVE_DELTA
 #define MOUSEKEY_MOVE_DELTA        1
 #undef MOUSEKEY_MAX_SPEED
-#define MOUSEKEY_MAX_SPEED         20
+#define MOUSEKEY_MAX_SPEED         32
 #undef MOUSEKEY_TIME_TO_MAX
-#define MOUSEKEY_TIME_TO_MAX       80
+#define MOUSEKEY_TIME_TO_MAX       60
 #undef MOUSEKEY_WHEEL_DELAY
 #define MOUSEKEY_WHEEL_DELAY       0
 #undef MOUSEKEY_WHEEL_INTERVAL
