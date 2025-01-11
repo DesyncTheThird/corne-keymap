@@ -1426,7 +1426,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
 
                 case KC_N: SEND_STRING(/*n*/"'t "); update_last_keys(KC_SPC, 3); magic_override = false; break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
-                case KC_T: SEND_STRING(/*t*/"ion"); update_last_keys(KC_N, 3); break;
+                case KC_T: SEND_STRING(/*t*/"ment"); update_last_keys(KC_N, 3); break;
                 case KC_S: tap_code(KC_C); update_last_key(KC_C); break;
                 case KC_G: tap_code(KC_S); update_last_key(KC_S); break;
 
