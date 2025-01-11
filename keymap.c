@@ -419,6 +419,7 @@ bool muted = false;
 
 uint16_t boot_timer;
 bool boot = false;
+deferred_token boot_animation_token = INVALID_DEFERRED_TOKEN;
 
 uint8_t set_rgb_mode = 5;
 
@@ -1732,6 +1733,23 @@ bool process_vol_repeat(uint16_t keycode, keyrecord_t* record) {
 
 
 
+bool process_boot_anim(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) {
+        case CS_LT3:
+        case CS_LT2:
+        case CS_LT1:
+        case CS_RT1:
+        case CS_RT2:
+        case CS_RT3:
+            if (!record->tap.count && record->event.pressed) {
+                cancel_deferred_exec(boot_animation_token);
+            }
+    }
+    return true;
+}
+
+
+
 //==============================================================================
 // Clock
 //==============================================================================
@@ -1923,6 +1941,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_select_word(keycode, record, SELECT)) { return false; }
     if (!process_vol_repeat(keycode, record)) { return false; }
     if (!process_clock(keycode, record)) { return false; }
+    if (!process_boot_anim(keycode, record)) { return false; }
 
     switch (keycode) {
 
@@ -3457,7 +3476,7 @@ void keyboard_post_init_user(void) {
     rgb_matrix_sethsv_noeeprom(255,255,255);
     rgb_matrix_mode_noeeprom(RGB_MATRIX_BAND_VAL);
 
-    defer_exec(5200, boot_animation_fade, NULL);
+    boot_animation_token = defer_exec(5200, boot_animation_fade, NULL);
 
     // Clock
     defer_exec(clock_callback(0,NULL), clock_callback, NULL);
