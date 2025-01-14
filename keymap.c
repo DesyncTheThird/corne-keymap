@@ -120,7 +120,7 @@ enum custom_keycodes {
 // Edit overlay keys
 #define DELLEFT RSFT_T(KC_BSPC)
 #define DELRGHT RALT_T(KC_DEL)
-#define DELWRDM RGUI_T(KC_DEL)
+#define MT_DEL  RGUI_T(KC_DEL)
 #define SELECT  RCTL_T(KC_INS)
 #define EO_UP   LCTL(KC_UP)
 #define EO_DOWN LCTL(KC_DOWN)
@@ -332,9 +332,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, EO_HOME,   EO_UP,  EO_END, _______,                       KC_ESC, WORDCBR, WORDPRN, WORDBRC, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, _______, EO_LEFT, EO_DOWN, EO_RGHT,  EO_DEL,                      DELLINE, DELLEFT,  SELECT, DELRGHT, DELWRDM, _______,
+          _______, _______, EO_LEFT, EO_DOWN, EO_RGHT,  EO_DEL,                      KC_BSPC, DELLEFT,  SELECT, DELRGHT,  MT_DEL, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, _______, EO_PGUP, EO_PGDN, _______, _______,                          CUT,    COPY,   PASTE,    REDO,    UNDO, _______,
+          _______, _______, EO_PGUP, EO_PGDN, _______, _______,                          CUT,   PASTE,    COPY,    REDO,    UNDO, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -2043,22 +2043,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_CSAG);
                 tap_code16(LCTL(KC_DEL));
-                set_mods(mods);
-            }
-            return false;
-        case DELWRDM:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RGUI));
-            } else {
-                unregister_mods(MOD_BIT(KC_RGUI));
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_RGHT);
-                add_mods(MOD_MASK_CTRL);
-                tap_code(KC_LEFT);
-                tap_code(KC_DEL);
                 set_mods(mods);
             }
             return false;
