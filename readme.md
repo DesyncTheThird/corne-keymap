@@ -286,11 +286,9 @@ Activating the `Program` layer while on the `Edit` layer will activate the `Edit
 This layer contains macros useful for text selection and deletion:
 - The three macros at the top enclose the current word with the listed brackets. These macros also interoperate with the rollback feature.
 - The `< Del` and `Del >` macros delete the previous and forward characters in current word, respectively.
-- `Select` macro by [Getreuer](https://getreuer.info/posts/keyboards/select-word/index.html) selects the current word and extends selection by one word per subsequent press; holding shift selects/extends selection by lines instead.
-- `< Del >` deletes the current line.
-- `DelWord` deletes the current word.
+- `Select` macro selects the current word, or select the current line if shifted.
 
-The `LCTL` modifier is also held while this layer is active, and the `LSFT` modifier is additionally held for the `Home` and `End` keys.
+The `LCTL` modifier is also held for the keys listed on the left while this layer is active, apart from the `Home` and `End` keys, for which the `LSFT` modifier is held instead.
 
 
 
