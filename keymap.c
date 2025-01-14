@@ -133,22 +133,22 @@ enum custom_keycodes {
 // Home row mods
 #define MT_A LGUI_T(KC_A)
 #define MT_S LALT_T(KC_S)
-#define MT_D LSFT_T(KC_D)
-#define MT_F LCTL_T(KC_F)
+#define MT_D LCTL_T(KC_D)
+#define MT_F LSFT_T(KC_F)
 
-#define MT_J RCTL_T(KC_J)
-#define MT_K RSFT_T(KC_K)
+#define MT_J RSFT_T(KC_J)
+#define MT_K RCTL_T(KC_K)
 #define MT_L LALT_T(KC_L)
 #define MT_SCLN RGUI_T(KC_SCLN)
 
 // Alt layout home row mods
 #define MTA_N LGUI_T(KC_N)
 #define MTA_R LALT_T(KC_R)
-#define MTA_T LSFT_T(KC_T)
-#define MTA_S LCTL_T(KC_S)
+#define MTA_T LCTL_T(KC_T)
+#define MTA_S LSFT_T(KC_S)
 
-#define MTA_H RCTL_T(KC_H)
-#define MTA_E RSFT_T(KC_E)
+#define MTA_H RSFT_T(KC_H)
+#define MTA_E RCTL_T(KC_E)
 #define MTA_I LALT_T(KC_I)
 #define MTA_A RGUI_T(KC_A)
 
@@ -163,15 +163,15 @@ enum custom_keycodes {
 #define MT_MINS LT(0,CS_MINS)
 #define MT_EQL  LT(0,CS_EQL)
 
-#define MT_1 RCTL_T(KC_1)
-#define MT_2 RSFT_T(KC_2)
+#define MT_1 RSFT_T(KC_1)
+#define MT_2 RCTL_T(KC_2)
 #define MT_3 LALT_T(KC_3)
 #define MT_0 LGUI_T(KC_0)
 
 #define MT_PIPE LGUI_T(KC_PIPE)
 #define MT_COLN LALT_T(KC_COLN)
-#define MT_DOT  LSFT_T(KC_DOT)
-#define MT_COMM LCTL_T(KC_COMM)
+#define MT_DOT LCTL_T(KC_DOT)
+#define MT_COMM LSFT_T(KC_COMM)
 
 // Layer keys
 #define CS_LT3 LT(_UTILITY,KC_ENT)
@@ -2609,9 +2609,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case MT_LPRN:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RSFT));
+                register_mods(MOD_BIT(KC_RCTL));
             } else {
-                unregister_mods(MOD_BIT(KC_RSFT));
+                unregister_mods(MOD_BIT(KC_RCTL));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -2623,9 +2623,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case MT_RPRN:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RCTL));
+                register_mods(MOD_BIT(KC_RSFT));
             } else {
-                unregister_mods(MOD_BIT(KC_RCTL));
+                unregister_mods(MOD_BIT(KC_RSFT));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -2668,9 +2668,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case MT_MINS:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LSFT));
+                register_mods(MOD_BIT(KC_LCTL));
             } else {
-                unregister_mods(MOD_BIT(KC_LSFT));
+                unregister_mods(MOD_BIT(KC_LCTL));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -2682,9 +2682,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case MT_EQL:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LCTL));
+                register_mods(MOD_BIT(KC_LSFT));
             } else {
-                unregister_mods(MOD_BIT(KC_LCTL));
+                unregister_mods(MOD_BIT(KC_LSFT));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -2723,9 +2723,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             return false;
         case MT_DOT:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LSFT));
+                register_mods(MOD_BIT(KC_LCTL));
             } else {
-                unregister_mods(MOD_BIT(KC_LSFT));
+                unregister_mods(MOD_BIT(KC_LCTL));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -2736,9 +2736,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             return false;
         case MT_COMM:
             if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LCTL));
+                register_mods(MOD_BIT(KC_LSFT));
             } else {
-                unregister_mods(MOD_BIT(KC_LCTL));
+                unregister_mods(MOD_BIT(KC_LSFT));
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -3121,32 +3121,32 @@ void render_modifier_state(uint8_t line) {
         oled_write_char(164,false);
     }
     oled_set_cursor(4,line);
-    if ((get_mods() & MOD_MASK_SHIFT) || oneshot_shift_on) {
-        oled_write_char(141,false);
-        oled_write_char(142,false);
-        oled_set_cursor(4,line+1);
-        oled_write_char(173,false);
-        oled_write_char(174,false);
-    } else {
-        oled_write_char(133,false);
-        oled_write_char(134,false);
-        oled_set_cursor(4,line+1);
-        oled_write_char(165,false);
-        oled_write_char(166,false);
-    }
-    oled_set_cursor(6,line);
     if (get_mods() & MOD_MASK_CTRL) {
         oled_write_char(143,false);
         oled_write_char(144,false);
-        oled_set_cursor(6,line+1);
+        oled_set_cursor(4,line+1);
         oled_write_char(175,false);
         oled_write_char(176,false);
     } else {
         oled_write_char(135,false);
         oled_write_char(136,false);
-        oled_set_cursor(6,line+1);
+        oled_set_cursor(4,line+1);
         oled_write_char(167,false);
         oled_write_char(168,false);
+    }
+    oled_set_cursor(6,line);
+    if ((get_mods() & MOD_MASK_SHIFT) || oneshot_shift_on) {
+        oled_write_char(141,false);
+        oled_write_char(142,false);
+        oled_set_cursor(6,line+1);
+        oled_write_char(173,false);
+        oled_write_char(174,false);
+    } else {
+        oled_write_char(133,false);
+        oled_write_char(134,false);
+        oled_set_cursor(6,line+1);
+        oled_write_char(165,false);
+        oled_write_char(166,false);
     }
     oled_set_cursor(8,line);
     oled_write_char(145,false);
