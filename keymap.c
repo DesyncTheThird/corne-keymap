@@ -433,7 +433,11 @@ bool ctrl_on(void) {
 }
 
 bool shifted(void) {
-    return ((get_mods() & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT) || (get_mods() & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT));
+    return ((get_mods() & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT)
+         || (get_mods() & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)
+         || (get_oneshot_mods() & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT)
+         || (get_oneshot_mods() & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)
+         );
 }
 
 bool is_alpha(uint16_t keycode) {
