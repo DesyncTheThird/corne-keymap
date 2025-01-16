@@ -1413,6 +1413,10 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         }
 
         if (record->tap.count && record->event.pressed) {
+            if (!is_layer_locked(_EDIT)) {
+                layer_lock_off(_EDIT);
+                return false;
+            }
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_CTRL);
             if (IS_LAYER_ON(_QWERTY)|| IS_LAYER_ON(_BASIC)) {
