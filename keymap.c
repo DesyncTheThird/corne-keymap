@@ -1409,7 +1409,6 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         } else if (!is_layer_locked(_EDIT)) {
             layer_off(_EDIT);
             layer_off(_EDIT_OVERLAY);
-            unregister_mods(MOD_BIT(KC_RCTL));
         }
 
         if (record->tap.count && record->event.pressed) {
@@ -1481,7 +1480,6 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 update_tri_layer(_DATA, _PROGRAM, _EDIT);
             }
             layer_off(_EDIT_OVERLAY);
-            unregister_mods(MOD_BIT(KC_RCTL));
         }
 
         if (record->tap.count && record->event.pressed) {
