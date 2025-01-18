@@ -1412,7 +1412,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         }
 
         if (record->tap.count && record->event.pressed) {
-            if (!is_layer_locked(_EDIT)) {
+            if (is_layer_locked(_EDIT)) {
                 layer_lock_off(_EDIT);
                 return false;
             }
