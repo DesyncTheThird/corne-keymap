@@ -216,6 +216,7 @@ enum custom_keycodes {
 // Other
 #define NXT_TAB LCTL(KC_PGDN)
 #define PRV_TAB LCTL(KC_PGUP)
+#define OSMLSFT OSM(MOD_LSFT)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASIC] = LAYOUT( //3
@@ -277,14 +278,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                STN_FN,   STN_A,   STN_O,      STN_E,   STN_U, STN_PWR
                                           //`--------------------------'  `--------------------------'
     ),
-
+    
     [_DATA] = LAYOUT( //5
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                        CS_AT,    KC_7,    KC_8,    KC_9, CS_TILD,  KC_DEL,
+          _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, MT_PIPE, MT_COLN,  MT_DOT, MT_COMM, CS_PERC,                      CS_PLUS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
+          OSMLSFT, MT_PIPE, MT_COLN,  MT_DOT, MT_COMM, CS_PRNS,                      CS_PLUS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_NORM, CS_CBRS, CS_PRNS, CS_BRCS, CS_POUN,                      CS_ASTR,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
+          KC_LCTL, CS_TILD, CS_UNDS, CS_ASTR, CS_CIRC, CS_BRCS,                      CS_MINS,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    KC_BSPC,  CS_AL1, CS_SLSH
                                           //`--------------------------'  `--------------------------'
@@ -1960,10 +1961,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CS_BRCS:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CS);
-                tap_code(KC_LBRC);
-                tap_code(KC_RBRC);
-                tap_code(KC_LEFT);
+                if (shifted()) {
+                    del_mods(MOD_MASK_CS);
+                    tap_code16(KC_LCBR);
+                    tap_code16(KC_RCBR);
+                    tap_code(KC_LEFT);
+                } else {
+                    del_mods(MOD_MASK_CS);
+                    tap_code(KC_LBRC);
+                    tap_code(KC_RBRC);
+                    tap_code(KC_LEFT);
+                }
                 set_mods(mods);
             }
             break;
