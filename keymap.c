@@ -732,6 +732,9 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case MTA_A:
             return 250;
 
+        case OSMLSFT:
+            return 300;
+
         default:
             return TAPPING_TERM;
     }
