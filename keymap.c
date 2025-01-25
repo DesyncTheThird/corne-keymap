@@ -445,14 +445,14 @@ bool right_eager_shift_on = false;
 bool nav_activated = false;
 
 bool ctrl_on(void) {
-    return ((get_mods() & MOD_BIT(KC_LCTL)) == MOD_BIT(KC_LCTL) || (get_mods() & MOD_BIT(KC_RCTL)) == MOD_BIT(KC_RCTL));
+    return (get_mods() & MOD_BIT(KC_LCTL) || get_mods() & MOD_BIT(KC_RCTL));
 }
 
 bool shifted(void) {
-    return ((get_mods() & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT)
-         || (get_mods() & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)
-         || (get_oneshot_mods() & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT)
-         || (get_oneshot_mods() & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)
+    return (get_mods() & MOD_BIT(KC_LSFT)
+         || get_mods() & MOD_BIT(KC_RSFT)
+         || get_oneshot_mods() & MOD_BIT(KC_LSFT)
+         || get_oneshot_mods() & MOD_BIT(KC_RSFT)
          );
 }
 
@@ -825,8 +825,13 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
 
 uint16_t achordion_streak_chord_timeout( uint16_t tap_hold_keycode, uint16_t next_keycode) {
     uint8_t mod = mod_config(QK_MOD_TAP_GET_MODS(tap_hold_keycode));
-    if ((next_keycode == CS_LCTL) || (next_keycode == KC_LCTL) || (next_keycode == KC_LSFT) || (next_keycode == TABLSFT) || (next_keycode == TABRSFT)) {
-        return 0;
+    switch (next_keycode) {
+        case CS_LCTL:
+        case KC_LCTL:
+        case KC_LSFT:
+        case TABLSFT:
+        case TABRSFT:
+            return 0;
     }
     if (is_magic(tap_hold_keycode)) {
         return 75;
@@ -3345,122 +3350,89 @@ bool oled_task_user(void) {
 // RGB
 //==============================================================================
 
+
+// Wrapper around rgb_matrix_set_color to correct for split detection with MASTER_RIGHT defined
+void rgb_matrix_set_color_split(uint8_t index, uint8_t r, uint8_t g, uint8_t b) {
+    if ((!is_keyboard_master() && index < 27) || (is_keyboard_master() && index >= 27)) {
+        rgb_matrix_set_color(index, r, g, b);
+    }
+}
+
+
+
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     // if (boot || sync_data.boot_sync) {
     //     return false;
     // }
 
-    // int arrows[4] = { 17, 19, 16, 11 };
+    int arrows[4] = { 17, 19, 16, 11 };
     int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
-    
-    // HSV arrow_hsv = (HSV){ 169, 255, 255 };
-    // RGB arrow_rgb = hsv_to_rgb(arrow_hsv);
+
+    HSV arrow_hsv = (HSV){ 169, 255, 255 };
+    RGB arrow_rgb = hsv_to_rgb(arrow_hsv);
 
     HSV underglow_hsv = (HSV){ 0, 0, 0 };
     RGB underglow_rgb = hsv_to_rgb(underglow_hsv);
 
-    for (uint8_t i = 0; i < 12; i++) {
-        switch (get_highest_layer(layer_state|default_layer_state)) {
-            case _PROGRAM:
-                underglow_hsv = (HSV){ 85, 255, 255 };
-                underglow_rgb = hsv_to_rgb(underglow_hsv);
-                rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-                break;
-            case _DATA:
-                underglow_hsv = (HSV){ 127, 255, 255 };
-                underglow_rgb = hsv_to_rgb(underglow_hsv);
-                rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-                break;
-            case _EDIT:
-                underglow_hsv = (HSV){ 0, 255, 255 };
-                underglow_rgb = hsv_to_rgb(underglow_hsv);
-                rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-                break;
-            case _SYMBOL:
-                underglow_hsv = (HSV){ 169, 255, 255 };
-                underglow_rgb = hsv_to_rgb(underglow_hsv);
-                rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-                break;
-            case _MOUSE:
-                underglow_hsv = (HSV){ 222, 255, 255 };
-                underglow_rgb = hsv_to_rgb(underglow_hsv);
-                rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-                break;
-            case _NUMPAD:
-                underglow_hsv = (HSV){ 43, 255, 255 };
-                underglow_rgb = hsv_to_rgb(underglow_hsv);
-                rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-                break;
-            case _UTILITY:
-                underglow_hsv = (HSV){ 201, 255, 255 };
-                underglow_rgb = hsv_to_rgb(underglow_hsv);
-                rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-                break;
-            case _TOUHOU:
-                // for (uint8_t i = 0; i < 4; i++) {
-                //     rgb_matrix_set_color(arrows[i], arrow_rgb.r, arrow_rgb.g, arrow_rgb.b);
-                // }
-                // break;
-            case _BASIC:
-            default:
-                break;
-        }
+    switch (get_highest_layer(layer_state|default_layer_state)) {
+        case _PROGRAM:
+            underglow_hsv = (HSV){ 85, 255, 255 };
+            underglow_rgb = hsv_to_rgb(underglow_hsv);
+            for (uint8_t i = 0; i < 12; i++) {
+                rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+            }
+            break;
+        case _DATA:
+            underglow_hsv = (HSV){ 127, 255, 255 };
+            underglow_rgb = hsv_to_rgb(underglow_hsv);
+            for (uint8_t i = 0; i < 12; i++) {
+                rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+            }
+            break;
+        case _EDIT:
+            underglow_hsv = (HSV){ 0, 255, 255 };
+            underglow_rgb = hsv_to_rgb(underglow_hsv);
+            for (uint8_t i = 0; i < 12; i++) {
+                rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+            }
+            break;
+        case _SYMBOL:
+            underglow_hsv = (HSV){ 169, 255, 255 };
+            underglow_rgb = hsv_to_rgb(underglow_hsv);
+            for (uint8_t i = 0; i < 12; i++) {
+                rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+            }
+            break;
+        case _MOUSE:
+            underglow_hsv = (HSV){ 222, 255, 255 };
+            underglow_rgb = hsv_to_rgb(underglow_hsv);
+            for (uint8_t i = 0; i < 12; i++) {
+                rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+            }
+            break;
+        case _NUMPAD:
+            underglow_hsv = (HSV){ 43, 255, 255 };
+            underglow_rgb = hsv_to_rgb(underglow_hsv);
+            for (uint8_t i = 0; i < 12; i++) {
+                rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+            }
+            break;
+        case _UTILITY:
+            underglow_hsv = (HSV){ 201, 255, 255 };
+            underglow_rgb = hsv_to_rgb(underglow_hsv);
+            for (uint8_t i = 0; i < 12; i++) {
+                rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+            }
+            break;
+        case _TOUHOU:
+            for (uint8_t i = 0; i < 4; i++) {
+                rgb_matrix_set_color_split(arrows[i], arrow_rgb.r, arrow_rgb.g, arrow_rgb.b);
+            }
+            break;
+        case _BASIC:
+        default:
+            break;
     }
-
-    // if (get_mods() == 0) {
-    //     rgb_matrix_sethsv_noeeprom(255,255,225);
-    // } else {
-    //     rgb_matrix_sethsv_noeeprom(255,255,255);
-    // }
-
-    // Thumbkeys
-    // HSV mod_hsv = (HSV){ 0, 0, 0 };
-    // RGB mod_rgb = hsv_to_rgb(mod_hsv);
-    // int idxs[3] = { 33, 40, 41 };
-    // for (uint8_t i = 0; i < 3; i++) {
-    //     if ((get_mods() & MOD_BIT(KC_LGUI)) == MOD_BIT(KC_LGUI) || (get_mods() & MOD_BIT(KC_RGUI)) == MOD_BIT(KC_RGUI)) {
-    //         mod_hsv = (HSV){ 000, 255, 128 };
-    //         mod_rgb = hsv_to_rgb(mod_hsv);
-    //         rgb_matrix_set_color(idxs[i], mod_rgb.r, mod_rgb.g, mod_rgb.b);
-    //         rgb_matrix_set_color(idxs[i]-27, mod_rgb.r, mod_rgb.g, mod_rgb.b);
-    //     }
-    //     if ((get_mods() & MOD_BIT(KC_LALT)) == MOD_BIT(KC_LALT) || (get_mods() & MOD_BIT(KC_RALT)) == MOD_BIT(KC_RALT)) {
-    //         mod_hsv = (HSV){ 201, 255, 128 };
-    //         mod_rgb = hsv_to_rgb(mod_hsv);
-    //         rgb_matrix_set_color(idxs[i], mod_rgb.r, mod_rgb.g, mod_rgb.b);
-    //         rgb_matrix_set_color(idxs[i]-27, mod_rgb.r, mod_rgb.g, mod_rgb.b);
-    //     }
-    //     if ((get_mods() & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT) || (get_mods() & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
-    //         mod_hsv = (HSV){ 127, 255, 96 };
-    //         mod_rgb = hsv_to_rgb(mod_hsv);
-    //         rgb_matrix_set_color(idxs[i], mod_rgb.r, mod_rgb.g, mod_rgb.b);
-    //         rgb_matrix_set_color(idxs[i]-27, mod_rgb.r, mod_rgb.g, mod_rgb.b);
-
-    //     }
-    //     if ((get_mods() & MOD_BIT(KC_LCTL)) == MOD_BIT(KC_LCTL) || (get_mods() & MOD_BIT(KC_RCTL)) == MOD_BIT(KC_RCTL)) {
-    //         mod_hsv = (HSV){ 169, 255, 128 };
-    //         mod_rgb = hsv_to_rgb(mod_hsv);
-    //         rgb_matrix_set_color(idxs[i], mod_rgb.r, mod_rgb.g, mod_rgb.b);
-    //         rgb_matrix_set_color(idxs[i]-27, mod_rgb.r, mod_rgb.g, mod_rgb.b);
-    //     }
-    // }
-
-    // Modifiers
-    // if ((get_mods() & MOD_BIT(KC_LGUI)) == MOD_BIT(KC_LGUI) || (get_mods() & MOD_BIT(KC_RGUI)) == MOD_BIT(KC_RGUI)) {
-    //     rgb_matrix_set_color(33, RGB_BLUE);
-    // }
-    // if ((get_mods() & MOD_BIT(KC_LALT)) == MOD_BIT(KC_LALT) || (get_mods() & MOD_BIT(KC_RALT)) == MOD_BIT(KC_RALT)) {
-    //     rgb_matrix_set_color(40, RGB_PURPLE);
-
-    // }
-    // if ((get_mods() & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT) || (get_mods() & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
-    //     rgb_matrix_set_color(41, RGB_PINK);
-
-    // }
-    // if ((get_mods() & MOD_BIT(KC_LCTL)) == MOD_BIT(KC_LCTL) || (get_mods() & MOD_BIT(KC_RCTL)) == MOD_BIT(KC_RCTL)) {
-    //     rgb_matrix_set_color(41, RGB_PINK);
-    // }
-
     return false;
 }
 //  ,-----------------------.           ,-----------------------.

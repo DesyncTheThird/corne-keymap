@@ -148,7 +148,7 @@ Key on utility layer available to change both OLEDs to static images.
 - Common punctuation is accessible from combos on or near home row;
 - Mouse emulation layer accessible on pinky key combos to allow mouse control without moving from home row.
 - Uncommon locking layers (numpad/steno) also accessible from large combos;
-- `New` combo presses `DOT`, `SPC`, then sets a one shot shift (same as `Newsent` key);
+- `New` combo presses `DOT`, `SPC`, then sets a one shot shift;
 - `Del` combo deletes the current word;
 - `<<` combo presses `M4` (`Back`); `>>` combo presses `M5` (`Forward`);
 - `Join` combo joins current line to following line with space between; does not add space if shifted;
@@ -199,8 +199,6 @@ I find it difficult to press upper row keys with my pinkies and end up alt finge
 `Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together or omitted, as they accessible from combos near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a LaTeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/(reverse) leader key.
 
 A copy of `Tab` is placed on the right hand to reduce left hand contortions. The two `Tab` keys also function as `LShift` and `RShift` when held. The shift modifiers are applied eagerly on keydown to improve interaction with pointing devices; these eager shift modifiers do not overwrite home row mods, so you can still shift-tab with one hand.
-
-`New Sentence` macro sends a dot, a space, then sets a one shot shift.
 
 The `LCTL` key also sets a weak one shot `ctrl` modifier for the `Backspace` key only to allow for faster usage while typing. The one shot modifier lingers for 500ms and is removed on any other keypress (without being applied).
 
