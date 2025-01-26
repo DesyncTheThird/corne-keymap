@@ -322,7 +322,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LCTL, CS_CIRC, CS_SLSH, CS_ASTR, CS_HASH, CS_TILD,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              CS_UNDS,  CS_AL3, _______,    _______, _______, _______
+                                              CS_SLSH,  CS_AL3, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -913,7 +913,7 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_SCLN);
+                tap_code16(KC_UNDS);
                 set_mods(mods);
             }
             return false;
