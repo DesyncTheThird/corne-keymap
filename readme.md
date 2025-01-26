@@ -208,7 +208,7 @@ Number grid with `1`, `2`, and `3` on right hand home row, along with common num
 
 Arithmetic symbols on right hand share positions with combos, `-` not included as it is a home row combo; `@` is also available on this layer as many email handles end with numbers, and also because I use it as a leader key for LaTeX commands; and `~` is available for git commands.
 
-The bracket macros `{}`, `()`, `[]` sends the listed brackets, then taps `Left`, placing the cursor between the two brackets. These macros also interact properly with the rollback feature.
+The bracket macros `(-)` and `[-]` sends the listed brackets, then taps `Left`, placing the cursor between the two brackets. The `[-]` macro is shiftable. These macros also interact properly with the rollback feature.
 
 Function keys also available for left hand only usage.
 

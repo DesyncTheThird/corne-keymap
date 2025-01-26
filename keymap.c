@@ -1,5 +1,6 @@
 #include QMK_KEYBOARD_H
 #include "print.h"
+#include "version.h"
 
 // #include "ps2_mouse.h"
 // #include "ps2.h"
@@ -56,6 +57,8 @@ enum custom_keycodes {
     CS_F3,
     CS_F4,
     CS_F5,
+
+    DB_INFO,
 
     // Custom Symbols
     COM_DOT,
@@ -223,7 +226,7 @@ enum custom_keycodes {
 #define NXT_TAB LCTL(KC_PGDN)
 #define PRV_TAB LCTL(KC_PGUP)
 #define OSMLSFT OSM(MOD_LSFT)
-#define OSLPROG OSL(_PROGRAM)
+#define OSLDATA OSL(_DATA)
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -233,7 +236,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_DOT, QUE_EXL, OSLPROG,
+          KC_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_DOT, QUE_EXL, OSLDATA,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  KC_SPC,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -245,7 +248,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    MT_A,    MT_S,    MT_D,    MT_F,    KC_G,                         KC_H,    MT_J,    MT_K,    MT_L, MT_SCLN, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_DOT, QUE_EXL, OSLPROG,
+          CS_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_DOT, QUE_EXL, OSLDATA,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -257,7 +260,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           TABLSFT,   MTA_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,   MTA_A, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Q,    KC_X,    KC_M,    KC_W,    KC_V,                         KC_K,    KC_P, KC_QUOT, COM_DOT, QUE_EXL, OSLPROG,
+          CS_LCTL,    KC_Q,    KC_X,    KC_M,    KC_W,    KC_V,                         KC_K,    KC_P, KC_QUOT, COM_DOT, QUE_EXL, OSLDATA,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -286,7 +289,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                STN_FN,   STN_A,   STN_O,      STN_E,   STN_U, STN_PWR
                                           //`--------------------------'  `--------------------------'
     ),
-    
+
     [_DATA] = LAYOUT( //5
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______,   CS_F1,   CS_F2,   CS_F3,   CS_F4,   CS_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
