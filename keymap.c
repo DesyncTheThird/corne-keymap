@@ -1375,6 +1375,12 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
+    if (keycode == SELECT) {
+        if (record->event.pressed) {
+            update_last_key(SELECT);
+        }
+        return true;
+    }
 
     // Handle deletes
     if (keycode == CS_RT1) {
@@ -2060,8 +2066,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code16(LCTL(KC_BSPC));
+                if (shifted()) {
+                    del_mods(MOD_MASK_CSAG);
+                    add_mods(MOD_MASK_SHIFT);
+                    tap_code(KC_HOME);
+                    tap_code(KC_DEL);
+                } else {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LCTL(KC_BSPC));
+                }
                 set_mods(mods);
             }
             return false;
@@ -2073,8 +2086,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code16(LCTL(KC_DEL));
+                if (shifted()) {
+                    del_mods(MOD_MASK_CSAG);
+                    add_mods(MOD_MASK_SHIFT);
+                    tap_code(KC_END);
+                    tap_code(KC_DEL);
+                } else {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LCTL(KC_DEL));
+                }
                 set_mods(mods);
             }
             return false;
@@ -2088,17 +2108,28 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->tap.count && record->event.pressed) {
                 if (shifted()) {
                     const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code16(KC_END);
-                    tap_code16(KC_HOME);
-                    tap_code16(LSFT(KC_END));
+                    if (last_key == SELECT) {
+                        del_mods(MOD_MASK_CSAG);
+                        tap_code16(LSFT(KC_RGHT));
+                        tap_code16(LSFT(KC_END));
+                    } else {
+                        del_mods(MOD_MASK_CSAG);
+                        tap_code(KC_END);
+                        tap_code(KC_HOME);
+                        tap_code16(LSFT(KC_END));
+                    }
                     set_mods(mods);
                 } else {
                     const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code16(LCTL(KC_RGHT));
-                    tap_code16(LCTL(KC_LEFT));
-                    tap_code16(LSFT(LCTL(KC_RGHT)));
+                    if (last_key == SELECT) {
+                        del_mods(MOD_MASK_CSAG);
+                        tap_code16(LSFT(LCTL(KC_RGHT)));
+                    } else {
+                        del_mods(MOD_MASK_CSAG);
+                        tap_code16(LCTL(KC_RGHT));
+                        tap_code16(LCTL(KC_LEFT));
+                        tap_code16(LSFT(LCTL(KC_RGHT)));
+                    }
                     set_mods(mods);
                 }
             }
