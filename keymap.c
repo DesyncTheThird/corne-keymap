@@ -540,6 +540,42 @@ bool is_bracket_macro(uint16_t keycode) {
 
 bool is_bracket_wrap_macro(uint16_t keycode) {
     return (keycode >= WORDCBR && keycode <= WORDBRC);
+void update_last_key(uint16_t new_keycode) {
+    last_key_3 = last_key_2;
+    last_key_2 = last_key;
+    last_key = new_keycode;
+
+    char_count = 1;
+
+    dprintf("updated keys!\n");
+    dprintf("last_key:   %d\n", last_key);
+    dprintf("last_key_2: %d\n", last_key_2);
+    dprintf("last_key_3: %d\n", last_key_3);
+    dprintf("char_count: %d\n", char_count);
+}
+
+void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
+    last_key_3 = last_key_2;
+    last_key_2 = last_key;
+    last_key = new_keycode;
+
+    char_count = new_count;
+    dprintf("updated multiple keys!\n");
+    dprintf("last_key:   %d\n", last_key);
+    dprintf("last_key_2: %d\n", last_key_2);
+    dprintf("last_key_3: %d\n", last_key_3);
+    dprintf("char_count: %d\n", char_count);
+}
+
+void rollback_last_key(void) {
+    last_key = last_key_2;
+    last_key_2 = last_key_3;
+    last_key_3 = KC_NO;
+    dprintf("rolled back!\n");
+    dprintf("last_key:   %d\n", last_key);
+    dprintf("last_key_2: %d\n", last_key_2);
+    dprintf("last_key_3: %d\n", last_key_3);
+    dprintf("char_count: %d\n", char_count);
 }
 
 //==============================================================================
@@ -1234,6 +1270,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("he");
                 set_mods(mods);
+                update_last_keys(KC_E, 3);
             }
             break;
         case STL_AND:
@@ -1244,6 +1281,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("nd");
                 set_mods(mods);
+                update_last_keys(KC_D, 3);
             }
             break;
         case STL_THAT:
@@ -1254,6 +1292,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("hat");
                 set_mods(mods);
+                update_last_keys(KC_T, 4);
             }
             break;
         case STL_THIS:
@@ -1264,6 +1303,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("his");
                 set_mods(mods);
+                update_last_keys(KC_S, 4);
             }
             break;
         case STL_HERE:
@@ -1274,6 +1314,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("ere");
                 set_mods(mods);
+                update_last_keys(KC_E, 4);
             }
             break;
         case STL_HAVE:
@@ -1284,6 +1325,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("ave");
                 set_mods(mods);
+                update_last_keys(KC_E, 4);
             }
             break;
         case STL_WITH:
@@ -1294,6 +1336,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("ith");
                 set_mods(mods);
+                update_last_keys(KC_H, 4);
             }
             break;
         case STL_YOU:
@@ -1304,6 +1347,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("ou");
                 set_mods(mods);
+                update_last_keys(KC_U, 3);
             }
             break;
         case STL_EVER:
@@ -1314,6 +1358,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("ver");
                 set_mods(mods);
+                update_last_keys(KC_R, 4);
             }
             break;
         case STL_FROM:
@@ -1324,6 +1369,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("rom");
                 set_mods(mods);
+                update_last_keys(KC_M, 4);
             }
             break;
         case STL_SOME:
@@ -1334,6 +1380,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("ome");
                 set_mods(mods);
+                update_last_keys(KC_E, 4);
             }
             break;
         case STL_WHAT:
@@ -1344,6 +1391,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("hat");
                 set_mods(mods);
+                update_last_keys(KC_T, 4);
             }
             break;
         case STL_BUT:
@@ -1354,6 +1402,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("ut");
                 set_mods(mods);
+                update_last_keys(KC_T, 3);
             }
             break;
         case STL_WHICH:
@@ -1364,6 +1413,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("hich");
                 set_mods(mods);
+                update_last_keys(KC_H, 5);
             }
             break;
         case STL_JUST:
@@ -1374,18 +1424,21 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 del_mods(MOD_MASK_SHIFT);
                 SEND_STRING("ust");
                 set_mods(mods);
+                update_last_keys(KC_T, 4);
             }
             break;
         case STL_MENT:
         case STR_MENT:
             if (pressed) {
                 SEND_STRING("ment");
+                update_last_keys(KC_T, 4);
             }
             break;
         case STL_ING:
         case STR_ING:
             if (pressed) {
                 SEND_STRING("ing");
+                update_last_keys(KC_G, 3);
             }
             break;
     }
@@ -1492,77 +1545,6 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
 //==============================================================================
 // Repeat and Magic keys
 //==============================================================================
-
-void update_last_key(uint16_t new_keycode) {
-    last_key_3 = last_key_2;
-    last_key_2 = last_key;
-    last_key = new_keycode;
-
-    char_count = 1;
-
-    // dprintf("updated keys!\n");
-    // dprintf("last_key:   %d\n", last_key);
-    // dprintf("last_key_2: %d\n", last_key_2);
-    // dprintf("last_key_3: %d\n", last_key_3);
-    // dprintf("char_count: %d\n", char_count);
-}
-
-void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
-    last_key_3 = last_key_2;
-    last_key_2 = last_key;
-    last_key = new_keycode;
-
-    char_count = new_count;
-    // dprintf("updated multiple keys!\n");
-    // dprintf("last_key:   %d\n", last_key);
-    // dprintf("last_key_2: %d\n", last_key_2);
-    // dprintf("last_key_3: %d\n", last_key_3);
-    // dprintf("char_count: %d\n", char_count);
-}
-
-void rollback_last_key(void) {
-    char_count = 1;
-
-    last_key = last_key_2;
-    last_key_2 = last_key_3;
-    last_key_3 = KC_NO;
-    // dprintf("rolled back!\n");
-    // dprintf("last_key:   %d\n", last_key);
-    // dprintf("last_key_2: %d\n", last_key_2);
-    // dprintf("last_key_3: %d\n", last_key_3);
-    // dprintf("char_count: %d\n", char_count);
-}
-
-bool process_rollback(void) {
-    if (ctrl_on()) {
-        rollback_last_key();
-        return true;
-    }
-
-    if (is_bracket_wrap_macro(last_key) && (char_count == 2)) {
-        dprint("Rolled back bracket wrap macro");
-        const uint8_t mods = get_mods();
-        del_mods(MOD_MASK_CSAG);
-        tap_code(KC_BSPC);
-        tap_code16(LCTL(KC_LEFT));
-        tap_code(KC_BSPC);
-        tap_code16(LCTL(KC_RGHT));
-        set_mods(mods);
-        rollback_last_key();
-        return false;
-    }
-
-    if (is_bracket_macro(last_key) && (char_count == 2)) {
-        tap_code(KC_RGHT);
-    }
-
-    for (int i = 1; i < char_count; i++) {
-        tap_code(KC_BSPC);
-    }
-    rollback_last_key();
-
-    return true;
-}
 
 bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     // Reset repeat space override if any non-magic key is pressed
