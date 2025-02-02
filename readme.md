@@ -127,17 +127,31 @@ This feature is also reused to rollback various macro outputs in a single keypre
 
 ## Steno-lite
 
-The `Magic` and `Repeat` keys are also used in "steno-lite" combos, which output words or word fragments. Any of these combos can be triggered by pressing `Magic` *or* `Repeat`, along with the specified combo keys listed below:
+The `Magic` and `Repeat` keys are also used in "steno-lite" combos, which output words or word fragments. Most of these combos agree with magic/repeat outputs.
 
-|     |     |     |     |     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Combo  | `T`   | `A`   | `TH`   | `TI`   | `H`    | `HA`   | `W`    | `Y`   | `S`    |
-| Output | `the` | `and` | `that` | `this` | `here` | `have` | `with` | `you` | `some` |
+Magic:
+|     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Combo  | `B`        | `T`      | `TH`    | `TI`    | `S`     | `M`     | `W`     | `WH`    |
+| Output | `because⎵` | `tment⎵` | `that⎵` | `this⎵` | `some⎵` | `ment⎵` | `with⎵` | `what⎵` |
 
 |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Combo  | `WH`   | `B`   | `WI`    | `J`    | `M`    | `I`   | `E`    | `F`    |
-| Output | `what` | `but` | `which` | `just` | `ment` | `ing` | `ever` | `from` |
+| Combo  | `WI`     | `J`     | `F`     | `Y`       | `H`     | `E`      |`I`     | `A`     |
+| Output | `which⎵` | `ject⎵` | `from⎵` | `you've⎵` | `here⎵` | `every⎵` | `ion⎵` |`about⎵` |
+
+
+
+Repeat:
+|     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Combo  | `B`    | `T`   | `TH`   | `TI`   | `S`    | `M`    | `W`    | `WH`   |
+| Output | `but⎵` | `the` | `that` | `this` | `some` | `ment` | `with` | `what` |
+
+|     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Combo  | `WI`    | `J`    | `F`    | `Y`       | `H`    | `E`     |`I`     | `A`  |
+| Output | `which` | `just` | `from` | `you're⎵` | `have` | `every` | `ing⎵` |`and` |
 
 
 
