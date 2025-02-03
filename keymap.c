@@ -129,10 +129,6 @@ enum custom_keycodes {
 #define DELRGHT RALT_T(KC_DEL)
 #define MT_DEL  RGUI_T(KC_DEL)
 #define SELECT  RCTL_T(KC_INS)
-#define EO_UP   LCTL(KC_UP)
-#define EO_DOWN LCTL(KC_DOWN)
-#define EO_LEFT LCTL(KC_LEFT)
-#define EO_RGHT LCTL(KC_RGHT)
 #define EO_PGUP LCTL(KC_PGUP)
 #define EO_PGDN LCTL(KC_PGDN)
 #define EO_DEL  LCTL(KC_DEL)
@@ -340,9 +336,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT_OVERLAY] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, _______, EO_HOME,   EO_UP,  EO_END, _______,                       KC_ESC, WORDCBR, WORDPRN, WORDBRC, _______, _______,
+          _______, _______, EO_HOME, _______,  EO_END, _______,                       KC_ESC, WORDCBR, WORDPRN, WORDBRC, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, _______, EO_LEFT, EO_DOWN, EO_RGHT,  EO_DEL,                      KC_BSPC, DELLEFT,  SELECT, DELRGHT,  MT_DEL, _______,
+          _______, _______, _______, _______, _______,  EO_DEL,                      KC_BSPC, DELLEFT,  SELECT, DELRGHT,  MT_DEL, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, _______, EO_PGUP, EO_PGDN, _______, _______,                          CUT,   PASTE,    COPY,    REDO,    UNDO, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -1375,10 +1371,8 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
+    // SELECT has special handling in process_record
     if (keycode == SELECT) {
-        if (record->event.pressed) {
-            update_last_key(SELECT);
-        }
         return true;
     }
 
@@ -1396,11 +1390,23 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
 
+    // Do nothing:
+    if (is_bspc(keycode)) {
+        return true;
+    }
+    if (is_spc(keycode)) {
+        return true;
+    }
+    if (is_magic(keycode)) {
+        return true;
+    }
+    if (keycode == KC_LSFT) {
+        return true;
+    }
+
     // Reset rollback counter and recorded key on any other keypress
-    if (!(is_bspc(keycode) || is_spc(keycode) || is_alpha(keycode) || is_hrm(keycode) || is_magic(keycode) || is_bracket_macro(keycode) || keycode == KC_LSFT)) {
-        if (record->event.pressed) {
-            update_last_key(KC_NO);
-        }
+    if (record->event.pressed) {
+        update_last_key(KC_NO);
     }
     return true;
 }
@@ -2106,32 +2112,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 unregister_mods(MOD_BIT(KC_RCTL));
             }
             if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
                 if (shifted()) {
-                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_CSAG);
                     if (last_key == SELECT) {
-                        del_mods(MOD_MASK_CSAG);
                         tap_code16(LSFT(KC_RGHT));
                         tap_code16(LSFT(KC_END));
                     } else {
-                        del_mods(MOD_MASK_CSAG);
                         tap_code(KC_END);
                         tap_code(KC_HOME);
                         tap_code16(LSFT(KC_END));
                     }
-                    set_mods(mods);
                 } else {
-                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_CSAG);
                     if (last_key == SELECT) {
-                        del_mods(MOD_MASK_CSAG);
                         tap_code16(LSFT(LCTL(KC_RGHT)));
                     } else {
-                        del_mods(MOD_MASK_CSAG);
-                        tap_code16(LCTL(KC_RGHT));
+                        tap_code(KC_RGHT);
                         tap_code16(LCTL(KC_LEFT));
                         tap_code16(LSFT(LCTL(KC_RGHT)));
                     }
-                    set_mods(mods);
                 }
+                set_mods(mods);
+                update_last_key(SELECT);
             }
             return false;
 

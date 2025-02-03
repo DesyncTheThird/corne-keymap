@@ -222,7 +222,7 @@ Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}
 
 Activating both `Data` and `Program` layers will activate the `Edit` layer on top to allow for quick navigation. This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
-See also the [Edit Overlay](#edit-overlay).
+See also the [Edit Overlay](#edit-overlay), accessible by holding the right thumb home key.
 
 
 
@@ -286,7 +286,7 @@ This layer contains macros useful for text selection and deletion:
 - The `< Del` and `Del >` macros delete the previous/forward characters in current word, respectively. If shifted, they delete to the beginning/end of the line instead.
 - `Select` macro selects the current word, or select the current line if shifted. Tapping the macro again extends the selection by one word, or one line if shifted.
 
-The `LCTL` modifier is also held for the keys listed on the left while this layer is active, apart from the `Home` and `End` keys, for which the `LSFT` modifier is held instead.
+While this layer is active, the `LCTL` modifier is held for the `Delete` and `Page` keys, and `LSFT` is held for the `Home` and `End` keys.
 
 
 
