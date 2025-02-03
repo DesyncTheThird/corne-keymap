@@ -540,6 +540,8 @@ bool is_bracket_macro(uint16_t keycode) {
 
 bool is_bracket_wrap_macro(uint16_t keycode) {
     return (keycode >= WORDCBR && keycode <= WORDBRC);
+}
+
 void update_last_key(uint16_t new_keycode) {
     last_key_3 = last_key_2;
     last_key_2 = last_key;
@@ -1016,10 +1018,7 @@ enum combo_events {
     BSPC_2,
     BSPC_3,
 
-    L_NEW,
-    R_NEW,
-
-    // Steno-lite
+ // Steno-lite
     STENO_START,
     STL_TMENT,
     STR_THE,
@@ -1137,8 +1136,6 @@ const uint16_t PROGMEM str_I[]          = {CS_RT2, KC_L,          COMBO_END}; //
 const uint16_t PROGMEM stl_A[]          = {CS_LT2, KC_SCLN,       COMBO_END}; // ABOUT⎵
 const uint16_t PROGMEM str_A[]          = {CS_RT2, KC_SCLN,       COMBO_END}; // AND
 
-
-
 combo_t key_combos[] = {
     [TOUHOU]        = COMBO_ACTION(touhou),
     [STENO]         = COMBO_ACTION(steno),
@@ -1254,7 +1251,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 }
             }
             break;
-
+            
         // Steno-lite
         case STL_BECAUSE:
             if (pressed) {
@@ -1635,7 +1632,8 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
 
         // Steno-lite combos
         case STENO_START ... STENO_END:
-            return 50;
+            return 15;
+
 
         default:
             return 20;
@@ -1696,6 +1694,37 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
 //==============================================================================
 // Repeat and Magic keys
 //==============================================================================
+
+bool process_rollback(void) {
+    if (ctrl_on()) {
+        rollback_last_key();
+        return true;
+    }
+
+    if (is_bracket_wrap_macro(last_key) && (char_count == 2)) {
+        dprint("Rolled back bracket wrap macro");
+        const uint8_t mods = get_mods();
+        del_mods(MOD_MASK_CSAG);
+        tap_code(KC_BSPC);
+        tap_code16(LCTL(KC_LEFT));
+        tap_code(KC_BSPC);
+        tap_code16(LCTL(KC_RGHT));
+        set_mods(mods);
+        rollback_last_key();
+        return false;
+    }
+
+    if (is_bracket_macro(last_key) && (char_count == 2)) {
+        tap_code(KC_RGHT);
+    }
+
+    for (int i = 1; i < char_count; i++) {
+        tap_code(KC_BSPC);
+    }
+    rollback_last_key();
+
+    return true;
+}
 
 bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     // Reset repeat space override if any non-magic key is pressed
