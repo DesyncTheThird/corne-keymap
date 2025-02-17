@@ -162,17 +162,31 @@ Various additional experimental features that have not yet been incorporated int
 ### [Steno-lite](https://github.com/DesyncTheThird/corne-keymap/tree/steno-lite)
 This feature adds a selection of combos that output common words or word fragments.
 
-Any of these combos can be triggered by pressing `Magic` *or* `Repeat`, along with the specified combo keys listed below:
+These combos can be triggered by pressing `Magic` or `Repeat`, along with the specified combo keys listed below. Most of these combos agree with magic/repeat outputs.
 
-|     |     |     |     |     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Combo  | `T`   | `A`   | `TH`   | `TI`   | `H`    | `HA`   | `W`    | `Y`   | `S`    |
-| Output | `the` | `and` | `that` | `this` | `here` | `have` | `with` | `you` | `some` |
+Magic:
+|     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Combo  | `B`        | `T`      | `TH`    | `TI`    | `S`     | `M`     | `W`     | `WH`    |
+| Output | `because⎵` | `tment⎵` | `that⎵` | `this⎵` | `some⎵` | `ment⎵` | `with⎵` | `what⎵` |
 
 |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Combo  | `WH`   | `B`   | `WI`    | `J`    | `M`    | `I`   | `E`    | `F`    |
-| Output | `what` | `but` | `which` | `just` | `ment` | `ing` | `ever` | `from` |
+| Combo  | `WI`     | `J`     | `F`     | `Y`       | `H`     | `E`      |`I`     | `A`     |
+| Output | `which⎵` | `ject⎵` | `from⎵` | `you've⎵` | `here⎵` | `every⎵` | `ion⎵` |`about⎵` |
+
+Repeat:
+|     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Combo  | `B`    | `T`   | `TH`   | `TI`   | `S`    | `M`    | `W`    | `WH`   |
+| Output | `but⎵` | `the` | `that` | `this` | `some` | `ment` | `with` | `what` |
+
+|     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Combo  | `WI`    | `J`    | `F`    | `Y`       | `H`    | `E`     |`I`     | `A`  |
+| Output | `which` | `just` | `from` | `you're⎵` | `have` | `every` | `ing⎵` |`and` |
+
+
 
 ### [Quadrant-based mouse keys](https://github.com/DesyncTheThird/corne-keymap/tree/quad-mousekeys)
 Based on qmk/qmk_firmware#24760, this feature uses the digitiser support to move the mouse pointer to absolute positions rather than relative ones as per the built-in mouse keys feature as follows: the screen is divided up into a quadrants; pressing one of the directional keys snaps the pointer to the centre of that quadrant, and then the grid is rescaled to the quadrant; then, movement can be repeated within the quadrant.
@@ -301,6 +315,34 @@ While this layer is active, the `LCTL` modifier is held for the `Delete` and `Pa
 Accessible with `Base` key on Utility layer, or `Basic` to also disable home row mods and `Space` layer-tap (for games).
 
 > ⚠️ Modifying the _BASIC layer will also require changing mod-tap and combo code.
+
+
+
+# Some notes on implementation
+
+### CS_XXXX Keycodes
+I've had problems in the past with rolling built-in shifted keycodes. For instance, `&=` is a very common inward roll (in LaTeX), but the shift from the ampersand would often persist through to the equals symbol, outputting `&+` instead. (And similar problems with other rolls.)
+
+The `CS_XXXX` keycodes explicitly reset shift modifiers before sending the intended keycode, fixing this issue. They also rename the keycodes to their ISO counterparts. These keycodes also can't be shifted manually: this is intended -- every symbol should be accessible on some layer without needing the shift key at all -- shift should only be needed for normal letters.
+
+This has probably been fixed in the years since I first encountered this issue, but there's little reason to swap back to ordinary keycodes as; the keycode renaming is convenient for maintenance; the shift-disabling behaviour is desired; and it works as-is.
+
+I also don't use key overrides for this purpose, because they override all matching instances of inputs when active, and sometimes I do want to manually send strange combinations of modifiers and keycodes.
+
+By the way, `CS` originally stood for `Custom Symbol`, but I've ended up using the prefix for any custom key I implement, mostly because it's easy to search/regex for.
+
+### Layers
+You may notice that this keymap has a lot of layers defined. In practice however, you'll only really be using 6 or so layers: the `Base` layer, `Edit`, `Data`, `Symbol`, `Program`, and `Utility`. The other 9 are either persistent locking layers (different base layers/numpad/steno, etc.), or are there to make the internal layer switching implementation simpler (including "overlay" layers).
+
+Because layers are arranged in a stack that is scanned top-down, there isn't an easy way to move from a higher layer to a lower layer momentarily. I've done some implementations of this before, but they are often error-prone to work with, difficult to maintain and troubleshoot, and often doesn't interact well with other features like Achordion or built-in timers. Alternatively, I could make every key on every layer that needs this behaviour a custom key that performs different actions depending on the currently held keys, but this is even worse for maintenance, even if it is slightly more memory efficient. To save myself the trouble, I just stack extra layers on top wherever I need them.
+
+### Repeat Key
+I am aware that there is a built-in QMK implementation of the repeat/magic key. However, my original implementation precedes the repeat key being merged into the main branch. Furthermore, I've customised my dynamic keys so much at this point that it's easier to keep using my own implementation as I keep all of the functions exposed and can hook into it anywhere. In particular, the rollback feature and various dynamic macros do this extensively.
+
+### Other
+If there's anything else in the keymap that looks inefficient or badly implemented, that's probably because it's very old and I didn't want to look into it too deeply when refactoring, and/or I didn't put much thought into it when I was first making it.
+
+If you find a way to clean up some of my code or fix some bugs, that's lovely, and a PR would be appreciated. However, this is my personal keymap, so I will not be accepting any PRs that change functionality meaningfully; please make a fork if you would like to experiment on your own copy.
 
 
 
