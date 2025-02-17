@@ -204,11 +204,11 @@ The `LCTL` key also sets a weak one shot `ctrl` modifier for the `Backspace` key
 
 ### Data
 ![Data](images/data.png?raw=true)
-Number grid with `1`, `2`, and `3` on right hand home row, along with common numerical separators on left hand, sharing similar layout to `Symbol` and `Program` layers.
+Number grid with `1`, `2`, and `3` on right hand home row, along with common numerical separators on left hand home row, sharing similar layout to `Symbol` and `Program` layers.
 
-Arithmetic symbols on right hand share positions with combos, `-` not included as it is a home row combo; `@` is also available on this layer as many email handles end with numbers, and also because I use it as a leader key for LaTeX commands; and `~` is available for git commands.
+The bracket macros `{-}`, `(-)`, and `[-]` send the listed brackets, then tap `Left`, placing the cursor between the two brackets. These macros also interoperate with the rollback feature.
 
-The bracket macros `(-)` and `[-]` sends the listed brackets, then taps `Left`, placing the cursor between the two brackets. The `[-]` macro is shiftable. These macros also interact properly with the rollback feature.
+The `@` symbol is also available on this layer as many email handles end with numbers, and also because I use it as a leader key for LaTeX commands; and `~` is available for git commands.
 
 Function keys also available for left hand only usage.
 
