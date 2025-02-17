@@ -3342,6 +3342,9 @@ void render_layout(void) {
         case _EDIT:
             oled_write_raw_P(menu_layout_edit, frame_size);
             break;
+        case _EDIT_CONTROL:
+            oled_write_raw_P(menu_layout_edit_control, frame_size);
+            break;
         case _EDIT_OVERLAY:
             oled_write_raw_P(menu_layout_edit_overlay, frame_size);
             break;
