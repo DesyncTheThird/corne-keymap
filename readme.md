@@ -220,6 +220,10 @@ Navigation/editing keys on left hand and paired delimiters and common symbol com
 
 Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `?()`; right hand also duplicated on Symbol and Program layers.
 
+The `Select` macro selects the current word. Pressing it again will select the current line. The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
+
+Holding `LCTL` on this layer covers the bottom row with: `Redo`, `Undo`, `Cut`, `Copy`, and `Paste` shortcuts (i.e. overlays the bottom row only of the [Control Overlay](#control-overlay)).
+
 Activating both `Data` and `Program` layers will activate the `Edit` layer on top to allow for quick navigation. This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
 See also the [Edit Overlay](#edit-overlay), accessible by holding the right thumb home key.

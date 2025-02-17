@@ -83,7 +83,8 @@ timeout managed manually in keymap instead.
 #define COMBO_SHOULD_TRIGGER
 #define COMBO_ONLY_FROM_LAYER 0
 #define COMBO_MUST_TAP_PER_COMBO
-//#define EXTRA_SHORT_COMBOS // Saves space, but only 6 keys per combo
+// #define COMBO_MUST_HOLD_PER_COMBO
+// #define EXTRA_SHORT_COMBOS // Saves space, but only 6 keys per combo
 
 #define COMBO_TERM_PER_COMBO
 // #define COMBO_MUST_PRESS_IN_ORDER_PER_COMBO

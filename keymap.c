@@ -15,6 +15,7 @@ enum corne_layers {
     _PROGRAM,
     _SYMBOL,
     _EDIT,
+    _EDIT_CONTROL,
     _EDIT_OVERLAY,
     _NUMPAD,
     _TOUHOU,
@@ -122,15 +123,16 @@ enum custom_keycodes {
     
     EO_HOME,
     EO_END,
+    SELLEFT,
+    SELRGHT,
+    SELECT,
 };
 
 // Edit overlay keys
 #define DELLEFT RSFT_T(KC_BSPC)
 #define DELRGHT RALT_T(KC_DEL)
 #define MT_DEL  RGUI_T(KC_DEL)
-#define SELECT  RCTL_T(KC_INS)
-#define EO_PGUP LCTL(KC_PGUP)
-#define EO_PGDN LCTL(KC_PGDN)
+#define MT_SLCT RCTL_T(KC_INS)
 #define EO_DEL  LCTL(KC_DEL)
 
 // Home row mods
@@ -199,6 +201,7 @@ enum custom_keycodes {
 
 // Control keys
 #define CS_LCTL LM(_CONTROL, MOD_LCTL)
+#define EO_LCTL LM(_EDIT_CONTROL, MOD_LCTL)
 
 #define UNDO    LCTL(KC_Z)
 #define REDO    LCTL(KC_Y)
@@ -324,23 +327,35 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NXT_TAB, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
+          _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, PRV_TAB, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
+          _______, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, KC_SCRL, KC_PGUP, KC_PGDN, KC_CAPS,  KC_ENT,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
+          EO_LCTL, KC_CAPS, SELLEFT,  SELECT, SELRGHT,  KC_ENT,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______,  CS_AL4,  KC_SPC
                                           //`--------------------------'  `--------------------------'
     ),
 
+    [_EDIT_CONTROL] = LAYOUT( //8
+      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+          _______, NXT_TAB, EO_HOME, _______,  EO_END, _______,                      _______, _______, _______, _______, _______, _______,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          _______, PRV_TAB, _______, _______, _______,  EO_DEL,                      _______, _______, _______, _______, _______, _______,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          _______,    REDO,    UNDO,     CUT,    COPY,   PASTE,                      _______, _______, _______, _______, _______, _______,
+      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                              _______, _______, _______,    _______, _______, _______
+                                          //`--------------------------'  `--------------------------'
+    ),
+
     [_EDIT_OVERLAY] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, _______, EO_HOME, _______,  EO_END, _______,                       KC_ESC, WORDCBR, WORDPRN, WORDBRC, _______, _______,
+          _______, NXT_TAB, EO_HOME, _______,  EO_END, _______,                       KC_ESC, WORDCBR, WORDPRN, WORDBRC, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, _______, _______, _______, _______,  EO_DEL,                      KC_BSPC, DELLEFT,  SELECT, DELRGHT,  MT_DEL, _______,
+          _______, PRV_TAB, _______, _______, _______,  EO_DEL,                      KC_BSPC, DELLEFT, MT_SLCT, DELRGHT,  MT_DEL, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, _______, EO_PGUP, EO_PGDN, _______, _______,                          CUT,   PASTE,    COPY,    REDO,    UNDO, _______,
+          _______, _______, _______, _______, _______, _______,                          CUT,   PASTE,    COPY,    REDO,    UNDO, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -378,21 +393,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LCTL, MS_WHLL, MS_WHLU, MS_WHLD, MS_WHLR,  KC_ENT,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              MS_BTN3, MS_BTN2, MS_BTN1,    MS_ACL2, MS_ACL0, MS_ACL1
+                                              MS_BTN3, MS_BTN2, MS_BTN1,    KC_BSPC, MS_ACL2, MS_ACL0
                                           //`--------------------------'  `--------------------------'
     ),
-
-    // [_MOUSE_BTN] = LAYOUT( //10
-    //   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-    //       _______, _______, KC_BTN4, _______, KC_BTN5,  KC_TAB,                      _______, _______, _______, _______, _______, _______,
-    //   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-    //       _______, _______, _______, _______, _______,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
-    //   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-    //       _______, _______, _______, _______, _______, _______,                      _______, _______, _______, _______, _______, _______,
-    //   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-    //                                           KC_BTN3, KC_BTN2, KC_BTN1,    _______, _______, _______
-    //                                       //`--------------------------'  `--------------------------'
-    // ),
     
     [_UTILITY] = LAYOUT( //12
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
@@ -400,7 +403,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, CLOCKDN, KC_MPRV, CS_VOLD, KC_MNXT,    BASE,                        BASIC,   KC_F1,   KC_F2,   KC_F3,  KC_F11, DB_TOGG,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CLOCKNX, OLEDTOG,    MUTE, KC_PSCR,    MENU,                      CS_RGBT,   KC_F4,   KC_F5,   KC_F6,  KC_F12,  KC_ENT,
+          _______, CLOCKNX, OLEDTOG,    MUTE, KC_PSCR,    MENU,                      CS_RGBT,   KC_F4,   KC_F5,   KC_F6,  KC_F12, KC_SCRL,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               KC_MSTP,  MUTE_L, KC_MPLY,    KC_MPLY,  MUTE_R, KC_MSTP
                                           //`--------------------------'  `--------------------------'
@@ -940,9 +943,10 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
 enum combo_events {
     TOUHOU,
     STENO,
+    NUMPAD,
+
     MOUSE,
     MOUSE2,
-    NUMPAD,
 
     L_EXPONENT,
     L_COMMA,
@@ -1018,12 +1022,6 @@ const uint16_t PROGMEM bspc_1[]         = {CS_RT1, KC_J, COMBO_END};
 const uint16_t PROGMEM bspc_2[]         = {CS_RT1, KC_K, COMBO_END};
 const uint16_t PROGMEM bspc_3[]         = {CS_RT1, KC_L, COMBO_END};
 
-// const uint16_t PROGMEM num_1[]          = {KC_Q, KC_A, COMBO_END};
-// const uint16_t PROGMEM num_2[]          = {KC_W, KC_S, COMBO_END};
-// const uint16_t PROGMEM num_3[]          = {KC_E, KC_D, COMBO_END};
-// const uint16_t PROGMEM num_4[]          = {KC_R, KC_F, COMBO_END};
-// const uint16_t PROGMEM num_5[]          = {KC_T, KC_G, COMBO_END};
-
 combo_t key_combos[] = {
     [TOUHOU]        = COMBO_ACTION(touhou),
     [STENO]         = COMBO_ACTION(steno),
@@ -1066,6 +1064,7 @@ combo_t key_combos[] = {
 
     [L_NEW]         = COMBO(r_new,          NEWSENT),
     [R_NEW]         = COMBO(l_new,          NEWSENT),
+
 };
 
 
@@ -1081,21 +1080,21 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 }
             }
             break;
-        case NUMPAD:
-            if (pressed) {
-                if (IS_LAYER_ON(_NUMPAD)) {
-                    layer_off(_NUMPAD);
-                } else {
-                    layer_on(_NUMPAD);
-                }
-            }
-            break;
         case STENO:
             if (pressed) {
                 if (IS_LAYER_ON(_STENO)) {
                     layer_off(_STENO);
                 } else {
                     layer_on(_STENO);
+                }
+            }
+            break;
+        case NUMPAD:
+            if (pressed) {
+                if (IS_LAYER_ON(_NUMPAD)) {
+                    layer_off(_NUMPAD);
+                } else {
+                    layer_on(_NUMPAD);
                 }
             }
             break;
@@ -1199,11 +1198,11 @@ void update_last_key(uint16_t new_keycode) {
 
     char_count = 1;
 
-    // dprintf("updated keys!\n");
-    // dprintf("last_key:   %d\n", last_key);
-    // dprintf("last_key_2: %d\n", last_key_2);
-    // dprintf("last_key_3: %d\n", last_key_3);
-    // dprintf("char_count: %d\n", char_count);
+    dprintf("updated keys!\n");
+    dprintf("last_key:   %d\n", last_key);
+    dprintf("last_key_2: %d\n", last_key_2);
+    dprintf("last_key_3: %d\n", last_key_3);
+    dprintf("char_count: %d\n", char_count);
 }
 
 void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
@@ -1239,7 +1238,6 @@ bool process_rollback(void) {
     }
 
     if (is_bracket_wrap_macro(last_key) && (char_count == 2)) {
-        dprint("Rolled back bracket wrap macro");
         const uint8_t mods = get_mods();
         del_mods(MOD_MASK_CSAG);
         tap_code(KC_BSPC);
@@ -1371,8 +1369,7 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
-    // SELECT has special handling in process_record
-    if (keycode == SELECT) {
+    if (keycode == SELLEFT || keycode == SELECT || keycode == SELRGHT || keycode == MT_SLCT) {
         return true;
     }
 
@@ -1450,7 +1447,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
             }
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_CTRL);
-            if (IS_LAYER_ON(_QWERTY)|| IS_LAYER_ON(_BASIC)) {
+            if (IS_LAYER_ON(_QWERTY) || IS_LAYER_ON(_BASIC)) {
                 tap_code(last_key);
                 update_last_key(last_key);
                 set_mods(mods);
@@ -1525,7 +1522,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 return false;
             }
 
-            if (IS_LAYER_ON(_QWERTY)|| IS_LAYER_ON(_BASIC)) {
+            if (IS_LAYER_ON(_QWERTY) || IS_LAYER_ON(_BASIC)) {
                 tap_code(last_key);
                 update_last_key(last_key);
                 set_mods(mods);
@@ -2105,7 +2102,47 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
 
+        case SELLEFT:
+            if (record->event.pressed) {
+                register_code16(LSFT(LCTL(KC_LEFT)));
+                update_last_key(SELLEFT);
+            } else {
+                unregister_code16(LSFT(LCTL(KC_LEFT)));
+            }
+            return false;
         case SELECT:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                if (last_key != SELECT) {
+                    if (last_key == SELLEFT) {
+                        tap_code(KC_LEFT);
+                    }
+                    if (last_key == SELRGHT) {
+                        tap_code(KC_RGHT);
+                    }
+                    tap_code(KC_RGHT);
+                    tap_code16(LCTL(KC_LEFT));
+                    tap_code16(LSFT(LCTL(KC_RGHT)));
+                } else {
+                    tap_code(KC_HOME);
+                    tap_code16(LSFT(KC_END));
+                }
+                set_mods(mods);
+                update_last_key(SELECT);
+            }
+            return false;
+            
+        case SELRGHT:
+            if (record->event.pressed) {
+                register_code16(LSFT(LCTL(KC_RGHT)));
+                update_last_key(SELRGHT);
+            } else {
+                unregister_code16(LSFT(LCTL(KC_RGHT)));
+            }
+            return false;
+
+        case MT_SLCT:
             if (!record->tap.count && record->event.pressed) {
                 register_mods(MOD_BIT(KC_RCTL));
             } else {
@@ -2415,7 +2452,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (nav_activated && (IS_LAYER_ON(_PROGRAM) || IS_LAYER_ON(_DATA))) {
                     return false;
-                    dprintf("nav_active: %s\n", nav_activated ? "true" : "false");
                 } else {
                     register_code(KC_F1);
                 }
@@ -2427,7 +2463,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (nav_activated && (IS_LAYER_ON(_PROGRAM) || IS_LAYER_ON(_DATA))) {
                     return false;
-                    dprintf("nav_active: %s\n", nav_activated ? "true" : "false");
                 } else {
                     register_code(KC_F2);
                 }
@@ -2440,7 +2475,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (nav_activated && (IS_LAYER_ON(_PROGRAM) || IS_LAYER_ON(_DATA))) {
                     return false;
-                    dprintf("nav_active: %s\n", nav_activated ? "true" : "false");
                 } else {
                     register_code(KC_F3);
                 }
@@ -2453,7 +2487,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (nav_activated && (IS_LAYER_ON(_PROGRAM) || IS_LAYER_ON(_DATA))) {
                     return false;
-                    dprintf("nav_active: %s\n", nav_activated ? "true" : "false");
                 } else {
                     register_code(KC_F4);
                 }
@@ -2466,7 +2499,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (nav_activated && (IS_LAYER_ON(_PROGRAM) || IS_LAYER_ON(_DATA))) {
                     return false;
-                    dprintf("nav_active: %s\n", nav_activated ? "true" : "false");
                 } else {
                     register_code(KC_F5);
                 }
