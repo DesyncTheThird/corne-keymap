@@ -291,11 +291,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_DATA] = LAYOUT( //5
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______,   CS_F1,   CS_F2,   CS_F3,   CS_F4,   CS_F5,                       CS_EQL,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
+          _______,   CS_F1,   CS_F2,   CS_F3,   CS_F4,   CS_F5,                      CS_CBRS,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          OSMLSFT, MT_PIPE, MT_COLN,  MT_DOT, MT_COMM, CS_PRNS,                      CS_PLUS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
+          OSMLSFT, MT_PIPE, MT_COLN,  MT_DOT, MT_COMM, CS_CIRC,                      CS_PRNS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL, CS_TILD, CS_UNDS, CS_ASTR, CS_CIRC, CS_BRCS,                      CS_MINS,    KC_4,    KC_5,    KC_6, CS_QUES,  KC_ENT,
+          KC_LCTL, CS_TILD, CS_UNDS, CS_MINS, CS_PLUS, CS_ASTR,                      CS_BRCS,    KC_4,    KC_5,    KC_6, CS_POUN,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    KC_BSPC,  CS_AL1, CS_SLSH
                                           //`--------------------------'  `--------------------------'
@@ -1994,17 +1994,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CS_BRCS:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                if (shifted()) {
-                    del_mods(MOD_MASK_CS);
-                    tap_code16(KC_LCBR);
-                    tap_code16(KC_RCBR);
-                    tap_code(KC_LEFT);
-                } else {
-                    del_mods(MOD_MASK_CS);
-                    tap_code(KC_LBRC);
-                    tap_code(KC_RBRC);
-                    tap_code(KC_LEFT);
-                }
+                del_mods(MOD_MASK_CS);
+                tap_code(KC_LBRC);
+                tap_code(KC_RBRC);
+                tap_code(KC_LEFT);
                 set_mods(mods);
             }
             break;
