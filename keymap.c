@@ -681,6 +681,19 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case MT_0:
             return TAPPING_TERM;
 
+        case CS_LT3:
+        case CS_LT2:
+        case CS_LT1:
+
+        case CS_RT1:
+        case CS_RT2:
+        case CS_RT3:
+        
+        case CS_AL1:
+        case CS_AL2:
+        case CS_AL3:
+        case CS_AL4:
+        
         case TABLSFT:
         case TABRSFT:
             return 0;
