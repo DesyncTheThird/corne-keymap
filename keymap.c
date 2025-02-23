@@ -1078,6 +1078,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                     layer_off(_STENO);
                 } else {
                     layer_on(_STENO);
+                    unregister_mods(MOD_BIT(KC_LSFT));
                 }
             }
             break;
@@ -1887,14 +1888,12 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
         case TABLSFT:
             if (record->event.pressed && !(get_mods() & MOD_BIT(KC_LSFT))) {
                 register_mods(MOD_BIT(KC_LSFT));
-                // dprintf("Eager left shift on\n");
                 left_eager_shift_on = true;
             }
             break;
         case TABRSFT:
             if (record->event.pressed && !(get_mods() & MOD_BIT(KC_RSFT))) {
                 register_mods(MOD_BIT(KC_RSFT));
-                // dprintf("Eager right shift on\n");
                 right_eager_shift_on = true;
             }
             break;
@@ -2295,8 +2294,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CS_END:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CTRL);
-                tap_code(KC_END);
+                if (ctrl_on()) {
+                    del_mods(MOD_MASK_CTRL);
+                    tap_code16(LSFT(KC_END));
+                } else {
+                    del_mods(MOD_MASK_CTRL);
+                    tap_code(KC_END);
+                }
                 set_mods(mods);
             }
             break;
@@ -2304,7 +2308,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_CTRL);
-                tap_code(KC_HOME);
+                tap_code16(LSFT(KC_HOME));
+                if (ctrl_on()) {
+                    del_mods(MOD_MASK_CTRL);
+                    tap_code16(LSFT(KC_HOME));
+                } else {
+                    del_mods(MOD_MASK_CTRL);
+                    tap_code(KC_HOME);
+                }
                 set_mods(mods);
             }
             break;
@@ -2332,7 +2343,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             if (record->tap.count && record->event.pressed) {
                 if (left_eager_shift_on) {
-                    dprint("Eager left shift off\n");
                     unregister_mods(MOD_BIT(KC_LSFT));
                 }
                 tap_code(KC_TAB);
@@ -2345,7 +2355,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             if (record->tap.count && record->event.pressed) {
                 if (right_eager_shift_on) {
-                    dprint("Eager right shift off\n");
                     unregister_mods(MOD_BIT(KC_RSFT));
                 }
                 tap_code(KC_TAB);
@@ -3303,50 +3312,98 @@ void render_modifier_state(uint8_t line) {
 #include "menu.c"
 
 
+#define overlay_mask ~((1 << _EDIT_CONTROL) | (1 << _NUMPAD) | (1 << _MOUSE))
 
 void render_layout(void) {
-    switch (get_highest_layer(layer_state)) {
+    switch (get_highest_layer(layer_state & overlay_mask)) {
         case _BASE:
         default:
-            oled_write_raw_P(menu_layout_base, frame_size);
+            oled_set_cursor(0,3);
+            oled_write_raw_P(menu_layout_base_left, layout_left_size);
+            oled_set_cursor(0,6);
+            oled_write_raw_P(menu_layout_base_right, layout_right_size);
             break;
         case _BASIC:
         case _QWERTY:
-            oled_write_raw_P(menu_layout_qwerty, frame_size);
+            oled_set_cursor(0,3);
+            oled_write_raw_P(menu_layout_qwerty_left, layout_left_size);
+            oled_set_cursor(0,6);
+            oled_write_raw_P(menu_layout_qwerty_right, layout_right_size);
             break;
         case _STENO:
-            oled_write_raw_P(menu_layout_steno, frame_size);
+            oled_set_cursor(0,3);
+            oled_write_raw_P(menu_layout_steno_left, layout_left_size);
+            oled_set_cursor(0,6);
+            oled_write_raw_P(menu_layout_steno_right, layout_right_size);
             break;
         case _DATA:
-            oled_write_raw_P(menu_layout_data, frame_size);
-            break;
-        case _SYMBOL:
-            oled_write_raw_P(menu_layout_symbol, frame_size);
+            oled_set_cursor(0,3);
+            oled_write_raw_P(menu_layout_data_left, layout_left_size);
+            oled_set_cursor(0,6);
+            oled_write_raw_P(menu_layout_data_right, layout_right_size);
             break;
         case _PROGRAM:
-            oled_write_raw_P(menu_layout_program, frame_size);
+            oled_set_cursor(0,3);
+            oled_write_raw_P(menu_layout_program_left, layout_left_size);
+            oled_set_cursor(0,6);
+            oled_write_raw_P(menu_layout_program_right, layout_right_size);
+            break;
+        case _SYMBOL:
+            oled_set_cursor(0,3);
+            oled_write_raw_P(menu_layout_symbol_left, layout_left_size);
+            oled_set_cursor(0,6);
+            oled_write_raw_P(menu_layout_symbol_right, layout_right_size);
             break;
         case _EDIT:
-            oled_write_raw_P(menu_layout_edit, frame_size);
-            break;
-        case _EDIT_CONTROL:
-            oled_write_raw_P(menu_layout_edit_control, frame_size);
+            oled_set_cursor(0,3);
+            oled_write_raw_P(menu_layout_edit_left, layout_left_size);
+            oled_set_cursor(0,6);
+            oled_write_raw_P(menu_layout_edit_right, layout_right_size);
             break;
         case _EDIT_OVERLAY:
-            oled_write_raw_P(menu_layout_edit_overlay, frame_size);
-            break;
-        case _MOUSE:
-            oled_write_raw_P(menu_layout_mouse, frame_size);
+            oled_set_cursor(0,3);
+            oled_write_raw_P(menu_layout_edit_overlay_left, layout_left_size);
+            oled_set_cursor(0,6);
+            oled_write_raw_P(menu_layout_edit_overlay_right, layout_right_size);
             break;
         case _UTILITY:
-            oled_write_raw_P(menu_layout_utility, frame_size);
+            oled_set_cursor(0,3);
+            oled_write_raw_P(menu_layout_utility_left, layout_left_size);
+            oled_set_cursor(0,6);
+            oled_write_raw_P(menu_layout_utility_right, layout_right_size);
             break;
         case _TOUHOU:
-            oled_write_raw_P(menu_layout_touhou, frame_size);
+            oled_set_cursor(0,3);
+            oled_write_raw_P(menu_layout_touhou, 448);
             break;
-        case _NUMPAD:
-            oled_write_raw_P(menu_layout_numpad, frame_size);
-            break;
+    }
+}
+
+
+void render_right_thumb(const char* progmem_data) {    
+    oled_set_cursor(8,6);
+    oled_write_raw_P(&progmem_data[0], 16);
+    oled_set_cursor(8,7);
+    oled_write_raw_P(&progmem_data[16], 16);
+    oled_set_cursor(8,8);
+    oled_write_raw_P(&progmem_data[32], 16);
+    oled_set_cursor(8,9);
+    oled_write_raw_P(&progmem_data[48], 16);
+}
+
+void render_overlays(void) {
+    if (IS_LAYER_ON(_EDIT_CONTROL)) {
+        oled_set_cursor(1,5);
+        oled_write_raw_P(menu_layout_edit_control, 42);
+    }
+    if (IS_LAYER_ON(_NUMPAD)) {
+            oled_set_cursor(0,6);
+            oled_write_raw_P(menu_layout_numpad, layout_right_size);
+    }
+    if (IS_LAYER_ON(_MOUSE)) {
+        oled_set_cursor(0,3);
+        oled_write_raw_P(menu_layout_mouse_left, layout_left_size);
+        render_right_thumb(menu_layout_mouse_right);
     }
 }
 
@@ -3357,6 +3414,7 @@ void render_status(void) {
         render_layer(); // 7
     } else if (menu == 1) {
         render_layout();
+        render_overlays();
     }
 
     oled_set_cursor(0,0);
