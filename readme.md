@@ -188,6 +188,16 @@ Repeat:
 
 
 
+### [Arrow Layout Toggle](https://github.com/DesyncTheThird/corne-keymap/tree/edit-mode-toggle)
+This feature allows you to swap the arrow keys on the `Edit` layer between an inverted-T and line (vim-like) layout.
+![Line Layout](images/line%20arrow%20layout.png)
+
+![Inverted-T Layout](images/inverted-T%20arrow%20layout.png)
+
+Pressing the pinky key (line left) while in inverted-T swaps to line mode, and pressing the upper middle key (inverted-T up) while in line mode swaps to inverted-T.
+
+
+
 ### [Quadrant-based mouse keys](https://github.com/DesyncTheThird/corne-keymap/tree/quad-mousekeys)
 Based on qmk/qmk_firmware#24760, this feature uses the digitiser support to move the mouse pointer to absolute positions rather than relative ones as per the built-in mouse keys feature as follows: the screen is divided up into a quadrants; pressing one of the directional keys snaps the pointer to the centre of that quadrant, and then the grid is rescaled to the quadrant; then, movement can be repeated within the quadrant.
 
