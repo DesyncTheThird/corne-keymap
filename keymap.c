@@ -192,8 +192,6 @@ enum custom_keycodes {
 #define CS_AL3 LT(_EDIT,CS_SCLN)
 #define CS_AL4 LT(_EDIT_OVERLAY,KC_0)
 
-#define LCTL_0 LCTL_T(KC_0)
-
 // Custom tap-hold keys
 #define CS_BOOT LT(0,KC_ESC)
 #define TABLSFT LSFT_T(KC_TAB)
@@ -486,25 +484,25 @@ bool is_hrm(uint16_t keycode) {
         case MTA_I:
         case MTA_A:
 
-        // case MT_TILD:
-        // case MT_UNDS:
-        // case MT_LPRN:
-        // case MT_RPRN:
+        case MT_TILD:
+        case MT_UNDS:
+        case MT_LPRN:
+        case MT_RPRN:
 
-        // case MT_CIRC:
-        // case MT_PLUS:
-        // case MT_MINS:
-        // case MT_EQL:
+        case MT_CIRC:
+        case MT_PLUS:
+        case MT_MINS:
+        case MT_EQL:
 
-        // case MT_1:
-        // case MT_2:
-        // case MT_3:
-        // case MT_0:
+        case MT_1:
+        case MT_2:
+        case MT_3:
+        case MT_0:
 
-        // case MT_PIPE:
-        // case MT_COLN:
-        // case MT_DOT:
-        // case MT_COMM:
+        case MT_PIPE:
+        case MT_COLN:
+        case MT_DOT:
+        case MT_COMM:
             return true;
         default:
             return false;
@@ -675,42 +673,25 @@ void matrix_scan_user(void) {
 //==============================================================================
 
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        // enable key repeating on numerical home row mod keys
+        case MT_1:
+        case MT_2:
+        case MT_3:
+        case MT_0:
+            return TAPPING_TERM;
+
+        case TABLSFT:
+        case TABRSFT:
+            return 0;
+    }
+
+    // disable key repeating on other home row mod keys
     if (is_hrm(keycode)) {
         return 0;
     }
 
-    switch (keycode) {
-        case CS_LT3:
-        case CS_LT2:
-        case CS_LT1:
-
-        case CS_RT1:
-        case CS_RT2:
-        case CS_RT3:
-        
-        case CS_AL1:
-        case CS_AL2:
-        case CS_AL3:
-        case CS_AL4:
-
-        case MT_RPRN:
-        case MT_LPRN:
-        case MT_UNDS:
-        case MT_TILD:
-
-        case MT_CIRC:
-        case MT_PLUS:
-        case MT_MINS:
-        case MT_EQL:
-
-        case TABLSFT:
-        case TABRSFT:
-
-        case LCTL_0:
-            return 0;
-        default:
-            return TAPPING_TERM;
-    }
+    return TAPPING_TERM;
 }
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
@@ -799,8 +780,6 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
         case CS_BOOT:
         case TABLSFT:
         case TABRSFT:
-
-        case LCTL_0:
             return 0;
 
         default:
@@ -2042,17 +2021,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        case DELLINE:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_HOME);
-                add_mods(MOD_MASK_SHIFT);
-                tap_code(KC_END);
-                tap_code(KC_BSPC);
-                set_mods(mods);
-            }
-            break;
 
         case DELLEFT:
             if (!record->tap.count && record->event.pressed) {
@@ -2094,6 +2062,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             return false;
+        // case DELLINE:
+        //     if (record->event.pressed) {
+        //         const uint8_t mods = get_mods();
+        //         del_mods(MOD_MASK_CSAG);
+        //         tap_code(KC_HOME);
+        //         add_mods(MOD_MASK_SHIFT);
+        //         tap_code(KC_END);
+        //         tap_code(KC_BSPC);
+        //         set_mods(mods);
+        //     }
+        //     break;
 
         case SELLEFT:
             if (record->event.pressed) {
@@ -2117,6 +2096,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                     tap_code(KC_RGHT);
                     tap_code16(LCTL(KC_LEFT));
                     tap_code16(LSFT(LCTL(KC_RGHT)));
+                } else if (last_key_2 == SELECT) {
+                    /*intentionally blank*/ ;
                 } else {
                     tap_code(KC_HOME);
                     tap_code16(LSFT(KC_END));
