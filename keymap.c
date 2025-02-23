@@ -16,7 +16,7 @@ enum corne_layers {
     _SYMBOL,
     _EDIT,
     _EDIT_OVERLAY,
-    _EDIT_CONTROL,
+    _CONTROL_OVERLAY,
     _NUMPAD,
     _TOUHOU,
     _MOUSE,
@@ -126,6 +126,11 @@ enum custom_keycodes {
     SELLEFT,
     SELRGHT,
     SELECT,
+
+    // Edit mode keys
+    UP_TOGG,
+    LEFT_UP,
+    TOGG_LF,
 };
 
 // Edit overlay keys
@@ -324,9 +329,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
+          _______, KC_PGUP, CS_HOME, UP_TOGG,  CS_END, QK_LLCK,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
+          _______, TOGG_LF, LEFT_UP, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, KC_PGDN, SELLEFT,  SELECT, SELRGHT,  KC_ENT,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -336,9 +341,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT_OVERLAY] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                      WORDCBR,    KC_7,    KC_8,    KC_9,   CS_AT, _______,
+          _______, NXT_TAB, EO_HOME, _______,  EO_END, KC_CAPS,                      WORDCBR,    KC_7,    KC_8,    KC_9,   CS_AT, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, DELLINE, KC_LEFT, KC_DOWN, KC_RGHT,  EO_DEL,                      WORDPRN,    MT_1,    MT_2,    MT_3,    MT_0, _______,
+          _______, _______, _______, _______, _______,  EO_DEL,                      WORDPRN,    MT_1,    MT_2,    MT_3,    MT_0, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, PRV_TAB, DELLEFT, DELWORD, DELRGHT,  KC_ENT,                      WORDBRC,    KC_4,    KC_5,    KC_6, CS_POUN, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -346,11 +351,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_EDIT_CONTROL] = LAYOUT( //8
+    [_CONTROL_OVERLAY] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                      _______, _______, _______, _______, _______, _______,
+          _______, _______, _______, _______, _______, _______,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+---0-----+--------+--------|
-          _______, DELLINE, KC_LEFT, KC_DOWN, KC_RGHT,  EO_DEL,                      _______, _______, _______, _______, _______, _______,
+          _______, _______, _______, _______, _______, _______,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______,    REDO,    UNDO,     CUT,    COPY,   PASTE,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -412,6 +417,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 //==============================================================================
 // Variables
 //==============================================================================
+
+bool edit_mode = 0;
 
 uint8_t time_setting = 0;
 uint8_t min = 0;
@@ -858,7 +865,7 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
                 update_tri_layer(_DATA, _PROGRAM, _EDIT);
             } else {
                 layer_off(_DATA);
-                update_tri_layer(_DATA, _PROGRAM, _EDIT);
+                update_tri_layer(_DATA, _PROGRAM, _EDIT);  
             }
             if (record->tap.count && record->event.pressed) {
                 tap_code(KC_SPC);
@@ -925,18 +932,20 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
         case KC_LCTL:
             if (record->event.pressed) {
                 layer_on(_CONTROL);
+                layer_on(_CONTROL_OVERLAY);
             } else {
                 layer_off(_CONTROL);
+                layer_off(_CONTROL_OVERLAY);
             }
-            update_tri_layer(_EDIT, _CONTROL, _EDIT_CONTROL);
             return true;
         case CS_LCTL:
             if (!record->tap.count && record->event.pressed) {
                 layer_on(_CONTROL);
+                layer_on(_CONTROL_OVERLAY);
             } else {
                 layer_off(_CONTROL);
+                layer_off(_CONTROL_OVERLAY);
             }
-            update_tri_layer(_EDIT, _CONTROL, _EDIT_CONTROL);
             return true;
         default:
             return true;
@@ -1442,11 +1451,9 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         if (!record->tap.count && record->event.pressed) {
             layer_lock_off(_EDIT);
             layer_on(_EDIT);
-            update_tri_layer(_EDIT, _CONTROL, _EDIT_CONTROL);
         } else if (!is_layer_locked(_EDIT)) {
             layer_off(_EDIT);
             layer_off(_EDIT_OVERLAY);
-            update_tri_layer(_EDIT, _CONTROL, _EDIT_CONTROL);
         }
 
         if (record->tap.count && record->event.pressed) {
@@ -1895,6 +1902,64 @@ void user_config_sync_handler(uint8_t initiator2target_buffer_size, const void* 
 
 
 
+
+//==============================================================================
+// Events
+//==============================================================================
+
+bool process_edit_mode(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) {
+        case UP_TOGG:
+            if (record->event.pressed) {
+                if (edit_mode == 0) {
+                    register_code(KC_UP);
+                } else {
+                    edit_mode = 0;
+                }
+            } else {
+                if (edit_mode == 0) {
+                    unregister_code(KC_UP);
+                }
+            }
+            break;
+        case LEFT_UP:
+            if (record->event.pressed) {
+                if (edit_mode == 0) {
+                    register_code(KC_LEFT);
+                } else {
+                    register_code(KC_UP);
+                }
+            
+            } else {
+                if (edit_mode == 0) {
+                    unregister_code(KC_LEFT);
+                } else {
+                    unregister_code(KC_UP);
+                }
+
+            }
+            break;
+        case TOGG_LF:
+            if (record->event.pressed) {
+                if (edit_mode == 0) {
+                    edit_mode = 1;
+                } else {
+                    register_code(KC_LEFT);
+                }
+            
+            } else {
+                if (edit_mode == 0) {
+                    /*intentionally blank*/ ;
+                } else {
+                    unregister_code(KC_LEFT);
+                }
+            }
+            break;
+    }
+    return true;
+}
+
+
 //==============================================================================
 // Events
 //==============================================================================
@@ -1927,6 +1992,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_magic(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
     if (!process_lingering_mods(keycode, record)) { return false; }
+    if (!process_edit_mode(keycode, record)) { return false; }
     if (!process_vol_repeat(keycode, record)) { return false; }
     if (!process_clock(keycode, record)) { return false; }
     if (!process_boot_anim(keycode, record)) { return false; }
@@ -3281,7 +3347,7 @@ void render_modifier_state(uint8_t line) {
 
 
 void render_layout(void) {
-    switch (get_highest_layer(layer_state)) {
+    switch (get_highest_layer(layer_state & ~(1 << _CONTROL_OVERLAY))) {
         case _BASE:
         default:
             oled_write_raw_P(menu_layout_base, frame_size);
@@ -3307,9 +3373,6 @@ void render_layout(void) {
             break;
         case _EDIT_OVERLAY:
             oled_write_raw_P(menu_layout_edit_overlay, frame_size);
-            break;
-        case _EDIT_CONTROL:
-            oled_write_raw_P(menu_layout_edit_control, frame_size);
             break;
         case _MOUSE:
             oled_write_raw_P(menu_layout_mouse, frame_size);
