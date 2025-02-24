@@ -2307,8 +2307,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CS_HOME:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CTRL);
-                tap_code16(LSFT(KC_HOME));
                 if (ctrl_on()) {
                     del_mods(MOD_MASK_CTRL);
                     tap_code16(LSFT(KC_HOME));
