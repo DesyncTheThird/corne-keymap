@@ -244,13 +244,15 @@ Navigation/editing keys on left hand and paired delimiters and common symbol com
 
 Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `?()`; right hand also duplicated on Symbol and Program layers.
 
-The `Select` macro selects the current word. Pressing it again will select the current line. The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
+The `Select` macro selects the current word; pressing it again will delete the selection.
 
-Holding `LCTL` on this layer covers the bottom row with: `Redo`, `Undo`, `Cut`, `Copy`, and `Paste` shortcuts (i.e. overlays the bottom row only of the [Control Overlay](#control-overlay)).
+The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
 
-Activating both `Data` and `Program` layers will activate the `Edit` layer on top to allow for quick navigation. This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
+- Holding `LCTL` on this layer covers the bottom row with: `Redo`, `Undo`, `Cut`, `Copy`, and `Paste` shortcuts (i.e. overlays the bottom row only of the [Control Overlay](#control-overlay)).
+- Activating both `Data` and `Program` layers will also activate the `Edit` layer on top to allow for quick navigation during numerical input.
+- Activating both `Edit` and `Program` layers will also activate the [Edit Overlay](#edit-overlay) layer on top to allow for quick numerical input during editing.
 
-See also the [Edit Overlay](#edit-overlay), accessible by holding the right thumb home key.
+These are all implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
 
 
@@ -307,12 +309,10 @@ Overrides activate only from left hand control key; home row mods are unaffected
 
 ### Edit Overlay
 ![Edit Overlay](images/edit_overlay.png?raw=true)
-Activating the `Program` layer while on the `Edit` layer will activate the `Edit Overlay` layer on top (of the `Edit` layer). This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue. 
+Activating the `Program` layer while on the `Edit` layer will activate the `Edit Overlay` layer on top (of the `Edit` layer). This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
-This layer contains macros useful for text selection and deletion:
-- The three macros at the top enclose the current word with the listed brackets. These macros also interoperate with the rollback feature.
-- The `< Del` and `Del >` macros delete the previous/forward characters in current word, respectively. If shifted, they delete to the beginning/end of the line instead.
-- `Select` macro selects the current word, or select the current line if shifted. Tapping the macro again extends the selection by one word, or one line if shifted.
+The right hand is replaced by a slightly modified copy of the `Data` layer:
+- The three bracket macros enclose the current word with the listed brackets. (Compare with the bracket macros on the `Data` layer.) These macros also interoperate with the rollback feature.
 
 While this layer is active, the `LCTL` modifier is held for the `Delete` and `Page` keys, and `LSFT` is held for the `Home` and `End` keys.
 
