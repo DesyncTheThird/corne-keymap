@@ -148,11 +148,7 @@ Key on utility layer available to change both OLEDs to static images.
 - Common punctuation is accessible from combos on or near home row;
 - Mouse emulation layer accessible on pinky key combos to allow mouse control without moving from home row.
 - Uncommon locking layers (numpad/steno) also accessible from large combos;
-- `New` combo presses `DOT`, `SPC`, then sets a one shot shift;
-- `Del` combo deletes the current word;
-- `<<` combo presses `M4` (`Back`); `>>` combo presses `M5` (`Forward`);
-- `Join` combo joins current line to following line with space between; does not add space if shifted;
-- `Line` combos adds new lines above/below the current position.
+- `New` combo presses `DOT`, `SPC`, then sets a one shot shift.
 
 
 
@@ -190,9 +186,8 @@ Repeat:
 
 ### [Arrow Layout Toggle](https://github.com/DesyncTheThird/corne-keymap/tree/edit-mode-toggle)
 This feature allows you to swap the arrow keys on the `Edit` layer between an inverted-T and line (vim-like) layout.
-![Line Layout](images/line%20arrow%20layout.png)
 
-![Inverted-T Layout](images/inverted-T%20arrow%20layout.png)
+<img src="./images/line arrow layout.png" width="49%"> <img src="./images/inverted-T arrow layout.png" width="49%">
 
 Pressing the pinky key (line left) while in inverted-T swaps to line mode, and pressing the upper middle key (inverted-T up) while in line mode swaps to inverted-T.
 
@@ -236,6 +231,8 @@ The `@` symbol is also available on this layer as many email handles end with nu
 
 Function keys also available for left hand only usage.
 
+Activating both `Data` and `Program` layers will also activate the `Edit` layer on top to allow for quick navigation during numerical input. This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
+
 
 
 ### Edit
@@ -244,15 +241,14 @@ Navigation/editing keys on left hand and paired delimiters and common symbol com
 
 Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `?()`; right hand also duplicated on Symbol and Program layers.
 
-The `Select` macro selects the current word; pressing it again will delete the selection.
+The `Select` macro selects the current word; pressing it again will delete the selection. Holding `LCTL` for the second press cuts (`Ctrl`+`X`) the selection instead.
 
 The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
 
-- Holding `LCTL` on this layer covers the bottom row with: `Redo`, `Undo`, `Cut`, `Copy`, and `Paste` shortcuts (i.e. overlays the bottom row only of the [Control Overlay](#control-overlay)).
-- Activating both `Data` and `Program` layers will also activate the `Edit` layer on top to allow for quick navigation during numerical input.
-- Activating both `Edit` and `Program` layers will also activate the [Edit Overlay](#edit-overlay) layer on top to allow for quick numerical input during editing.
+- Activating both `Edit` and `Program` layers will also activate the [Edit Overlay](#edit-overlay), containing macros useful for editing.
+- Activating both `Edit` and `Symbol` layers will replace the right hand with a copy of the `Data` layer. While this layer is active, the `LCTL` modifier is also held for all the keys on the left hand; `LSFT` is held for the `Home` and `End` keys.
 
-These are all implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
+These are both implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
 
 
@@ -303,7 +299,9 @@ Cursor/scroll speed may be overridden with right thumb keys for higher speed or 
 ![Control](images/control.png?raw=true)
 Control key overrides with QWERTY-esque layout for easier left-hand only use. (I usually don't remember which *letter* does what command, only which key *position*, particularly for graphical and editing software)
 
-Overrides activate only from left hand control key; home row mods are unaffected, so ntentional letter controls can be used in two-hand usage.
+Overrides activate only from left hand control key on a base layer; home row mods are unaffected, so intentional letter controls can be used in two-hand usage.
+
+Holding `LCTL` on any layer (including non-base layers) covers the left hand bottom row with: `Redo`, `Undo`, `Cut`, `Copy`, and `Paste` shortcuts (i.e. overlays only the bottom row of this layer).
 
 
 
@@ -311,8 +309,14 @@ Overrides activate only from left hand control key; home row mods are unaffected
 ![Edit Overlay](images/edit_overlay.png?raw=true)
 Activating the `Program` layer while on the `Edit` layer will activate the `Edit Overlay` layer on top (of the `Edit` layer). This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
-The right hand is replaced by a slightly modified copy of the `Data` layer:
-- The three bracket macros enclose the current word with the listed brackets. (Compare with the bracket macros on the `Data` layer.) These macros also interoperate with the rollback feature.
+The right hand is replaced with macros useful for editing:
+- The (directional) `Select` macros are identical to those on the `Edit` layer;
+- The (directional) `Delete` macros function similarly to the selection macros, except deleting the selection.
+- The `Line` macro adds new lines above/below the current position.
+- The `Join` macro joins current line to following line with space between; does not add space if shifted.
+
+- The three bracket macros enclose the current word with the listed brackets. (Compare with 
+the bracket macros on the `Data` layer.) These macros also interoperate with the rollback feature.
 
 While this layer is active, the `LCTL` modifier is held for the `Delete` and `Page` keys, and `LSFT` is held for the `Home` and `End` keys.
 
@@ -342,12 +346,12 @@ I also don't use key overrides for this purpose, because they override all match
 By the way, `CS` originally stood for `Custom Symbol`, but I've ended up using the prefix for any custom key I implement, mostly because it's easy to search/regex for.
 
 ### Layers
-You may notice that this keymap has a lot of layers defined. In practice however, you'll only really be using 6 or so layers: the `Base` layer, `Edit`, `Data`, `Symbol`, `Program`, and `Utility`. The other 9 are either persistent locking layers (different base layers/numpad/steno, etc.), or are there to make the internal layer switching implementation simpler (including "overlay" layers).
+You may notice that this keymap has a lot of layers defined. In practice however, you'll only really be using 6 or so layers: the `Base` layer, `Edit`, `Data`, `Symbol`, `Program`, and `Utility`. The other 10 are either persistent locking layers (different base layers/numpad/steno, etc.), or are there to make the internal layer switching implementation simpler (including "overlay" layers).
 
 Because layers are arranged in a stack that is scanned top-down, there isn't an easy way to move from a higher layer to a lower layer momentarily. I've done some implementations of this before, but they are often error-prone to work with, difficult to maintain and troubleshoot, and often doesn't interact well with other features like Achordion or built-in timers. Alternatively, I could make every key on every layer that needs this behaviour a custom key that performs different actions depending on the currently held keys, but this is even worse for maintenance, even if it is slightly more memory efficient. To save myself the trouble, I just stack extra layers on top wherever I need them.
 
 ### Repeat Key
-I am aware that there is a built-in QMK implementation of the repeat/magic key. However, my original implementation precedes the repeat key being merged into the main branch. Furthermore, I've customised my dynamic keys so much at this point that it's easier to keep using my own implementation as I keep all of the functions exposed and can hook into it anywhere. In particular, the rollback feature and various dynamic macros do this extensively.
+I am aware that there is a built-in QMK implementation of the repeat/magic key. However, my original implementation predates the repeat key being merged into the main branch. Furthermore, I've customised my dynamic keys so much at this point that it's easier to keep using my own implementation as I keep all of the functions exposed and can hook into it anywhere. In particular, the rollback feature and various dynamic macros do this extensively.
 
 ### Other
 If there's anything else in the keymap that looks inefficient or badly implemented, that's probably because it's very old and I didn't want to look into it too deeply when refactoring, and/or I didn't put much thought into it when I was first making it.
