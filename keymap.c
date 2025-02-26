@@ -14,9 +14,10 @@ enum corne_layers {
     _DATA,
     _PROGRAM,
     _SYMBOL,
+    _CONTROL_OVERLAY,
     _EDIT,
     _EDIT_OVERLAY,
-    _CONTROL_OVERLAY,
+    _DATA_OVERLAY,
     _NUMPAD,
     _TOUHOU,
     _MOUSE,
@@ -36,6 +37,9 @@ enum custom_keycodes {
 
     CS_END,
     CS_HOME,
+    SELLEFT,
+    SELECT,
+    SELRGHT,
 
     MUTE,
     MUTE_L,
@@ -108,12 +112,8 @@ enum custom_keycodes {
 
     // Combos
     CM_MOUSE,
-
     DELWORD,
 
-    SPC_DN,
-    JOIN,
-    SPC_UP,
 
     // Edit overlay keys
     WORDCBR,
@@ -121,15 +121,25 @@ enum custom_keycodes {
     WORDBRC,
     DELLINE,
     
+    SPC_DN,
+    JOIN,
+    SPC_UP,
     EO_HOME,
     EO_END,
-    SELLEFT,
-    SELRGHT,
-    SELECT,
+    EO_ENT,
 };
 
 // Edit overlay keys
 #define EO_DEL  LCTL(KC_DEL)
+#define DELLEFT LCTL(KC_BSPC)
+#define DELRGHT LCTL(KC_DEL)
+#define EO_LEFT LCTL(KC_LEFT)
+#define EO_UP   LCTL(KC_UP)
+#define EO_DOWN LCTL(KC_DOWN)
+#define EO_RGHT LCTL(KC_RGHT)
+// #define EO_SELL LT(0,SELLEFT)
+// #define EO_SELC LT(0,SELECT)
+// #define EO_SELR LT(0,SELRGHT)
 
 // Home row mods
 #define MT_A LGUI_T(KC_A)
@@ -186,7 +196,7 @@ enum custom_keycodes {
 #define CS_AL1 LT(_PROGRAM,KC_0)
 #define CS_AL2 LT(_EDIT,CS_BSLS)
 #define CS_AL3 LT(_EDIT,CS_SCLN)
-#define CS_AL4 LT(_EDIT_OVERLAY,KC_0)
+#define CS_AL4 LT(_DATA_OVERLAY,KC_0)
 
 // Custom tap-hold keys
 #define CS_BOOT LT(0,KC_ESC)
@@ -319,31 +329,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_EDIT] = LAYOUT( //8
-      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, KC_PGDN, SELLEFT,  SELECT, SELRGHT,  KC_ENT,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
-      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______,    _______,  CS_AL4,  KC_SPC
-                                          //`--------------------------'  `--------------------------'
-    ),
-
-    [_EDIT_OVERLAY] = LAYOUT( //9
-      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                      WORDCBR,    KC_7,    KC_8,    KC_9,   CS_AT, _______,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  EO_DEL,                      WORDPRN,    MT_1,    MT_2,    MT_3,    MT_0, _______,
-      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, PRV_TAB, SELLEFT,  SELECT, SELRGHT,  KC_ENT,                      WORDBRC,    KC_4,    KC_5,    KC_6, CS_POUN, _______,
-      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______,    _______, _______, _______
-                                          //`--------------------------'  `--------------------------'
-    ),
-
-    [_CONTROL_OVERLAY] = LAYOUT( //10
+    [_CONTROL_OVERLAY] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, _______, _______, _______, _______,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -355,7 +341,43 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_NUMPAD] = LAYOUT( //11
+    [_EDIT] = LAYOUT( //9
+      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+          _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          _______, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          _______, DELWORD, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
+      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                              _______, _______, _______,    _______,  CS_AL4,  KC_SPC
+                                          //`--------------------------'  `--------------------------'
+    ),
+
+    [_EDIT_OVERLAY] = LAYOUT( //10
+      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+          _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                      WORDCBR, DELLEFT, DELWORD, DELRGHT, _______, _______,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          _______, PRV_TAB, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      WORDPRN, SELLEFT,  SELECT, SELRGHT,  KC_DEL, _______,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+-   -------+--------|
+          _______,    REDO,    UNDO,  SELECT,    COPY,   PASTE,                      WORDBRC,  SPC_UP,    JOIN,  SPC_DN,  KC_ESC, _______,
+      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                              _______, _______, _______,    _______, _______, _______
+                                          //`--------------------------'  `--------------------------'
+    ),
+
+    [_DATA_OVERLAY] = LAYOUT( //11
+      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+          _______, NXT_TAB, EO_HOME,   EO_UP,  EO_END, KC_CAPS,                      CS_CBRS,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          _______, PRV_TAB, EO_LEFT, EO_DOWN, EO_RGHT,  KC_DEL,                      CS_PRNS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          _______,    REDO,    UNDO,  SELECT,    COPY,   PASTE,                      CS_BRCS,    KC_4,    KC_5,    KC_6, CS_POUN,  KC_ENT,
+      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                              _______, _______, _______,    KC_BSPC,  CS_AL1, CS_SLSH
+                                          //`--------------------------'  `--------------------------'
+    ),
+
+    [_NUMPAD] = LAYOUT( //12
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, _______, _______, _______, _______,                       KC_NUM,   KC_P7,   KC_P8,   KC_P9, KC_CIRC,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -367,7 +389,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_TOUHOU] = LAYOUT( //12
+    [_TOUHOU] = LAYOUT( //13
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, _______,   KC_UP, _______, _______,                      _______, _______, _______, _______, _______,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -379,7 +401,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_MOUSE] = LAYOUT( //13
+    [_MOUSE] = LAYOUT( //14
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, NXT_TAB, MS_BTN4,   MS_UP, MS_BTN5, QK_LLCK,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -391,7 +413,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_UTILITY] = LAYOUT( //14
+    [_UTILITY] = LAYOUT( //15
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            ALTTAB, CLOCKUP, KC_PAUS, CS_VOLU,  KC_INS, OLEDSAV,                      CS_RGBN,   KC_F7,   KC_F8,   KC_F9,  KC_F10, CS_BOOT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -861,6 +883,18 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
                 tap_code(KC_SPC);
             }
             return false;
+        case CS_RT1:
+            if (!record->tap.count && record->event.pressed) {
+                layer_on(_SYMBOL);
+                update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
+            } else {
+                layer_off(_SYMBOL);
+                update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
+            }
+            if (record->tap.count && record->event.pressed) {
+                tap_code(KC_BSPC);
+            }
+            return false;
         case CS_AL1:
             if (!record->tap.count && record->event.pressed) {
                 layer_on(_PROGRAM);
@@ -879,8 +913,10 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
         case CS_AL2:
             if (!record->tap.count && record->event.pressed) {
                 layer_on(_EDIT);
+                update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
             } else {
                 layer_off(_EDIT);
+                update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -969,14 +1005,6 @@ enum combo_events {
     EXCLAMATION,
     SEMICOLON,
 
-    SPC_1,
-    SPC_2,
-    SPC_3,
-
-    BSPC_1,
-    BSPC_2,
-    BSPC_3,
-
     COMBO_LENGTH
 };
 uint16_t COMBO_LEN = COMBO_LENGTH;
@@ -1011,14 +1039,6 @@ const uint16_t PROGMEM r_new[]          = {KC_QUOT, COM_DOT, COMBO_END};
 const uint16_t PROGMEM semicolon[]      = {KC_J, KC_I, COMBO_END};
 const uint16_t PROGMEM exclamation[]    = {KC_I, KC_L, COMBO_END};
 
-const uint16_t PROGMEM spc_3[]          = {KC_SPC, KC_S, COMBO_END};
-const uint16_t PROGMEM spc_2[]          = {KC_SPC, KC_D, COMBO_END};
-const uint16_t PROGMEM spc_1[]          = {KC_SPC, KC_F, COMBO_END};
-
-const uint16_t PROGMEM bspc_1[]         = {CS_RT1, KC_J, COMBO_END};
-const uint16_t PROGMEM bspc_2[]         = {CS_RT1, KC_K, COMBO_END};
-const uint16_t PROGMEM bspc_3[]         = {CS_RT1, KC_L, COMBO_END};
-
 combo_t key_combos[] = {
     [TOUHOU]        = COMBO_ACTION(touhou),
     [STENO]         = COMBO_ACTION(steno),
@@ -1027,14 +1047,6 @@ combo_t key_combos[] = {
     [MOUSE]         = COMBO(mouse,          CM_MOUSE),
     [MOUSE2]        = COMBO(mouse2,         CM_MOUSE),
 
-    [SPC_3]         = COMBO(spc_3,          MS_BTN4),
-    [SPC_2]         = COMBO(spc_2,          DELWORD),
-    [SPC_1]         = COMBO(spc_1,          MS_BTN5),
-    
-    [BSPC_1]        = COMBO(bspc_1,         SPC_UP),
-    [BSPC_2]        = COMBO(bspc_2,         JOIN),
-    [BSPC_3]        = COMBO(bspc_3,         SPC_DN),
-    
     [L_EXPONENT]    = COMBO(l_exponent,     CS_CIRC),
     [L_COMMA]       = COMBO(l_comma,        CS_COMM),
     [L_DOT]         = COMBO(l_dot,          CS_DOT),
@@ -1102,14 +1114,6 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
 // 50ms default
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
-        case SPC_3:
-        case SPC_2:
-        case SPC_1:
-
-        case BSPC_1:
-        case BSPC_2:
-        case BSPC_3:
-        
         case L_NEW:
         case R_NEW:
 
@@ -1183,6 +1187,69 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
     return false;
 }
 
+//==============================================================================
+// Edit Control Keys
+//==============================================================================
+
+bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
+    if (get_highest_layer(layer_state) != _EDIT) {
+        return true;
+    }
+    switch (keycode) {
+        case DELWORD:
+            if (record->event.pressed) {
+                if (ctrl_on()) {
+                    register_code16(LCTL(KC_Y));
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                unregister_code16(LCTL(KC_Y));
+                return true;
+            }
+        case SELLEFT:
+            if (record->event.pressed) {
+                if (ctrl_on()) {
+                    register_code16(LCTL(KC_Z));
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                unregister_code16(LCTL(KC_Z));
+                return true;
+            }
+        case SELECT:
+            // handled in key definition
+            return true;
+        case SELRGHT:
+            if (record->event.pressed) {
+                if (ctrl_on()) {
+                    register_code16(LCTL(KC_C));
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                unregister_code16(LCTL(KC_C));
+                return true;
+            }
+        case EO_ENT:
+            if (record->event.pressed) {
+                if (ctrl_on()) {
+                    register_code16(LCTL(KC_V));
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                unregister_code16(LCTL(KC_V));
+                return true;
+            }
+    }
+    return true;
+}
 
 
 //==============================================================================
@@ -1196,11 +1263,11 @@ void update_last_key(uint16_t new_keycode) {
 
     char_count = 1;
 
-    dprintf("updated keys!\n");
-    dprintf("last_key:   %d\n", last_key);
-    dprintf("last_key_2: %d\n", last_key_2);
-    dprintf("last_key_3: %d\n", last_key_3);
-    dprintf("char_count: %d\n", char_count);
+    // dprintf("updated keys!\n");
+    // dprintf("last_key:   %d\n", last_key);
+    // dprintf("last_key_2: %d\n", last_key_2);
+    // dprintf("last_key_3: %d\n", last_key_3);
+    // dprintf("char_count: %d\n", char_count);
 }
 
 void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
@@ -1272,8 +1339,8 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
     }
 
-    // Ignore tracking if ctrl is on (apart from edit overlay layer) and reset rollback counter
-    if (ctrl_on() && IS_LAYER_OFF(_EDIT_OVERLAY)) {
+    // Ignore tracking if ctrl is on (apart from data overlay layer) and reset rollback counter
+    if (ctrl_on() && IS_LAYER_OFF(_DATA_OVERLAY)) {
         char_count = 1;
         return true;
     }
@@ -1395,7 +1462,7 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     if (is_magic(keycode)) {
         return true;
     }
-    if (keycode == KC_LSFT || keycode == OSMLSFT) {
+    if (keycode == KC_LSFT || keycode == OSMLSFT || keycode == KC_LCTL || keycode == CS_LCTL) {
         return true;
     }
 
@@ -1433,9 +1500,10 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         if (!record->tap.count && record->event.pressed) {
             layer_lock_off(_EDIT);
             layer_on(_EDIT);
+            update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
         } else if (!is_layer_locked(_EDIT)) {
             layer_off(_EDIT);
-            layer_off(_EDIT_OVERLAY);
+            update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
         }
 
         if (record->tap.count && record->event.pressed) {
@@ -1503,10 +1571,10 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
             update_tri_layer(_DATA, _PROGRAM, _EDIT);
         } else {
             layer_off(_PROGRAM);
-            if (IS_LAYER_OFF(_EDIT_OVERLAY)) {
+            if (IS_LAYER_OFF(_DATA_OVERLAY)) {
                 update_tri_layer(_DATA, _PROGRAM, _EDIT);
             }
-            layer_off(_EDIT_OVERLAY);
+            layer_off(_DATA_OVERLAY);
         }
 
         if (record->tap.count && record->event.pressed) {
@@ -1911,9 +1979,10 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_achordion(keycode, record)) { return false; }
     if (!process_key_tracking(keycode, record)) { return false; }
+    if (!process_lingering_mods(keycode, record)) { return false; }
     if (!process_magic(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
-    if (!process_lingering_mods(keycode, record)) { return false; }
+    if (!process_edit_controls(keycode, record)) { return false; }
     if (!process_vol_repeat(keycode, record)) { return false; }
     if (!process_clock(keycode, record)) { return false; }
     if (!process_boot_anim(keycode, record)) { return false; }
@@ -2038,6 +2107,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
+        case DELWORD:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code(KC_RGHT);
+                add_mods(MOD_MASK_CTRL);
+                tap_code(KC_LEFT);
+                tap_code(KC_DEL);
+                set_mods(mods);
+            }
+            break;
         case SELLEFT:
             if (record->event.pressed) {
                 register_code16(LSFT(LCTL(KC_LEFT)));
@@ -2049,8 +2129,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case SELECT:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
                 if (last_key != SELECT) {
+                    del_mods(MOD_MASK_CSAG);
                     if (last_key == SELLEFT) {
                         tap_code(KC_LEFT);
                     }
@@ -2063,13 +2143,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 } else if (last_key_2 == SELECT) {
                     /*intentionally blank*/ ;
                 } else {
-                    tap_code(KC_DEL);
+                    if (ctrl_on()) {
+                        tap_code16(LCTL(KC_X));
+                    } else {
+                        tap_code(KC_DEL);
+                    }
                 }
                 set_mods(mods);
                 update_last_key(SELECT);
             }
             return false;
-            
         case SELRGHT:
             if (record->event.pressed) {
                 register_code16(LSFT(LCTL(KC_RGHT)));
@@ -2078,6 +2161,47 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 unregister_code16(LSFT(LCTL(KC_RGHT)));
             }
             return false;
+        case EO_ENT:
+            if (record->event.pressed) {
+                register_code(KC_ENT);
+            } else {
+                unregister_code(KC_ENT);
+            }
+        case SPC_UP:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code(KC_HOME);
+                tap_code(KC_ENT);
+                tap_code(KC_UP);
+                set_mods(mods);
+            }
+            break;
+        case JOIN:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code(KC_END);
+                add_mods(MOD_MASK_CTRL);
+                tap_code(KC_DEL);
+                del_mods(MOD_MASK_CTRL);
+                set_mods(mods);
+                if (shifted()) {
+                    /*intentionally blank*/ ;
+                } else {
+                    tap_code(KC_SPC);
+                }
+            }
+            break;
+        case SPC_DN:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code(KC_END);
+                tap_code(KC_ENT);
+                set_mods(mods);
+            }
+            break;
 
         // =====================================================================
         // Misc control
@@ -2818,52 +2942,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 layer_off(_MOUSE);
             }
             break;
-        case DELWORD:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_RGHT);
-                add_mods(MOD_MASK_CTRL);
-                tap_code(KC_LEFT);
-                tap_code(KC_DEL);
-                set_mods(mods);
-            }
-            break;
-        case SPC_UP:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_HOME);
-                tap_code(KC_ENT);
-                tap_code(KC_UP);
-                set_mods(mods);
-            }
-            break;
-        case JOIN:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_END);
-                add_mods(MOD_MASK_CTRL);
-                tap_code(KC_DEL);
-                del_mods(MOD_MASK_CTRL);
-                set_mods(mods);
-                if (shifted()) {
-                    /*intentionally blank*/ ;
-                } else {
-                    tap_code(KC_SPC);
-                }
-            }
-            break;
-        case SPC_DN:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_END);
-                tap_code(KC_ENT);
-                set_mods(mods);
-            }
-            break;
     }
     return true;
 }
@@ -3053,7 +3131,7 @@ void render_mode(void) {
 }
 
 void render_layer(void) {
-    if (IS_LAYER_ON(_DATA)) {
+    if (IS_LAYER_ON(_DATA) || IS_LAYER_ON(_DATA_OVERLAY)) {
         oled_write_P(PSTR(">Data\n"), false);
     } else {
         oled_write_P(PSTR(" Data\n"), false);
@@ -3280,6 +3358,12 @@ void render_layout(void) {
             oled_write_raw_P(menu_layout_edit_overlay_left, layout_left_size);
             oled_set_cursor(0,6);
             oled_write_raw_P(menu_layout_edit_overlay_right, layout_right_size);
+            break;
+        case _DATA_OVERLAY:
+            oled_set_cursor(0,3);
+            oled_write_raw_P(menu_layout_edit_overlay_left, layout_left_size);
+            oled_set_cursor(0,6);
+            oled_write_raw_P(menu_layout_data_overlay_right, layout_right_size);
             break;
         case _UTILITY:
             oled_set_cursor(0,3);
