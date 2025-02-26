@@ -373,7 +373,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______,    REDO,    UNDO,  SELECT,    COPY,   PASTE,                      CS_BRCS,    KC_4,    KC_5,    KC_6, CS_POUN,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______,    KC_BSPC,  CS_AL1, CS_SLSH
+                                              _______, _______, _______,    _______, _______, CS_SLSH
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -1501,9 +1501,11 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
             layer_lock_off(_EDIT);
             layer_on(_EDIT);
             update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
+            update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
         } else if (!is_layer_locked(_EDIT)) {
             layer_off(_EDIT);
             update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
+            update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
         }
 
         if (record->tap.count && record->event.pressed) {
@@ -1568,12 +1570,14 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_RT2) {
         if (!record->tap.count && record->event.pressed) {
             layer_on(_PROGRAM);
+            update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
             update_tri_layer(_DATA, _PROGRAM, _EDIT);
         } else {
             layer_off(_PROGRAM);
-            if (IS_LAYER_OFF(_DATA_OVERLAY)) {
+            if (IS_LAYER_OFF(_EDIT_OVERLAY)) {
                 update_tri_layer(_DATA, _PROGRAM, _EDIT);
             }
+            update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
             layer_off(_DATA_OVERLAY);
         }
 
