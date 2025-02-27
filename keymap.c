@@ -2171,6 +2171,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             } else {
                 unregister_code(KC_ENT);
             }
+            break;
         case SPC_UP:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
