@@ -10,7 +10,7 @@
 - [Base layer](#base) is a [magic](#dynamic-keys) modded [graphite](https://github.com/rdavison/graphite-layout)/[gallium](https://github.com/GalileoBlues/Gallium) layout. ([Alternative base layers](#alt-base-layer) available.)
 - Many common symbols and punctuation are accessible through [combos](#combos).
 - Home row mods selectively available on most layers.
-- [Chordal Hold](https://docs.qmk.fm/tap_hold#chordal-hold) enabled with opposite hand triggers and typing streak detection for home row mod and `Repeat`/`Magic` layer-tap safety.
+- [Chordal Hold](https://docs.qmk.fm/tap_hold#chordal-hold) enabled with opposite hand triggers for home row mod and `Repeat`/`Magic` layer-tap safety.
 - [Rollback feature](#rollbacks) for magic outputs and macros.
 - [Mouse emulation](#mouse) accessible on pinky key combo; movement keys in same position as arrow keys on navigation layer, scrolling underneath in vim arrow layout.
 - Media control on [Utility layer](#utility).
