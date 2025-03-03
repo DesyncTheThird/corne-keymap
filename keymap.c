@@ -1489,6 +1489,21 @@ void send_the(void) {
     update_last_keys(KC_E,3);
 }
 
+void send_nt(void) {
+    if (shifted()) {
+        const uint8_t mods = get_mods();
+        del_mods(MOD_MASK_CSAG);
+        tap_code(KC_QUOT);
+        add_mods(MOD_MASK_SHIFT);
+        tap_code(KC_T);
+        tap_code(KC_SPC);
+        set_mods(mods);
+    } else {
+        SEND_STRING("'t ");
+    }
+    update_last_keys(KC_SPC,3);
+}
+
 void start_sentence(void) {
     tap_code(KC_SPC);
     set_oneshot_mods(MOD_BIT(KC_LSFT));
@@ -1532,7 +1547,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
                 case KC_B: SEND_STRING(/*b*/"ecause "); update_last_keys(KC_SPC, 7); magic_override = false; break;
 
-                case KC_N: SEND_STRING(/*n*/"'t "); update_last_keys(KC_SPC, 3); magic_override = false; break;
+                case KC_N: send_nt(); magic_override = false; break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
                 case KC_T: SEND_STRING(/*t*/"ment"); update_last_keys(KC_N, 4); break;
                 case KC_S: tap_code(KC_C); update_last_key(KC_C); break;
