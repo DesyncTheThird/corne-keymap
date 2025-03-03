@@ -10,7 +10,7 @@
 - [Base layer](#base) is a [magic](#dynamic-keys) modded [graphite](https://github.com/rdavison/graphite-layout)/[gallium](https://github.com/GalileoBlues/Gallium) layout. ([Alternative base layers](#alt-base-layer) available.)
 - Many common symbols and punctuation are accessible through [combos](#combos).
 - Home row mods selectively available on most layers.
-- [Achordion](https://getreuer.info/posts/keyboards/achordion/index.html) enabled with opposite hand triggers and typing streak detection for home row mod and `Repeat`/`Magic` layer-tap safety.
+- [Chordal Hold](https://docs.qmk.fm/tap_hold#chordal-hold) enabled with opposite hand triggers and typing streak detection for home row mod and `Repeat`/`Magic` layer-tap safety.
 - [Rollback feature](#rollbacks) for magic outputs and macros.
 - [Mouse emulation](#mouse) accessible on pinky key combo; movement keys in same position as arrow keys on navigation layer, scrolling underneath in vim arrow layout.
 - Media control on [Utility layer](#utility).
@@ -213,7 +213,7 @@ I find it difficult to press upper row keys with my pinkies and end up alt finge
 
 > ℹ️ Note that this keymap internally uses a QWERTY layer (specifically, the `_BASIC` layer) for combos, so this Base layer can be modified easily without needing any changes to combo code. 
 > 
-> ⚠️ However, per-key mod-tap settings and Achordion will still need to be handled separately if home row mods are changed.
+> ⚠️ However, per-key mod-tap settings and Chordal Hold will still need to be handled separately if home row mods are changed.
 
 `Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together or omitted, as they accessible from combos near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a LaTeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/(reverse) leader key.
 
@@ -348,7 +348,7 @@ By the way, `CS` originally stood for `Custom Symbol`, but I've ended up using t
 ### Layers
 You may notice that this keymap has a lot of layers defined. In practice however, you'll only really be using 6 or so layers: the `Base` layer, `Edit`, `Data`, `Symbol`, `Program`, and `Utility`. The other 10 are either persistent locking layers (different base layers/numpad/steno, etc.), or are there to make the internal layer switching implementation simpler (including "overlay" layers).
 
-Because layers are arranged in a stack that is scanned top-down, there isn't an easy way to move from a higher layer to a lower layer momentarily. I've done some implementations of this before, but they are often error-prone to work with, difficult to maintain and troubleshoot, and often doesn't interact well with other features like Achordion or built-in timers. Alternatively, I could make every key on every layer that needs this behaviour a custom key that performs different actions depending on the currently held keys, but this is even worse for maintenance, even if it is slightly more memory efficient. To save myself the trouble, I just stack extra layers on top wherever I need them.
+Because layers are arranged in a stack that is scanned top-down, there isn't an easy way to move from a higher layer to a lower layer momentarily. I've done some implementations of this before, but they are often error-prone to work with, difficult to maintain and troubleshoot, and often don't interact well with other features. Alternatively, I could make every key on every layer that needs this behaviour a custom key that performs different actions depending on the currently held keys, but this is even worse for maintenance, even if it is slightly more memory efficient. To save myself the trouble, I just stack extra layers on top wherever I need them.
 
 ### Repeat Key
 I am aware that there is a built-in QMK implementation of the repeat/magic key. However, my original implementation predates the repeat key being merged into the main branch. Furthermore, I've customised my dynamic keys so much at this point that it's easier to keep using my own implementation as I keep all of the functions exposed and can hook into it anywhere. In particular, the rollback feature and various dynamic macros do this extensively.
@@ -370,11 +370,7 @@ If you find a way to clean up some of my code or fix some bugs, that's lovely, a
    git clone https://github.com/DesyncTheThird/corne-keymap qmk_firmware\keyboards\crkbd\keymaps\desync
    ```
 
-3. Install the `achordion` feature as per step 4 in [these instructions](https://getreuer.info/posts/keyboards/achordion/index.html#add-achordion-to-your-keymap).
-
-   That is, in the cloned directory (i.e. the one containing `keymap.c`), add a new subdirectory called `features`, and copy [achordion.h](https://raw.githubusercontent.com/getreuer/qmk-keymap/main/features/achordion.h) and [achordion.c](https://raw.githubusercontent.com/getreuer/qmk-keymap/main/features/achordion.c) there.
-
-4. Build the keymap from the [QMK CLI](https://docs.qmk.fm/cli#qmk-cli) with:
+3. Build the keymap from the [QMK CLI](https://docs.qmk.fm/cli#qmk-cli) with:
 
    ```sh
    qmk compile -c -kb crkbd -km desync
@@ -390,7 +386,7 @@ See [here](https://docs.qmk.fm/squeezing_avr) for more ways to save space. (Most
 
 > ℹ️ I recommend using an RP2040 or another ARM MCU with more space. (Plus, they're generally cheaper and faster than AVR pro-micros.)
 
-5. To use a drop-in replacement controller, additionally use a [converter](https://docs.qmk.fm/feature_converters#supported-converters) flag: `-e CONVERT_TO=<converter>`.
+4. To use a drop-in replacement controller, additionally use a [converter](https://docs.qmk.fm/feature_converters#supported-converters) flag: `-e CONVERT_TO=<converter>`.
 
    For instance, I use a (non-Sparkfun) RP2040 controller, so my full build command is:
 

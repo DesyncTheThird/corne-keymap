@@ -101,7 +101,7 @@ timeout managed manually in keymap instead.
 // Perform hold action if other keys are pressed (nested only).
 #define PERMISSIVE_HOLD_PER_KEY
 
-#define ACHORDION_STREAK
+#define CHORDAL_HOLD
 
 // Disable repeating tap function on tap-hold keys.
 // #define QUICK_TAP_TERM 0

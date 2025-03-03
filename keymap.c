@@ -205,7 +205,6 @@ enum custom_keycodes {
 
 // Control keys
 #define CS_LCTL LM(_CONTROL, MOD_LCTL)
-#define EO_LCTL LM(_CONTROL_OVERLAY, MOD_LCTL)
 
 #define UNDO    LCTL(KC_Z)
 #define REDO    LCTL(KC_Y)
@@ -426,8 +425,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 };
 
-#include "features/achordion.h"
-
 //==============================================================================
 // Variables
 //==============================================================================
@@ -645,8 +642,6 @@ static bool oled_timeout = false;
 static bool oled_disable = false;
 
 void matrix_scan_user(void) {
-    achordion_task();
-
     if (timer_elapsed(boot_timer) > 5000) {
         boot = false;
     }
@@ -793,10 +788,15 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
+bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
+                      uint16_t other_keycode, keyrecord_t* other_record) {
+    if (is_hrm(tap_hold_keycode)) {
+        return get_chordal_hold_default(tap_hold_record, other_record);
+    }
+
     switch (tap_hold_keycode) {
         case CS_LT3:
-        // case CS_LT2:
+        case CS_LT2:
         case CS_LT1:
 
         case CS_RT1:
@@ -811,58 +811,11 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
         case CS_BOOT:
         case TABLSFT:
         case TABRSFT:
-            return 0;
+            return true;
 
-        default:
-            return 300;
-    }
-}
-
-bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
-                     uint16_t other_keycode, keyrecord_t* other_record) {
-    if (is_hrm(tap_hold_keycode)) {
-        return achordion_opposite_hands(tap_hold_record, other_record);
-    }
-
-    switch (tap_hold_keycode) {
         case CS_AL1:
         case CS_RT2:
-            return achordion_opposite_hands(tap_hold_record, other_record);
-
-        case CS_LT2:
-        default:
-            return true;
-    }
-}
-
-uint16_t achordion_streak_chord_timeout( uint16_t tap_hold_keycode, uint16_t next_keycode) {
-    uint8_t mod = mod_config(QK_MOD_TAP_GET_MODS(tap_hold_keycode));
-    switch (next_keycode) {
-        case CS_LCTL:
-        case KC_LCTL:
-        case KC_LSFT:
-        case TABLSFT:
-        case TABRSFT:
-            return 0;
-    }
-    if (is_magic(tap_hold_keycode)) {
-        return 75;
-    }
-    if (((mod & MOD_LSFT) != 0) || ((mod & MOD_RSFT) != 0)) {
-        return 100;
-    }
-    return 250;
-}
-
-bool achordion_eager_mod(uint8_t mod) {
-    switch (mod) {
-        case MOD_LSFT:
-        case MOD_RSFT:
-        case MOD_LCTL:
-        case MOD_RCTL:
-        // case MOD_LALT:
-        // case MOD_RALT:
-            return true;
+            return get_chordal_hold_default(tap_hold_record, other_record);
 
         default:
             return false;
@@ -1996,7 +1949,6 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
-    if (!process_achordion(keycode, record)) { return false; }
     if (!process_key_tracking(keycode, record)) { return false; }
     if (!process_lingering_mods(keycode, record)) { return false; }
     if (!process_magic(keycode, record)) { return false; }
