@@ -119,7 +119,8 @@ Pressing any other key will instantly close this window.
 
 This feature is also reused to rollback various macro outputs in a single keypress.
 
-> ℹ️ You can hook into this feature with the `process_key_tracking` and `rollback_last_key` functions.
+> [!NOTE]
+> You can hook into this feature with the `process_key_tracking` and `rollback_last_key` functions.
 
 
 
@@ -211,9 +212,11 @@ Base layer alphas is a slightly modified graphite layout, with home row mods, an
 
 I find it difficult to press upper row keys with my pinkies and end up alt fingering them with my ring fingers, which introduces some SFBs (`BL`, `BR`) with the default Graphite layout. So, `J` and `B` have been moved off the outer top row; `B` has also been placed next to `C` to make the common `B_C` string not a skipgram. Also, I don't like `E` on the ring finger, so `HEIA` is used over `HAEI`.
 
-> ℹ️ Note that this keymap internally uses a QWERTY layer (specifically, the `_BASIC` layer) for combos, so this Base layer can be modified easily without needing any changes to combo code. 
-> 
-> ⚠️ However, per-key mod-tap settings and Chordal Hold will still need to be handled separately if home row mods are changed.
+> [!NOTE]
+> The keymap internally uses a QWERTY layer (specifically, the `_BASIC` layer) for combo tracking, so this `Base` layer can be modified easily without needing any changes to combo code.
+
+> [!WARNING]
+> However, per-key mod-tap settings and Chordal Hold config will still need to be handled separately if home row mods are changed.
 
 `Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together or omitted, as they accessible from combos near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a LaTeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/(reverse) leader key.
 
@@ -237,17 +240,19 @@ Activating both `Data` and `Program` layers will also activate the `Edit` layer 
 
 ### Edit
 ![Edit](images/edit.png?raw=true)
-Navigation/editing keys on left hand and paired delimiters and common symbol combinations on right hand.
+Navigation/editing keys on left hand and paired delimiters and common symbol combinations on right hand. I prefer the navigation cluster on the left hand to allow usage with the mouse.
 
 Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `?()`; right hand also duplicated on Symbol and Program layers.
 
-The `Select` macro selects the current word; pressing it again will delete the selection. Holding `LCTL` for the second press cuts (`Ctrl`+`X`) the selection instead.
-
 The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
 
+The `Select` macro selects the current word; pressing it again will cut (`Ctrl`+`X`) the selection. Pressing it after one of the two other directional `Select` macros will also immediately cut the selection.
+
+After cutting with `Select`, the `Enter` key on this layer will act as paste (`Ctrl`+`V`), resetting after the first use, or if the `Edit` layer is disabled. (Note that the bottow row of the [Control Overlay](#control-overlay) will still work on this layer.)
+
+The right thumb keys also have additional layering actions:
 - Activating both `Edit` and `Program` layers will also activate the [Edit Overlay](#edit-overlay), containing macros useful for editing.
 - Activating both `Edit` and `Symbol` layers will replace the right hand with a copy of the `Data` layer. While this layer is active, the `LCTL` modifier is also held for all the keys on the left hand; `LSFT` is held for the `Home` and `End` keys.
-
 These are both implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
 
@@ -315,8 +320,7 @@ The right hand is replaced with macros useful for editing:
 - The `Line` macro adds new lines above/below the current position.
 - The `Join` macro joins current line to following line with space between; does not add space if shifted.
 
-- The three bracket macros enclose the current word with the listed brackets. (Compare with 
-the bracket macros on the `Data` layer.) These macros also interoperate with the rollback feature.
+- The three bracket macros enclose the current word with the listed brackets. (Compare with the bracket macros on the `Data` layer.) These macros also interoperate with the rollback feature.
 
 While this layer is active, the `LCTL` modifier is held for the `Delete` and `Page` keys, and `LSFT` is held for the `Home` and `End` keys.
 
@@ -328,7 +332,8 @@ While this layer is active, the `LCTL` modifier is held for the `Delete` and `Pa
 
 Accessible with `Base` key on Utility layer, or `Basic` to also disable home row mods and `Space` layer-tap (for games).
 
-> ⚠️ Modifying the _BASIC layer will also require changing mod-tap and combo code.
+> [!WARNING]
+> Modifying the _BASIC layer will also require changing mod-tap and combo code.
 
 
 
@@ -378,13 +383,15 @@ If you find a way to clean up some of my code or fix some bugs, that's lovely, a
 
    Note, however:
 
-> ⚠️ Unmodified, this keymap will not fit on most AVR MCUs (and in fact may fail to compile in some cases due to overflowing 8-bit integers).
+> [!CAUTION]
+> Unmodified, this keymap will not fit on most AVR MCUs (and in fact may fail to compile in some cases due to overflowing 8-bit integers).
 
 For reference, my compiled uf2 file is 218kB (accurate as of commit [`972be81`](https://github.com/DesyncTheThird/corne-keymap/tree/972be8199a39604a71828d9c83535090095b7b2f)), though you should be able to save a significant amount of space by removing various OLED animations, deleting unused layers (along with the associated OLED layout `PROGMEM`), and disabling additional RGB animations (the `CS_RGBN` key will need to be updated in this case).
 
 See [here](https://docs.qmk.fm/squeezing_avr) for more ways to save space. (Most space-saving `rules.mk` and `config.h` options have already been enabled; only modify those files if you have disabled additional features in `keymap.c`.)
 
-> ℹ️ I recommend using an RP2040 or another ARM MCU with more space. (Plus, they're generally cheaper and faster than AVR pro-micros.)
+> [!TIP]
+> I recommend using an RP2040 or another ARM MCU with more space. (Plus, they're generally cheaper and faster than AVR pro-micros.)
 
 4. To use a drop-in replacement controller, additionally use a [converter](https://docs.qmk.fm/feature_converters#supported-converters) flag: `-e CONVERT_TO=<converter>`.
 

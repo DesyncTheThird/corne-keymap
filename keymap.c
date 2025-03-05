@@ -539,11 +539,11 @@ bool is_layer_tap(uint16_t keycode) {
 }
 
 bool is_bspc(uint16_t keycode) {
-    return ((keycode == CS_RT1) || (keycode == KC_BSPC));
+    return (keycode == CS_RT1 || keycode == KC_BSPC);
 }
 
 bool is_spc(uint16_t keycode) {
-    return ((keycode == CS_RT1) || (keycode == KC_SPC));
+    return (keycode == CS_RT1 || keycode == KC_SPC);
 }
 
 bool is_bracket_macro(uint16_t keycode) {
@@ -554,6 +554,13 @@ bool is_bracket_wrap_macro(uint16_t keycode) {
     return (keycode >= WORDCBR && keycode <= WORDBRC);
 }
 
+bool is_select_macro(uint16_t keycode) {
+    return (keycode == SELLEFT || keycode == SELECT || keycode == SELRGHT);
+}
+
+bool is_arrow_key(uint16_t keycode) {
+    return (keycode == KC_UP || keycode == KC_DOWN || keycode == KC_LEFT || keycode == KC_RGHT);
+}
 //==============================================================================
 // Trackpoint
 //==============================================================================
@@ -1144,7 +1151,12 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
 // Edit Control Keys
 //==============================================================================
 
+bool edit_clip = false;
+
 bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
+    if (IS_LAYER_OFF(_EDIT)) {
+        edit_clip = false;
+    }
     if (get_highest_layer(layer_state) != _EDIT) {
         return true;
     }
@@ -1190,8 +1202,9 @@ bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
             }
         case EO_ENT:
             if (record->event.pressed) {
-                if (ctrl_on()) {
+                if (ctrl_on() || edit_clip) {
                     register_code16(LCTL(KC_V));
+                    edit_clip = false;
                     return false;
                 } else {
                     return true;
@@ -1387,7 +1400,11 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
-    if (keycode == SELLEFT || keycode == SELECT || keycode == SELRGHT) {
+    // Tracking handled in macro for reactive events
+    if (is_select_macro(keycode)) {
+        return true;
+    }
+    if (keycode == EO_ENT) {
         return true;
     }
 
@@ -1491,7 +1508,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
             }
 
             magic_override = true;
-            
+
             switch (last_key) {
                 // Left hand keys
                 case KC_Z: tap_code(KC_N); update_last_key(KC_N); break;
@@ -2100,25 +2117,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case SELECT:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                if (last_key != SELECT) {
+                if (is_select_macro(last_key)) {
+                    tap_code16(LCTL(KC_X));
+                    edit_clip = true;
+                } else {
                     del_mods(MOD_MASK_CSAG);
-                    if (last_key == SELLEFT) {
-                        tap_code(KC_LEFT);
-                    }
-                    if (last_key == SELRGHT) {
-                        tap_code(KC_RGHT);
-                    }
                     tap_code(KC_RGHT);
                     tap_code16(LCTL(KC_LEFT));
                     tap_code16(LSFT(LCTL(KC_RGHT)));
-                } else if (last_key_2 == SELECT) {
-                    /*intentionally blank*/ ;
-                } else {
-                    if (ctrl_on()) {
-                        tap_code16(LCTL(KC_X));
-                    } else {
-                        tap_code(KC_DEL);
-                    }
                 }
                 set_mods(mods);
                 update_last_key(SELECT);
