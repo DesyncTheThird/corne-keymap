@@ -266,11 +266,13 @@ The two directional `Select` macros select in the indicated directions from the 
 
 The `Select` macro selects the current word; pressing it again will cut (`Ctrl`+`X`) the selection. Pressing it after one of the two other directional `Select` macros will also immediately cut the selection.
 
-After cutting with `Select`, the `Enter` key on this layer will act as paste (`Ctrl`+`V`), resetting after the first use, or if the `Edit` layer is disabled. (Note that the bottow row of the [Control Overlay](#control-overlay) will still work on this layer.)
+After cutting with `Select`, the `Enter` key on this layer will act as paste (`Ctrl`+`V`), resetting after the first use, or if the `Edit` layer is disabled.
+
+The bottow row of the [Control Overlay](#control-overlay) can also be activated with home row mods on this layer.
 
 The right thumb keys also have additional layering actions:
 - Activating both `Edit` and `Program` layers will also activate the [Edit Overlay](#edit-overlay), containing macros useful for editing.
-- Activating both `Edit` and `Symbol` layers will replace the right hand with a copy of the `Data` layer. While this layer is active, the `LCTL` modifier is also held for all the keys on the left hand; `LSFT` is held for the `Home` and `End` keys.
+- Activating both `Edit` and `Symbol` layers will replace the right hand with a copy of the `Data` layer, and also hold the `LCTL` or `LSFT` modifier for various keys on the left hand.
 These are both implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
 
@@ -333,9 +335,8 @@ Holding `LCTL` on any layer (including non-base layers) covers the left hand bot
 Activating the `Program` layer while on the `Edit` layer will activate the `Edit Overlay` layer on top (of the `Edit` layer). This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
 The right hand is replaced with macros useful for editing:
-- The (directional) `Select` macros are identical to those on the `Edit` layer;
 - The (directional) `Delete` macros function similarly to the selection macros, except deleting the selection.
-- The `Line` macro adds new lines above/below the current position.
+- The `Line` macro adds new lines above/below the current line.
 - The `Join` macro joins current line to following line with space between; does not add space if shifted.
 
 - The three bracket macros enclose the current word with the listed brackets. (Compare with the bracket macros on the `Data` layer.) These macros also interoperate with the rollback feature.

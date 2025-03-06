@@ -130,27 +130,15 @@ enum custom_keycodes {
     EO_ENT,
 };
 
-// Edit overlay keys
-#define EO_DEL  LCTL(KC_DEL)
-#define DELLEFT LCTL(KC_BSPC)
-#define DELRGHT LCTL(KC_DEL)
-#define EO_LEFT LCTL(KC_LEFT)
-#define EO_UP   LCTL(KC_UP)
-#define EO_DOWN LCTL(KC_DOWN)
-#define EO_RGHT LCTL(KC_RGHT)
-// #define EO_SELL LT(0,SELLEFT)
-// #define EO_SELC LT(0,SELECT)
-// #define EO_SELR LT(0,SELRGHT)
-
 // Home row mods
 #define MT_A LGUI_T(KC_A)
 #define MT_S LALT_T(KC_S)
 #define MT_D LCTL_T(KC_D)
 #define MT_F LSFT_T(KC_F)
 
-#define MT_J RSFT_T(KC_J)
-#define MT_K RCTL_T(KC_K)
-#define MT_L LALT_T(KC_L)
+#define MT_J    RSFT_T(KC_J)
+#define MT_K    RCTL_T(KC_K)
+#define MT_L    LALT_T(KC_L)
 #define MT_SCLN RGUI_T(KC_SCLN)
 
 // Alt layout home row mods
@@ -182,8 +170,15 @@ enum custom_keycodes {
 
 #define MT_PIPE LGUI_T(KC_PIPE)
 #define MT_COLN LALT_T(KC_COLN)
-#define MT_DOT LCTL_T(KC_DOT)
+#define MT_DOT  LCTL_T(KC_DOT)
 #define MT_COMM LSFT_T(KC_COMM)
+
+// Edit overlay home row mods
+#define MT_DELL RSFT_T(KC_BSPC)
+#define MT_DELW RCTL_T(KC_BSPC)
+#define MT_DELR LALT_T(KC_DEL)
+#define MT_DEL  RGUI_T(KC_DEL)
+
 
 // Layer keys
 #define CS_LT3 LT(_UTILITY,KC_ENT)
@@ -343,9 +338,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
+          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, DELWORD, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
+          _______, KC_PGDN, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______,  CS_AL4,  KC_SPC
                                           //`--------------------------'  `--------------------------'
@@ -353,11 +348,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT_OVERLAY] = LAYOUT( //10
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                      WORDCBR, DELLEFT, DELWORD, DELRGHT, _______, _______,
+          _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                      WORDCBR,  SPC_UP,    JOIN,  SPC_DN,  KC_ESC, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, PRV_TAB, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      WORDPRN, SELLEFT,  SELECT, SELRGHT,  KC_DEL, _______,
+          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      WORDPRN, MT_DELL, MT_DELW, MT_DELR,  MT_DEL, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+-   -------+--------|
-          _______,    REDO,    UNDO,  SELECT,    COPY,   PASTE,                      WORDBRC,  SPC_UP,    JOIN,  SPC_DN,  KC_ESC, _______,
+          _______, PRV_TAB, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                      WORDBRC,   PASTE,    COPY,    REDO,    UNDO, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -365,11 +360,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_DATA_OVERLAY] = LAYOUT( //11
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NXT_TAB, EO_HOME,   EO_UP,  EO_END, KC_CAPS,                      CS_CBRS,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
+          _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                      CS_CBRS,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, PRV_TAB, EO_LEFT, EO_DOWN, EO_RGHT,  KC_DEL,                      CS_PRNS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
+          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      CS_PRNS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______,    REDO,    UNDO,  SELECT,    COPY,   PASTE,                      CS_BRCS,    KC_4,    KC_5,    KC_6, CS_POUN,  KC_ENT,
+          _______, PRV_TAB, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                      CS_BRCS,    KC_4,    KC_5,    KC_6, CS_POUN,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______, _______, CS_SLSH
                                           //`--------------------------'  `--------------------------'
@@ -517,6 +512,11 @@ bool is_hrm(uint16_t keycode) {
         case MT_COLN:
         case MT_DOT:
         case MT_COMM:
+
+        case MT_DELL:
+        case MT_DELW:
+        case MT_DELR:
+        case MT_DEL:
             return true;
         default:
             return false;
@@ -1382,7 +1382,9 @@ bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
     if (IS_LAYER_OFF(_EDIT)) {
         edit_clip = false;
     }
-    if (get_highest_layer(layer_state) != _EDIT) {
+    if (get_highest_layer(layer_state) != _EDIT
+     && get_highest_layer(layer_state) != _EDIT_OVERLAY 
+     && get_highest_layer(layer_state) != _DATA_OVERLAY) {
         return true;
     }
     switch (keycode) {
@@ -3112,6 +3114,53 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
 
+
+            
+        case MT_DELL:
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_BIT(KC_RSFT));
+            } else {
+                unregister_mods(MOD_BIT(KC_RSFT));
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code16(RCTL(KC_BSPC));
+                set_mods(mods);
+            }
+            return false;
+
+        case MT_DELW:
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_BIT(KC_RCTL));
+            } else {
+                unregister_mods(MOD_BIT(KC_RCTL));
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code(KC_RGHT);
+                add_mods(MOD_MASK_CTRL);
+                tap_code(KC_LEFT);
+                tap_code(KC_DEL);
+                set_mods(mods);
+            }
+            return false;
+
+        case MT_DELR:
+            if (!record->tap.count && record->event.pressed) {
+                register_mods(MOD_BIT(KC_LALT));
+            } else {
+                unregister_mods(MOD_BIT(KC_LALT));
+            }
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code16(RCTL(KC_DEL));
+                set_mods(mods);
+            }
+            return false;
+
         // =====================================================================
         // Combos
         // =====================================================================
@@ -3597,6 +3646,14 @@ void render_overlays(void) {
         return;
     }
     if (IS_LAYER_ON(_CONTROL_OVERLAY)) {
+        oled_set_cursor(1,5);
+        oled_write_raw_P(menu_layout_control_overlay, 42);
+        return;
+    }
+    if (ctrl_on() &&
+       (get_highest_layer(layer_state) == _EDIT 
+     || get_highest_layer(layer_state) == _EDIT_OVERLAY 
+     || get_highest_layer(layer_state) == _DATA_OVERLAY) ) {
         oled_set_cursor(1,5);
         oled_write_raw_P(menu_layout_control_overlay, 42);
         return;
