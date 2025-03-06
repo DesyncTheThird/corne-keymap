@@ -672,6 +672,10 @@ void matrix_scan_user(void) {
             alt_tab_active = false;
         }
     }
+
+    if (last_input_activity_elapsed() > 200 && last_key == SELECT) {
+        last_key = KC_NO;
+    }
     if (last_input_activity_elapsed() > 500) { // Reset key tracking
         char_count = 1;
     }
@@ -1186,8 +1190,17 @@ bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
                 return true;
             }
         case SELECT:
-            // handled in key definition
-            return true;
+            if (record->event.pressed) {
+                if (ctrl_on()) {
+                    register_code16(LCTL(KC_X));
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                unregister_code16(LCTL(KC_X));
+                return true;
+            }
         case SELRGHT:
             if (record->event.pressed) {
                 if (ctrl_on()) {
