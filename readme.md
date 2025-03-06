@@ -169,6 +169,7 @@ Key on utility layer available to change both OLEDs to static images.
 - Uncommon locking layers (numpad/steno) also accessible from large combos;
 - `New` combo presses `DOT`, `SPC`, then sets a one shot shift.
 
+Pressing `Spc` plus a key on the left hand top row will output the function keys `F1` to `F5` for left-hand-only usage. (Not shown on image due to reduce clutter.)
 
 
 # ⚠️ Experimental Features
@@ -249,8 +250,6 @@ Number grid with `1`, `2`, and `3` on right hand home row, along with common num
 The bracket macros `{-}`, `(-)`, and `[-]` send the listed brackets, then tap `Left`, placing the cursor between the two brackets. These macros also interoperate with the rollback feature.
 
 The `@` symbol is also available on this layer as many email handles end with numbers, and also because I use it as a leader key for LaTeX commands; and `~` is available for git commands.
-
-Function keys also available for left hand only usage.
 
 Activating both `Data` and `Program` layers will also activate the `Edit` layer on top to allow for quick navigation during numerical input. This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 

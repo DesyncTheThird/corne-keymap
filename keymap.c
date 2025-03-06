@@ -50,19 +50,13 @@ enum custom_keycodes {
 
     CS_RGBN,
     CS_RGBT,
-    
+
     CLOCKUP,
     CLOCKDN,
     CLOCKNX,
 
     OLEDSAV,
     OLEDTOG,
-
-    CS_F1,
-    CS_F2,
-    CS_F3,
-    CS_F4,
-    CS_F5,
 
     DB_INFO,
 
@@ -168,7 +162,7 @@ enum custom_keycodes {
 #define MT_3 LALT_T(KC_3)
 #define MT_0 LGUI_T(KC_0)
 
-#define MT_PIPE LGUI_T(KC_PIPE)
+#define MT_EXLM LGUI_T(KC_EXLM)
 #define MT_COLN LALT_T(KC_COLN)
 #define MT_DOT  LCTL_T(KC_DOT)
 #define MT_COMM LSFT_T(KC_COMM)
@@ -288,11 +282,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_DATA] = LAYOUT( //5
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______,   CS_F1,   CS_F2,   CS_F3,   CS_F4,   CS_F5,                      CS_CBRS,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
+          _______, CS_PERC, CS_MINS, CS_PLUS,  CS_DLR, CS_AMPR,                      CS_CBRS,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          OSMLSFT, MT_PIPE, MT_COLN,  MT_DOT, MT_COMM, CS_CIRC,                      CS_PRNS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
+          OSMLSFT, MT_EXLM, MT_COLN,  MT_DOT, MT_COMM, CS_PIPE,                      CS_PRNS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, CS_TILD, CS_UNDS, CS_MINS, CS_PLUS, CS_ASTR,                      CS_BRCS,    KC_4,    KC_5,    KC_6, CS_POUN,  KC_ENT,
+          CS_LCTL, CS_CIRC, CS_UNDS, CS_ASTR, CS_HASH, CS_TILD,                      CS_BRCS,    KC_4,    KC_5,    KC_6, CS_POUN,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    KC_BSPC,  CS_AL1, CS_SLSH
                                           //`--------------------------'  `--------------------------'
@@ -451,8 +445,6 @@ bool ctrl_linger = false;
 bool left_eager_shift_on = false;
 bool right_eager_shift_on = false;
 
-bool nav_activated = false;
-
 bool ctrl_on(void) {
     return (get_mods() & MOD_BIT(KC_LCTL) || get_mods() & MOD_BIT(KC_RCTL));
 }
@@ -508,7 +500,7 @@ bool is_hrm(uint16_t keycode) {
         case MT_3:
         case MT_0:
 
-        case MT_PIPE:
+        case MT_EXLM:
         case MT_COLN:
         case MT_DOT:
         case MT_COMM:
@@ -995,6 +987,12 @@ enum combo_events {
     EXCLAMATION,
     SEMICOLON,
 
+    SPC_F1,
+    SPC_F2,
+    SPC_F3,
+    SPC_F4,
+    SPC_F5,
+
     COMBO_LENGTH
 };
 uint16_t COMBO_LEN = COMBO_LENGTH;
@@ -1028,6 +1026,13 @@ const uint16_t PROGMEM r_minus[]        = {KC_J, KC_K, COMBO_END};
 const uint16_t PROGMEM r_new[]          = {KC_QUOT, COM_DOT, COMBO_END};
 const uint16_t PROGMEM semicolon[]      = {KC_J, KC_I, COMBO_END};
 const uint16_t PROGMEM exclamation[]    = {KC_I, KC_L, COMBO_END};
+
+const uint16_t PROGMEM spc_f1[]         = {KC_SPC, KC_Q, COMBO_END};
+const uint16_t PROGMEM spc_f2[]         = {KC_SPC, KC_W, COMBO_END};
+const uint16_t PROGMEM spc_f3[]         = {KC_SPC, KC_E, COMBO_END};
+const uint16_t PROGMEM spc_f4[]         = {KC_SPC, KC_R, COMBO_END};
+const uint16_t PROGMEM spc_f5[]         = {KC_SPC, KC_T, COMBO_END};
+
 
 combo_t key_combos[] = {
     [TOUHOU]        = COMBO_ACTION(touhou),
@@ -1064,6 +1069,11 @@ combo_t key_combos[] = {
     [L_NEW]         = COMBO(r_new,          NEWSENT),
     [R_NEW]         = COMBO(l_new,          NEWSENT),
 
+    [SPC_F1]        = COMBO(spc_f1,         KC_F1),
+    [SPC_F2]        = COMBO(spc_f2,         KC_F2),
+    [SPC_F3]        = COMBO(spc_f3,         KC_F3),
+    [SPC_F4]        = COMBO(spc_f4,         KC_F4),
+    [SPC_F5]        = COMBO(spc_f5,         KC_F5),
 };
 
 
@@ -2668,65 +2678,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        case CS_F1:
-            if (record->event.pressed) {
-                if (nav_activated && (IS_LAYER_ON(_PROGRAM) || IS_LAYER_ON(_DATA))) {
-                    return false;
-                } else {
-                    register_code(KC_F1);
-                }
-            } else {
-                unregister_code(KC_F1);
-            }
-            break;
-        case CS_F2:
-            if (record->event.pressed) {
-                if (nav_activated && (IS_LAYER_ON(_PROGRAM) || IS_LAYER_ON(_DATA))) {
-                    return false;
-                } else {
-                    register_code(KC_F2);
-                }
-            } else {
-                unregister_code(KC_F2);
-            }
-            break;
-
-        case CS_F3:
-            if (record->event.pressed) {
-                if (nav_activated && (IS_LAYER_ON(_PROGRAM) || IS_LAYER_ON(_DATA))) {
-                    return false;
-                } else {
-                    register_code(KC_F3);
-                }
-            } else {
-                unregister_code(KC_F3);
-            }
-            break;
-
-        case CS_F4:
-            if (record->event.pressed) {
-                if (nav_activated && (IS_LAYER_ON(_PROGRAM) || IS_LAYER_ON(_DATA))) {
-                    return false;
-                } else {
-                    register_code(KC_F4);
-                }
-            } else {
-                unregister_code(KC_F4);
-            }
-            break;
-
-        case CS_F5:
-            if (record->event.pressed) {
-                if (nav_activated && (IS_LAYER_ON(_PROGRAM) || IS_LAYER_ON(_DATA))) {
-                    return false;
-                } else {
-                    register_code(KC_F5);
-                }
-            } else {
-                unregister_code(KC_F5);
-            }
-            break;
-
         // =====================================================================
         // Custom symbol handling
         // =====================================================================
@@ -3061,7 +3012,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             return false;
 
         
-        case MT_PIPE:
+        case MT_EXLM:
             if (!record->tap.count && record->event.pressed) {
                 register_mods(MOD_BIT(KC_LGUI));
             } else {
@@ -3070,7 +3021,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
-                tap_code16(LSFT(KC_NUBS));
+                tap_code16(KC_EXLM);
                 set_mods(mods);
             }
             return false;
@@ -3820,16 +3771,6 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 layer_state_t layer_state_set_user(layer_state_t state) {
     if (boot) {
         return state;
-    }
-
-    if (IS_LAYER_ON_STATE(state, _DATA) && IS_LAYER_ON_STATE(state, _PROGRAM)) {
-        nav_activated = true;
-        // dprintf("nav_active: %s\n", nav_activated ? "true" : "false");
-    }
-
-    if (IS_LAYER_OFF_STATE(state, _DATA) && IS_LAYER_OFF_STATE(state, _PROGRAM)) {
-        nav_activated = false;
-        // dprintf("nav_active: %s\n", nav_activated ? "true" : "false");
     }
 
     if (IS_LAYER_ON_STATE(state, _BASIC) || IS_LAYER_ON_STATE(state, _TOUHOU)) {
