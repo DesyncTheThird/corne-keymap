@@ -29,6 +29,7 @@ enum custom_keycodes {
     REP = SAFE_RANGE,
     MAGIC,
     NEWSENT,
+    CS_CASE,
 
     ALTTAB,
     BASIC,
@@ -228,8 +229,6 @@ enum custom_keycodes {
 #define NXT_TAB LCTL(KC_PGDN)
 #define PRV_TAB LCTL(KC_PGUP)
 #define OSMLSFT OSM(MOD_LSFT)
-#define OSLDATA OSL(_DATA)
-
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASIC] = LAYOUT( //0
@@ -238,7 +237,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN,  KC_TAB,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_DOT, QUE_EXL, OSLDATA,
+          KC_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_DOT, QUE_EXL, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  KC_SPC,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -250,7 +249,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    MT_A,    MT_S,    MT_D,    MT_F,    KC_G,                         KC_H,    MT_J,    MT_K,    MT_L, MT_SCLN, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_DOT, QUE_EXL, OSLDATA,
+          CS_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_DOT, QUE_EXL, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -262,7 +261,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           TABLSFT,   MTA_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,   MTA_A, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Q,    KC_X,    KC_M,    KC_W,    KC_V,                         KC_K,    KC_P, KC_QUOT, COM_DOT, QUE_EXL, OSLDATA,
+          CS_LCTL,    KC_Q,    KC_X,    KC_M,    KC_W,    KC_V,                         KC_K,    KC_P, KC_QUOT, COM_DOT, QUE_EXL, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -530,6 +529,33 @@ uint16_t last_key = KC_NO;
 uint16_t last_key_2 = KC_NO;
 uint16_t last_key_3 = KC_NO;
 
+void update_last_key(uint16_t new_keycode) {
+    last_key_3 = last_key_2;
+    last_key_2 = last_key;
+    last_key = new_keycode;
+
+    char_count = 1;
+
+    // dprintf("updated keys!\n");
+    // dprintf("last_key:   %d\n", last_key);
+    // dprintf("last_key_2: %d\n", last_key_2);
+    // dprintf("last_key_3: %d\n", last_key_3);
+    // dprintf("char_count: %d\n", char_count);
+}
+
+void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
+    last_key_3 = last_key_2;
+    last_key_2 = last_key;
+    last_key = new_keycode;
+
+    char_count = new_count;
+    // dprintf("updated multiple keys!\n");
+    // dprintf("last_key:   %d\n", last_key);
+    // dprintf("last_key_2: %d\n", last_key_2);
+    // dprintf("last_key_3: %d\n", last_key_3);
+    // dprintf("char_count: %d\n", char_count);
+}
+
 bool is_magic(uint16_t keycode) {
     return ((keycode == CS_LT2) || (keycode == CS_RT2));
 }
@@ -543,7 +569,7 @@ bool is_bspc(uint16_t keycode) {
 }
 
 bool is_spc(uint16_t keycode) {
-    return (keycode == CS_RT1 || keycode == KC_SPC);
+    return (keycode == CS_LT1 || keycode == KC_SPC);
 }
 
 bool is_bracket_macro(uint16_t keycode) {
@@ -1151,6 +1177,201 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
     return false;
 }
 
+
+
+//==============================================================================
+// Case Lock
+//==============================================================================
+
+bool case_lock_active = false;
+bool case_lock_capture = false;
+uint16_t case_lock_separator = KC_UNDS;
+int16_t separator_distance = 0;
+
+void case_lock_on(void) {
+    case_lock_active = true;
+    case_lock_capture = true;
+    dprintf("case lock on!\n");
+}
+
+void case_lock_off(void) {
+    case_lock_active = false;
+    case_lock_separator = KC_NO;
+    dprintf("case lock off!\n");
+}
+
+void send_separator(void) {
+    if (case_lock_separator == KC_LSFT) {
+        add_weak_mods(MOD_BIT(KC_LSFT));
+    } else {
+        tap_code16(case_lock_separator);
+    }
+}
+
+bool process_case_capture(uint16_t keycode) {
+    switch (keycode) {
+        default:
+            case_lock_off();
+            dprintf("capture cancelled\n");
+            return true;
+            
+        case KC_UNDS:
+        case CS_UNDS:
+            dprintf("captured underscore\n");
+            case_lock_separator = KC_UNDS;
+            case_lock_capture = false;
+            return false;
+
+        case KC_MINS:
+        case CS_MINS:
+            dprintf("captured dash\n");
+            case_lock_separator = KC_MINS;
+            case_lock_capture = false;
+            return false;
+
+        case KC_DOT:
+        case CS_DOT:
+            dprintf("captured dot\n");
+            case_lock_separator = KC_DOT;
+            case_lock_capture = false;
+            return false;
+
+        case KC_LSFT:
+        case TABLSFT:
+        case TABRSFT:
+            dprintf("captured shift\n");
+            case_lock_separator = KC_LSFT;
+            case_lock_capture = false;
+            return true;
+    }
+}
+
+bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
+    if (record->event.pressed) {
+        if (keycode == CS_CASE) {
+            dprintf("Case key pressed!\n");
+            if (case_lock_capture) {
+                tap_code(KC_CAPS);
+                case_lock_off();
+            } else {
+                case_lock_on();
+            }
+            return true;
+        }
+
+        if (case_lock_capture) {
+            dprintf("capture start\n");
+            return process_case_capture(keycode);
+        }
+
+        if (!case_lock_active) {
+            return true;
+        }
+
+        // Track distance for rollbacks
+        if (is_hrm(keycode)) {
+            if (record->tap.count) {
+                separator_distance += 1;
+                dprintf("separator distance = %d\n", separator_distance);
+                return true;
+            }
+        }
+        switch (keycode) {
+            case KC_A ... KC_Z:
+            case KC_1 ... KC_0:
+                separator_distance += 1;
+                dprintf("separator distance = %d\n", separator_distance);
+                return true;
+            case CS_LT2:
+            case CS_RT2:
+                if (record->tap.count) {
+                    separator_distance += 1;
+                    dprintf("separator distance = %d\n", separator_distance);
+                }
+                return true;
+
+        }
+        switch (keycode) {
+            case KC_UNDS:
+            case CS_UNDS:
+                if (case_lock_separator == KC_UNDS) {
+                    separator_distance = 0;
+                }
+                return true;
+
+            case KC_MINS:
+            case CS_MINS:
+                if (case_lock_separator == KC_MINS) {
+                    separator_distance = 0;
+                }
+                return true;
+
+            case KC_DOT:
+            case CS_DOT:
+                if (case_lock_separator == KC_DOT) {
+                    separator_distance = 0;
+                }
+                return true;
+        }
+
+        if (keycode == CS_LT1) {
+            if (record->tap.count) {
+                if (case_lock_active) {
+                    if (is_spc(last_key)) {
+                        if (case_lock_separator == KC_LSFT) {
+                            clear_oneshot_mods();
+                        } else {
+                            const uint8_t mods = get_mods();
+                            del_mods(MOD_MASK_CSAG);
+                            tap_code16(KC_BSPC);
+                            set_mods(mods);
+                        }
+                        case_lock_off();
+                        return true;
+                    } else {
+                        if (case_lock_separator == KC_LSFT) {
+                            set_oneshot_mods(MOD_BIT(KC_LSFT));
+                        } else {
+                            send_separator();
+                        }
+                        separator_distance = 0;
+                        update_last_key(KC_SPC);
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        if (keycode == CS_RT1) {
+            if (record->tap.count) {
+                if (ctrl_on()) {
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_CSAG);
+                    for (int i = 0; i < separator_distance; i++) {
+                        tap_code(KC_BSPC);
+                    }
+                    set_mods(mods);
+                    dprintf("rolled back!");
+                    separator_distance = 0;
+                    return false;
+                } else {
+                    if (separator_distance > 0) {
+                        separator_distance -= 1;
+                    }
+                    return true;
+                }
+            }
+        }
+
+        // Disable case lock on other keys
+        case_lock_off();
+    }
+    return true;
+}
+
+
+
 //==============================================================================
 // Edit Control Keys
 //==============================================================================
@@ -1231,36 +1452,10 @@ bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
 }
 
 
+
 //==============================================================================
 // Repeat and Magic keys
 //==============================================================================
-
-void update_last_key(uint16_t new_keycode) {
-    last_key_3 = last_key_2;
-    last_key_2 = last_key;
-    last_key = new_keycode;
-
-    char_count = 1;
-
-    // dprintf("updated keys!\n");
-    // dprintf("last_key:   %d\n", last_key);
-    // dprintf("last_key_2: %d\n", last_key_2);
-    // dprintf("last_key_3: %d\n", last_key_3);
-    // dprintf("char_count: %d\n", char_count);
-}
-
-void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
-    last_key_3 = last_key_2;
-    last_key_2 = last_key;
-    last_key = new_keycode;
-
-    char_count = new_count;
-    // dprintf("updated multiple keys!\n");
-    // dprintf("last_key:   %d\n", last_key);
-    // dprintf("last_key_2: %d\n", last_key_2);
-    // dprintf("last_key_3: %d\n", last_key_3);
-    // dprintf("char_count: %d\n", char_count);
-}
 
 void rollback_last_key(void) {
     char_count = 1;
@@ -1436,12 +1631,6 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     }
 
     // Do nothing:
-    if (is_bspc(keycode)) {
-        return true;
-    }
-    if (is_spc(keycode)) {
-        return true;
-    }
     if (is_magic(keycode)) {
         return true;
     }
@@ -1976,9 +2165,11 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-
+    
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
+    if (!process_case_lock(keycode, record)) { return false; }
+    // Reactive features go before key tracking
     if (!process_key_tracking(keycode, record)) { return false; }
     if (!process_lingering_mods(keycode, record)) { return false; }
     if (!process_magic(keycode, record)) { return false; }
@@ -3576,12 +3767,12 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
     if (IS_LAYER_ON_STATE(state, _DATA) && IS_LAYER_ON_STATE(state, _PROGRAM)) {
         nav_activated = true;
-        dprintf("nav_active: %s\n", nav_activated ? "true" : "false");
+        // dprintf("nav_active: %s\n", nav_activated ? "true" : "false");
     }
 
     if (IS_LAYER_OFF_STATE(state, _DATA) && IS_LAYER_OFF_STATE(state, _PROGRAM)) {
         nav_activated = false;
-        dprintf("nav_active: %s\n", nav_activated ? "true" : "false");
+        // dprintf("nav_active: %s\n", nav_activated ? "true" : "false");
     }
 
     if (IS_LAYER_ON_STATE(state, _BASIC) || IS_LAYER_ON_STATE(state, _TOUHOU)) {
