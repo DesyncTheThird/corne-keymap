@@ -12,7 +12,7 @@
 - Home row mods selectively available on most layers.
 - [Chordal Hold](https://docs.qmk.fm/tap_hold#chordal-hold) enabled with opposite hand triggers for home row mod and `Repeat`/`Magic` layer-tap safety.
 - [Rollback feature](#rollbacks) for magic outputs and macros.
-- [Case lock](#case-lock) for easy `snake_case`, `kebab-case`, `dot.case`, and `camelCase` usage.
+- [Case Lock](#case-lock) for easy `snake_case`, `kebab-case`, `camelCase`, etc.
 - [Mouse emulation](#mouse) accessible on pinky key combo; movement keys in same position as arrow keys on navigation layer, scrolling underneath in vim arrow layout.
 - Media control on [Utility layer](#utility).
 - [Control key overrides](#control-overlay) for easier left-hand only use; overrides disabled on home row mods.
@@ -129,16 +129,29 @@ This feature is also reused to rollback various macro outputs in a single keypre
 ## Case Lock
 Tapping the `Case Lock` key will prime the feature, capturing the next key pressed to be used as a separator. Then, the `Space` key will emit the captured separator instead of a space.
 
-By default, the only keys that can be captured are `_` (snake_case), `-` (kebab-case), `.` (dot.case), and `LSFT` (camelCase).
+
+By default, the only keys that can be captured are:
+- `_` (snake_case),
+- `-` (kebab-case),
+- `.` (dot.case),
+- `/` (unix/file/path),
+- `\` (win\file\path) [activated by `Q` or `Z` since `\` is not on base layer],
+- `LSFT` (camelCase),
+- `RSFT` (Title Case),
+- `Case Lock` (enables `Caps Lock`).
+
+Pressing any other key activates snake_case by default.
 
 > [!NOTE]
 > This can be customised in the `process_case_lock` and `process_case_capture` functions.
 
-Capturing the `Case Lock` will instead activate `Caps Lock`.
+The capture will time out after a short duration of no input (default 1000ms), cancelling the Case Lock.
 
-Tapping the `Space` key twice while case lock is active will delete the separator, output a space, and disable case lock.
+Tapping the `Space` key twice while Case Lock is active will delete the separator, output a space, and disable Case Lock.
 
-While case lock is active, `Ctrl`+`Bspc` will instead delete to the previous separator rather than deleting the entire word.
+While Case Lock is active, `Ctrl`+`Bspc` will instead delete to the previous separator rather than deleting the entire word.
+
+Case Lock will time out after a duration of no input (default 15s).
 
 
 
