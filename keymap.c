@@ -413,6 +413,34 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 };
 
+
+
+//==============================================================================
+// Data Sync
+//==============================================================================
+
+#include "transactions.h"
+
+typedef struct _master_to_slave_t {
+    // bool boot_sync :1;
+    bool static_display_sync :1;
+    bool oled_timeout_sync :1;
+    bool oled_disable_sync :1;
+    bool case_lock_capture_sync :1;
+    bool case_lock_active_sync :1;
+} master_to_slave_t;
+
+master_to_slave_t sync_data;
+
+void user_config_sync_handler(uint8_t initiator2target_buffer_size, const void* initiator2target_buffer,
+                      uint8_t target2initiator_buffer_size, void* target2initiator_buffer) {
+    if (initiator2target_buffer_size == sizeof(master_to_slave_t)) {
+        memcpy(&sync_data, initiator2target_buffer, initiator2target_buffer_size);
+    }
+}
+
+
+
 //==============================================================================
 // Variables
 //==============================================================================
@@ -450,14 +478,39 @@ bool case_lock_capture = false;
 uint16_t case_lock_separator = KC_UNDS;
 int16_t separator_distance = 0;
 
-void case_lock_on(void) {
+void case_lock_capture_on(void) {
     case_lock_capture = true;
+    master_to_slave_t m2s = {
+        .case_lock_capture_sync = case_lock_capture,
+    };
+    transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
+}
+
+void case_lock_capture_off(void) {
+    case_lock_capture = false;
+    master_to_slave_t m2s = {
+        .case_lock_capture_sync = case_lock_capture,
+    };
+    transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
+}
+
+void case_lock_on(void) {
+    case_lock_active = true;
+    master_to_slave_t m2s = {
+        .case_lock_active_sync = case_lock_active,
+    };
+    transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
     dprintf("case lock on!\n");
 }
 
 void case_lock_off(void) {
     case_lock_active = false;
     case_lock_capture = false;
+    master_to_slave_t m2s = {
+        .case_lock_active_sync = case_lock_active,
+        .case_lock_capture_sync = case_lock_capture,
+    };
+    transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
     case_lock_separator = KC_NO;
     dprintf("case lock off!\n");
 }
@@ -726,7 +779,7 @@ void matrix_scan_user(void) {
         
         // Reset Case Lock capture
         if (!case_lock_active) {
-            case_lock_capture = false;
+            case_lock_capture_off();
         }
     }
     if (last_input_activity_elapsed() > 15000) {
@@ -1277,8 +1330,8 @@ bool process_case_capture(uint16_t keycode) {
     switch (keycode) {
         default:
             case_lock_separator = KC_UNDS;
-            case_lock_capture = false;
-            case_lock_active = true;
+            case_lock_capture_off();
+            case_lock_on();
             return true;
 
         case KC_RSFT:
@@ -1294,8 +1347,8 @@ bool process_case_capture(uint16_t keycode) {
         case KC_SLSH:
         case KC_NUBS:
             case_lock_separator = keycode;
-            case_lock_capture = false;
-            case_lock_active = true;
+            case_lock_capture_off();
+            case_lock_on();
             return false;
     }
 }
@@ -1310,7 +1363,7 @@ bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
                 tap_code(KC_CAPS);
                 case_lock_off();
             } else {
-                case_lock_on();
+                case_lock_capture_on();
             }
             return true;
         }
@@ -1372,6 +1425,8 @@ bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
                         }
                         if (case_lock_separator == KC_RSFT) {
                             clear_oneshot_mods();
+                            case_lock_off();
+                            return false;
                         }
                         const uint8_t mods = get_mods();
                         del_mods(MOD_MASK_CSAG);
@@ -2185,30 +2240,6 @@ void render_clock(uint8_t shift, uint8_t line) {
 
     oled_set_cursor(shift,line);
     oled_write(time_str, false);
-}
-
-
-
-//==============================================================================
-// Data Sync
-//==============================================================================
-
-#include "transactions.h"
-
-typedef struct _master_to_slave_t {
-    // bool boot_sync :1;
-    bool static_display_sync :1;
-    bool oled_timeout_sync :1;
-    bool oled_disable_sync :1;
-} master_to_slave_t;
-
-master_to_slave_t sync_data;
-
-void user_config_sync_handler(uint8_t initiator2target_buffer_size, const void* initiator2target_buffer,
-                      uint8_t target2initiator_buffer_size, void* target2initiator_buffer) {
-    if (initiator2target_buffer_size == sizeof(master_to_slave_t)) {
-        memcpy(&sync_data, initiator2target_buffer, initiator2target_buffer_size);
-    }
 }
 
 
@@ -3776,6 +3807,20 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     //     return false;
     // }
 
+    if (case_lock_capture || sync_data.case_lock_capture_sync) {
+        for (uint8_t index = 6; index < 27; index++) {
+            RGB green = hsv_to_rgb((HSV){ 85, 255, 200 });
+            rgb_matrix_set_color_split(index, green.r, green.g, green.b);
+            rgb_matrix_set_color_split(index+27, green.r, green.g, green.b);
+        }
+    } else if (case_lock_active || sync_data.case_lock_active_sync) {
+        for (uint8_t index = 6; index < 27; index++) {
+            RGB red = hsv_to_rgb((HSV){ 255, 255, 200 });
+            rgb_matrix_set_color_split(index, red.r, red.g, red.b);
+            rgb_matrix_set_color_split(index+27, red.r, red.g, red.b);
+        }
+    }
+
     int arrows[4] = { 17, 19, 16, 11 };
     int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
 
@@ -3930,11 +3975,12 @@ void housekeeping_task_user(void) {
         static uint32_t last_sync = 0;
         if (timer_elapsed32(last_sync) > 500) { // Interact with slave every 500ms
             master_to_slave_t m2s = {
-                // .boot_sync = boot,
                 .static_display_sync = static_display,
                 .oled_timeout_sync = oled_timeout,
                 .oled_disable_sync = oled_disable,
-                };
+                .case_lock_capture_sync = case_lock_capture,
+                .case_lock_active_sync = case_lock_active,
+            };
             if (transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s)) {
                 last_sync = timer_read32();
             } else {
@@ -3972,7 +4018,7 @@ bool shutdown_user(bool jump_to_bootloader) {
         int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
         for (uint8_t i = 0; i < 12; i++) {
             RGB underglow_rgb  = hsv_to_rgb((HSV){ 255, 255, 255 });
-            rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+            rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
         }
     }
     rgb_matrix_update_pwm_buffers();
