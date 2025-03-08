@@ -1612,7 +1612,11 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     }
     if (keycode == CS_CONJ || keycode == CS_DISJ) {
         if (record->event.pressed) {
-            if (shifted()) {
+            if (ctrl_on() && shifted()) {
+                update_last_keys(KC_NO, 4);
+            } else if (ctrl_on()) {
+                update_last_keys(KC_NO, 3);
+            } else if (shifted()) {
                 update_last_keys(KC_NO, 2);
             } else {
                 update_last_key(KC_NO);
@@ -2651,7 +2655,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CS_CONJ:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                if (shifted()) {
+                if (ctrl_on() && shifted()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_SPC);
+                    tap_code16(KC_AMPR);
+                    tap_code16(KC_AMPR);
+                    tap_code(KC_SPC);
+                } else if (ctrl_on()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_SPC);
+                    tap_code16(KC_AMPR);
+                    tap_code(KC_SPC);
+                    
+                } else if (shifted()) {
                     del_mods(MOD_MASK_CSAG);
                     tap_code16(KC_AMPR);
                     tap_code16(KC_AMPR);
@@ -2666,7 +2682,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CS_DISJ:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                if (shifted()) {
+                if (ctrl_on() && shifted()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_SPC);
+                    tap_code16(LSFT(KC_NUBS));
+                    tap_code16(LSFT(KC_NUBS));
+                    tap_code(KC_SPC);
+                } else if (ctrl_on()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_SPC);
+                    tap_code16(LSFT(KC_NUBS));
+                    tap_code(KC_SPC);
+                    
+                } else if (shifted()) {
                     del_mods(MOD_MASK_CSAG);
                     tap_code16(LSFT(KC_NUBS));
                     tap_code16(LSFT(KC_NUBS));

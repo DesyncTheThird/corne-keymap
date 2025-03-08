@@ -287,7 +287,7 @@ Symbol layout optimised for (La)TeX editing with many common strings as inward r
 Program layer optimised for programming (mostly C and Python). Inward rolls include:
 - comparison operators: `!=`, `>=`, `<=` on home row;
 - arithmetic assignment operators: `^=`, `+=`, `-=`, `*=`, `/=` above and below home row.
-Bitwise operator symbols are grouped on the inner index column. Holding shift while pressing `&` or `|` will send the respective symbol twice, i.e. as logical operators.
+Bitwise operator symbols are grouped on the inner index column. Holding shift while pressing `&` or `|` will send the respective symbol twice, i.e. as logical operators, and holding control will add spaces.
 
 Brackets on right hand as above.
 
