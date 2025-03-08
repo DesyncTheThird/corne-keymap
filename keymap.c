@@ -462,6 +462,10 @@ bool left_active = false;
 bool right_active = false;
 bool muted = false;
 
+static bool alt_tab_active = false;
+static bool oled_timeout = false;
+static bool oled_disable = false;
+
 uint16_t boot_timer;
 bool boot = false;
 deferred_token boot_animation_token = INVALID_DEFERRED_TOKEN;
@@ -478,39 +482,38 @@ bool case_lock_capture = false;
 uint16_t case_lock_separator = KC_UNDS;
 int16_t separator_distance = 0;
 
-void case_lock_capture_on(void) {
-    case_lock_capture = true;
+void update_sync(void) {
     master_to_slave_t m2s = {
+        .static_display_sync = static_display,
+        .oled_timeout_sync = oled_timeout,
+        .oled_disable_sync = oled_disable,
         .case_lock_capture_sync = case_lock_capture,
+        .case_lock_active_sync = case_lock_active,
     };
     transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
+}
+
+
+void case_lock_capture_on(void) {
+    case_lock_capture = true;
+    update_sync();
 }
 
 void case_lock_capture_off(void) {
     case_lock_capture = false;
-    master_to_slave_t m2s = {
-        .case_lock_capture_sync = case_lock_capture,
-    };
-    transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
+    update_sync();
 }
 
 void case_lock_on(void) {
     case_lock_active = true;
-    master_to_slave_t m2s = {
-        .case_lock_active_sync = case_lock_active,
-    };
-    transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
+    update_sync();
     dprintf("case lock on!\n");
 }
 
 void case_lock_off(void) {
     case_lock_active = false;
     case_lock_capture = false;
-    master_to_slave_t m2s = {
-        .case_lock_active_sync = case_lock_active,
-        .case_lock_capture_sync = case_lock_capture,
-    };
-    transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
+    update_sync();
     case_lock_separator = KC_NO;
     dprintf("case lock off!\n");
 }
@@ -735,10 +738,6 @@ bool is_arrow_key(uint16_t keycode) {
 
 #define IDLE_TIMEOUT 1000 * 60 * 5
 
-static bool alt_tab_active = false;
-static bool oled_timeout = false;
-static bool oled_disable = false;
-
 void matrix_scan_user(void) {
     if (timer_elapsed(boot_timer) > 5000) {
         boot = false;
@@ -786,6 +785,12 @@ void matrix_scan_user(void) {
         // OLED timeout
         time_setting = 0;
         oled_timeout = true;
+        static uint32_t last_sync = 0;
+        if (timer_elapsed32(last_sync) > 500) {
+            update_sync();
+            last_sync = timer_read32();
+        }
+
 
         // Reset Case Lock
         if (case_lock_active) {
@@ -2567,22 +2572,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case OLEDSAV:
             if (record->event.pressed) {
                 static_display = !static_display;
-                master_to_slave_t m2s = {
-                    .static_display_sync = static_display,
-                };
-                transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
+                update_sync();
                 if (!static_display) {
-                    oled_clear();
+                    oled_off();
                 }
             }
             break;
         case OLEDTOG:
             if (record->event.pressed) {
                 oled_disable = !oled_disable;
-                master_to_slave_t m2s = {
-                    .oled_disable_sync = oled_disable,
-                };
-                transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
+                update_sync();
             }
             break;
 
@@ -3766,7 +3765,6 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 
 bool oled_task_user(void) {
     if (oled_timeout || oled_disable) {
-        oled_clear();
         oled_off();
         return false;
     }
