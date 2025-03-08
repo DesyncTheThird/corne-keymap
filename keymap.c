@@ -2536,6 +2536,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case OLEDSAV:
             if (record->event.pressed) {
                 static_display = !static_display;
+                master_to_slave_t m2s = {
+                    .static_display_sync = static_display,
+                };
+                transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
                 if (!static_display) {
                     oled_clear();
                 }
@@ -2544,6 +2548,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case OLEDTOG:
             if (record->event.pressed) {
                 oled_disable = !oled_disable;
+                master_to_slave_t m2s = {
+                    .oled_disable_sync = oled_disable,
+                };
+                transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
             }
             break;
 
@@ -3920,7 +3928,7 @@ void keyboard_post_init_user(void) {
 void housekeeping_task_user(void) {
     if (is_keyboard_master()) {
         static uint32_t last_sync = 0;
-        if (timer_elapsed32(last_sync) > 250) { // Interact with slave every 250ms
+        if (timer_elapsed32(last_sync) > 500) { // Interact with slave every 500ms
             master_to_slave_t m2s = {
                 // .boot_sync = boot,
                 .static_display_sync = static_display,
