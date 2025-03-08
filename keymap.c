@@ -451,7 +451,6 @@ uint16_t case_lock_separator = KC_UNDS;
 int16_t separator_distance = 0;
 
 void case_lock_on(void) {
-    case_lock_active = true;
     case_lock_capture = true;
     dprintf("case lock on!\n");
 }
@@ -726,7 +725,9 @@ void matrix_scan_user(void) {
         last_key_3 = KC_NO;
         
         // Reset Case Lock capture
-        case_lock_off();
+        if (!case_lock_active) {
+            case_lock_capture = false;
+        }
     }
     if (last_input_activity_elapsed() > 15000) {
         // OLED timeout
@@ -1277,6 +1278,7 @@ bool process_case_capture(uint16_t keycode) {
         default:
             case_lock_separator = KC_UNDS;
             case_lock_capture = false;
+            case_lock_active = true;
             return true;
 
         case KC_RSFT:
@@ -1293,6 +1295,7 @@ bool process_case_capture(uint16_t keycode) {
         case KC_NUBS:
             case_lock_separator = keycode;
             case_lock_capture = false;
+            case_lock_active = true;
             return false;
     }
 }
