@@ -781,6 +781,12 @@ void matrix_scan_user(void) {
             case_lock_capture_off();
         }
     }
+    if (last_input_activity_elapsed() > 2000) {
+        // Reset Case Lock
+        if (case_lock_active) {
+            case_lock_off();
+        }
+    }
     if (last_input_activity_elapsed() > 15000) {
         // OLED timeout
         time_setting = 0;
@@ -791,11 +797,6 @@ void matrix_scan_user(void) {
             last_sync = timer_read32();
         }
 
-
-        // Reset Case Lock
-        if (case_lock_active) {
-            case_lock_off();
-        }
     } else {
         oled_timeout = false;
     }

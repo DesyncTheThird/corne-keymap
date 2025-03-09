@@ -151,7 +151,7 @@ Tapping the `Space` key twice while Case Lock is active will delete the separato
 
 While Case Lock is active, `Ctrl`+`Bspc` will instead delete to the previous separator rather than deleting the entire word.
 
-Case Lock will time out after a duration of no input (default 15s).
+Case Lock will time out after a short duration of no input (default 2000ms).
 
 
 
