@@ -917,7 +917,7 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
 
     switch (tap_hold_keycode) {
         case CS_LT3:
-        case CS_LT2:
+        // case CS_LT2:
         case CS_LT1:
 
         case CS_RT1:
@@ -932,6 +932,12 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
         case CS_BOOT:
         case TABLSFT:
         case TABRSFT:
+            return true;
+            
+        case CS_LT2:
+            if (chordal_hold_handedness(other_record->event.key) == 'R' && (other_record->event.key.col == 1 || other_record->event.key.col == 2)) {
+                return false;
+            }
             return true;
 
         case CS_AL1:
