@@ -732,75 +732,6 @@ bool is_arrow_key(uint16_t keycode) {
 // }
 
 
-//==============================================================================
-// Timers
-//==============================================================================
-
-#define IDLE_TIMEOUT 1000 * 60 * 5
-
-void matrix_scan_user(void) {
-    if (timer_elapsed(boot_timer) > 5000) {
-        boot = false;
-    }
-
-    // if (mh_auto_buttons_timer && (timer_elapsed(mh_auto_buttons_timer) > MH_AUTO_BUTTONS_TIMEOUT)) {
-    //     if (!tp_buttons) {
-    //         layer_off(MH_AUTO_BUTTONS_LAYER);
-    //         mh_auto_buttons_timer = 0;
-    //     }
-    // }
-
-    if (get_highest_layer(layer_state) == _NUMPAD) {
-        if (last_input_activity_elapsed() > IDLE_TIMEOUT) { // Layer timeout
-            layer_off(_NUMPAD);
-            layer_off(_TOUHOU);
-        }
-    }
-    if (alt_tab_active) {
-        if (IS_LAYER_OFF(_UTILITY)) {
-            unregister_code(KC_LALT);
-            alt_tab_active = false;
-        }
-    }
-
-    if (last_input_activity_elapsed() > 200 && last_key == SELECT) {
-        last_key = KC_NO;
-    }
-    if (last_input_activity_elapsed() > 500) {
-        // Reset key tracking
-        char_count = 1;
-    }
-    if (last_input_activity_elapsed() > 1000) {
-        // Reset magic keys
-        last_key = KC_NO;
-        last_key_2 = KC_NO;
-        last_key_3 = KC_NO;
-        
-        // Reset Case Lock capture
-        if (!case_lock_active) {
-            case_lock_capture_off();
-        }
-    }
-    if (last_input_activity_elapsed() > 2000) {
-        // Reset Case Lock
-        if (case_lock_active) {
-            case_lock_off();
-        }
-    }
-    if (last_input_activity_elapsed() > 15000) {
-        // OLED timeout
-        time_setting = 0;
-        oled_timeout = true;
-        static uint32_t last_sync = 0;
-        if (timer_elapsed32(last_sync) > 500) {
-            update_sync();
-            last_sync = timer_read32();
-        }
-
-    } else {
-        oled_timeout = false;
-    }
-}
 
 //==============================================================================
 // Tap/hold
@@ -3929,7 +3860,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 
 // =============================================================================
-// 
+//  Boot/Shutdown
 // =============================================================================
 
 uint32_t boot_animation_fade(uint32_t trigger_time, void* cb_arg) {
@@ -3975,7 +3906,113 @@ void keyboard_post_init_user(void) {
     transaction_register_rpc(USER_SYNC_A, user_config_sync_handler);
 }
 
+void oled_render_boot(bool bootloader) {
+    oled_clear();
+    if (bootloader) {
+        oled_write_raw_P(bootloader_oled, frame_size);
+    } else {
+    oled_write_P(PSTR("Rebooting"), false);
+    }
+    oled_render_dirty(true);
+}
+
+bool shutdown_user(bool jump_to_bootloader) {
+    oled_render_boot(jump_to_bootloader);
+    if (jump_to_bootloader) {
+        rgb_matrix_set_color_all(RGB_OFF);
+        int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
+        for (uint8_t i = 0; i < 12; i++) {
+            RGB underglow_rgb  = hsv_to_rgb((HSV){ 255, 255, 255 });
+            rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+        }
+    }
+    rgb_matrix_update_pwm_buffers();
+    return false;
+}
+
+
+
+// =============================================================================
+// 
+// =============================================================================
+
+
+#define IDLE_TIMEOUT 1000 * 60 * 5
+
 void housekeeping_task_user(void) {
+
+    // =========================================================================
+    // Timers
+    // =========================================================================
+
+    if (timer_elapsed(boot_timer) > 5000) {
+        boot = false;
+    }
+
+    // if (mh_auto_buttons_timer && (timer_elapsed(mh_auto_buttons_timer) > MH_AUTO_BUTTONS_TIMEOUT)) {
+    //     if (!tp_buttons) {
+    //         layer_off(MH_AUTO_BUTTONS_LAYER);
+    //         mh_auto_buttons_timer = 0;
+    //     }
+    // }
+
+    // Layer timeout
+    if (last_input_activity_elapsed() > IDLE_TIMEOUT) {
+        layer_off(_NUMPAD);
+        layer_off(_TOUHOU);
+    }
+
+    if (last_input_activity_elapsed() > 200 && last_key == SELECT) {
+        last_key = KC_NO;
+    }
+    if (last_input_activity_elapsed() > 500) {
+        // Reset key tracking
+        char_count = 1;
+    }
+    if (last_input_activity_elapsed() > 1000) {
+        // Reset magic keys
+        last_key = KC_NO;
+        last_key_2 = KC_NO;
+        last_key_3 = KC_NO;
+        
+        // Reset Case Lock capture
+        if (!case_lock_active) {
+            case_lock_capture_off();
+        }
+    }
+    if (last_input_activity_elapsed() > 2000) {
+        // Reset Case Lock
+        if (case_lock_active) {
+            case_lock_off();
+        }
+    }
+    if (last_input_activity_elapsed() > 15000) {
+        // OLED timeout
+        time_setting = 0;
+        oled_timeout = true;
+        static uint32_t last_sync = 0;
+        if (timer_elapsed32(last_sync) > 500) {
+            update_sync();
+            last_sync = timer_read32();
+        }
+    } else {
+        oled_timeout = false;
+    }
+
+    // Alt tab key
+    if (alt_tab_active) {
+        if (IS_LAYER_OFF(_UTILITY)) {
+            unregister_code(KC_LALT);
+            alt_tab_active = false;
+        }
+    }
+
+
+
+    // =========================================================================
+    // Data Sync
+    // =========================================================================
+
     if (is_keyboard_master()) {
         static uint32_t last_sync = 0;
         if (timer_elapsed32(last_sync) > 500) { // Interact with slave every 500ms
@@ -4004,28 +4041,4 @@ void housekeeping_task_user(void) {
             oled_on();
         }
     }
-}
-
-void oled_render_boot(bool bootloader) {
-    oled_clear();
-    if (bootloader) {
-        oled_write_raw_P(bootloader_oled, frame_size);
-    } else {
-    oled_write_P(PSTR("Rebooting"), false);
-    }
-    oled_render_dirty(true);
-}
-
-bool shutdown_user(bool jump_to_bootloader) {
-    oled_render_boot(jump_to_bootloader);
-    if (jump_to_bootloader) {
-        rgb_matrix_set_color_all(RGB_OFF);
-        int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
-        for (uint8_t i = 0; i < 12; i++) {
-            RGB underglow_rgb  = hsv_to_rgb((HSV){ 255, 255, 255 });
-            rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-        }
-    }
-    rgb_matrix_update_pwm_buffers();
-    return false;
 }
