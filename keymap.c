@@ -781,27 +781,39 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case CS_RT1:
         case CS_RT2:
         case CS_RT3:
+            return 150;
+
+        case TABLSFT:
+        case TABRSFT:
+            return 125;
 
         // Shift mod-taps
+        case MT_F:
+        case MT_J:
+        case MTA_S:
+        case MTA_H:
+            return 200;
+
+        // Ctrl mod-taps
         case MT_D:
         case MT_K:
         case MTA_T:
         case MTA_E:
-            return 150;
+            return 250;
 
         // Alt mod-taps
         case MT_S:
         case MT_L:
         case MTA_R:
         case MTA_I:
-            return 225;
+            return 300;
 
         // GUI mod-taps
         case MT_A:
         case MT_SCLN:
         case MTA_N:
         case MTA_A:
-            return 250;
+            return 350;
 
         case OSMLSFT:
             return 300;
