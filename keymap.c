@@ -114,7 +114,6 @@ enum custom_keycodes {
     WORDCBR,
     WORDPRN,
     WORDBRC,
-    DELLINE,
     
     SPC_DN,
     JOIN,
@@ -288,7 +287,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           CS_LCTL, CS_CIRC, CS_UNDS, CS_ASTR, CS_HASH, CS_TILD,                      CS_BRCS,    KC_4,    KC_5,    KC_6, CS_POUN,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______,    KC_BSPC,  CS_AL1, CS_SLSH
+                                              _______, _______, _______,    _______,  CS_AL1, CS_SLSH
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -300,7 +299,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           CS_LCTL, CS_TILD, CS_COLN,  CS_DOT, CS_COMM, CS_UNDS,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              CS_SLSH,  CS_AL2,  KC_SPC,    _______, _______, _______
+                                              CS_SLSH,  CS_AL2, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -1500,8 +1499,9 @@ bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
             }
         case SELRGHT:
             if (record->event.pressed) {
-                if (ctrl_on()) {
+                if (ctrl_on() || last_key == SELECT) {
                     register_code16(LCTL(KC_C));
+                    edit_clip = true;
                     return false;
                 } else {
                     return true;

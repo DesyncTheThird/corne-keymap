@@ -275,9 +275,9 @@ Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}
 
 The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
 
-The `Select` macro selects the current word; pressing it again will cut (`Ctrl`+`X`) the selection. Pressing it after one of the two other directional `Select` macros will also immediately cut the selection.
+The `Select` macro selects the current word; pressing it again within 200ms will cut (`Ctrl`+`X`) the selection. Pressing the `Select Right` key within 200ms of the `Select` key will copy (`Ctrl`+`C`) the selection. Pressing it after one of the two other directional `Select` macros will also immediately cut the selection.
 
-After cutting with `Select`, the `Enter` key on this layer will act as paste (`Ctrl`+`V`), resetting after the first use, or if the `Edit` layer is disabled.
+After cutting with `Select` or copying with `Select Right`, the `Enter` key on this layer will act as paste (`Ctrl`+`V`), resetting after the first use, or if the `Edit` layer is disabled.
 
 The bottow row of the [Control Overlay](#control-overlay) can also be activated with home row mods on this layer.
 
