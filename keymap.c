@@ -285,7 +285,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           OSMLSFT, MT_EXLM, MT_COLN,  MT_DOT, MT_COMM, CS_PIPE,                      CS_PRNS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, CS_CIRC, CS_UNDS, CS_ASTR, CS_HASH, CS_TILD,                      CS_BRCS,    KC_4,    KC_5,    KC_6, CS_POUN,  KC_ENT,
+          CS_LCTL, CS_CIRC, CS_SLSH, CS_ASTR, CS_HASH, CS_TILD,                      CS_BRCS,    KC_4,    KC_5,    KC_6, CS_POUN,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______,  CS_AL1, CS_SLSH
                                           //`--------------------------'  `--------------------------'
@@ -2625,7 +2625,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 if (left_eager_shift_on) {
                     unregister_mods(MOD_BIT(KC_LSFT));
                 }
-                tap_code(KC_TAB);
+                if (IS_LAYER_OFF(_CONTROL_OVERLAY)) {
+                    tap_code(KC_TAB);
+                }
             }
             left_eager_shift_on = false;
             return false;
