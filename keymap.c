@@ -1272,6 +1272,9 @@ uint16_t separator_map(uint16_t keycode) {
         case TABRSFT:
             return KC_RSFT;
 
+        case MT_SCLN:
+            return KC_SCLN;
+
         default:
             return keycode;
     }
@@ -1342,6 +1345,7 @@ bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
         switch (keycode) {
             case KC_A ... KC_Z:
             case KC_1 ... KC_0:
+            case KC_SCLN:
                 separator_distance += 1;
                 // dprintf("separator distance = %d\n", separator_distance);
                 return true;
@@ -3759,13 +3763,13 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
     if (case_lock_capture || sync_data.case_lock_capture_sync) {
         for (uint8_t index = 6; index < 27; index++) {
-            RGB green = hsv_to_rgb((HSV){ 85, 255, 200 });
+            RGB green = hsv_to_rgb((HSV){ 85, 255, 100 });
             rgb_matrix_set_color_split(index, green.r, green.g, green.b);
             rgb_matrix_set_color_split(index+27, green.r, green.g, green.b);
         }
     } else if (case_lock_active || sync_data.case_lock_active_sync) {
         for (uint8_t index = 6; index < 27; index++) {
-            RGB red = hsv_to_rgb((HSV){ 255, 255, 200 });
+            RGB red = hsv_to_rgb((HSV){ 255, 255, 100 });
             rgb_matrix_set_color_split(index, red.r, red.g, red.b);
             rgb_matrix_set_color_split(index+27, red.r, red.g, red.b);
         }
