@@ -587,6 +587,7 @@ bool is_hrm(uint16_t keycode) {
     }
 }
 
+bool last_key_dynamic = false;
 bool magic_override = false;
 uint8_t char_count = 1;
 uint16_t last_key = KC_NO;
@@ -1786,6 +1787,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
             }
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_CTRL);
+            last_key_dynamic = true;
             if (IS_LAYER_ON(_QWERTY) || IS_LAYER_ON(_BASIC)) {
                 tap_code(last_key);
                 update_last_key(last_key);
@@ -1856,6 +1858,7 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_CTRL);
             if (magic_override) {
+            last_key_dynamic = true;
                 tap_code(KC_SPC);
                 update_last_key(KC_SPC);
                 magic_override = false;
@@ -1904,9 +1907,34 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         return false;
     }
 
+    last_key_dynamic = false;
     return true;
 }
 
+
+
+bool process_pre_key_tracking(uint16_t keycode, keyrecord_t* record) {
+    if (last_key == KC_SPC && last_key_dynamic) {
+        switch (keycode) {
+            case KC_DOT:
+            case CS_DOT:
+            case KC_COMM:
+            case CS_COMM:
+            case COM_DOT:
+
+            case KC_EXLM:
+            case CS_EXLM:
+
+            case KC_QUES:
+            case CS_QUES:
+
+            case KC_SCLN:
+            case CS_SCLN:
+                tap_code(KC_BSPC);
+        }
+    }
+    return true;
+}
 
 
 //==============================================================================
@@ -2225,10 +2253,11 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-    
+
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_case_lock(keycode, record)) { return false; }
+    if (!process_pre_key_tracking(keycode, record)) { return false; }
     // Reactive features go before key tracking
     if (!process_key_tracking(keycode, record)) { return false; }
     if (!process_lingering_mods(keycode, record)) { return false; }
