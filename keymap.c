@@ -218,6 +218,11 @@ enum custom_keycodes {
 #define PRV_TAB LCTL(KC_PGUP)
 #define OSMLSFT OSM(MOD_LSFT)
 
+#define EO_LEFT LCTL(KC_LEFT)
+#define EO_RGHT LCTL(KC_RGHT)
+#define EO_UP   LCTL(KC_UP)
+#define EO_DOWN LCTL(KC_DOWN)
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASIC] = LAYOUT( //0
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
@@ -341,9 +346,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT_OVERLAY] = LAYOUT( //10
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                      WORDCBR,  SPC_UP,    JOIN,  SPC_DN,  KC_ESC, _______,
+          _______, NXT_TAB, EO_HOME,   EO_UP,  EO_END, KC_CAPS,                      WORDCBR,  SPC_UP,    JOIN,  SPC_DN,  KC_ESC, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      WORDPRN, MT_DELL, MT_DELW, MT_DELR,  MT_DEL, _______,
+          _______, DELWORD, EO_LEFT, EO_DOWN, EO_RGHT,  KC_DEL,                      WORDPRN, MT_DELL, MT_DELW, MT_DELR,  MT_DEL, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+-   -------+--------|
           _______, PRV_TAB, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                      WORDBRC,   PASTE,    COPY,    REDO,    UNDO, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -3181,7 +3186,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_CSAG);
-                tap_code16(RCTL(KC_BSPC));
+                tap_code16(LSFT(KC_HOME));
+                tap_code16(KC_BSPC);
                 set_mods(mods);
             }
             return false;
@@ -3212,7 +3218,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_CSAG);
-                tap_code16(RCTL(KC_DEL));
+                tap_code16(LSFT(KC_END));
+                tap_code16(KC_BSPC);
                 set_mods(mods);
             }
             return false;
