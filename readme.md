@@ -108,6 +108,8 @@ Note that this feature only tracks two keys into the past.
 
 After a short duration (default 1000ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state.
 
+Punctuation following a dynamic output that ends with a space will remove the space within the timeout duration.
+
 In QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality.
 
 
@@ -122,7 +124,6 @@ This feature is also reused to rollback various macro outputs in a single keypre
 
 > [!NOTE]
 > You can hook into this feature with the `process_key_tracking` and `rollback_last_key` functions.
-
 
 
 
@@ -279,7 +280,7 @@ The `Select` macro selects the current word; pressing it again within 200ms will
 
 After cutting with `Select` or copying with `Select Right`, the `Enter` key on this layer will act as paste (`Ctrl`+`V`), resetting after the first use, or if the `Edit` layer is disabled.
 
-The bottow row of the [Control Overlay](#control-overlay) can also be activated with home row mods on this layer.
+The bottom row of the [Control Overlay](#control-overlay) can also be activated with home row mods on this layer.
 
 The right thumb keys also have additional layering actions:
 - Activating both `Edit` and `Program` layers will also activate the [Edit Overlay](#edit-overlay), containing macros useful for editing.
