@@ -349,7 +349,7 @@ Holding `LCTL` on any layer (including non-base layers) covers the left hand bot
 Activating the `Program` layer while on the `Edit` layer will activate the `Edit Overlay` layer on top (of the `Edit` layer). This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
 The right hand is replaced with macros useful for editing:
-- The (directional) `Delete` macros delete to the beginning/end of the current line.
+- The directional `Delete` macros delete in the indicated directions from the current cursor position to the beginning/end of the next word; holding shift deletes to the beginning/end of the current line instead.
 - The `Line` macro adds new lines above/below the current line.
 - The `Join` macro joins current line to following line with space between; does not add space if shifted.
 

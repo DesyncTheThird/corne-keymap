@@ -3185,9 +3185,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code16(LSFT(KC_HOME));
-                tap_code16(KC_BSPC);
+                if (shifted()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LSFT(KC_HOME));
+                    tap_code16(KC_BSPC);
+                } else {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LCTL(KC_BSPC));
+                }
                 set_mods(mods);
             }
             return false;
@@ -3217,9 +3222,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code16(LSFT(KC_END));
-                tap_code16(KC_BSPC);
+                if (shifted()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LSFT(KC_END));
+                    tap_code(KC_BSPC);
+                } else {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LCTL(KC_DEL));
+                }
                 set_mods(mods);
             }
             return false;
