@@ -736,7 +736,7 @@ bool is_arrow_key(uint16_t keycode) {
 void homerow_mod(uint8_t mods, keyrecord_t* record) {
     if (!record->tap.count && record->event.pressed) {
         register_mods(mods);
-    } else {
+    } else if (!record->tap.count && !record->event.pressed) {
         unregister_mods(mods);
     }
 }
