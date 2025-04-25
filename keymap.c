@@ -146,15 +146,10 @@ enum custom_keycodes {
 #define MTA_A RGUI_T(KC_A)
 
 // Symbol home row mods
-#define MT_TILD LT(0,CS_TILD)
-#define MT_UNDS LT(0,CS_UNDS)
-#define MT_LPRN LT(0,CS_LPRN)
 #define MT_RPRN LT(0,CS_RPRN)
-
-#define MT_CIRC LT(0,CS_CIRC)
-#define MT_PLUS LT(0,CS_PLUS)
-#define MT_MINS LT(0,CS_MINS)
-#define MT_EQL  LT(0,CS_EQL)
+#define MT_LPRN LT(0,CS_LPRN)
+#define MT_UNDS LT(0,CS_UNDS)
+#define MT_TILD LT(0,CS_TILD)
 
 #define MT_1 RSFT_T(KC_1)
 #define MT_2 RCTL_T(KC_2)
@@ -562,15 +557,10 @@ bool is_hrm(uint16_t keycode) {
         case MTA_I:
         case MTA_A:
 
-        case MT_TILD:
-        case MT_UNDS:
-        case MT_LPRN:
         case MT_RPRN:
-
-        case MT_CIRC:
-        case MT_PLUS:
-        case MT_MINS:
-        case MT_EQL:
+        case MT_LPRN:
+        case MT_UNDS:
+        case MT_TILD:
 
         case MT_1:
         case MT_2:
@@ -736,6 +726,85 @@ bool is_arrow_key(uint16_t keycode) {
 //     }
 // }
 
+
+
+
+//==============================================================================
+// Deferred Executions
+//==============================================================================
+
+void homerow_mod(uint8_t mods, keyrecord_t* record) {
+    if (!record->tap.count && record->event.pressed) {
+        register_mods(mods);
+    } else {
+        unregister_mods(mods);
+    }
+}
+
+bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) {
+        // LGUI
+        case MTA_N:
+        case MT_A:
+        case MT_EXLM:
+            homerow_mod(MOD_BIT(KC_LGUI), record);
+            break;
+        // LALT
+        case MT_S:
+        case MTA_R:
+        case MT_COLN:
+            homerow_mod(MOD_BIT(KC_LALT), record);
+            break;
+        // LCTL
+        case MT_D:
+        case MTA_T:
+        case MT_DOT:
+            homerow_mod(MOD_BIT(KC_LCTL), record);
+            break;
+        // LSFT
+        case MT_F:
+        case MTA_S:
+        case MT_COMM:
+            homerow_mod(MOD_BIT(KC_LSFT), record);
+            break;
+
+
+
+        // RSFT
+        case MT_J:
+        case MTA_H:
+        case MT_RPRN:
+        case MT_1:
+        case MT_DELL:
+            homerow_mod(MOD_BIT(KC_RSFT), record);
+            break;
+        // RCTL
+        case MT_K:
+        case MTA_E:
+        case MT_LPRN:
+        case MT_2:
+        case MT_DELW:
+            homerow_mod(MOD_BIT(KC_RCTL), record);
+            break;
+        // RALT
+        case MT_L:
+        case MTA_I:
+        case MT_UNDS:
+        case MT_3:
+        case MT_DELR:
+            homerow_mod(MOD_BIT(KC_RALT), record);
+            break;
+        // RGUI
+        case MT_SCLN:
+        case MTA_A:
+        case MT_TILD:
+        case MT_0:
+        case MT_DEL:
+            homerow_mod(MOD_BIT(KC_RGUI), record);
+            break;
+    }
+    return true;
+}
 
 
 //==============================================================================
@@ -2267,6 +2336,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_key_tracking(keycode, record)) { return false; }
     if (!process_lingering_mods(keycode, record)) { return false; }
     if (!process_magic(keycode, record)) { return false; }
+    if (!process_homerow_mod_tap(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
     if (!process_edit_controls(keycode, record)) { return false; }
     if (!process_vol_repeat(keycode, record)) { return false; }
@@ -3002,16 +3072,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             break;
 
         // =====================================================================
-        // Mod-taps
+        // Home row mods
         // =====================================================================
 
         // Edit layer
         case MT_TILD:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RGUI));
-            } else {
-                unregister_mods(MOD_BIT(KC_RGUI));
-            }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3021,11 +3086,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             return false;
 
         case MT_UNDS:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LALT));
-            } else {
-                unregister_mods(MOD_BIT(KC_LALT));
-            }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3035,11 +3095,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             return false;
 
         case MT_LPRN:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RCTL));
-            } else {
-                unregister_mods(MOD_BIT(KC_RCTL));
-            }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3049,11 +3104,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             return false;
 
         case MT_RPRN:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RSFT));
-            } else {
-                unregister_mods(MOD_BIT(KC_RSFT));
-            }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3065,69 +3115,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
 
         // Data layer
-        case MT_CIRC:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LGUI));
-            } else {
-                unregister_mods(MOD_BIT(KC_LGUI));
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_CIRC);
-                set_mods(mods);
-            }
-            return false;
-
-        case MT_PLUS:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LALT));
-            } else {
-                unregister_mods(MOD_BIT(KC_LALT));
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_PLUS);
-                set_mods(mods);
-            }
-            return false;
-
-        case MT_MINS:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LCTL));
-            } else {
-                unregister_mods(MOD_BIT(KC_LCTL));
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_MINS);
-                set_mods(mods);
-            }
-            return false;
-
-        case MT_EQL:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LSFT));
-            } else {
-                unregister_mods(MOD_BIT(KC_LSFT));
-            }
-            if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_EQL);
-                set_mods(mods);
-            }
-            return false;
-
-        
         case MT_EXLM:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LGUI));
-            } else {
-                unregister_mods(MOD_BIT(KC_LGUI));
-            }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3136,11 +3124,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
         case MT_COLN:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LALT));
-            } else {
-                unregister_mods(MOD_BIT(KC_LALT));
-            }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3149,11 +3132,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
         case MT_DOT:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LCTL));
-            } else {
-                unregister_mods(MOD_BIT(KC_LCTL));
-            }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3162,11 +3140,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
         case MT_COMM:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LSFT));
-            } else {
-                unregister_mods(MOD_BIT(KC_LSFT));
-            }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3178,11 +3151,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
             
         case MT_DELL:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RSFT));
-            } else {
-                unregister_mods(MOD_BIT(KC_RSFT));
-            }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 if (shifted()) {
@@ -3198,11 +3166,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             return false;
 
         case MT_DELW:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_RCTL));
-            } else {
-                unregister_mods(MOD_BIT(KC_RCTL));
-            }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_CSAG);
@@ -3215,11 +3178,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             return false;
 
         case MT_DELR:
-            if (!record->tap.count && record->event.pressed) {
-                register_mods(MOD_BIT(KC_LALT));
-            } else {
-                unregister_mods(MOD_BIT(KC_LALT));
-            }
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 if (shifted()) {
