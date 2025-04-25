@@ -730,7 +730,7 @@ bool is_arrow_key(uint16_t keycode) {
 
 
 //==============================================================================
-// Deferred Executions
+// Home row mods
 //==============================================================================
 
 void homerow_mod(uint8_t mods, keyrecord_t* record) {
@@ -792,7 +792,7 @@ bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
         case MT_UNDS:
         case MT_3:
         case MT_DELR:
-            homerow_mod(MOD_BIT(KC_RALT), record);
+            homerow_mod(MOD_BIT(KC_LALT), record);
             break;
         // RGUI
         case MT_SCLN:
