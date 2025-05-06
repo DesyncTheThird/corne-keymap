@@ -237,6 +237,11 @@ Due to the digitiser feature mapping outputs to the whole virtual desktop, it do
 
 
 
+### [Number Case](https://github.com/DesyncTheThird/corne-keymap/tree/numcase)
+This feature adds a toggle on the Data layer(s) that replaces the number keys with Roman numerals when active. Useful for some LaTeX editing. Could easily be extended to multiple cases by adding more cases to the switch statement in `process_number_case`, e.g. binary/octal/hexidecimal, Base64, ordinals (`1st`, `2nd`, `3rd`), parenthesised (`(1)`, `(2)`, `(3)`), prefixed/suffixed (`1.`, `2.`, `3.` / `1)`, `2)`, `3)`), words (`one`, `two`, `three`), etc.
+
+
+
 # Layers
 ### Base
 ![Base](images/base.png?raw=true)
