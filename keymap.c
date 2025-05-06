@@ -121,6 +121,7 @@ enum custom_keycodes {
     EO_HOME,
     EO_END,
     EO_ENT,
+    NUMCASE,
 };
 
 // Home row mods
@@ -281,7 +282,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_DATA] = LAYOUT( //5
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, CS_PERC, CS_MINS, CS_PLUS,  CS_DLR, CS_AMPR,                      CS_CBRS,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
+          _______, CS_PERC, CS_MINS, CS_PLUS,  CS_DLR, CS_AMPR,                      NUMCASE,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           OSMLSFT, MT_EXLM, MT_COLN,  MT_DOT, MT_COMM, CS_PIPE,                      CS_PRNS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -353,11 +354,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_DATA_OVERLAY] = LAYOUT( //11
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                      CS_CBRS,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      CS_PRNS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, PRV_TAB, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                      CS_BRCS,    KC_4,    KC_5,    KC_6, CS_POUN,  KC_ENT,
+          _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                      NUMCASE,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______, _______, CS_SLSH
                                           //`--------------------------'  `--------------------------'
@@ -588,6 +589,19 @@ uint8_t char_count = 1;
 uint16_t last_key = KC_NO;
 uint16_t last_key_2 = KC_NO;
 uint16_t last_key_3 = KC_NO;
+
+void rollback_last_key(void) {
+    char_count = 1;
+
+    last_key = last_key_2;
+    last_key_2 = last_key_3;
+    last_key_3 = KC_NO;
+    // dprintf("rolled back!\n");
+    // dprintf("last_key:   %d\n", last_key);
+    // dprintf("last_key_2: %d\n", last_key_2);
+    // dprintf("last_key_3: %d\n", last_key_3);
+    // dprintf("char_count: %d\n", char_count);
+}
 
 void update_last_key(uint16_t new_keycode) {
     last_key_3 = last_key_2;
@@ -1609,20 +1623,84 @@ bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
 
 
 //==============================================================================
-// Repeat and Magic keys
+// Number case
 //==============================================================================
 
-void rollback_last_key(void) {
-    char_count = 1;
+bool process_number_case(uint16_t keycode, keyrecord_t* record) {
+    static bool number_case = false;
+    if (keycode == NUMCASE) {
+        if (record->event.pressed) {
+            number_case = !number_case;
+        }
+    }
+    if (number_case) {
+        switch (keycode) {
+            case RS_1:
+                if (record->tap.count && record->event.pressed) {
+                    SEND_STRING("i");
+                    update_last_key(KC_I);
+                }
+                return false;
+            case RC_2:
+                if (record->tap.count && record->event.pressed) {
+                    SEND_STRING("ii");
+                    update_last_keys(KC_I, 2);
+                }
+                return false;
+            case RA_3:
+                if (record->tap.count && record->event.pressed) {
+                    SEND_STRING("iii");
+                    update_last_keys(KC_I, 3);
+                }
+                return false;
+            case KC_4:
+                if (record->event.pressed) {
+                    SEND_STRING("iv");
+                    update_last_keys(KC_V, 2);
+                }
+                return false;
+            case KC_5:
+                if (record->event.pressed) {
+                    SEND_STRING("v");
+                    update_last_key(KC_V);
+                }
+                return false;
+            case KC_6:
+                if (record->event.pressed) {
+                    SEND_STRING("vi");
+                    update_last_keys(KC_I, 2);
+                }
+                return false;
+            case KC_7:
+                if (record->event.pressed) {
+                    SEND_STRING("vii");
+                    update_last_keys(KC_I, 3);
+                }
+                return false;
+            case KC_8:
+                if (record->event.pressed) {
+                    SEND_STRING("viii");
+                    update_last_keys(KC_I, 4);
+                }
+                return false;
+            case KC_9:
+                if (record->event.pressed) {
+                    SEND_STRING("ix");
+                    update_last_keys(KC_X, 2);
+                }
+                return false;
+            // case MT_0:
+            case CS_AL4:
+                if (record->tap.count && record->event.pressed) {
+                    SEND_STRING("x");
+                    update_last_key(KC_X);
+                }
+                return false;
+        }
+    }
+    return true;
+}
 
-    last_key = last_key_2;
-    last_key_2 = last_key_3;
-    last_key_3 = KC_NO;
-    // dprintf("rolled back!\n");
-    // dprintf("last_key:   %d\n", last_key);
-    // dprintf("last_key_2: %d\n", last_key_2);
-    // dprintf("last_key_3: %d\n", last_key_3);
-    // dprintf("char_count: %d\n", char_count);
 }
 
 bool process_rollback(void) {
@@ -2339,6 +2417,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_homerow_mod_tap(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
     if (!process_edit_controls(keycode, record)) { return false; }
+    if (!process_number_case(keycode, record)) { return false; }
     if (!process_vol_repeat(keycode, record)) { return false; }
     if (!process_clock(keycode, record)) { return false; }
     if (!process_boot_anim(keycode, record)) { return false; }
