@@ -1325,6 +1325,9 @@ void send_separator(void) {
 
 uint16_t separator_map(uint16_t keycode) {
     switch (keycode) {
+        case CS_LT1:
+            return KC_SPC;
+
         case CS_UNDS:
             return KC_UNDS;
 
@@ -1366,6 +1369,13 @@ bool process_case_capture(uint16_t keycode) {
             case_lock_capture_off();
             case_lock_on();
             return true;
+
+        case KC_SPC:
+            case_lock_separator = KC_UNDS;
+            case_lock_capture_off();
+            case_lock_on();
+            tap_code16(KC_UNDS);
+            return false;
 
         case KC_RSFT:
             unregister_mods(MOD_BIT(KC_RSFT));
@@ -1448,7 +1458,7 @@ bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
                 return true;
         }
 
-        if (keycode == CS_LT1) {
+        if (keycode == KC_SPC) {
             if (record->tap.count) {
                 if (case_lock_active) {
                     if (is_spc(last_key)) {
