@@ -124,48 +124,49 @@ enum custom_keycodes {
 };
 
 // Home row mods
-#define MT_A LGUI_T(KC_A)
-#define MT_S LALT_T(KC_S)
-#define MT_D LCTL_T(KC_D)
-#define MT_F LSFT_T(KC_F)
+#define LG_A LGUI_T(KC_A)
+#define LA_S LALT_T(KC_S)
+#define LC_D LCTL_T(KC_D)
+#define LS_F LSFT_T(KC_F)
 
-#define MT_J    RSFT_T(KC_J)
-#define MT_K    RCTL_T(KC_K)
-#define MT_L    LALT_T(KC_L)
-#define MT_SCLN RGUI_T(KC_SCLN)
+#define RS_J    RSFT_T(KC_J)
+#define RC_K    RCTL_T(KC_K)
+#define RA_L    LALT_T(KC_L)
+#define RS_SCLN RGUI_T(KC_SCLN)
 
 // Alt layout home row mods
-#define MTA_N LGUI_T(KC_N)
-#define MTA_R LALT_T(KC_R)
-#define MTA_T LCTL_T(KC_T)
-#define MTA_S LSFT_T(KC_S)
+#define LG_N LGUI_T(KC_N)
+#define LA_R LALT_T(KC_R)
+#define LC_T LCTL_T(KC_T)
+#define LS_S LSFT_T(KC_S)
 
-#define MTA_H RSFT_T(KC_H)
-#define MTA_E RCTL_T(KC_E)
-#define MTA_I LALT_T(KC_I)
-#define MTA_A RGUI_T(KC_A)
+#define RS_H RSFT_T(KC_H)
+#define RC_E RCTL_T(KC_E)
+#define RA_I LALT_T(KC_I)
+#define RG_A RGUI_T(KC_A)
 
 // Symbol home row mods
-#define MT_RPRN LT(0,CS_RPRN)
-#define MT_LPRN LT(0,CS_LPRN)
-#define MT_UNDS LT(0,CS_UNDS)
-#define MT_TILD LT(0,CS_TILD)
+#define RS_RPRN LT(0,CS_RPRN)
+#define RC_LPRN LT(0,CS_LPRN)
+#define RA_UNDS LT(0,CS_UNDS)
+#define RG_TILD LT(0,CS_TILD)
 
-#define MT_1 RSFT_T(KC_1)
-#define MT_2 RCTL_T(KC_2)
-#define MT_3 LALT_T(KC_3)
-#define MT_0 LGUI_T(KC_0)
+#define RS_1 RSFT_T(KC_1)
+#define RC_2 RCTL_T(KC_2)
+#define RA_3 LALT_T(KC_3)
+#define RG_UNDS LGUI_T(KC_UNDS)
 
-#define MT_EXLM LGUI_T(KC_EXLM)
-#define MT_COLN LALT_T(KC_COLN)
-#define MT_DOT  LCTL_T(KC_DOT)
-#define MT_COMM LSFT_T(KC_COMM)
+// Data home row mods
+#define LG_EXLM LGUI_T(KC_EXLM)
+#define LA_COLN LALT_T(KC_COLN)
+#define LC_DOT  LCTL_T(KC_DOT)
+#define LS_COMM LSFT_T(KC_COMM)
 
 // Edit overlay home row mods
-#define MT_DELL RSFT_T(KC_BSPC)
-#define MT_DELW RCTL_T(KC_BSPC)
-#define MT_DELR LALT_T(KC_DEL)
-#define MT_DEL  RGUI_T(KC_DEL)
+#define RS_DELL RSFT_T(KC_BSPC)
+#define RC_DELW RCTL_T(KC_BSPC)
+#define RA_DELR LALT_T(KC_DEL)
+#define RG_DEL  RGUI_T(KC_DEL)
 
 
 // Layer keys
@@ -235,7 +236,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT,    MT_A,    MT_S,    MT_D,    MT_F,    KC_G,                         KC_H,    MT_J,    MT_K,    MT_L, MT_SCLN, TABRSFT,
+          KC_LSFT,    LG_A,    LA_S,    LC_D,    LS_F,    KC_G,                         KC_H,    RS_J,    RC_K,    RA_L, RS_SCLN, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           CS_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_DOT, QUE_EXL, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -247,7 +248,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,    KC_Z,    KC_L,    KC_D,    KC_C,    KC_B,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          TABLSFT,   MTA_N,   MTA_R,   MTA_T,   MTA_S,    KC_G,                         KC_Y,   MTA_H,   MTA_E,   MTA_I,   MTA_A, TABRSFT,
+          TABLSFT,    LG_N,    LA_R,    LC_T,    LS_S,    KC_G,                         KC_Y,    RS_H,    RC_E,    RA_I,    RG_A, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           CS_LCTL,    KC_Q,    KC_X,    KC_M,    KC_W,    KC_V,                         KC_K,    KC_P, KC_QUOT, COM_DOT, QUE_EXL, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -283,7 +284,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, CS_PERC, CS_MINS, CS_PLUS,  CS_DLR, CS_AMPR,                      CS_CBRS,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          OSMLSFT, MT_EXLM, MT_COLN,  MT_DOT, MT_COMM, CS_PIPE,                      CS_PRNS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
+          OSMLSFT, LG_EXLM, LA_COLN,  LC_DOT, LS_COMM, CS_PIPE,                      CS_PRNS,    RS_1,    RC_2,    RA_3, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           CS_LCTL, CS_CIRC, CS_SLSH, CS_ASTR, CS_HASH, CS_TILD,                      CS_BRCS,    KC_4,    KC_5,    KC_6, CS_POUN,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -295,7 +296,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,---------------------------------------------------.
            KC_GRV,  CS_DLR, CS_EXLM, CS_DQUO, CS_AMPR, CS_CIRC,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          OSMLSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
+          OSMLSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT, RS_RPRN, RC_LPRN, RA_UNDS, RG_TILD, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           CS_LCTL, CS_TILD, CS_COLN,  CS_DOT, CS_COMM, CS_UNDS,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -307,7 +308,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_GRV, CS_PERC, CS_MINS, CS_PLUS,  CS_DLR, CS_CONJ,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          OSMLSFT, CS_EXLM,   CS_LT,   CS_GT,  CS_EQL, CS_DISJ,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
+          OSMLSFT, CS_EXLM,   CS_LT,   CS_GT,  CS_EQL, CS_DISJ,                        CS_LT, RS_RPRN, RC_LPRN, RA_UNDS, RG_TILD, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           CS_LCTL, CS_CIRC, CS_SLSH, CS_ASTR, CS_HASH, CS_TILD,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -331,7 +332,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, MT_RPRN, MT_LPRN, MT_UNDS, MT_TILD, TABRSFT,
+          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, RS_RPRN, RC_LPRN, RA_UNDS, RG_TILD, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, KC_PGDN, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -343,7 +344,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, NXT_TAB, EO_HOME,   EO_UP,  EO_END, KC_CAPS,                      WORDCBR,  SPC_UP,    JOIN,  SPC_DN,  KC_ESC, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, DELWORD, EO_LEFT, EO_DOWN, EO_RGHT,  KC_DEL,                      WORDPRN, MT_DELL, MT_DELW, MT_DELR,  MT_DEL, _______,
+          _______, DELWORD, EO_LEFT, EO_DOWN, EO_RGHT,  KC_DEL,                      WORDPRN, RS_DELL, RC_DELW, RA_DELR,  RG_DEL, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+-   -------+--------|
           _______, PRV_TAB, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                      WORDBRC,   PASTE,    COPY,    REDO,    UNDO, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -355,7 +356,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                      CS_CBRS,    KC_7,    KC_8,    KC_9,   CS_AT,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      CS_PRNS,    MT_1,    MT_2,    MT_3,    MT_0, TABRSFT,
+          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      CS_PRNS,    RS_1,    RC_2,    RA_3, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, PRV_TAB, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                      CS_BRCS,    KC_4,    KC_5,    KC_6, CS_POUN,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -539,43 +540,43 @@ bool is_alpha(uint16_t keycode) {
 
 bool is_hrm(uint16_t keycode) {
     switch (keycode) {
-        case MT_A:
-        case MT_S:
-        case MT_D:
-        case MT_F:
-        case MT_J:
-        case MT_K:
-        case MT_L:
-        case MT_SCLN:
+        case LG_A:
+        case LA_S:
+        case LC_D:
+        case LS_F:
+        case RS_J:
+        case RC_K:
+        case RA_L:
+        case RS_SCLN:
 
-        case MTA_N:
-        case MTA_R:
-        case MTA_T:
-        case MTA_S:
-        case MTA_H:
-        case MTA_E:
-        case MTA_I:
-        case MTA_A:
+        case LG_N:
+        case LA_R:
+        case LC_T:
+        case LS_S:
+        case RS_H:
+        case RC_E:
+        case RA_I:
+        case RG_A:
 
-        case MT_RPRN:
-        case MT_LPRN:
-        case MT_UNDS:
-        case MT_TILD:
+        case RS_RPRN:
+        case RC_LPRN:
+        case RA_UNDS:
+        case RG_TILD:
 
-        case MT_1:
-        case MT_2:
-        case MT_3:
-        case MT_0:
+        case RS_1:
+        case RC_2:
+        case RA_3:
+        case RG_UNDS:
 
-        case MT_EXLM:
-        case MT_COLN:
-        case MT_DOT:
-        case MT_COMM:
+        case LG_EXLM:
+        case LA_COLN:
+        case LC_DOT:
+        case LS_COMM:
 
-        case MT_DELL:
-        case MT_DELW:
-        case MT_DELR:
-        case MT_DEL:
+        case RS_DELL:
+        case RC_DELW:
+        case RA_DELR:
+        case RG_DEL:
             return true;
         default:
             return false;
@@ -744,62 +745,62 @@ void homerow_mod(uint8_t mods, keyrecord_t* record) {
 bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         // LGUI
-        case MTA_N:
-        case MT_A:
-        case MT_EXLM:
+        case LG_N:
+        case LG_A:
+        case LG_EXLM:
             homerow_mod(MOD_BIT(KC_LGUI), record);
             break;
         // LALT
-        case MT_S:
-        case MTA_R:
-        case MT_COLN:
+        case LA_S:
+        case LA_R:
+        case LA_COLN:
             homerow_mod(MOD_BIT(KC_LALT), record);
             break;
         // LCTL
-        case MT_D:
-        case MTA_T:
-        case MT_DOT:
+        case LC_D:
+        case LC_T:
+        case LC_DOT:
             homerow_mod(MOD_BIT(KC_LCTL), record);
             break;
         // LSFT
-        case MT_F:
-        case MTA_S:
-        case MT_COMM:
+        case LS_F:
+        case LS_S:
+        case LS_COMM:
             homerow_mod(MOD_BIT(KC_LSFT), record);
             break;
 
 
 
         // RSFT
-        case MT_J:
-        case MTA_H:
-        case MT_RPRN:
-        case MT_1:
-        case MT_DELL:
+        case RS_J:
+        case RS_H:
+        case RS_RPRN:
+        case RS_1:
+        case RS_DELL:
             homerow_mod(MOD_BIT(KC_RSFT), record);
             break;
         // RCTL
-        case MT_K:
-        case MTA_E:
-        case MT_LPRN:
-        case MT_2:
-        case MT_DELW:
+        case RC_K:
+        case RC_E:
+        case RC_LPRN:
+        case RC_2:
+        case RC_DELW:
             homerow_mod(MOD_BIT(KC_RCTL), record);
             break;
         // RALT
-        case MT_L:
-        case MTA_I:
-        case MT_UNDS:
-        case MT_3:
-        case MT_DELR:
+        case RA_L:
+        case RA_I:
+        case RA_UNDS:
+        case RA_3:
+        case RA_DELR:
             homerow_mod(MOD_BIT(KC_LALT), record);
             break;
         // RGUI
-        case MT_SCLN:
-        case MTA_A:
-        case MT_TILD:
-        case MT_0:
-        case MT_DEL:
+        case RS_SCLN:
+        case RG_A:
+        case RG_TILD:
+        case RG_UNDS:
+        case RG_DEL:
             homerow_mod(MOD_BIT(KC_RGUI), record);
             break;
     }
@@ -814,10 +815,10 @@ bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         // enable key repeating on numerical home row mod keys
-        case MT_1:
-        case MT_2:
-        case MT_3:
-        case MT_0:
+        case RS_1:
+        case RC_2:
+        case RA_3:
+        // case MT_0:
             return TAPPING_TERM;
 
         case CS_LT3:
@@ -862,31 +863,31 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
             return 125;
 
         // Shift mod-taps
-        case MT_F:
-        case MT_J:
-        case MTA_S:
-        case MTA_H:
+        case LS_F:
+        case RS_J:
+        case LS_S:
+        case RS_H:
             return 200;
 
         // Ctrl mod-taps
-        case MT_D:
-        case MT_K:
-        case MTA_T:
-        case MTA_E:
+        case LC_D:
+        case RC_K:
+        case LC_T:
+        case RC_E:
             return 250;
 
         // Alt mod-taps
-        case MT_S:
-        case MT_L:
-        case MTA_R:
-        case MTA_I:
+        case LA_S:
+        case RA_L:
+        case LA_R:
+        case RA_I:
             return 300;
 
         // GUI mod-taps
-        case MT_A:
-        case MT_SCLN:
-        case MTA_N:
-        case MTA_A:
+        case LG_A:
+        case RS_SCLN:
+        case LG_N:
+        case RG_A:
             return 350;
 
         case OSMLSFT:
@@ -1347,7 +1348,7 @@ uint16_t separator_map(uint16_t keycode) {
         case TABRSFT:
             return KC_RSFT;
 
-        case MT_SCLN:
+        case RS_SCLN:
             return KC_SCLN;
 
         default:
@@ -3076,7 +3077,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         // =====================================================================
 
         // Edit layer
-        case MT_TILD:
+        case RG_TILD:
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3085,7 +3086,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
 
-        case MT_UNDS:
+        case RA_UNDS:
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3094,7 +3095,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
 
-        case MT_LPRN:
+        case RC_LPRN:
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3103,7 +3104,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
 
-        case MT_RPRN:
+        case RS_RPRN:
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3115,7 +3116,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
 
         // Data layer
-        case MT_EXLM:
+        case LG_EXLM:
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3123,7 +3124,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             return false;
-        case MT_COLN:
+        case LA_COLN:
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3131,7 +3132,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             return false;
-        case MT_DOT:
+        case LC_DOT:
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3139,7 +3140,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             return false;
-        case MT_COMM:
+        case LS_COMM:
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_SHIFT);
@@ -3148,9 +3149,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
 
-
             
-        case MT_DELL:
+        case RG_UNDS:
+            if (record->tap.count && record->event.pressed) {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_SHIFT);
+                tap_code16(KC_UNDS);
+                set_mods(mods);
+            }
+            return false;
+
+
+
+        // Edit overlay
+        case RS_DELL:
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 if (shifted()) {
@@ -3165,7 +3177,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
 
-        case MT_DELW:
+        case RC_DELW:
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_CSAG);
@@ -3177,7 +3189,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
 
-        case MT_DELR:
+        case RA_DELR:
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
                 if (shifted()) {
