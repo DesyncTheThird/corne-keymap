@@ -1,7 +1,7 @@
 # Desync's Keymap
 ![Layout](images/layout.png?raw=true)
 
-<img src="./images/left.gif" height="225"> <img src="./images/right.jpg" height="225"> <img src="./images/base display.png" height="225"> <img src="./images/edit display.png" height="225"> <img src="./images/waves.png" height="225"> <img src="./images/four-byte-burger.png" height="225">
+<img src="./images/left.gif" height="225"> <img src="./images/right.jpg" height="225"> <img src="./images/base display.png" height="225"> <img src="./images/edit display.png" height="225"> <img src="./images/waves.png" height="225"> <img src="./images/pro_micro.png" height="225">
 
 ---
 
@@ -271,7 +271,7 @@ The inner column on the right hand has *cycling macros* which cycle between diff
   
   This macro places the cursor between the two brackets with each press.
 
-- `Comparison`: `>` -> `<` -> `=` -> `>` -> ...
+- `Comp`: `>` -> `<` -> `=` -> `>` -> ...
 
 These macros interoperate with the rollback feature.
 
