@@ -265,9 +265,15 @@ The `LCTL` key also sets a weak one shot `ctrl` modifier for the `Backspace` key
 ![Data](images/data.png?raw=true)
 Number grid with `1`, `2`, and `3` on right hand home row, along with common numerical separators on left hand home row, sharing similar layout to `Symbol` and `Program` layers.
 
-The bracket macros `{-}`, `(-)`, and `[-]` send the listed brackets, then tap `Left`, placing the cursor between the two brackets. These macros also interoperate with the rollback feature.
+The inner column on the right hand has *cycling macros* which cycle between different outputs on repeated presses:
+- `Misc`: `@` -> `£` -> `#` -> `@` -> ...
+- `Bracket`: `()` -> `{}` -> `[]` -> `()` -> ...
+  
+  This macro places the cursor between the two brackets with each press.
 
-The `@` symbol is also available on this layer as many email handles end with numbers, and also because I use it as a leader key for LaTeX commands; and `~` is available for git commands.
+- `Comparison`: `>` -> `<` -> `=` -> `>` -> ...
+
+These macros interoperate with the rollback feature.
 
 Activating both `Data` and `Program` layers will also activate the `Edit` layer on top to allow for quick navigation during numerical input. This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
@@ -296,7 +302,7 @@ These are both implemented via the tri-layer feature, so the layer keys may be r
 
 ### Symbol
 ![Symbol](images/symbol.png?raw=true)
-Symbol layout optimised for (La)TeX editing with many common strings as inward rolls on left hand, e.g.; `<-`, `<=`, `->`, `>=`, `|->`, `<-`, `~>`, `|>`, `:=`, `:-`, `&=`, etc. (Intended to be used with [snippet extensions](https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17).) Brackets on right hand as above.
+Symbol layout optimised for (La)TeX editing with many common strings as inward rolls on left hand, e.g.; `<-`, `<=`, `->`, `>=`, `|->`, `<-`, `|>`, `:=`, `:-`, `&=`, etc. (Intended to be used with [snippet extensions](https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17).) Brackets on right hand as above.
 
 
 
