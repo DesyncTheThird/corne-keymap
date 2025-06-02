@@ -294,8 +294,9 @@ After cutting with `Select` or copying with `Select Right`, the `Enter` key on t
 The bottom row of the [Control Overlay](#control-overlay) can also be activated with home row mods on this layer.
 
 The right thumb keys also have additional layering actions:
-- Activating both `Edit` and `Program` layers will also activate the [Edit Overlay](#edit-overlay), containing macros useful for editing.
-- Activating both `Edit` and `Symbol` layers will replace the right hand with a copy of the `Data` layer, and also hold the `LCTL` or `LSFT` modifier for various keys on the left hand.
+- Activating both `Edit` and `Program` layers will activate the [Edit Overlay](#edit-overlay), which contains macros useful for editing, and also hold the `LCTL` or `LSFT` modifier for various keys on the left hand.
+- Activating both `Edit` and `Symbol` layers will replace the right hand with a copy of the `Data` layer.
+
 These are both implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
 
@@ -321,7 +322,7 @@ Brackets on right hand as above.
 
 ### Utility
 ![Utility](images/utility.png?raw=true)
-Utility layer containing media control, RGB controls, OLED controls, function keys, and debug functions. Layer is accessible using either outer thumb key (XOR).
+Utility layer containing media control, RGB controls, OLED controls, function keys, and debug functions. Layer is accessible using either outer thumb key.
 
 The `Mute` thumb keys only activate on the hand opposite to the one holding the layer key to avoid accidental activations. The `Volume Up/Down` keys are macros that rapidly and repeatedly send the volume control keycodes for smooth volume control; holding shift sends the keycodes only once for finer control.
 
@@ -347,7 +348,7 @@ Cursor/scroll speed may be overridden with right thumb keys for higher speed or 
 
 ### Control Overlay
 ![Control](images/control.png?raw=true)
-Control key overrides with QWERTY-esque layout for easier left-hand only use. (I usually don't remember which *letter* does what command, only which key *position*, particularly for graphical and editing software)
+Control key overrides with QWERTY-esque layout for easier left-hand only use. (I usually don't remember which *letter* does what command, only which key *position*, particularly for graphical and editing software.)
 
 Overrides activate only from left hand control key on a base layer; home row mods are unaffected, so intentional letter controls can be used in two-hand usage.
 
@@ -361,10 +362,10 @@ Activating the `Program` layer while on the `Edit` layer will activate the `Edit
 
 The right hand is replaced with macros useful for editing:
 - The directional `Delete` macros delete in the indicated directions from the current cursor position to the beginning/end of the next word; holding shift deletes to the beginning/end of the current line instead.
-- The `Line` macro adds new lines above/below the current line.
+- The `Line` macros add new lines above/below the current line.
 - The `Join` macro joins current line to following line with space between; does not add space if shifted.
 
-- The three bracket macros enclose the current word with the listed brackets. (Compare with the bracket macros on the `Data` layer.) These macros also interoperate with the rollback feature.
+- The three bracket macros enclose the current word with the listed brackets. These macros also interoperate with the rollback feature.
 
 While this layer is active, the `LCTL` modifier is held for the arrow and page keys, and `LSFT` is held for the `Home` and `End` keys.
 
