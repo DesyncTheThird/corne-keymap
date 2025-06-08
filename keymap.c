@@ -3008,7 +3008,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 static_display = !static_display;
                 update_sync();
                 if (!static_display) {
-                    oled_off();
                     oled_clear();
                 }
             }
@@ -3955,7 +3954,6 @@ void render_modifier_state(uint8_t line) {
 
 #include "menu.c"
 
-
 #define overlay_mask ~((1 << _CONTROL_OVERLAY) | (1 << _NUMPAD) | (1 << _MOUSE))
 #define base_layer_mask ~((1 << _BASE) | (1 << _QWERTY) | (1 << _BASIC))
 
@@ -4027,7 +4025,6 @@ void render_layout(void) {
             break;
     }
 }
-
 
 void render_right_thumb(const char* progmem_data) {
     oled_set_cursor(8,6);
@@ -4117,7 +4114,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 
 bool oled_task_user(void) {
     if (oled_timeout || oled_disable) {
-        oled_off();
+        oled_clear();
         return false;
     }
     if (is_keyboard_master()) {
