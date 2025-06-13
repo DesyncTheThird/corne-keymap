@@ -836,6 +836,78 @@ bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
 }
 
 
+//==============================================================================
+// Timers
+//==============================================================================
+
+#define IDLE_TIMEOUT 1000 * 60 * 5
+
+void matrix_scan_user(void) {
+
+    if (timer_elapsed(boot_timer) > 5000) {
+        boot = false;
+    }
+
+    // if (mh_auto_buttons_timer && (timer_elapsed(mh_auto_buttons_timer) > MH_AUTO_BUTTONS_TIMEOUT)) {
+    //     if (!tp_buttons) {
+    //         layer_off(MH_AUTO_BUTTONS_LAYER);
+    //         mh_auto_buttons_timer = 0;
+    //     }
+    // }
+
+    // Layer timeout
+    if (last_input_activity_elapsed() > IDLE_TIMEOUT) {
+        layer_off(_NUMPAD);
+        layer_off(_TOUHOU);
+    }
+
+    if (last_input_activity_elapsed() > 200 && last_key == SELECT) {
+        last_key = KC_NO;
+    }
+    if (last_input_activity_elapsed() > 500) {
+        // Reset key tracking
+        char_count = 1;
+    }
+    if (last_input_activity_elapsed() > 1000) {
+        // Reset magic keys
+        last_key = KC_NO;
+        last_key_2 = KC_NO;
+        last_key_3 = KC_NO;
+        
+        // Reset Case Lock capture
+        if (!case_lock_active) {
+            case_lock_capture_off();
+        }
+    }
+    if (last_input_activity_elapsed() > 2000) {
+        // Reset Case Lock
+        if (case_lock_active) {
+            case_lock_off();
+        }
+    }
+    if (last_input_activity_elapsed() > 15000) {
+        // OLED timeout
+        time_setting = 0;
+        oled_timeout = true;
+        static uint32_t last_sync = 0;
+        if (timer_elapsed32(last_sync) > 500) {
+            update_sync();
+            last_sync = timer_read32();
+        }
+    } else {
+        oled_timeout = false;
+    }
+
+    // Alt tab key
+    if (alt_tab_active) {
+        if (IS_LAYER_OFF(_UTILITY)) {
+            unregister_code(KC_LALT);
+            alt_tab_active = false;
+        }
+    }
+}
+
+
 
 //==============================================================================
 // Tap/hold
@@ -4368,75 +4440,6 @@ bool shutdown_user(bool jump_to_bootloader) {
 #define IDLE_TIMEOUT 1000 * 60 * 5
 
 void housekeeping_task_user(void) {
-
-    // =========================================================================
-    // Timers
-    // =========================================================================
-
-    if (timer_elapsed(boot_timer) > 5000) {
-        boot = false;
-    }
-
-    // if (mh_auto_buttons_timer && (timer_elapsed(mh_auto_buttons_timer) > MH_AUTO_BUTTONS_TIMEOUT)) {
-    //     if (!tp_buttons) {
-    //         layer_off(MH_AUTO_BUTTONS_LAYER);
-    //         mh_auto_buttons_timer = 0;
-    //     }
-    // }
-
-    // Layer timeout
-    if (last_input_activity_elapsed() > IDLE_TIMEOUT) {
-        layer_off(_NUMPAD);
-        layer_off(_TOUHOU);
-    }
-
-    if (last_input_activity_elapsed() > 200 && last_key == SELECT) {
-        last_key = KC_NO;
-    }
-    if (last_input_activity_elapsed() > 500) {
-        // Reset key tracking
-        char_count = 1;
-    }
-    if (last_input_activity_elapsed() > 1000) {
-        // Reset magic keys
-        last_key = KC_NO;
-        last_key_2 = KC_NO;
-        last_key_3 = KC_NO;
-        
-        // Reset Case Lock capture
-        if (!case_lock_active) {
-            case_lock_capture_off();
-        }
-    }
-    if (last_input_activity_elapsed() > 2000) {
-        // Reset Case Lock
-        if (case_lock_active) {
-            case_lock_off();
-        }
-    }
-    if (last_input_activity_elapsed() > 15000) {
-        // OLED timeout
-        time_setting = 0;
-        oled_timeout = true;
-        static uint32_t last_sync = 0;
-        if (timer_elapsed32(last_sync) > 500) {
-            update_sync();
-            last_sync = timer_read32();
-        }
-    } else {
-        oled_timeout = false;
-    }
-
-    // Alt tab key
-    if (alt_tab_active) {
-        if (IS_LAYER_OFF(_UTILITY)) {
-            unregister_code(KC_LALT);
-            alt_tab_active = false;
-        }
-    }
-
-
-
     // =========================================================================
     // Data Sync
     // =========================================================================
