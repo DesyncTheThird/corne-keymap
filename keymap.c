@@ -918,7 +918,6 @@ bool is_flow_tap_key(uint16_t keycode) {
         return false;
     }
     switch (get_tap_keycode(keycode)) {
-        case KC_SPC:
         case KC_A ... KC_Z:
         case KC_DOT:
         case KC_COMM:
