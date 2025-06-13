@@ -235,7 +235,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN,  KC_TAB,
+          KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_DOT, QUE_EXL, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -247,7 +247,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LSFT,    LG_A,    LA_S,    LC_D,    LS_F,    KC_G,                         KC_H,    RS_J,    RC_K,    RA_L, RS_SCLN, TABRSFT,
+          TABLSFT,    LG_A,    LA_S,    LC_D,    LS_F,    KC_G,                         KC_H,    RS_J,    RC_K,    RA_L, RS_SCLN, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           CS_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_DOT, QUE_EXL, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -841,6 +841,24 @@ bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
 // Tap/hold
 //==============================================================================
 
+bool is_flow_tap_key(uint16_t keycode) {
+    if ((get_mods() & (MOD_MASK_CG | MOD_BIT_LALT)) != 0) {
+        return false;
+    }
+    switch (get_tap_keycode(keycode)) {
+        case KC_SPC:
+        case KC_A ... KC_Z:
+        case KC_DOT:
+        case KC_COMM:
+        case KC_SCLN:
+        case KC_QUOT:
+        case COM_DOT:
+        case QUE_EXL:
+            return true;
+    }
+    return false;
+}
+
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         // enable key repeating on numerical home row mod keys
@@ -1143,7 +1161,7 @@ enum combo_events {
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
 const uint16_t PROGMEM touhou[]         = {KC_P, CS_HASH, KC_ESC, COMBO_END};
-const uint16_t PROGMEM steno[]          = {KC_P, CS_HASH, KC_SCLN, KC_TAB, COMBO_END};
+const uint16_t PROGMEM steno[]          = {KC_P, CS_HASH, KC_SCLN, TABRSFT, COMBO_END};
 const uint16_t PROGMEM numpad[]         = {KC_O, KC_P, CS_HASH, COMBO_END};
 const uint16_t PROGMEM mouse[]          = {KC_SCLN, QUE_EXL, COMBO_END};
 const uint16_t PROGMEM mouse2[]         = {KC_A, KC_Z, COMBO_END};
@@ -2688,9 +2706,9 @@ bool process_clock(uint16_t keycode, keyrecord_t* record) {
 
 void render_clock(uint8_t shift, uint8_t line) {
     // char time_str[11];
-    char time_str[8];
+    char time_str[9];
 
-    // time_str[8] = '\0';
+    time_str[8] = '\0';
     time_str[7] = '0' + sec % 10;
     time_str[6] = '0' + sec / 10;
     time_str[5] = ':';

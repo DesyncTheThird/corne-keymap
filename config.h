@@ -95,6 +95,8 @@ timeout managed manually in keymap instead.
 #define TAPPING_TERM 200
 #define TAPPING_TERM_PER_KEY
 
+#define FLOW_TAP_TERM 150
+
 // Perform hold action if other keys are pressed (nested/rolled activations).
 #define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
 
@@ -108,7 +110,7 @@ timeout managed manually in keymap instead.
 #define QUICK_TAP_TERM_PER_KEY
 
 // N-key rollover
-#define FORCE_NKRO
+#define NKRO_DEFAULT_ON true
 
 // Auto Shift
 // #define NO_AUTO_SHIFT_ALPHA
@@ -143,11 +145,6 @@ timeout managed manually in keymap instead.
 #define MOUSEKEY_WHEEL_TIME_TO_MAX 40
 
 
-
-
-
-// Makes GESC key output escape while ctrl is held
-// #define GRAVE_ESC_CTRL_OVERRIDE
 
 #define OLED_FONT_H "keyboards/crkbd/keymaps/desync/font.c"
 
