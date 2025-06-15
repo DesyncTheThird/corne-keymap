@@ -3,6 +3,8 @@
 
 <img src="./images/left.gif" height="225"> <img src="./images/right.jpg" height="225"> <img src="./images/base display.png" height="225"> <img src="./images/edit display.png" height="225"> <img src="./images/waves.png" height="225"> <img src="./images/pro_micro.png" height="225">
 
+See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
+
 ---
 
 # Overview
