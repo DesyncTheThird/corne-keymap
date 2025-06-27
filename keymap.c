@@ -3645,9 +3645,9 @@ bool wpm_keycode_user(uint16_t keycode) {
 
 void render_wpm(void) {
     uint8_t n = get_current_wpm();
-    char render_str[3];
+    char render_str[4];
 
-    // render_str[3] = '\0';
+    render_str[3] = '\0';
     render_str[2] = '0' + n % 10;
     render_str[1] = '0' + (n /= 10) % 10;
     render_str[0] = '0' + n / 10;

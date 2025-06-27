@@ -147,46 +147,51 @@ Pressing any other key activates snake_case by default.
 > [!NOTE]
 > This can be customised in the `process_case_lock` and `process_case_capture` functions.
 
-The capture will time out after a short duration of no input (default 1000ms), cancelling the Case Lock.
+The capture will time out after a short duration of no input (default 1000ms), cancelling the capture. Case Lock will also time out after a short duration of no input (default 2000ms).
 
 Tapping the `Space` key twice while Case Lock is active will delete the separator, output a space, and disable Case Lock.
 
-While Case Lock is active, `Ctrl`+`Bspc` will instead delete to the previous separator rather than deleting the entire word.
-
-Case Lock will time out after a short duration of no input (default 2000ms).
+While Case Lock is active, `Ctrl`+`BSPC` will instead delete to the previous separator rather than deleting the entire word.
 
 To indicate that the feature is active, the per-key LEDs will glow green while the feature is primed, and red while active.
 
 
 
-## OLEDs
-(128x64 OLEDs)
-### Right:
-- Default layer and layer stack display;
-- Menu key swaps layer stack to layout display;
-- Clock — time is set manually using keys on utility layer and doesn't require software on host (persists through sleep events);
-- Custom locking key, modifier, and mute state indicators.
-
-### Left:
-- Cycles between text and logo with cyberpunk glich aesthetic animation (based on [this code](https://gist.github.com/aleksbrgt/48a8eb932dc1b6aa8f4b36ecd7c380d0));
-- Logo displays WPM and current session time.
-
-Key on utility layer available to change both OLEDs to static images.
-
-
-
-# Combos
+## Combos
 ![Combos](images/combos.png?raw=true)
 
 (Press `Esc`, `;`, and `#` to access Touhou layer and to see funky Cirno fumo on right OLED.)
 
 ---
+
 - Common punctuation is accessible from combos on or near home row;
 - Mouse emulation layer accessible on pinky key combos to allow mouse control without moving from home row.
 - Uncommon locking layers (numpad/steno) also accessible from large combos;
 - `New` combo presses `DOT`, `SPC`, then sets a one shot shift.
 
-Pressing `Spc` plus a key on the left hand top row will output the function keys `F1` to `F5` for left-hand-only usage. (Not shown on image due to reduce clutter.)
+Pressing `SPC` plus a key on the left hand top row will output the function keys `F1` to `F5` for left-hand-only usage. (Not shown on image due to reduce clutter.)
+
+
+
+## OLEDs
+
+<img src="./images/left.gif" height="225"> <img src="./images/right.jpg" height="225"> <img src="./images/base display.png" height="225"> <img src="./images/edit display.png" height="225"> <img src="./images/waves.png" height="225"> <img src="./images/pro_micro.png" height="225">
+
+(128x64 OLEDs)
+### Left:
+- Cycles between text and logo with cyberpunk glich aesthetic animation (based on [this code](https://gist.github.com/aleksbrgt/48a8eb932dc1b6aa8f4b36ecd7c380d0));
+- Logo displays WPM and current session time.
+
+### Right:
+- Default layer and layer stack display;
+- `Menu` key on [`Utility` layer](#utility) swaps layer stack to layout display;
+- Clock — time is set manually using keys on `Utility` layer and doesn't require software on host (persists through sleep events);
+- Custom locking key, modifier, and mute state indicators.
+- `OLED Static` key on `Utility` layer swaps both OLEDs to static images.
+
+> [!NOTE]
+> You can change the static images by updating `static_left` and `static_right` in `menu.c`.
+
 
 
 # ⚠️ Experimental Features
@@ -240,7 +245,7 @@ Due to the digitiser feature mapping outputs to the whole virtual desktop, it do
 
 
 ### [Number Case](https://github.com/DesyncTheThird/corne-keymap/tree/numcase)
-This feature adds a toggle on the Data layer(s) that replaces the number keys with Roman numerals when active. Useful for some LaTeX editing. Could easily be extended to multiple cases by adding more cases to the switch statement in `process_number_case`, e.g. binary/octal/hexidecimal, Base64, ordinals (`1st`, `2nd`, `3rd`), parenthesised (`(1)`, `(2)`, `(3)`), prefixed/suffixed (`1.`, `2.`, `3.` / `1)`, `2)`, `3)`), words (`one`, `two`, `three`), etc.
+This feature adds a toggle on the `Data` layer(s) that replaces the number keys with Roman numerals when active. Useful for some LaTeX editing. Could easily be extended to multiple cases by adding more cases to the switch statement in `process_number_case`, e.g. binary/octal/hexidecimal, Base64, ordinals (`1st`, `2nd`, `3rd`), parenthesised (`(1)`, `(2)`, `(3)`), prefixed/suffixed (`1.`, `2.`, `3.` / `1)`, `2)`, `3)`), words (`one`, `two`, `three`), etc.
 
 
 
@@ -285,7 +290,7 @@ Activating both `Data` and `Program` layers will also activate the `Edit` layer 
 ![Edit](images/edit.png?raw=true)
 Navigation/editing keys on left hand and paired delimiters and common symbol combinations on right hand. I prefer the navigation cluster on the left hand to allow usage with the mouse.
 
-Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `?()`; right hand also duplicated on Symbol and Program layers.
+Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `?()`; right hand also duplicated on `Symbol` and `Program` layers.
 
 The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
 
@@ -311,7 +316,7 @@ Symbol layout optimised for (La)TeX editing with many common strings as inward r
 
 ### Program
 ![Program](images/program.png?raw=true)
-Program layer optimised for programming (mostly C and Python). Inward rolls include:
+`Program` layer optimised for programming in mostly C and Python. Inward rolls include:
 - Comparison operators: `!=`, `>=`, `<=` on home row;
 - Arithmetic assignment operators: `^=`, `+=`, `-=`, `*=`, `/=` above and below home row.
 Bitwise operator symbols are grouped on the inner index column.
@@ -324,7 +329,7 @@ Brackets on right hand as above.
 
 ### Utility
 ![Utility](images/utility.png?raw=true)
-Utility layer containing media control, RGB controls, OLED controls, function keys, and debug functions. Layer is accessible using either outer thumb key.
+`Utility` layer containing media control, RGB controls, OLED controls, function keys, and debug functions. Layer is accessible using either outer thumb key.
 
 The `Mute` thumb keys only activate on the hand opposite to the one holding the layer key to avoid accidental activations. The `Volume Up/Down` keys are macros that rapidly and repeatedly send the volume control keycodes for smooth volume control; holding shift sends the keycodes only once for finer control.
 
@@ -377,7 +382,7 @@ While this layer is active, the `LCTL` modifier is held for the arrow and page k
 ### QWERTY
 ![QWERTY](images/qwerty.png?raw=true)
 
-Accessible with `Base` key on Utility layer, or `Basic` to also disable home row mods and `Space` layer-tap (for games).
+Accessible with `Base` key on `Utility` layer, or `Basic` to also disable home row mods and `Space` layer-tap (for games).
 
 > [!WARNING]
 > Modifying the _BASIC layer will also require changing mod-tap and combo code.
@@ -433,7 +438,7 @@ If you find a way to clean up some of my code or fix some bugs, that's lovely, a
 > [!CAUTION]
 > Unmodified, this keymap will not fit on most AVR MCUs (and in fact may fail to compile in some cases due to overflowing 8-bit integers).
 
-For reference, my compiled uf2 file is 218kB (accurate as of commit [`972be81`](https://github.com/DesyncTheThird/corne-keymap/tree/972be8199a39604a71828d9c83535090095b7b2f)), though you should be able to save a significant amount of space by removing various OLED animations, deleting unused layers (along with the associated OLED layout `PROGMEM`), and disabling additional RGB animations (the `CS_RGBN` key will need to be updated in this case).
+For reference, my compiled uf2 file is 220kB (accurate as of commit [`dd59929`](https://github.com/DesyncTheThird/corne-keymap/tree/dd599294d9cbd42c863b7d2914a1f687b2181fc3)), though you should be able to save a significant amount of space by removing various OLED animations, deleting unused layers (along with the associated OLED layout `PROGMEM`), and disabling additional RGB animations (the `CS_RGBN` key will need to be updated in this case).
 
 See [here](https://docs.qmk.fm/squeezing_avr) for more ways to save space. (Most space-saving `rules.mk` and `config.h` options have already been enabled; only modify those files if you have disabled additional features in `keymap.c`.)
 
