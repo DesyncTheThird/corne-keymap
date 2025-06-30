@@ -844,9 +844,6 @@ bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
 //==============================================================================
 
 bool is_flow_tap_key(uint16_t keycode) {
-    if ((get_mods() & (MOD_MASK_CG | MOD_BIT_LALT)) != 0) {
-        return false;
-    }
     switch (get_tap_keycode(keycode)) {
         case KC_A ... KC_Z:
         case KC_DOT:
@@ -860,13 +857,42 @@ bool is_flow_tap_key(uint16_t keycode) {
     return false;
 }
 
+uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t* record, 
+                           uint16_t prev_keycode) {
+    if (get_tap_keycode(prev_keycode) == KC_BSPC) {
+        return false;
+    }
+
+    if (is_flow_tap_key(keycode) && is_flow_tap_key(prev_keycode)) {
+        switch (keycode) {
+            // Shift mod-taps
+            case LS_F:
+            case RS_J:
+            case LS_S:
+            case RS_H:
+                return 50;
+                
+            // Ctrl mod-taps
+            case LC_D:
+            case RC_K:
+            case LC_T:
+            case RC_E:
+                return 75;
+
+            default:
+                return FLOW_TAP_TERM;
+        }
+    }
+    return 0;  // Disable Flow Tap.
+}
+
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         // enable key repeating on numerical home row mod keys
         case RS_1:
         case RC_2:
         case RA_3:
-        // case MT_0:
+        // case RG_0:
             return TAPPING_TERM;
 
         case CS_LT3:
@@ -908,35 +934,35 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 
         case TABLSFT:
         case TABRSFT:
-            return 125;
+            return 100;
 
         // Shift mod-taps
         case LS_F:
         case RS_J:
         case LS_S:
         case RS_H:
-            return 200;
+            return 125;
 
         // Ctrl mod-taps
         case LC_D:
         case RC_K:
         case LC_T:
         case RC_E:
-            return 250;
+            return 150;
 
         // Alt mod-taps
         case LA_S:
         case RA_L:
         case LA_R:
         case RA_I:
-            return 300;
+            return 175;
 
         // GUI mod-taps
         case LG_A:
         case RS_SCLN:
         case LG_N:
         case RG_A:
-            return 350;
+            return 200;
 
         case OSMLSFT:
             return 300;
