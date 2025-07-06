@@ -1,7 +1,7 @@
 # Desync's Keymap
 ![Layout](images/layout.png?raw=true)
 
-<img src="./images/left.gif" height="225"> <img src="./images/right.jpg" height="225"> <img src="./images/base display.png" height="225"> <img src="./images/edit display.png" height="225"> <img src="./images/waves.png" height="225"> <img src="./images/pro_micro.png" height="225">
+<img src="./images/left.gif" width="110"> <img src="./images/right.jpg" width="113"> <img src="./images/base display.png" width="110"> <img src="./images/edit display.png" width="110"> <img src="./images/waves.png" width="180"> <img src="./images/pro_micro.png" width="180">
 
 See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 
@@ -175,7 +175,7 @@ Pressing `SPC` plus a key on the left hand top row will output the function keys
 
 ## OLEDs
 
-<img src="./images/left.gif" height="225"> <img src="./images/right.jpg" height="225"> <img src="./images/base display.png" height="225"> <img src="./images/edit display.png" height="225"> <img src="./images/waves.png" height="225"> <img src="./images/pro_micro.png" height="225">
+<img src="./images/left.gif" width="110"> <img src="./images/right.jpg" width="113"> <img src="./images/base display.png" width="110"> <img src="./images/edit display.png" width="110"> <img src="./images/waves.png" width="180"> <img src="./images/pro_micro.png" width="180">
 
 (128x64 OLEDs)
 ### Left:
