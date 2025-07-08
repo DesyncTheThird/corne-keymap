@@ -934,7 +934,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 
         case TABLSFT:
         case TABRSFT:
-            return 100;
+            return 125;
 
         // Shift mod-taps
         case LS_F:
@@ -955,14 +955,14 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case RA_L:
         case LA_R:
         case RA_I:
-            return 175;
+            return 200;
 
         // GUI mod-taps
         case LG_A:
         case RS_SCLN:
         case LG_N:
         case RG_A:
-            return 200;
+            return 250;
 
         case OSMLSFT:
             return 300;
@@ -2478,6 +2478,7 @@ bool process_pre_key_tracking(uint16_t keycode, keyrecord_t* record) {
     }
     return true;
 }
+
 
 
 //==============================================================================
