@@ -192,7 +192,7 @@ enum custom_keycodes {
 #define CS_AL1 LT(_PROGRAM,KC_0)
 #define CS_AL2 LT(_EDIT,CS_BSLS)
 #define CS_AL3 LT(_EDIT,CS_SCLN)
-#define CS_AL4 LT(_DATA_OVERLAY,KC_0)
+#define CS_AL4 LT(_EDIT_OVERLAY,KC_0)
 
 // Custom tap-hold keys
 #define CS_BOOT LT(0,KC_ESC)
@@ -1126,7 +1126,7 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
                 tap_code(KC_0);
                 set_mods(mods);
             }
-            return false;
+            return true; // continue to arrow retrigger processing
         case CS_LCTL:
             if (record->event.pressed) {
                 layer_on(_CONTROL);
@@ -1612,6 +1612,93 @@ bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
 //==============================================================================
 // Edit Control Keys
 //==============================================================================
+
+bool arrow_up = false;
+bool arrow_down = false;
+bool arrow_left = false;
+bool arrow_right = false;
+
+bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) {
+        case KC_UP:
+        case EO_UP:
+            if (record->event.pressed) {
+                arrow_up = true;
+            } else {
+                arrow_up = false;
+            }
+            return true;
+
+        case KC_DOWN:
+        case EO_DOWN:
+            if (record->event.pressed) {
+                arrow_down = true;
+            } else {
+                arrow_down = false;
+            }
+            return true;
+
+        case KC_LEFT:
+        case EO_LEFT:
+            if (record->event.pressed) {
+                arrow_left = true;
+            } else {
+                arrow_left = false;
+            }
+            return true;
+
+        case KC_RGHT:
+        case EO_RGHT:
+            if (record->event.pressed) {
+                arrow_right = true;
+            } else {
+                arrow_right = false;
+            }
+            return true;
+
+        case CS_AL4:
+            if (!record->tap.count && record->event.pressed) {
+                if (arrow_up) { 
+                    unregister_code(KC_UP);
+                    register_code16(LCTL(KC_UP));
+                }
+                if (arrow_down) {
+                    unregister_code(KC_DOWN);
+                    register_code16(LCTL(KC_DOWN));
+                }
+                if (arrow_left) {
+                    unregister_code(KC_LEFT);
+                    register_code16(LCTL(KC_LEFT));
+                }
+                if (arrow_right) {
+                    unregister_code(KC_RGHT);
+                    register_code16(LCTL(KC_RGHT));
+                }
+            } else if (!record->tap.count && !record->event.pressed) {
+                if (arrow_up) { 
+                    unregister_code16(LCTL(KC_UP));
+                    register_code(KC_UP);
+                }
+                if (arrow_down) {
+                    unregister_code16(LCTL(KC_DOWN));
+                    register_code(KC_DOWN);
+                }
+                if (arrow_left) {
+                    unregister_code16(LCTL(KC_LEFT));
+                    register_code(KC_LEFT);
+                }
+                if (arrow_right) {
+                    unregister_code16(LCTL(KC_RGHT));
+                    register_code(KC_RGHT);
+                }
+                return false;
+            }
+
+        default:
+            return true;
+    }
+}
+
 
 bool edit_clip = false;
 bool select_line = false;
@@ -2809,6 +2896,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_magic(keycode, record)) { return false; }
     if (!process_homerow_mod_tap(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
+    if (!process_arrow_retrigger(keycode, record)) { return false; }
     if (!process_edit_controls(keycode, record)) { return false; }
     if (!process_edit_macros(keycode, record)) { return false; }
     if (!process_vol_repeat(keycode, record)) { return false; }
