@@ -609,6 +609,7 @@ void rollback_last_key(void) {
     last_key = last_key_2;
     last_key_2 = last_key_3;
     last_key_3 = KC_NO;
+
     // dprintf("rolled back!\n");
     // dprintf("last_key:   %d\n", last_key);
     // dprintf("last_key_2: %d\n", last_key_2);
@@ -636,6 +637,7 @@ void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
     last_key = new_keycode;
 
     char_count = new_count;
+
     // dprintf("updated multiple keys!\n");
     // dprintf("last_key:   %d\n", last_key);
     // dprintf("last_key_2: %d\n", last_key_2);
@@ -644,7 +646,7 @@ void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
 }
 
 bool is_magic(uint16_t keycode) {
-    return ((keycode == CS_LT2) || (keycode == CS_RT2));
+    return (keycode == CS_LT2 || keycode == CS_RT2);
 }
 
 bool is_layer_tap(uint16_t keycode) {
@@ -926,7 +928,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case CS_LT3:
         case CS_LT2:
         case CS_LT1:
-        
+
         case CS_RT1:
         case CS_RT2:
         case CS_RT3:
@@ -981,12 +983,12 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
         case CS_RT1:
         // case CS_RT2:
         case CS_RT3:
- 
+
         // case CS_AL1:
         // case CS_AL2:
         // case CS_AL3:
         // case CS_AL4:
-        
+
         case TABLSFT:
         case TABRSFT:
             // Immediately select the hold action when another key is pressed.
@@ -1010,7 +1012,7 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
     switch (tap_hold_keycode) {
         case CS_LT3:
         // case CS_LT2:
-        case CS_LT1:
+        // case CS_LT1:
 
         case CS_RT1:
         // case CS_RT2:
@@ -1025,7 +1027,7 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
         case TABLSFT:
         case TABRSFT:
             return true;
-            
+
         case CS_LT2:
             if (chordal_hold_handedness(other_record->event.key) == 'R' && (other_record->event.key.col == 1 || other_record->event.key.col == 2)) {
                 return false;
@@ -2361,7 +2363,9 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
 }
 
 void send_the(void) {
-    if (shifted()) {
+    if (!shifted()) {
+        SEND_STRING("the");
+    } else {
         const uint8_t mods = get_mods();
         del_mods(MOD_MASK_CSAG);
         add_mods(MOD_MASK_SHIFT);
@@ -2370,14 +2374,14 @@ void send_the(void) {
         tap_code(KC_H);
         tap_code(KC_E);
         set_mods(mods);
-    } else {
-        SEND_STRING("the");
     }
     update_last_keys(KC_E,3);
 }
 
 void send_nt(void) {
-    if (shifted()) {
+    if (!shifted()) {
+        SEND_STRING("'t ");
+    } else {
         const uint8_t mods = get_mods();
         del_mods(MOD_MASK_CSAG);
         tap_code(KC_QUOT);
@@ -2385,8 +2389,6 @@ void send_nt(void) {
         tap_code(KC_T);
         tap_code(KC_SPC);
         set_mods(mods);
-    } else {
-        SEND_STRING("'t ");
     }
     update_last_keys(KC_SPC,3);
 }
@@ -2680,10 +2682,10 @@ bool process_vol_repeat(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_VOLD) {
         if (record->event.pressed) {
             muted = false;
-            if (shifted()) {
-                register_code16(KC_VOLD);
-            } else {
+            if (!shifted()) {
                 VOLD_start();
+            } else {
+                register_code16(KC_VOLD);
             }
         } else {
             VOLD_stop();
@@ -2694,10 +2696,10 @@ bool process_vol_repeat(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_VOLU) {
         if (record->event.pressed) {
             muted = false;
-            if (shifted()) {
-                register_code16(KC_VOLU);
-            } else {
+            if (!shifted()) {
                 VOLU_start();
+            } else {
+                register_code16(KC_VOLU);
             }
         } else {
             VOLU_stop();
@@ -2800,17 +2802,17 @@ bool process_clock(uint16_t keycode, keyrecord_t* record) {
     }
     if (keycode == CLOCKNX) {
         if (record->event.pressed) {
-            if (shifted()) {
-                if (time_setting == 0) {
-                    time_setting = 3;
-                } else {
-                    time_setting--;
-                }
-            } else {
+            if (!shifted()) {
                 if (time_setting == 3) {
                     time_setting = 0;
                 } else {
                     time_setting++;
+                }
+            } else {
+                if (time_setting == 0) {
+                    time_setting = 3;
+                } else {
+                    time_setting--;
                 }
             }
         }
@@ -3042,9 +3044,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 tap_code(KC_DEL);
                 del_mods(MOD_MASK_CTRL);
                 set_mods(mods);
-                if (shifted()) {
-                    /*intentionally blank*/ ;
-                } else {
+                if (!shifted()) {
                     tap_code(KC_SPC);
                 }
             }
@@ -3102,17 +3102,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case CS_RGBN:
             if (record->event.pressed) {
-                if (shifted()) {
-                    if (set_rgb_mode < 7) {
-                        set_rgb_mode += 1;
-                    } else {
-                        set_rgb_mode = 3;
-                    }
-                } else {
+                if (!shifted()) {
                     if (set_rgb_mode > 3) {
                         set_rgb_mode -= 1;
                     } else {
                         set_rgb_mode = 7;
+                    }
+                } else {
+                    if (set_rgb_mode < 7) {
+                        set_rgb_mode += 1;
+                    } else {
+                        set_rgb_mode = 3;
                     }
                 }
                 dprintf("rgb_mode: %d\n", set_rgb_mode);
@@ -3268,15 +3268,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case COM_EXL:
             if (record->event.pressed) {
-                if (shifted()) {
+                if (!shifted()) {
                     const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_EXLM);
+                    tap_code(KC_COMM);
                     set_mods(mods);
                 } else {
                     const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_SHIFT);
-                    tap_code(KC_COMM);
+                    tap_code16(KC_EXLM);
                     set_mods(mods);
                 }
             }
@@ -3284,15 +3284,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case DOT_QUE:
             if (record->event.pressed) {
-                if (shifted()) {
+                if (!shifted()) {
                     const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_QUES);
+                    tap_code(KC_DOT);
                     set_mods(mods);
                 } else {
                     const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_SHIFT);
-                    tap_code(KC_DOT);
+                    tap_code16(KC_QUES);
                     set_mods(mods);
                 }
             }
@@ -3300,15 +3300,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case APO_QUO:
             if (record->event.pressed) {
-                if (shifted()) {
+                if (!shifted()) {
                     const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_AT);
+                    tap_code16(KC_QUOT);
                     set_mods(mods);
                 } else {
                     const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_QUOT);
+                    tap_code16(KC_AT);
                     set_mods(mods);
                 }
             }
@@ -3674,13 +3674,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case RS_DELL:
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
-                if (shifted()) {
+                if (!shifted()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LCTL(KC_BSPC));
+                } else {
                     del_mods(MOD_MASK_CSAG);
                     tap_code16(LSFT(KC_HOME));
                     tap_code16(KC_BSPC);
-                } else {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code16(LCTL(KC_BSPC));
                 }
                 set_mods(mods);
             }
@@ -3701,13 +3701,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case RA_DELR:
             if (record->tap.count && record->event.pressed) {
                 const uint8_t mods = get_mods();
-                if (shifted()) {
+                if (!shifted()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LCTL(KC_DEL));
+                } else {
                     del_mods(MOD_MASK_CSAG);
                     tap_code16(LSFT(KC_END));
                     tap_code(KC_BSPC);
-                } else {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code16(LCTL(KC_DEL));
                 }
                 set_mods(mods);
             }
@@ -3738,7 +3738,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 //------------
 
 bool wpm_keycode_user(uint16_t keycode) {
-    if ((keycode >= QK_MOD_TAP && keycode <= QK_MOD_TAP_MAX) || (keycode >= QK_LAYER_TAP && keycode <= QK_LAYER_TAP_MAX) || (keycode >= QK_MODS && keycode <= QK_MODS_MAX)) {
+    if ((keycode >= QK_MOD_TAP && keycode <= QK_MOD_TAP_MAX)
+     || (keycode >= QK_LAYER_TAP && keycode <= QK_LAYER_TAP_MAX)
+     || (keycode >= QK_MODS && keycode <= QK_MODS_MAX)) {
         keycode = keycode & 0xFF;
     } else if (keycode > 0xFF) {
         keycode = 0;

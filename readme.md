@@ -31,7 +31,7 @@ See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 
 As the name suggests, the Repeat key repeats the last key pressed; while the Magic key swaps the first and second rows, along with various keys on the index columns (with some exceptions, listed below). This eliminates many SFBs and double-taps, turning them into alternations and rolls.
 
-The most common use-case for the swapping-rows behaviour is for the vowel block on the right side, turning the `OE`, `EO`, `IU`, and `UI` SFBs into rolls and alternations; as well as eliminating various index finger SFBs on both sides (i.e., in the words `T[YP]E`, `[SC]IENCE`, `[HYP]HEN`, etc.).
+The most common use-case for the swapping-rows behaviour is for the vowel block on the right side, turning the `OE`, `EO`, `IU`, and `UI` SFBs into rolls and alternations, as well as eliminating various index finger SFBs on both sides (i.e., in the words `T[YP]E`, `[SC]IENCE`, `[HYP]HEN`, etc.).
 
 Letters that are not commonly repeated (i.e. `I`, `U`, `A`) are overridden and instead return common n-grams. (Some letters uncommonly repeated in prose are still common in LaTeX commands and have not been overridden.)
 
@@ -149,7 +149,7 @@ Pressing any other key activates snake_case by default.
 
 The capture will time out after a short duration of no input (default 1000ms), cancelling the capture. Case Lock will also time out after a short duration of no input (default 2000ms).
 
-Tapping the `Space` key twice while Case Lock is active will delete the separator, output a space, and disable Case Lock.
+Tapping the `Space` key again after a separator will delete the separator, disable Case Lock, and output a space.
 
 While Case Lock is active, `Ctrl`+`BSPC` will instead delete to the previous separator rather than deleting the entire word.
 
@@ -167,17 +167,18 @@ To indicate that the feature is active, the per-key LEDs will glow green while t
 - Common punctuation is accessible from combos on or near home row;
 - Mouse emulation layer accessible on pinky key combos to allow mouse control without moving from home row.
 - Uncommon locking layers (numpad/steno) also accessible from large combos;
-- `New` combo presses `DOT`, `SPC`, then sets a one shot shift.
+- `New` combo presses `DOT`, `Space`, then sets a one shot shift.
 
-Pressing `SPC` plus a key on the left hand top row will output the function keys `F1` to `F5` for left-hand-only usage. (Not shown on image due to reduce clutter.)
+Pressing `Space` plus a key on the left hand top row will output the function keys `F1` to `F5` for left-hand-only usage. (Not shown on image due to reduce clutter.)
 
 
 
-## OLEDs
+## 128x64 OLEDs
 
 <img src="./images/left.gif" width="110"> <img src="./images/right.jpg" width="113"> <img src="./images/base display.png" width="110"> <img src="./images/edit display.png" width="110"> <img src="./images/waves.png" width="180"> <img src="./images/pro_micro.png" width="180">
 
-(128x64 OLEDs)
+See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
+
 ### Left:
 - Cycles between text and logo with cyberpunk glich aesthetic animation (based on [this code](https://gist.github.com/aleksbrgt/48a8eb932dc1b6aa8f4b36ecd7c380d0));
 - Logo displays WPM and current session time.
@@ -290,7 +291,7 @@ Activating both `Data` and `Program` layers will also activate the `Edit` layer 
 ![Edit](images/edit.png?raw=true)
 Navigation/editing keys on left hand and paired delimiters and common symbol combinations on right hand. I prefer the navigation cluster on the left hand to allow usage with the mouse.
 
-Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `?()`; right hand also duplicated on `Symbol` and `Program` layers.
+Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `?()`; right hand also duplicated on `Symbol` and `Program` layers.
 
 The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
 
@@ -333,7 +334,7 @@ Brackets on right hand as above.
 
 The `Mute` thumb keys only activate on the hand opposite to the one holding the layer key to avoid accidental activations. The `Volume Up/Down` keys are macros that rapidly and repeatedly send the volume control keycodes for smooth volume control; holding shift sends the keycodes only once for finer control.
 
-`Base` swaps default layer to QWERTY layout; `Basic` swaps default layer to QWERTY layout with home row mods and `Space` layer-tap disabled (`Data` layer is still accessible by holding down the OSL key on base layer).
+`Base` swaps default layer to QWERTY layout; `Basic` swaps default layer to QWERTY layout with home row mods and `Space` layer-tap disabled (right hand `Data` layer is still accessible by simultaneously activating `Edit` and `Symbol` layers).
 
 `Clock` keys set the OLED clock. `OLED Static` disables animations and changes OLEDs to static images. `OLED Menu` toggles between layer stack view and layout display on right OLED.
 
