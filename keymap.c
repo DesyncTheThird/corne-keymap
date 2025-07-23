@@ -867,19 +867,26 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t* record,
 
     if (is_flow_tap_key(keycode) && is_flow_tap_key(prev_keycode)) {
         switch (keycode) {
-            // Shift mod-taps
-            case LS_F:
-            case RS_J:
-            case LS_S:
-            case RS_H:
-                return 50;
-                
             // Ctrl mod-taps
             case LC_D:
             case RC_K:
             case LC_T:
             case RC_E:
                 return 75;
+
+            // Alt mod-taps
+            case LA_S:
+            case RA_L:
+            case LA_R:
+            case RA_I:
+                return 150;
+
+            // GUI mod-taps
+            case LG_A:
+            case RS_SCLN:
+            case LG_N:
+            case RG_A:
+                return 100;
 
             default:
                 return FLOW_TAP_TERM;
