@@ -1019,7 +1019,7 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
     switch (tap_hold_keycode) {
         case CS_LT3:
         // case CS_LT2:
-        // case CS_LT1:
+        case CS_LT1:
 
         case CS_RT1:
         // case CS_RT2:
