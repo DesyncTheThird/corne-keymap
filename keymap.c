@@ -950,7 +950,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case RS_J:
         case LS_S:
         case RS_H:
-            return 125;
+            return 150;
 
         // Ctrl mod-taps
         case LC_D:
@@ -4401,7 +4401,10 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         return state;
     }
 
-    if (IS_LAYER_ON_STATE(state, _BASIC) || IS_LAYER_ON_STATE(state, _TOUHOU)) {
+    if (IS_LAYER_ON_STATE(state, _MOUSE)) {
+        rgb_matrix_sethsv_noeeprom(209,255,192);
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
+    } else if (IS_LAYER_ON_STATE(state, _BASIC) || IS_LAYER_ON_STATE(state, _TOUHOU)) {
         rgb_matrix_sethsv_noeeprom(127,255,255);
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
     } else if (IS_LAYER_ON_STATE(state, _QWERTY)) {
