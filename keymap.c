@@ -287,7 +287,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LCTL,  STN_N1,  STN_N2,  STN_N3,  STN_N4,  STN_N5,                       STN_N6,  STN_N7,  STN_N8,  STN_N9,  STN_NA,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                               STN_FN,   STN_A,   STN_O,      STN_E,   STN_U, STN_PWR
+                                              _______,   STN_A,   STN_O,      STN_E,   STN_U, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -1294,7 +1294,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                     layer_off(_STENO);
                 } else {
                     layer_on(_STENO);
-                    unregister_mods(MOD_BIT(KC_LSFT));
+                    unregister_mods(MOD_BIT(KC_RSFT));
                 }
             }
             break;
