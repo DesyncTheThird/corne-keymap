@@ -3791,7 +3791,7 @@ uint16_t render_timer;
 uint16_t anim_timer = 0;
 bool show_text = true;
 
-#include "frames.c"
+#include "frames.inc"
 
 uint8_t clean_frame = 0;
 
@@ -4096,6 +4096,7 @@ void render_modifier_state(uint8_t line) {
 
 
 #include "menu.c"
+#include "menu.inc"
 
 #define overlay_mask ~((1 << _CONTROL_OVERLAY) | (1 << _NUMPAD) | (1 << _MOUSE))
 #define base_layer_mask ~((1 << _BASE) | (1 << _QWERTY) | (1 << _BASIC))
