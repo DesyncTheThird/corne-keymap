@@ -481,7 +481,6 @@ uint16_t boot_timer;
 bool boot = false;
 deferred_token boot_animation_token = INVALID_DEFERRED_TOKEN;
 
-uint8_t set_rgb_mode = 5;
 
 bool ctrl_linger = false;
 
@@ -492,6 +491,17 @@ bool case_lock_active = false;
 bool case_lock_capture = false;
 uint16_t case_lock_separator = KC_UNDS;
 int16_t separator_distance = 0;
+
+uint8_t current_rgb_mode = 0;
+void set_rgb_mode(void) {
+    dprintf("rgb_mode: %d\n", current_rgb_mode);
+    if (current_rgb_mode == 0) {
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_reactive_smooth);
+    } else {
+        // Skip 0/1 for off/solid background animations
+        rgb_matrix_mode_noeeprom(current_rgb_mode + 2);
+    }
+}
 
 void update_sync(void) {
     if (is_keyboard_master()) {
@@ -505,7 +515,6 @@ void update_sync(void) {
         transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
     }
 }
-
 
 void case_lock_capture_on(void) {
     case_lock_capture = true;
@@ -3110,20 +3119,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CS_RGBN:
             if (record->event.pressed) {
                 if (!shifted()) {
-                    if (set_rgb_mode > 3) {
-                        set_rgb_mode -= 1;
+                    if (current_rgb_mode > 0) {
+                        current_rgb_mode -= 1;
                     } else {
-                        set_rgb_mode = 7;
+                        current_rgb_mode = 3;
                     }
                 } else {
-                    if (set_rgb_mode < 7) {
-                        set_rgb_mode += 1;
+                    if (current_rgb_mode < 3) {
+                        current_rgb_mode += 1;
                     } else {
-                        set_rgb_mode = 3;
+                        current_rgb_mode = 0;
                     }
                 }
-                dprintf("rgb_mode: %d\n", set_rgb_mode);
-                rgb_matrix_mode_noeeprom(set_rgb_mode);
+                set_rgb_mode();
             }
             break;
 
@@ -4095,7 +4103,6 @@ void render_modifier_state(uint8_t line) {
 
 
 
-#include "menu.c"
 #include "menu.inc"
 
 #define overlay_mask ~((1 << _CONTROL_OVERLAY) | (1 << _NUMPAD) | (1 << _MOUSE))
@@ -4413,7 +4420,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
     } else if (IS_LAYER_ON_STATE(state, _BASE)) {
         rgb_matrix_sethsv_noeeprom(255,255,255);
-        rgb_matrix_mode_noeeprom(set_rgb_mode);
+        set_rgb_mode();
     }
     return state;
 }
@@ -4427,7 +4434,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 uint32_t boot_animation_fade(uint32_t trigger_time, void* cb_arg) {
     static int fade = 0;
     rgb_matrix_sethsv_noeeprom(255, 255, fade);
-    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_REACTIVE);
+    set_rgb_mode();
     if (fade < 64) {
         fade += 2;
         return 50;

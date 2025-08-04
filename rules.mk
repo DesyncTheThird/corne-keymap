@@ -12,6 +12,7 @@ STENO_PROTOCOL = geminipr
 
 RGBLIGHT_ENABLE = no
 RGB_MATRIX_ENABLE = yes
+RGB_MATRIX_CUSTOM_USER = yes
 
 MOUSEKEY_ENABLE = yes
 EXTRAKEY_ENABLE = yes # Audio control and System control
