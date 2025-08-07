@@ -246,7 +246,7 @@ Due to the digitiser feature mapping outputs to the whole virtual desktop, it do
 
 
 ### [Number Case](https://github.com/DesyncTheThird/corne-keymap/tree/numcase)
-This feature adds a toggle on the `Data` layer(s) that replaces the number keys with Roman numerals when active. Useful for some LaTeX editing. Could easily be extended to multiple cases by adding more cases to the switch statement in `process_number_case`, e.g. binary/octal/hexidecimal, Base64, ordinals (`1st`, `2nd`, `3rd`), parenthesised (`(1)`, `(2)`, `(3)`), prefixed/suffixed (`1.`, `2.`, `3.` / `1)`, `2)`, `3)`), words (`one`, `two`, `three`), etc.
+This feature adds a toggle on the `Data` layer(s) that replaces the number keys with Roman numerals when active. Useful for some LaTeX editing. Could easily be extended to multiple cases by adding more cases to the switch statement in `process_number_case`, e.g. binary/octal/hexadecimal, Base64, ordinals (`1st`, `2nd`, `3rd`), parenthesised (`(1)`, `(2)`, `(3)`), prefixed/suffixed (`1.`, `2.`, `3.` / `1)`, `2)`, `3)`), words (`one`, `two`, `three`), etc.
 
 
 
@@ -274,7 +274,7 @@ The `LCTL` key also sets a weak one shot `ctrl` modifier for the `Backspace` key
 Number grid with `1`, `2`, and `3` on right hand home row, along with common numerical separators on left hand home row, sharing similar layout to `Symbol` and `Program` layers.
 
 The inner column on the right hand has *cycling macros* which cycle between different outputs on repeated presses:
-- `Misc`: `@` -> `£` -> `#` -> `@` -> ...
+- `Misc`: `@` -> `£` -> `@` -> ...
 - `Bracket`: `()` -> `{}` -> `[]` -> `()` -> ...
   
   This macro places the cursor between the two brackets with each press.
