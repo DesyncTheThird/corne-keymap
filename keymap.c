@@ -615,11 +615,11 @@ void rollback_last_key(void) {
     last_key_2 = last_key_3;
     last_key_3 = KC_NO;
 
-    dprintf("rolled back!\n");
-    dprintf("last_key:   %d\n", last_key);
-    dprintf("last_key_2: %d\n", last_key_2);
-    dprintf("last_key_3: %d\n", last_key_3);
-    dprintf("char_count: %d\n", char_count);
+    // dprintf("rolled back!\n");
+    // dprintf("last_key:   %d\n", last_key);
+    // dprintf("last_key_2: %d\n", last_key_2);
+    // dprintf("last_key_3: %d\n", last_key_3);
+    // dprintf("char_count: %d\n", char_count);
 }
 
 void update_last_key(uint16_t new_keycode) {
@@ -629,11 +629,11 @@ void update_last_key(uint16_t new_keycode) {
 
     char_count = 1;
 
-    dprintf("updated keys!\n");
-    dprintf("last_key:   %d\n", last_key);
-    dprintf("last_key_2: %d\n", last_key_2);
-    dprintf("last_key_3: %d\n", last_key_3);
-    dprintf("char_count: %d\n", char_count);
+    // dprintf("updated keys!\n");
+    // dprintf("last_key:   %d\n", last_key);
+    // dprintf("last_key_2: %d\n", last_key_2);
+    // dprintf("last_key_3: %d\n", last_key_3);
+    // dprintf("char_count: %d\n", char_count);
 }
 
 void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
@@ -643,11 +643,11 @@ void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
 
     char_count = new_count;
 
-    dprintf("updated multiple keys!\n");
-    dprintf("last_key:   %d\n", last_key);
-    dprintf("last_key_2: %d\n", last_key_2);
-    dprintf("last_key_3: %d\n", last_key_3);
-    dprintf("char_count: %d\n", char_count);
+    // dprintf("updated multiple keys!\n");
+    // dprintf("last_key:   %d\n", last_key);
+    // dprintf("last_key_2: %d\n", last_key_2);
+    // dprintf("last_key_3: %d\n", last_key_3);
+    // dprintf("char_count: %d\n", char_count);
 }
 
 bool is_magic(uint16_t keycode) {
@@ -1631,105 +1631,66 @@ bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
 //==============================================================================
 
 uint16_t last_arrow = KC_NO;
-
-bool arrow_up = false;
-bool arrow_down = false;
-bool arrow_left = false;
-bool arrow_right = false;
-
 bool arrow_control = false;
 
-bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
+uint16_t arrows[4] = {KC_UP, KC_DOWN, KC_LEFT, KC_RGHT};
+
+enum {
+    ARROW_UP    = 1 << 0,
+    ARROW_DOWN  = 1 << 1,
+    ARROW_LEFT  = 1 << 2,
+    ARROW_RIGHT = 1 << 3,
+};
+
+uint8_t arrow_flags = 0;
+
+static inline void set_arrow(uint8_t arrow)    { arrow_flags |= arrow; }
+static inline void clear_arrow(uint8_t arrow)  { arrow_flags &= ~arrow; }
+static inline bool check_arrow(uint8_t arrow)  { return arrow_flags & arrow; }
+static inline uint8_t arrow_bit(uint16_t keycode) {
     switch (keycode) {
-        case KC_UP:
-            if (record->event.pressed) {
-                arrow_up = true;
-                if (arrow_control && last_arrow == KC_DOWN) {
-                    register_code16(LCTL(KC_UP));
-                    last_arrow = KC_UP;
-                    return false;
-                }
-                arrow_control = false;
-                last_arrow = KC_UP;
-            } else {
-                arrow_up = false;
-            }
-            break;
-            
-            case KC_DOWN:
-            if (record->event.pressed) {
-                arrow_down = true;
-                if (arrow_control && last_arrow == KC_UP) {
-                    register_code16(LCTL(KC_DOWN));
-                    last_arrow = KC_DOWN;
-                    return false;
-                }
-                arrow_control = false;
-                last_arrow = KC_DOWN;
-            } else {
-                arrow_down = false;
-            }
-            break;
+        case KC_UP:   return ARROW_UP;
+        case KC_DOWN: return ARROW_DOWN;
+        case KC_LEFT: return ARROW_LEFT;
+        case KC_RGHT: return ARROW_RIGHT;
+        default:      return 0;
+    }
+}
 
-        case KC_LEFT:
-            if (record->event.pressed) {
-                arrow_left = true;
-                last_arrow = KC_LEFT;
-                arrow_control = false;
-            } else {
-                arrow_left = false;
+bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
+    if (is_arrow(keycode)) {
+        uint8_t bit = arrow_bit(keycode);
+        if (record->event.pressed) {
+            set_arrow(bit);
+            if ((arrow_flags & (ARROW_UP | ARROW_DOWN)) && arrow_control && last_arrow != keycode) {
+                register_code16(LCTL(keycode));
+                last_arrow = keycode;
+                return false;
             }
-            break;
-
-        case KC_RGHT:
-            if (record->event.pressed) {
-                arrow_right = true;
-                last_arrow = KC_RGHT;
-                arrow_control = false;
-            } else {
-                arrow_right = false;
+            arrow_control = false;
+            last_arrow = keycode;
+        } else {
+            clear_arrow(bit);
+        }
+    }
+    if (keycode == CS_AL4) {
+        if (!record->tap.count && record->event.pressed) {
+            arrow_control = true;
+            for (int i = 0; i < 4; i++ ) {
+                if (arrow_flags & 1 << i) {
+                    unregister_code(arrows[i]);
+                    register_code16(LCTL(arrows[i]));
+                }
             }
-            break;
-
-        case CS_AL4:
-            if (!record->tap.count && record->event.pressed) {
-                arrow_control = true;
-                if (arrow_up) { 
-                    unregister_code(KC_UP);
-                    register_code16(LCTL(KC_UP));
+        } else if (!record->tap.count && !record->event.pressed && arrow_control) {
+            arrow_control = false;
+            for (int i = 0; i < 4; i++ ) {
+                if (arrow_flags & 1 << i) {
+                    unregister_code16(LCTL(arrows[i]));
+                    register_code(arrows[i]);
                 }
-                if (arrow_down) {
-                    unregister_code(KC_DOWN);
-                    register_code16(LCTL(KC_DOWN));
-                }
-                if (arrow_left) {
-                    unregister_code(KC_LEFT);
-                    register_code16(LCTL(KC_LEFT));
-                }
-                if (arrow_right) {
-                    unregister_code(KC_RGHT);
-                    register_code16(LCTL(KC_RGHT));
-                }
-            } else if (!record->tap.count && !record->event.pressed && arrow_control) {
-                arrow_control = false;
-                if (arrow_up) { 
-                    unregister_code16(LCTL(KC_UP));
-                    register_code(KC_UP);
-                }
-                if (arrow_down) {
-                    unregister_code16(LCTL(KC_DOWN));
-                    register_code(KC_DOWN);
-                }
-                if (arrow_left) {
-                    unregister_code16(LCTL(KC_LEFT));
-                    register_code(KC_LEFT);
-                }
-                if (arrow_right) {
-                    unregister_code16(LCTL(KC_RGHT));
-                    register_code(KC_RGHT);
-                }
-                break;
             }
+        }
     }
     return true;
 }
@@ -4469,7 +4430,7 @@ void housekeeping_task_user(void) {
         if (last_key == SELECT) {
             last_key = KC_NO;
         }
-        if (!(arrow_up || arrow_down || arrow_left || arrow_right)) {
+        if (!arrow_flags) {
             arrow_control = false;
         }
     }
