@@ -224,11 +224,6 @@ enum custom_keycodes {
 #define PRV_TAB LCTL(KC_PGUP)
 #define OSMLSFT OSM(MOD_LSFT)
 
-#define EO_LEFT LCTL(KC_LEFT)
-#define EO_RGHT LCTL(KC_RGHT)
-#define EO_UP   LCTL(KC_UP)
-#define EO_DOWN LCTL(KC_DOWN)
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASIC] = LAYOUT( //0
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
@@ -352,9 +347,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT_OVERLAY] = LAYOUT( //10
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NXT_TAB, EO_HOME,   EO_UP,  EO_END, KC_CAPS,                      WORDCBR,  SPC_UP,    JOIN,  SPC_DN,  KC_ESC, _______,
+          _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                      WORDCBR,  SPC_UP,    JOIN,  SPC_DN,  KC_ESC, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, DELWORD, EO_LEFT, EO_DOWN, EO_RGHT,  KC_DEL,                      WORDPRN, RS_DELL, RC_DELW, RA_DELR,  RG_DEL, _______,
+          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      WORDPRN, RS_DELL, RC_DELW, RA_DELR,  RG_DEL, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______,    REDO,    UNDO,     CUT,    COPY,   PASTE,                      WORDBRC,   SELUP,  SELECT, SELDOWN,    UNDO, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -495,7 +490,7 @@ int16_t separator_distance = 0;
 
 uint8_t current_rgb_mode = 0;
 void set_rgb_mode(void) {
-    dprintf("rgb_mode: %d\n", current_rgb_mode);
+    // dprintf("rgb_mode: %d\n", current_rgb_mode);
     if (current_rgb_mode == 0) {
         rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_reactive_smooth);
     } else {
@@ -620,11 +615,11 @@ void rollback_last_key(void) {
     last_key_2 = last_key_3;
     last_key_3 = KC_NO;
 
-    // dprintf("rolled back!\n");
-    // dprintf("last_key:   %d\n", last_key);
-    // dprintf("last_key_2: %d\n", last_key_2);
-    // dprintf("last_key_3: %d\n", last_key_3);
-    // dprintf("char_count: %d\n", char_count);
+    dprintf("rolled back!\n");
+    dprintf("last_key:   %d\n", last_key);
+    dprintf("last_key_2: %d\n", last_key_2);
+    dprintf("last_key_3: %d\n", last_key_3);
+    dprintf("char_count: %d\n", char_count);
 }
 
 void update_last_key(uint16_t new_keycode) {
@@ -634,11 +629,11 @@ void update_last_key(uint16_t new_keycode) {
 
     char_count = 1;
 
-    // dprintf("updated keys!\n");
-    // dprintf("last_key:   %d\n", last_key);
-    // dprintf("last_key_2: %d\n", last_key_2);
-    // dprintf("last_key_3: %d\n", last_key_3);
-    // dprintf("char_count: %d\n", char_count);
+    dprintf("updated keys!\n");
+    dprintf("last_key:   %d\n", last_key);
+    dprintf("last_key_2: %d\n", last_key_2);
+    dprintf("last_key_3: %d\n", last_key_3);
+    dprintf("char_count: %d\n", char_count);
 }
 
 void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
@@ -648,11 +643,11 @@ void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
 
     char_count = new_count;
 
-    // dprintf("updated multiple keys!\n");
-    // dprintf("last_key:   %d\n", last_key);
-    // dprintf("last_key_2: %d\n", last_key_2);
-    // dprintf("last_key_3: %d\n", last_key_3);
-    // dprintf("char_count: %d\n", char_count);
+    dprintf("updated multiple keys!\n");
+    dprintf("last_key:   %d\n", last_key);
+    dprintf("last_key_2: %d\n", last_key_2);
+    dprintf("last_key_3: %d\n", last_key_3);
+    dprintf("char_count: %d\n", char_count);
 }
 
 bool is_magic(uint16_t keycode) {
@@ -687,7 +682,7 @@ bool is_select_macro(uint16_t keycode) {
     return (keycode == SELLEFT || keycode == SELECT || keycode == SELRGHT);
 }
 
-bool is_arrow_key(uint16_t keycode) {
+bool is_arrow(uint16_t keycode) {
     return (keycode == KC_UP || keycode == KC_DOWN || keycode == KC_LEFT || keycode == KC_RGHT);
 }
 
@@ -1146,7 +1141,7 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
                 tap_code(KC_0);
                 set_mods(mods);
             }
-            return true; // continue to arrow retrigger processing
+            return false;
         case CS_LCTL:
             if (record->event.pressed) {
                 layer_on(_CONTROL);
@@ -1635,51 +1630,70 @@ bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
 // Edit Control Keys
 //==============================================================================
 
+uint16_t last_arrow = KC_NO;
+
 bool arrow_up = false;
 bool arrow_down = false;
 bool arrow_left = false;
 bool arrow_right = false;
 
+bool arrow_control = false;
+
 bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         case KC_UP:
-        case EO_UP:
             if (record->event.pressed) {
                 arrow_up = true;
+                if (arrow_control && last_arrow == KC_DOWN) {
+                    register_code16(LCTL(KC_UP));
+                    last_arrow = KC_UP;
+                    return false;
+                }
+                arrow_control = false;
+                last_arrow = KC_UP;
             } else {
                 arrow_up = false;
             }
-            return true;
-
-        case KC_DOWN:
-        case EO_DOWN:
+            break;
+            
+            case KC_DOWN:
             if (record->event.pressed) {
                 arrow_down = true;
+                if (arrow_control && last_arrow == KC_UP) {
+                    register_code16(LCTL(KC_DOWN));
+                    last_arrow = KC_DOWN;
+                    return false;
+                }
+                arrow_control = false;
+                last_arrow = KC_DOWN;
             } else {
                 arrow_down = false;
             }
-            return true;
+            break;
 
         case KC_LEFT:
-        case EO_LEFT:
             if (record->event.pressed) {
                 arrow_left = true;
+                last_arrow = KC_LEFT;
+                arrow_control = false;
             } else {
                 arrow_left = false;
             }
-            return true;
+            break;
 
         case KC_RGHT:
-        case EO_RGHT:
             if (record->event.pressed) {
                 arrow_right = true;
+                last_arrow = KC_RGHT;
+                arrow_control = false;
             } else {
                 arrow_right = false;
             }
-            return true;
+            break;
 
         case CS_AL4:
             if (!record->tap.count && record->event.pressed) {
+                arrow_control = true;
                 if (arrow_up) { 
                     unregister_code(KC_UP);
                     register_code16(LCTL(KC_UP));
@@ -1696,7 +1710,8 @@ bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
                     unregister_code(KC_RGHT);
                     register_code16(LCTL(KC_RGHT));
                 }
-            } else if (!record->tap.count && !record->event.pressed) {
+            } else if (!record->tap.count && !record->event.pressed && arrow_control) {
+                arrow_control = false;
                 if (arrow_up) { 
                     unregister_code16(LCTL(KC_UP));
                     register_code(KC_UP);
@@ -1713,12 +1728,10 @@ bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
                     unregister_code16(LCTL(KC_RGHT));
                     register_code(KC_RGHT);
                 }
-                return false;
+                break;
             }
-
-        default:
-            return true;
     }
+    return true;
 }
 
 
@@ -1796,6 +1809,7 @@ bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
                     add_mods(MOD_MASK_SHIFT);
                     tap_code(KC_HOME);
                     set_mods(mods);
+                    register_code16(LSFT(KC_UP));
                 }
             } else {
                 if (record->event.pressed) {
@@ -1816,6 +1830,7 @@ bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
                     add_mods(MOD_MASK_SHIFT);
                     tap_code(KC_END);
                     set_mods(mods);
+                    register_code16(LSFT(KC_DOWN));
                 }
             } else {
                 if (record->event.pressed) {
@@ -2215,7 +2230,6 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
-
     // Track mod-taps
     if (is_hrm(keycode)) {
         if (record->tap.count && record->event.pressed) {
@@ -2301,6 +2315,7 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
+
     // Tracking handled in macro for reactive events
     if (is_select_macro(keycode)) {
         return true;
@@ -2328,7 +2343,9 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
     if (keycode == KC_LSFT || keycode == OSMLSFT ||
-        keycode == KC_LCTL || keycode == CS_LCTL) {
+        keycode == KC_LCTL || keycode == CS_LCTL ||
+        keycode == TABLSFT || keycode == TABRSFT) {
+        // Tap actions for tab/shift keys already handled earlier
         return true;
     }
 
@@ -2845,6 +2862,7 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_case_lock(keycode, record)) { return false; }
     if (!process_cycling_macros(keycode, record)) { return false; }
+    if (!process_arrow_retrigger(keycode, record)) { return false; }
     if (!process_pre_key_tracking(keycode, record)) { return false; }
     // Reactive features go before key tracking
     if (!process_key_tracking(keycode, record)) { return false; }
@@ -2852,7 +2870,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_magic(keycode, record)) { return false; }
     if (!process_homerow_mod_tap(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
-    if (!process_arrow_retrigger(keycode, record)) { return false; }
     if (!process_edit_controls(keycode, record)) { return false; }
     if (!process_edit_macros(keycode, record)) { return false; }
     if (!process_vol_repeat(keycode, record)) { return false; }
@@ -3009,6 +3026,60 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 del_mods(MOD_MASK_CSAG);
                 tap_code(KC_END);
                 tap_code(KC_ENT);
+                set_mods(mods);
+            }
+            break;
+
+        case CS_CONJ:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                if (ctrl_on() && shifted()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_SPC);
+                    tap_code16(KC_AMPR);
+                    tap_code16(KC_AMPR);
+                    tap_code(KC_SPC);
+                } else if (ctrl_on()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_SPC);
+                    tap_code16(KC_AMPR);
+                    tap_code(KC_SPC);
+                    
+                } else if (shifted()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(KC_AMPR);
+                    tap_code16(KC_AMPR);
+                } else {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(KC_AMPR);
+                }
+                set_mods(mods);
+            }
+            break;
+
+        case CS_DISJ:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                if (ctrl_on() && shifted()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_SPC);
+                    tap_code16(LSFT(KC_NUBS));
+                    tap_code16(LSFT(KC_NUBS));
+                    tap_code(KC_SPC);
+                } else if (ctrl_on()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_SPC);
+                    tap_code16(LSFT(KC_NUBS));
+                    tap_code(KC_SPC);
+                    
+                } else if (shifted()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LSFT(KC_NUBS));
+                    tap_code16(LSFT(KC_NUBS));
+                } else {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LSFT(KC_NUBS));
+                }
                 set_mods(mods);
             }
             break;
@@ -3256,60 +3327,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                     tap_code16(KC_AT);
                     set_mods(mods);
                 }
-            }
-            break;
-
-        case CS_CONJ:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                if (ctrl_on() && shifted()) {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code(KC_SPC);
-                    tap_code16(KC_AMPR);
-                    tap_code16(KC_AMPR);
-                    tap_code(KC_SPC);
-                } else if (ctrl_on()) {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code(KC_SPC);
-                    tap_code16(KC_AMPR);
-                    tap_code(KC_SPC);
-                    
-                } else if (shifted()) {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code16(KC_AMPR);
-                    tap_code16(KC_AMPR);
-                } else {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code16(KC_AMPR);
-                }
-                set_mods(mods);
-            }
-            break;
-
-        case CS_DISJ:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                if (ctrl_on() && shifted()) {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code(KC_SPC);
-                    tap_code16(LSFT(KC_NUBS));
-                    tap_code16(LSFT(KC_NUBS));
-                    tap_code(KC_SPC);
-                } else if (ctrl_on()) {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code(KC_SPC);
-                    tap_code16(LSFT(KC_NUBS));
-                    tap_code(KC_SPC);
-                    
-                } else if (shifted()) {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code16(LSFT(KC_NUBS));
-                    tap_code16(LSFT(KC_NUBS));
-                } else {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code16(LSFT(KC_NUBS));
-                }
-                set_mods(mods);
             }
             break;
 
@@ -4447,12 +4464,19 @@ void housekeeping_task_user(void) {
         layer_off(_TOUHOU);
     }
 
-    if (last_input_activity_elapsed() > 200 && last_key == SELECT) {
-        // Reset Select control override
-        last_key = KC_NO;
+    // Reset macro timers
+    if (last_input_activity_elapsed() > 200) {
+        if (last_key == SELECT) {
+            last_key = KC_NO;
+        }
+        if (!(arrow_up || arrow_down || arrow_left || arrow_right)) {
+            arrow_control = false;
+        }
     }
+
+    // Reset key tracking
     if (last_input_activity_elapsed() > 500) {
-        // Reset key tracking
+        // Reset rollbacks
         char_count = 1;
     }
     if (last_input_activity_elapsed() > 1000) {

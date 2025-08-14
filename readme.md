@@ -293,13 +293,15 @@ Navigation/editing keys on left hand and paired delimiters and common symbol com
 
 Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `?()`; right hand also duplicated on `Symbol` and `Program` layers.
 
+The `Lock` key activates the [Layer Lock](https://docs.qmk.fm/features/layer_lock) feature, for extended navigation.
+
+The bottom row of the [Control Overlay](#control-overlay) can also be activated with home row mods on this layer.
+
 The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
 
 The `Select` macro selects the current word; pressing it again within 200ms will cut (`Ctrl`+`X`) the selection. Pressing the `Select Right` key within 200ms of the `Select` key will copy (`Ctrl`+`C`) the selection. Pressing it after one of the two other directional `Select` macros will also immediately cut the selection.
 
-After cutting with `Select` or copying with `Select Right`, the `Enter` key on this layer will act as paste (`Ctrl`+`V`), resetting after the first use, or if the `Edit` layer is disabled.
-
-The bottom row of the [Control Overlay](#control-overlay) can also be activated with home row mods on this layer.
+After cutting with `Select` or copying with `Select Right`, the `Enter` key on this layer will act as paste (without having to hold control), resetting after the first use, or if the `Edit` layer is disabled.
 
 The right thumb keys also have additional layering actions:
 - Activating both `Edit` and `Program` layers will activate the [Edit Overlay](#edit-overlay), which contains macros useful for editing, and also hold the `LCTL` or `LSFT` modifier for various keys on the left hand.
@@ -366,16 +368,21 @@ Holding `LCTL` on any layer (including non-base layers) covers the left hand bot
 
 ### Edit Overlay
 ![Edit Overlay](images/edit_overlay.png?raw=true)
-Activating the `Program` layer while on the `Edit` layer will activate the `Edit Overlay` layer on top (of the `Edit` layer). This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
+Activating the `Program` and `Edit` layers simultaneously will activate the `Edit Overlay` layer on top (of the `Edit` layer). This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
 The right hand is replaced with macros useful for editing:
 - The directional `Delete` macros delete in the indicated directions from the current cursor position to the beginning/end of the next word; holding shift deletes to the beginning/end of the current line instead.
 - The `Line` macros add new lines above/below the current line.
-- The `Join` macro joins current line to following line with space between; does not add space if shifted.
+- The `Join` macro joins current line to following line with space between; omits the space if shifted.
 
 - The three bracket macros enclose the current word with the listed brackets. These macros also interoperate with the rollback feature.
 
-While this layer is active, the `LCTL` modifier is held for the arrow and page keys, and `LSFT` is held for the `Home` and `End` keys.
+If an arrow key is held on the `Edit` layer while this layer is activated, the arrow key will be retriggered with a non-persistent control modifier, allowing quick horizontal navigation/vertical scrolling without having to manually re-press the arrow key after holding a modifier. If the modifier has been lost (see below), the arrow key will not be retriggered when the overlay is deactivated, avoiding the pause in motion.
+
+If the arrow key is released, it will not retain the control modifier on subsequent presses, apart from the `Up`/`Down` keys, which will retain the modifier when alternating between the two keys within 200ms of release. e.g. if `Up` is has the overlay control modifier activated, then `Down` will retain the control modifier if pressed within 200ms of releasing `Up`.
+
+> [!NOTE]
+> You can modify this feature in the `process_arrow_retrigger` function.
 
 
 
