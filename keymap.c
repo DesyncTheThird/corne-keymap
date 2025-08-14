@@ -427,12 +427,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #include "transactions.h"
 
 typedef struct _master_to_slave_t {
-    // bool boot_sync :1;
-    bool static_display_sync :1;
-    bool oled_timeout_sync :1;
-    bool oled_disable_sync :1;
-    bool case_lock_capture_sync :1;
-    bool case_lock_active_sync :1;
+    bool static_display :1;
+    bool oled_timeout :1;
+    bool oled_disable :1;
+    bool capturing :1;
+    bool active :1;
 } master_to_slave_t;
 
 master_to_slave_t sync_data;
@@ -450,6 +449,22 @@ void user_config_sync_handler(uint8_t initiator2target_buffer_size, const void* 
 // Variables
 //==============================================================================
 
+typedef struct {
+    bool LT3_active :1;
+    bool RT3_active :1;
+    bool left_eager_shift :1;
+    bool right_eager_shift :1;
+    bool alt_tab_active :1;
+} misc_key_flags_t;
+
+misc_key_flags_t misc_key_state = {
+    .LT3_active = false,
+    .RT3_active = false,
+    .left_eager_shift = false,
+    .right_eager_shift = false,
+    .alt_tab_active = false
+};
+
 typedef enum {
     set_none,
     set_hour,
@@ -457,106 +472,152 @@ typedef enum {
     set_sec,
 } time_setting_t;
 
-time_setting_t time_setting = set_none;
-uint8_t min = 0;
-uint8_t hrs = 0;
-uint8_t sec = 0;
+typedef struct {
+    time_setting_t setting;
+    uint8_t hrs;
+    uint8_t min;
+    uint8_t sec;
+} clock_state_t;
 
-uint8_t menu = 0;
+static clock_state_t clock_state = {
+    .setting = set_none,
+    .hrs     = 0,
+    .min     = 0,
+    .sec     = 0
+};
 
-bool static_display = false;
+typedef struct {
+    uint8_t menu;
+    bool static_display :1;
+    bool oled_timeout :1;
+    bool oled_disable :1;
+    bool muted :1;
+} oled_flags_t;
 
-bool left_active = false;
-bool right_active = false;
-bool muted = false;
+static oled_flags_t oled_state = {
+    .menu = 0,
+    .static_display = false,
+    .oled_timeout = false,
+    .oled_disable = false,
+    .muted = false
+};
 
-static bool alt_tab_active = false;
-static bool oled_timeout = false;
-static bool oled_disable = false;
+typedef struct {
+    bool active :1;
+    bool capturing :1;
+    uint16_t separator;
+    int16_t distance;
+} case_lock_flags_t;
 
-uint16_t boot_timer;
-bool boot = false;
-deferred_token boot_animation_token = INVALID_DEFERRED_TOKEN;
+static case_lock_flags_t case_lock_state = {
+    .active = false,
+    .capturing = false,
+    .separator = KC_UNDS,
+    .distance = 0
+};
 
-bool ctrl_linger = false;
-
-bool left_eager_shift_on = false;
-bool right_eager_shift_on = false;
-
-bool case_lock_active = false;
-bool case_lock_capture = false;
-uint16_t case_lock_separator = KC_UNDS;
-int16_t separator_distance = 0;
-
-uint8_t current_rgb_mode = 0;
-void set_rgb_mode(void) {
-    // dprintf("rgb_mode: %d\n", current_rgb_mode);
-    if (current_rgb_mode == 0) {
-        rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_reactive_smooth);
-    } else {
-        // Skip 0/1 for off/solid background animations
-        rgb_matrix_mode_noeeprom(current_rgb_mode + 2);
-    }
-}
-
-void update_sync(void) {
+static void update_sync(void) {
     if (is_keyboard_master()) {
         master_to_slave_t m2s = {
-            .static_display_sync = static_display,
-            .oled_timeout_sync = oled_timeout,
-            .oled_disable_sync = oled_disable,
-            .case_lock_capture_sync = case_lock_capture,
-            .case_lock_active_sync = case_lock_active,
+            .static_display = oled_state.static_display,
+            .oled_timeout = oled_state.oled_timeout,
+            .oled_disable = oled_state.oled_disable,
+            .capturing = case_lock_state.capturing,
+            .active = case_lock_state.active,
         };
         transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
     }
 }
 
-void case_lock_capture_on(void) {
-    case_lock_capture = true;
+static void case_lock_capture_on(void) {
+    case_lock_state.capturing = true;
     update_sync();
 }
 
-void case_lock_capture_off(void) {
-    case_lock_capture = false;
+static void case_lock_capture_off(void) {
+    case_lock_state.capturing = false;
     update_sync();
 }
 
-void case_lock_on(void) {
-    case_lock_active = true;
+static void case_lock_on(void) {
+    case_lock_state.active = true;
     update_sync();
     dprintf("case lock on!\n");
 }
 
-void case_lock_off(void) {
-    case_lock_active = false;
-    case_lock_capture = false;
+static void case_lock_off(void) {
+    case_lock_state.active = false;
+    case_lock_state.capturing = false;
     update_sync();
-    case_lock_separator = KC_NO;
+    case_lock_state.separator = KC_NO;
     dprintf("case lock off!\n");
 }
 
-bool ctrl_on(void) {
-    return (get_mods() & MOD_BIT(KC_LCTL) || get_mods() & MOD_BIT(KC_RCTL));
+typedef struct {
+    bool dynamic :1;
+    bool magic_override :1;
+    uint8_t count;
+    uint16_t last_key;
+    uint16_t last_key_2;
+    uint16_t last_key_3;
+} recent_key_state_t;
+
+recent_key_state_t key_state = {
+    .dynamic = false,
+    .magic_override = false,
+    .count = 1,
+    .last_key = KC_NO,
+    .last_key_2 = KC_NO,
+    .last_key_3 = KC_NO
+};
+
+static void rollback_last_key(void) {
+    key_state.count = 1;
+
+    key_state.last_key = key_state.last_key_2;
+    key_state.last_key_2 = key_state.last_key_3;
+    key_state.last_key_3 = KC_NO;
+
+    // dprintf("rolled back!\n");
+    // dprintf("key_state.last_key:   %d\n", key_state.last_key);
+    // dprintf("key_state.last_key_2: %d\n", key_state.last_key_2);
+    // dprintf("key_state.last_key_3: %d\n", key_state.last_key_3);
+    // dprintf("key_state.count: %d\n", key_state.count);
 }
 
-bool shifted(void) {
-    return (get_mods() & MOD_BIT(KC_LSFT)
-         || get_mods() & MOD_BIT(KC_RSFT)
-         || get_oneshot_mods() & MOD_BIT(KC_LSFT)
-         || get_oneshot_mods() & MOD_BIT(KC_RSFT)
-         );
+static void update_last_key(uint16_t new_keycode) {
+    key_state.last_key_3 = key_state.last_key_2;
+    key_state.last_key_2 = key_state.last_key;
+    key_state.last_key = new_keycode;
+
+    key_state.count = 1;
+
+    // dprintf("updated keys!\n");
+    // dprintf("key_state.last_key:   %d\n", key_state.last_key);
+    // dprintf("key_state.last_key_2: %d\n", key_state.last_key_2);
+    // dprintf("key_state.last_key_3: %d\n", key_state.last_key_3);
+    // dprintf("key_state.count: %d\n", key_state.count);
 }
 
-bool is_alpha(uint16_t keycode) {
-    if (keycode >= KC_A && keycode <= KC_Z) {
-        return true;
-    } else {
-        return false;
-    }
+static void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
+    key_state.last_key_3 = key_state.last_key_2;
+    key_state.last_key_2 = key_state.last_key;
+    key_state.last_key = new_keycode;
+
+    key_state.count = new_count;
+
+    // dprintf("updated multiple keys!\n");
+    // dprintf("key_state.last_key:   %d\n", key_state.last_key);
+    // dprintf("key_state.last_key_2: %d\n", key_state.last_key_2);
+    // dprintf("key_state.last_key_3: %d\n", key_state.last_key_3);
+    // dprintf("key_state.count: %d\n", key_state.count);
 }
 
-bool is_hrm(uint16_t keycode) {
+static inline bool is_alpha(uint16_t keycode) {
+    return (keycode >= KC_A && keycode <= KC_Z);
+}
+
+static bool is_hrm(uint16_t keycode) {
     switch (keycode) {
         case LG_A:
         case LA_S:
@@ -601,90 +662,84 @@ bool is_hrm(uint16_t keycode) {
     }
 }
 
-bool last_key_dynamic = false;
-bool magic_override = false;
-uint8_t char_count = 1;
-uint16_t last_key = KC_NO;
-uint16_t last_key_2 = KC_NO;
-uint16_t last_key_3 = KC_NO;
-
-void rollback_last_key(void) {
-    char_count = 1;
-
-    last_key = last_key_2;
-    last_key_2 = last_key_3;
-    last_key_3 = KC_NO;
-
-    // dprintf("rolled back!\n");
-    // dprintf("last_key:   %d\n", last_key);
-    // dprintf("last_key_2: %d\n", last_key_2);
-    // dprintf("last_key_3: %d\n", last_key_3);
-    // dprintf("char_count: %d\n", char_count);
-}
-
-void update_last_key(uint16_t new_keycode) {
-    last_key_3 = last_key_2;
-    last_key_2 = last_key;
-    last_key = new_keycode;
-
-    char_count = 1;
-
-    // dprintf("updated keys!\n");
-    // dprintf("last_key:   %d\n", last_key);
-    // dprintf("last_key_2: %d\n", last_key_2);
-    // dprintf("last_key_3: %d\n", last_key_3);
-    // dprintf("char_count: %d\n", char_count);
-}
-
-void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
-    last_key_3 = last_key_2;
-    last_key_2 = last_key;
-    last_key = new_keycode;
-
-    char_count = new_count;
-
-    // dprintf("updated multiple keys!\n");
-    // dprintf("last_key:   %d\n", last_key);
-    // dprintf("last_key_2: %d\n", last_key_2);
-    // dprintf("last_key_3: %d\n", last_key_3);
-    // dprintf("char_count: %d\n", char_count);
-}
-
-bool is_magic(uint16_t keycode) {
+static inline bool is_magic(uint16_t keycode) {
     return (keycode == CS_LT2 || keycode == CS_RT2);
 }
 
-bool is_layer_tap(uint16_t keycode) {
+static inline bool is_layer_tap(uint16_t keycode) {
     return (keycode == CS_AL1 || keycode == CS_AL2 || keycode == CS_AL3 || keycode == CS_AL4);
 }
 
-bool is_bspc(uint16_t keycode) {
-    return (keycode == CS_RT1 || keycode == KC_BSPC);
-}
-
-bool is_spc(uint16_t keycode) {
+static inline bool is_spc(uint16_t keycode) {
     return (keycode == CS_LT1 || keycode == KC_SPC);
 }
 
-bool is_bracket_macro(uint16_t keycode) {
+static inline bool is_bracket_macro(uint16_t keycode) {
     return (keycode >= CS_NORM && keycode <= CS_BRCS);
 }
 
-bool is_bracket_wrap_macro(uint16_t keycode) {
+static inline bool is_bracket_wrap_macro(uint16_t keycode) {
     return (keycode >= WORDCBR && keycode <= WORDBRC);
 }
 
-bool is_cycling_macro(uint16_t keycode) {
+static inline bool is_cycling_macro(uint16_t keycode) {
     return (keycode >= CY_NUM && keycode <= CY_COMP);
 }
 
-bool is_select_macro(uint16_t keycode) {
+static inline bool is_select_macro(uint16_t keycode) {
     return (keycode == SELLEFT || keycode == SELECT || keycode == SELRGHT);
 }
 
-bool is_arrow(uint16_t keycode) {
+static inline bool is_arrow(uint16_t keycode) {
     return (keycode == KC_UP || keycode == KC_DOWN || keycode == KC_LEFT || keycode == KC_RGHT);
 }
+
+static inline void cs_tap_code16_mods(uint16_t keycode, uint8_t mod_mask) {
+    const uint8_t mods = get_mods();
+    del_mods(mod_mask);
+    tap_code16(keycode);
+    set_mods(mods);
+}
+static inline void cs_tap_code16(uint16_t keycode) {
+    const uint8_t mods = get_mods();
+    del_mods(MOD_MASK_SHIFT);
+    tap_code16(keycode);
+    set_mods(mods);
+}
+static inline void cs_tap_code(uint16_t keycode) {
+    const uint8_t mods = get_mods();
+    del_mods(MOD_MASK_SHIFT);
+    tap_code16(keycode);
+    set_mods(mods);
+}
+
+
+static uint8_t current_rgb_mode = 0;
+static void set_rgb_mode(void) {
+    // dprintf("rgb_mode: %d\n", current_rgb_mode);
+    if (current_rgb_mode == 0) {
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_reactive_smooth);
+    } else {
+        // Skip 0/1 for off/solid background animations
+        rgb_matrix_mode_noeeprom(current_rgb_mode + 2);
+    }
+}
+
+static bool ctrl_on(void) {
+    return (get_mods() & MOD_BIT(KC_LCTL) || get_mods() & MOD_BIT(KC_RCTL));
+}
+
+static bool shifted(void) {
+    return (get_mods() & MOD_BIT(KC_LSFT)
+         || get_mods() & MOD_BIT(KC_RSFT)
+         || get_oneshot_mods() & MOD_BIT(KC_LSFT)
+         || get_oneshot_mods() & MOD_BIT(KC_RSFT)
+         );
+}
+
+static uint16_t boot_timer;
+static bool boot = false;
+static deferred_token boot_animation_token = INVALID_DEFERRED_TOKEN;
 
 
 
@@ -770,7 +825,7 @@ bool is_arrow(uint16_t keycode) {
 // Home row mods
 //==============================================================================
 
-void homerow_mod(uint8_t mods, keyrecord_t* record) {
+static void homerow_mod(uint8_t mods, keyrecord_t* record) {
     if (!record->tap.count && record->event.pressed) {
         register_mods(mods);
     } else if (!record->tap.count && !record->event.pressed) {
@@ -778,7 +833,7 @@ void homerow_mod(uint8_t mods, keyrecord_t* record) {
     }
 }
 
-bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
+static bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         // LGUI
         case LG_N:
@@ -1091,10 +1146,7 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
                 update_tri_layer(_DATA, _PROGRAM, _EDIT);
             }
             if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_0);
-                set_mods(mods);
+                cs_tap_code(KC_0);
             }
             return false;
         case CS_AL2:
@@ -1106,10 +1158,7 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
                 update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
             }
             if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_NUBS);
-                set_mods(mods);
+                cs_tap_code16(KC_NUBS);
             }
             return false;
         case CS_AL3:
@@ -1121,10 +1170,7 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
                 update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
             }
             if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_NUBS);
-                set_mods(mods);
+                cs_tap_code16(KC_NUBS);
             }
             return false;
         case CS_AL4:
@@ -1136,10 +1182,7 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
                 update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
             }
             if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_0);
-                set_mods(mods);
+                cs_tap_code(KC_0);
             }
             return false;
         case CS_LCTL:
@@ -1155,6 +1198,8 @@ bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
             return true;
     }
 }
+
+
 
 //==============================================================================
 // Combos
@@ -1238,7 +1283,6 @@ const uint16_t PROGMEM spc_f3[]         = {KC_SPC, KC_E, COMBO_END};
 const uint16_t PROGMEM spc_f4[]         = {KC_SPC, KC_R, COMBO_END};
 const uint16_t PROGMEM spc_f5[]         = {KC_SPC, KC_T, COMBO_END};
 
-
 combo_t key_combos[] = {
     [TOUHOU]        = COMBO_ACTION(touhou),
     [STENO]         = COMBO_ACTION(steno),
@@ -1281,12 +1325,11 @@ combo_t key_combos[] = {
     [SPC_F5]        = COMBO(spc_f5,         KC_F5),
 };
 
-
 void process_combo_event(uint16_t combo_index, bool pressed) {
     switch(combo_index) {
         case TOUHOU:
             if (pressed) {
-                menu = 1;
+                oled_state.menu = 1;
                 if (IS_LAYER_ON(_TOUHOU)) {
                     layer_off(_TOUHOU);
                 } else {
@@ -1399,8 +1442,8 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo,
 // Case Lock
 //==============================================================================
 
-void send_separator(void) {
-    switch (case_lock_separator) {
+static void send_separator(void) {
+    switch (case_lock_state.separator) {
         case KC_LSFT:
             set_oneshot_mods(MOD_BIT(KC_LSFT));
             break;
@@ -1408,60 +1451,39 @@ void send_separator(void) {
             tap_code(KC_SPC);
             set_oneshot_mods(MOD_BIT(KC_LSFT));
         default:
-            tap_code16(case_lock_separator);
+            tap_code16(case_lock_state.separator);
             break;
     }
 }
 
-uint16_t separator_map(uint16_t keycode) {
+static uint16_t separator_map(uint16_t keycode) {
     switch (keycode) {
-        case CS_LT1:
-            return KC_SPC;
-
-        case CS_UNDS:
-            return KC_UNDS;
-
-        case CS_MINS:
-            return KC_MINS;
-
-        case CS_DOT: 
-            return KC_DOT;
-
+        case CS_LT1:  return KC_SPC;
+        case CS_UNDS: return KC_UNDS;
+        case CS_MINS: return KC_MINS;
+        case CS_DOT:  return KC_DOT;
         case CS_SLSH:
-        case CS_RT3:
-            return KC_SLSH;
-
+        case CS_RT3:  return KC_SLSH;
         case KC_Q:
-        case KC_Z:
-            return KC_NUBS;
-
-        case TABLSFT:
-            return KC_LSFT;
-
-        case TABRSFT:
-            return KC_RSFT;
-
-        case RS_SCLN:
-            return KC_SCLN;
-
-        default:
-            return keycode;
+        case KC_Z:    return KC_NUBS;
+        case TABLSFT: return KC_LSFT;
+        case TABRSFT: return KC_RSFT;
+        case RS_SCLN: return KC_SCLN;
+        default:      return keycode;
     }
 }
 
-bool process_case_capture(uint16_t keycode) {
-
+static bool process_case_capture(uint16_t keycode) {
     keycode = separator_map(keycode);
-
     switch (keycode) {
         default:
-            case_lock_separator = KC_UNDS;
+            case_lock_state.separator = KC_UNDS;
             case_lock_capture_off();
             case_lock_on();
             return true;
 
         case KC_SPC:
-            case_lock_separator = KC_UNDS;
+            case_lock_state.separator = KC_UNDS;
             case_lock_capture_off();
             case_lock_on();
             tap_code16(KC_UNDS);
@@ -1479,20 +1501,19 @@ bool process_case_capture(uint16_t keycode) {
         case KC_DOT:
         case KC_SLSH:
         case KC_NUBS:
-            case_lock_separator = keycode;
+            case_lock_state.separator = keycode;
             case_lock_capture_off();
             case_lock_on();
             return false;
     }
 }
 
-bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
-
+static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
     keycode = separator_map(keycode);
 
     if (record->event.pressed) {
         if (keycode == CS_CASE) {;
-            if (case_lock_capture) {
+            if (case_lock_state.capturing) {
                 tap_code(KC_CAPS);
                 case_lock_off();
             } else {
@@ -1501,20 +1522,20 @@ bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
             return true;
         }
 
-        if (case_lock_capture) {
+        if (case_lock_state.capturing) {
             dprintf("capture start\n");
             return process_case_capture(keycode);
         }
 
-        if (!case_lock_active) {
+        if (!case_lock_state.active) {
             return true;
         }
 
         // Track distance for rollbacks
         if (is_hrm(keycode)) {
             if (record->tap.count) {
-                separator_distance += 1;
-                // dprintf("separator distance = %d\n", separator_distance);
+                case_lock_state.distance += 1;
+                // dprintf("separator distance = %d\n", case_lock_state.distance);
                 return true;
             }
         }
@@ -1522,8 +1543,8 @@ bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
             case KC_A ... KC_Z:
             case KC_1 ... KC_0:
             case KC_SCLN:
-                separator_distance += 1;
-                // dprintf("separator distance = %d\n", separator_distance);
+                case_lock_state.distance += 1;
+                // dprintf("separator distance = %d\n", case_lock_state.distance);
                 return true;
 
             case KC_UNDS:
@@ -1531,46 +1552,43 @@ bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
             case KC_DOT:
             case KC_SLSH:
             case KC_NUBS:
-                if (case_lock_separator == keycode) {
-                    separator_distance = 0;
+                if (case_lock_state.separator == keycode) {
+                    case_lock_state.distance = 0;
                 } else {
-                    separator_distance += 1;
-                    // dprintf("separator distance = %d\n", separator_distance);
+                    case_lock_state.distance += 1;
+                    // dprintf("separator distance = %d\n", case_lock_state.distance);
                 }
                 return true;
                 
             case CS_LT2:
             case CS_RT2:
                 if (record->tap.count) {
-                    separator_distance += 1;
-                    // dprintf("separator distance = %d\n", separator_distance);
+                    case_lock_state.distance += 1;
+                    // dprintf("separator distance = %d\n", case_lock_state.distance);
                 }
                 return true;
         }
 
         if (keycode == KC_SPC) {
             if (record->tap.count) {
-                if (case_lock_active) {
-                    if (is_spc(last_key)) {
-                        if (case_lock_separator == KC_LSFT) {
+                if (case_lock_state.active) {
+                    if (is_spc(key_state.last_key)) {
+                        if (case_lock_state.separator == KC_LSFT) {
                             clear_oneshot_mods();
                             case_lock_off();
                             return true;
                         }
-                        if (case_lock_separator == KC_RSFT) {
+                        if (case_lock_state.separator == KC_RSFT) {
                             clear_oneshot_mods();
                             case_lock_off();
                             return false;
                         }
-                        const uint8_t mods = get_mods();
-                        del_mods(MOD_MASK_CSAG);
-                        tap_code16(KC_BSPC);
-                        set_mods(mods);
+                        cs_tap_code16_mods(KC_BSPC, MOD_MASK_CSAG);
                         case_lock_off();
                         return true;
                     } else {
                         send_separator();
-                        separator_distance = 0;
+                        case_lock_state.distance = 0;
                         update_last_key(KC_SPC);
                         return false;
                     }
@@ -1581,22 +1599,22 @@ bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
 
         if (keycode == CS_RT1) {
             if (record->tap.count) {
-                if (ctrl_on() && separator_distance > 0) {
+                if (ctrl_on() && case_lock_state.distance > 0) {
                     const uint8_t mods = get_mods();
                     del_mods(MOD_MASK_CSAG);
-                    for (int i = 0; i < separator_distance; i++) {
+                    for (int i = 0; i < case_lock_state.distance; i++) {
                         tap_code(KC_BSPC);
                     }
                     set_mods(mods);
                     // dprintf("rolled back case!");
-                    separator_distance = 0;
-                    if (case_lock_separator == KC_LSFT || case_lock_separator == KC_RSFT) {
+                    case_lock_state.distance = 0;
+                    if (case_lock_state.separator == KC_LSFT || case_lock_state.separator == KC_RSFT) {
                         set_oneshot_mods(MOD_BIT(KC_LSFT));
                     }
                     return false;
                 } else {
-                    if (separator_distance > 0) {
-                        separator_distance -= 1;
+                    if (case_lock_state.distance > 0) {
+                        case_lock_state.distance -= 1;
                     }
                     return true;
                 }
@@ -1630,10 +1648,19 @@ bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
 // Edit Control Keys
 //==============================================================================
 
-uint16_t last_arrow = KC_NO;
-bool arrow_control = false;
+typedef struct {
+    uint16_t last_key;
+    uint8_t held_keys;
+    bool active;
+} arrow_state_t;
 
-uint16_t arrows[4] = {KC_UP, KC_DOWN, KC_LEFT, KC_RGHT};
+static arrow_state_t arrow_state = {
+    .last_key = KC_NO,
+    .held_keys = 0,
+    .active = false
+};
+
+static uint16_t arrows[4] = {KC_UP, KC_DOWN, KC_LEFT, KC_RGHT};
 
 enum {
     ARROW_UP    = 1 << 0,
@@ -1642,11 +1669,10 @@ enum {
     ARROW_RIGHT = 1 << 3,
 };
 
-uint8_t arrow_flags = 0;
 
-static inline void set_arrow(uint8_t arrow)    { arrow_flags |= arrow; }
-static inline void clear_arrow(uint8_t arrow)  { arrow_flags &= ~arrow; }
-static inline bool check_arrow(uint8_t arrow)  { return arrow_flags & arrow; }
+static inline void set_arrow(uint8_t arrow)    { arrow_state.held_keys |= arrow; }
+static inline void clear_arrow(uint8_t arrow)  { arrow_state.held_keys &= ~arrow; }
+static inline bool check_arrow(uint8_t arrow)  { return arrow_state.held_keys & arrow; }
 static inline uint8_t arrow_bit(uint16_t keycode) {
     switch (keycode) {
         case KC_UP:   return ARROW_UP;
@@ -1657,35 +1683,35 @@ static inline uint8_t arrow_bit(uint16_t keycode) {
     }
 }
 
-bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
+static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
     if (is_arrow(keycode)) {
         uint8_t bit = arrow_bit(keycode);
         if (record->event.pressed) {
             set_arrow(bit);
-            if ((arrow_flags & (ARROW_UP | ARROW_DOWN)) && arrow_control && last_arrow != keycode) {
+            if ((arrow_state.held_keys & (ARROW_UP | ARROW_DOWN)) && arrow_state.active && arrow_state.last_key != keycode) {
                 register_code16(LCTL(keycode));
-                last_arrow = keycode;
+                arrow_state.last_key = keycode;
                 return false;
             }
-            arrow_control = false;
-            last_arrow = keycode;
+            arrow_state.active = false;
+            arrow_state.last_key = keycode;
         } else {
             clear_arrow(bit);
         }
     }
     if (keycode == CS_AL4) {
         if (!record->tap.count && record->event.pressed) {
-            arrow_control = true;
+            arrow_state.active = true;
             for (int i = 0; i < 4; i++ ) {
-                if (arrow_flags & 1 << i) {
+                if (arrow_state.held_keys & 1 << i) {
                     unregister_code(arrows[i]);
                     register_code16(LCTL(arrows[i]));
                 }
             }
-        } else if (!record->tap.count && !record->event.pressed && arrow_control) {
-            arrow_control = false;
+        } else if (!record->tap.count && !record->event.pressed && arrow_state.active) {
+            arrow_state.active = false;
             for (int i = 0; i < 4; i++ ) {
-                if (arrow_flags & 1 << i) {
+                if (arrow_state.held_keys & 1 << i) {
                     unregister_code16(LCTL(arrows[i]));
                     register_code(arrows[i]);
                 }
@@ -1697,10 +1723,10 @@ bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
 
 
 
-bool edit_clip = false;
-bool select_line = false;
+static bool edit_clip = false;
+static bool select_line = false;
 
-bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
+static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
     if (IS_LAYER_OFF(_EDIT_OVERLAY)) {
         select_line = false;
     }
@@ -1729,7 +1755,7 @@ bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
         case SELECT:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                if (is_select_macro(last_key)) {
+                if (is_select_macro(key_state.last_key)) {
                     tap_code16(LCTL(KC_X));
                     edit_clip = true;
                 } else {
@@ -1805,7 +1831,7 @@ bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
+static bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
     if (IS_LAYER_OFF(_EDIT)) {
         edit_clip = false;
     }
@@ -1853,7 +1879,7 @@ bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
             }
         case SELRGHT:
             if (record->event.pressed) {
-                if (ctrl_on() || last_key == SELECT) {
+                if (ctrl_on() || key_state.last_key == SELECT) {
                     register_code16(LCTL(KC_C));
                     edit_clip = true;
                     return false;
@@ -1887,7 +1913,7 @@ bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
 // Cycling Macros
 //==============================================================================
 
-void rollback_bracket_wrap_macro(void) {
+static void rollback_bracket_wrap_macro(void) {
     const uint8_t mods = get_mods();
     del_mods(MOD_MASK_CSAG);
     tap_code(KC_BSPC);
@@ -1898,7 +1924,7 @@ void rollback_bracket_wrap_macro(void) {
     rollback_last_key();
 }
 
-bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
+static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
     static int misc_macro_state = 0;
     static int bracket_macro_state = 0;
     static int comp_macro_state = 0;
@@ -2019,10 +2045,7 @@ bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 switch (comp_macro_state) {
                     case 0: {
-                        const uint8_t mods = get_mods();
-                        del_mods(MOD_MASK_CSAG);
-                        tap_code16(KC_GT);
-                        set_mods(mods);
+                        cs_tap_code16_mods(KC_GT, MOD_MASK_CSAG);
 
                         update_last_key(KC_GT);
                         comp_macro_state = 1;
@@ -2137,26 +2160,26 @@ bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
 // Repeat and Magic keys
 //==============================================================================
 
-bool process_rollback(void) {
+static bool process_rollback(void) {
     if (ctrl_on()) {
         rollback_last_key();
         return true;
     }
 
-    if (is_bracket_wrap_macro(last_key) && (char_count == 2)) {
+    if (is_bracket_wrap_macro(key_state.last_key) && (key_state.count == 2)) {
         rollback_bracket_wrap_macro();
         return false;
     }
 
-    if (is_bracket_macro(last_key) && (char_count == 2)) {
+    if (is_bracket_macro(key_state.last_key) && (key_state.count == 2)) {
         tap_code(KC_RGHT);
     }
 
-    if (last_key == CY_BRC  && (char_count == 2)) {
+    if (key_state.last_key == CY_BRC  && (key_state.count == 2)) {
         tap_code(KC_RGHT);
     }
 
-    for (int i = 1; i < char_count; i++) {
+    for (int i = 1; i < key_state.count; i++) {
         tap_code(KC_BSPC);
     }
     rollback_last_key();
@@ -2164,10 +2187,10 @@ bool process_rollback(void) {
     return true;
 }
 
-bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
+static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     // Reset repeat space override if any non-magic key is pressed
     if (!is_magic(keycode)) {
-        magic_override = false;
+        key_state.magic_override = false;
     }
 
     // Ignore tracking if layer tap key is held
@@ -2177,10 +2200,9 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
     }
 
-    // Ignore tracking if ctrl is on (apart from data overlay layer)
-    // and reset rollback counter
-    if (ctrl_on() && IS_LAYER_OFF(_DATA_OVERLAY)) {
-        char_count = 1;
+    // Ignore tracking if ctrl mod is active and reset rollback counter
+    if (ctrl_on() && keycode != CS_CONJ && keycode != CS_DISJ) {
+        key_state.count = 1;
         return true;
     }
 
@@ -2317,7 +2339,7 @@ bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-void send_the(void) {
+static inline void send_the(void) {
     if (!shifted()) {
         SEND_STRING("the");
     } else {
@@ -2333,7 +2355,7 @@ void send_the(void) {
     update_last_keys(KC_E,3);
 }
 
-void send_nt(void) {
+static inline void send_nt(void) {
     if (!shifted()) {
         SEND_STRING("'t ");
     } else {
@@ -2348,13 +2370,13 @@ void send_nt(void) {
     update_last_keys(KC_SPC,3);
 }
 
-void start_sentence(void) {
+static inline void start_sentence(void) {
     tap_code(KC_SPC);
     set_oneshot_mods(MOD_BIT(KC_LSFT));
     update_last_key(KC_SPC);
 }
 
-bool process_magic(uint16_t keycode, keyrecord_t* record) {
+static bool process_magic(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_LT2) {
         if (!record->tap.count && record->event.pressed) {
             layer_lock_off(_EDIT);
@@ -2374,25 +2396,25 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
             }
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_CTRL);
-            last_key_dynamic = true;
+            key_state.dynamic = true;
             if (IS_LAYER_ON(_QWERTY) || IS_LAYER_ON(_BASIC)) {
-                tap_code(last_key);
-                update_last_key(last_key);
+                tap_code(key_state.last_key);
+                update_last_key(key_state.last_key);
                 set_mods(mods);
                 return false;
             }
 
-            magic_override = true;
+            key_state.magic_override = true;
 
-            switch (last_key) {
+            switch (key_state.last_key) {
                 // Left hand keys
                 case KC_Z: tap_code(KC_N); update_last_key(KC_N); break;
                 case KC_L: tap_code(KC_R); update_last_key(KC_R); break;
                 case KC_D: tap_code(KC_T); update_last_key(KC_T); break;
                 case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
-                case KC_B: SEND_STRING(/*b*/"ecause "); update_last_keys(KC_SPC, 7); magic_override = false; break;
+                case KC_B: SEND_STRING(/*b*/"ecause "); update_last_keys(KC_SPC, 7); key_state.magic_override = false; break;
 
-                case KC_N: send_nt(); magic_override = false; break;
+                case KC_N: send_nt(); key_state.magic_override = false; break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
                 case KC_T: SEND_STRING(/*t*/"ment"); update_last_keys(KC_N, 4); break;
                 case KC_S: tap_code(KC_C); update_last_key(KC_C); break;
@@ -2412,15 +2434,15 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_E, 3); break;
                 case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
                 case KC_I: SEND_STRING(/*i*/"on"); update_last_keys(KC_N, 2); break;
-                case KC_A: SEND_STRING(/*a*/"nd "); update_last_keys(KC_SPC, 3); magic_override = false; break;
+                case KC_A: SEND_STRING(/*a*/"nd "); update_last_keys(KC_SPC, 3); key_state.magic_override = false; break;
 
                 case KC_NO:
-                case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); magic_override = false; break;
-                case KC_COMM: SEND_STRING(" and "); update_last_keys(KC_SPC, 4); magic_override = false; break;
-                case KC_DOT: start_sentence(); magic_override = false; break;
-                case KC_QUOT: SEND_STRING("ve "); update_last_keys(KC_SPC, 3); magic_override = false; break;
+                case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); key_state.magic_override = false; break;
+                case KC_COMM: SEND_STRING(" and "); update_last_keys(KC_SPC, 4); key_state.magic_override = false; break;
+                case KC_DOT: start_sentence(); key_state.magic_override = false; break;
+                case KC_QUOT: SEND_STRING("ve "); update_last_keys(KC_SPC, 3); key_state.magic_override = false; break;
 
-                default: tap_code(last_key); update_last_key(last_key); magic_override = false; break;
+                default: tap_code(key_state.last_key); update_last_key(key_state.last_key); key_state.magic_override = false; break;
             }
             set_mods(mods);
         }
@@ -2444,23 +2466,23 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
         if (record->tap.count && record->event.pressed) {
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_CTRL);
-            if (magic_override) {
-            last_key_dynamic = true;
+            if (key_state.magic_override) {
+            key_state.dynamic = true;
                 tap_code(KC_SPC);
                 update_last_key(KC_SPC);
-                magic_override = false;
+                key_state.magic_override = false;
                 set_mods(mods);
                 return false;
             }
 
             if (IS_LAYER_ON(_QWERTY) || IS_LAYER_ON(_BASIC)) {
-                tap_code(last_key);
-                update_last_key(last_key);
+                tap_code(key_state.last_key);
+                update_last_key(key_state.last_key);
                 set_mods(mods);
                 return false;
             }
 
-            switch (last_key) {
+            switch (key_state.last_key) {
                 // Right hand keys
                 case KC_J: SEND_STRING(/*j*/"ust"); update_last_keys(KC_T, 3); break;
                 case KC_F: tap_code(KC_Y); update_last_key(KC_Y); break;
@@ -2487,21 +2509,21 @@ bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_DOT: SEND_STRING("com"); update_last_keys(KC_NO, 3); break;
                 case KC_QUOT: SEND_STRING("re "); update_last_keys(KC_SPC, 3); break;
 
-                default: tap_code(last_key); update_last_key(last_key); break;
+                default: tap_code(key_state.last_key); update_last_key(key_state.last_key); break;
             }
             set_mods(mods);
         }
         return false;
     }
 
-    last_key_dynamic = false;
+    key_state.dynamic = false;
     return true;
 }
 
 
 
-bool process_pre_key_tracking(uint16_t keycode, keyrecord_t* record) {
-    if (last_key == KC_SPC && last_key_dynamic) {
+static bool process_pre_key_tracking(uint16_t keycode, keyrecord_t* record) {
+    if (key_state.last_key == KC_SPC && key_state.dynamic) {
         switch (keycode) {
             case KC_DOT:
             case CS_DOT:
@@ -2529,12 +2551,14 @@ bool process_pre_key_tracking(uint16_t keycode, keyrecord_t* record) {
 // Deferred Executions
 //==============================================================================
 
-uint32_t ctrl_linger_callback(uint32_t trigger_time, void *cb_arg) {
+static bool ctrl_linger = false;
+
+static uint32_t ctrl_linger_callback(uint32_t trigger_time, void *cb_arg) {
     ctrl_linger = false;
     return 0;
 }
 
-bool process_lingering_mods(uint16_t keycode, keyrecord_t* record) {
+static bool process_lingering_mods(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_LCTL) {
         if (record->event.pressed) {
             ctrl_linger = true;
@@ -2571,14 +2595,14 @@ bool process_lingering_mods(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-bool VOLD_active = false;
-bool VOLU_active = false;
-deferred_token VOLD_token = INVALID_DEFERRED_TOKEN;
-deferred_token VOLU_token = INVALID_DEFERRED_TOKEN;
+static bool VOLD_active = false;
+static bool VOLU_active = false;
+static deferred_token VOLD_token = INVALID_DEFERRED_TOKEN;
+static deferred_token VOLU_token = INVALID_DEFERRED_TOKEN;
 
 #define interval 15
 
-uint32_t VOLD_callback(uint32_t trigger_time, void* cb_arg) {
+static uint32_t VOLD_callback(uint32_t trigger_time, void* cb_arg) {
     if (!VOLD_active) {
         register_code16(KC_VOLD);
         VOLD_active = true;
@@ -2588,7 +2612,7 @@ uint32_t VOLD_callback(uint32_t trigger_time, void* cb_arg) {
     }
     return interval;
 }
-uint32_t VOLU_callback(uint32_t trigger_time, void* cb_arg) {
+static uint32_t VOLU_callback(uint32_t trigger_time, void* cb_arg) {
     if (!VOLU_active) {
         register_code16(KC_VOLU);
         VOLU_active = true;
@@ -2599,20 +2623,20 @@ uint32_t VOLU_callback(uint32_t trigger_time, void* cb_arg) {
     return interval * 1.5;
 }
 
-void VOLD_start(void) {
+static void VOLD_start(void) {
     if (VOLD_token == INVALID_DEFERRED_TOKEN) {
         uint32_t delay = VOLD_callback(0, NULL);
         VOLD_token = defer_exec(delay, VOLD_callback, NULL);
     }
 }
-void VOLU_start(void) {
+static void VOLU_start(void) {
     if (VOLU_token == INVALID_DEFERRED_TOKEN) {
         uint32_t delay = VOLU_callback(0, NULL);
         VOLU_token = defer_exec(delay, VOLU_callback, NULL);
     }
 }
 
-void VOLD_stop(void) {
+static void VOLD_stop(void) {
     if (VOLD_token != INVALID_DEFERRED_TOKEN) {
         cancel_deferred_exec(VOLD_token);
         VOLD_token = INVALID_DEFERRED_TOKEN;
@@ -2622,7 +2646,7 @@ void VOLD_stop(void) {
         }
     }
 }
-void VOLU_stop(void) {
+static void VOLU_stop(void) {
     if (VOLU_token != INVALID_DEFERRED_TOKEN) {
         cancel_deferred_exec(VOLU_token);
         VOLU_token = INVALID_DEFERRED_TOKEN;
@@ -2633,10 +2657,10 @@ void VOLU_stop(void) {
     }
 }
 
-bool process_vol_repeat(uint16_t keycode, keyrecord_t* record) {
+static bool process_vol_repeat(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_VOLD) {
         if (record->event.pressed) {
-            muted = false;
+            oled_state.muted = false;
             if (!shifted()) {
                 VOLD_start();
             } else {
@@ -2650,7 +2674,7 @@ bool process_vol_repeat(uint16_t keycode, keyrecord_t* record) {
     }
     if (keycode == CS_VOLU) {
         if (record->event.pressed) {
-            muted = false;
+            oled_state.muted = false;
             if (!shifted()) {
                 VOLU_start();
             } else {
@@ -2667,7 +2691,7 @@ bool process_vol_repeat(uint16_t keycode, keyrecord_t* record) {
 
 
 
-bool process_boot_anim(uint16_t keycode, keyrecord_t* record) {
+static bool process_boot_anim(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         case CS_LT3:
         case CS_LT2:
@@ -2688,36 +2712,36 @@ bool process_boot_anim(uint16_t keycode, keyrecord_t* record) {
 // Clock
 //==============================================================================
 
-uint32_t clock_callback(uint32_t trigger_time, void* cb_arg) {
-    sec++;
-    if (sec >= 60) {
-        sec = 0;
-        min++;
+static uint32_t clock_callback(uint32_t trigger_time, void* cb_arg) {
+    clock_state.sec++;
+    if (clock_state.sec >= 60) {
+        clock_state.sec = 0;
+        clock_state.min++;
     }
-    if (min >= 60) {
-        min = 0;
-        hrs++;
+    if (clock_state.min >= 60) {
+        clock_state.min = 0;
+        clock_state.hrs++;
     }
-    if (hrs >= 24) {
-        hrs = 0;
+    if (clock_state.hrs >= 24) {
+        clock_state.hrs = 0;
     }
     return 1000;
 }
 
-bool process_clock(uint16_t keycode, keyrecord_t* record) {
+static bool process_clock(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CLOCKUP) {
         if (record->event.pressed) {
-            switch (time_setting) {
+            switch (clock_state.setting) {
                 case set_none:
                     break;
                 case set_hour:
-                    hrs = (hrs + 1) % 24;
+                    clock_state.hrs = (clock_state.hrs + 1) % 24;
                     break;
                 case set_min:
-                    min = (min + 1) % 60;
+                    clock_state.min = (clock_state.min + 1) % 60;
                     break;
                 case set_sec:
-                    sec = (sec + 1) % 60;
+                    clock_state.sec = (clock_state.sec + 1) % 60;
                     break;
             }
         }
@@ -2725,17 +2749,17 @@ bool process_clock(uint16_t keycode, keyrecord_t* record) {
     }
     if (keycode == CLOCKDN) {
         if (record->event.pressed) {
-            switch (time_setting) {
+            switch (clock_state.setting) {
                 case set_none:
                     break;
                 case set_hour:
-                    hrs = hrs == 0 ? 23 : hrs - 1;
+                    clock_state.hrs = clock_state.hrs == 0 ? 23 : clock_state.hrs - 1;
                     break;
                 case set_min:
-                    min = min == 0 ? 59 : min - 1;
+                    clock_state.min = clock_state.min == 0 ? 59 : clock_state.min - 1;
                     break;
                 case set_sec:
-                    sec = sec == 0 ? 59 : sec - 1;
+                    clock_state.sec = clock_state.sec == 0 ? 59 : clock_state.sec - 1;
                     break;
             }
         }
@@ -2744,9 +2768,9 @@ bool process_clock(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CLOCKNX) {
         if (record->event.pressed) {
             if (!shifted()) {
-                time_setting = (time_setting + 1) % 4;
+                clock_state.setting = (clock_state.setting + 1) % 4;
             } else {
-                time_setting = time_setting == 0 ? 3 : time_setting - 1;
+                clock_state.setting = clock_state.setting == 0 ? 3 : clock_state.setting - 1;
             }
         }
         return false;
@@ -2754,34 +2778,34 @@ bool process_clock(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-void render_clock(uint8_t shift, uint8_t line) {
+static void render_clock(uint8_t shift, uint8_t line) {
     char time_str[9];
 
     time_str[8] = '\0';
-    time_str[7] = '0' + sec % 10;
-    time_str[6] = '0' + sec / 10;
+    time_str[7] = '0' + clock_state.sec % 10;
+    time_str[6] = '0' + clock_state.sec / 10;
     time_str[5] = ':';
-    time_str[4] = '0' + min % 10;
-    time_str[3] = '0' + min / 10;
+    time_str[4] = '0' + clock_state.min % 10;
+    time_str[3] = '0' + clock_state.min / 10;
     time_str[2] = ':';
-    time_str[1] = '0' + hrs % 10;
-    time_str[0] = '0' + hrs / 10;
+    time_str[1] = '0' + clock_state.hrs % 10;
+    time_str[0] = '0' + clock_state.hrs / 10;
 
-    if (time_setting == 1) {
+    if (clock_state.setting == set_hour) {
         oled_set_cursor(shift,line-1);
         oled_write_char(148,false);
         oled_write_char(149,false);
         oled_set_cursor(shift,line+1);
         oled_write_char(180,false);
         oled_write_char(181,false);
-    } else if (time_setting == 2) {
+    } else if (clock_state.setting == set_min) {
         oled_set_cursor(shift+3,line-1);
         oled_write_char(148,false);
         oled_write_char(149,false);
         oled_set_cursor(shift+3,line+1);
         oled_write_char(180,false);
         oled_write_char(181,false);
-    } else if (time_setting == 3) {
+    } else if (clock_state.setting == set_sec) {
         oled_set_cursor(shift+6,line-1);
         oled_write_char(148,false);
         oled_write_char(149,false);
@@ -2805,13 +2829,13 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
         case TABLSFT:
             if (record->event.pressed && !(get_mods() & MOD_BIT(KC_LSFT))) {
                 register_mods(MOD_BIT(KC_LSFT));
-                left_eager_shift_on = true;
+                misc_key_state.left_eager_shift = true;
             }
             break;
         case TABRSFT:
             if (record->event.pressed && !(get_mods() & MOD_BIT(KC_RSFT))) {
                 register_mods(MOD_BIT(KC_RSFT));
-                right_eager_shift_on = true;
+                misc_key_state.right_eager_shift = true;
             }
             break;
     }
@@ -2845,16 +2869,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case CS_LT3:
             if (record->event.pressed) {
-                left_active = true;
+                misc_key_state.LT3_active = true;
             } else {
-                left_active = false;
+                misc_key_state.LT3_active = false;
             }
             return true;
         case CS_RT3:
             if (record->event.pressed) {
-                right_active = true;
+                misc_key_state.RT3_active = true;
             } else {
-                right_active = false;
+                misc_key_state.RT3_active = false;
             }
             return true;
 
@@ -3052,25 +3076,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case MUTE:
             if (record->event.pressed) {
                 register_code(KC_MUTE);
-                muted = !muted;
+                oled_state.muted = !oled_state.muted;
             } else {
                 unregister_code(KC_MUTE);
             }
             break;
 
         case MUTE_L:
-            if (record->event.pressed && right_active) {
+            if (record->event.pressed && misc_key_state.RT3_active) {
                 register_code(KC_MUTE);
-                muted = !muted;
+                oled_state.muted = !oled_state.muted;
             } else {
                 unregister_code(KC_MUTE);
             }
             break;
 
         case MUTE_R:
-            if (record->event.pressed && left_active) {
+            if (record->event.pressed && misc_key_state.LT3_active) {
                 register_code(KC_MUTE);
-                muted = !muted;
+                oled_state.muted = !oled_state.muted;
             } else {
                 unregister_code(KC_MUTE);
             }
@@ -3078,10 +3102,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case MENU:
             if (record->event.pressed) {
-                if (menu == 0) {
-                    menu = 1;
-                } else if (menu == 1) {
-                    menu = 0;
+                if (oled_state.menu == 0) {
+                    oled_state.menu = 1;
+                } else if (oled_state.menu == 1) {
+                    oled_state.menu = 0;
                 }
             }
             break;
@@ -3104,8 +3128,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             break;
 
         case ALTTAB:
-            if (!alt_tab_active) {
-                alt_tab_active = true;
+            if (!misc_key_state.alt_tab_active) {
+                misc_key_state.alt_tab_active = true;
                 register_code(KC_LALT);
             }
             // alt_tab_timer = timer_read();
@@ -3116,16 +3140,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case OLEDSAV:
             if (record->event.pressed) {
-                static_display = !static_display;
+                oled_state.static_display = !oled_state.static_display;
                 update_sync();
-                if (!static_display) {
+                if (!oled_state.static_display) {
                     oled_clear();
                 }
             }
             break;
         case OLEDTOG:
             if (record->event.pressed) {
-                oled_disable = !oled_disable;
+                oled_state.oled_disable = !oled_state.oled_disable;
                 update_sync();
             }
             break;
@@ -3197,18 +3221,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case EO_END:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CTRL);
-                tap_code16(LSFT(KC_END));
-                set_mods(mods);
+                cs_tap_code16_mods(LSFT(KC_END), MOD_MASK_CTRL);
             }
             break;
         case EO_HOME:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CTRL);
-                tap_code16(LSFT(KC_HOME));
-                set_mods(mods);
+                cs_tap_code16_mods(LSFT(KC_HOME), MOD_MASK_CTRL);
             }
             break;
 
@@ -3217,26 +3235,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 unregister_mods(MOD_BIT(KC_LSFT));
             }
             if (record->tap.count && record->event.pressed) {
-                if (left_eager_shift_on) {
+                if (misc_key_state.left_eager_shift) {
                     unregister_mods(MOD_BIT(KC_LSFT));
                 }
                 if (IS_LAYER_OFF(_CONTROL_OVERLAY)) {
                     tap_code(KC_TAB);
                 }
             }
-            left_eager_shift_on = false;
+            misc_key_state.left_eager_shift = false;
             return false;
         case TABRSFT:
             if (!record->tap.count && !record->event.pressed) {
                 unregister_mods(MOD_BIT(KC_RSFT));
             }
             if (record->tap.count && record->event.pressed) {
-                if (right_eager_shift_on) {
+                if (misc_key_state.right_eager_shift) {
                     unregister_mods(MOD_BIT(KC_RSFT));
                 }
                 tap_code(KC_TAB);
             }
-            right_eager_shift_on = false;
+            misc_key_state.right_eager_shift = false;
             return false;
 
         // =====================================================================
@@ -3246,15 +3264,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case COM_EXL:
             if (record->event.pressed) {
                 if (!shifted()) {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    tap_code(KC_COMM);
-                    set_mods(mods);
+                    cs_tap_code(KC_COMM);
                 } else {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_EXLM);
-                    set_mods(mods);
+                    cs_tap_code16(KC_EXLM);
                 }
             }
             break;
@@ -3262,15 +3274,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case DOT_QUE:
             if (record->event.pressed) {
                 if (!shifted()) {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    tap_code(KC_DOT);
-                    set_mods(mods);
+                    cs_tap_code(KC_DOT);
                 } else {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_QUES);
-                    set_mods(mods);
+                    cs_tap_code16(KC_QUES);
                 }
             }
             break;
@@ -3278,15 +3284,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case APO_QUO:
             if (record->event.pressed) {
                 if (!shifted()) {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_QUOT);
-                    set_mods(mods);
+                    cs_tap_code16(KC_QUOT);
                 } else {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    tap_code16(KC_AT);
-                    set_mods(mods);
+                    cs_tap_code16(KC_AT);
                 }
             }
             break;
@@ -3297,210 +3297,132 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case CS_COLN:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_COLN);
-                set_mods(mods);
+                cs_tap_code16(KC_COLN);
             }
             break;
         case CS_UNDS:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_UNDS);
-                set_mods(mods);
+                cs_tap_code16(KC_UNDS);
             }
             break;
         case CS_PIPE:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(LSFT(KC_NUBS));
-                set_mods(mods);
+                cs_tap_code16(LSFT(KC_NUBS));
             }
             break;
         case CS_LT:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_LT);
-                set_mods(mods);
+                cs_tap_code16(KC_LT);
             }
             break;
         case CS_GT:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_GT);
-                set_mods(mods);
+                cs_tap_code16(KC_GT);
             }
             break;
         case CS_PERC:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_PERC);
-                set_mods(mods);
+                cs_tap_code16(KC_PERC);
             }
             break;
         case CS_ASTR:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_ASTR);
-                set_mods(mods);
+                cs_tap_code16(KC_ASTR);
             }
             break;
         case CS_DLR:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_DLR);
-                set_mods(mods);
+                cs_tap_code16(KC_DLR);
             }
             break;
         case CS_AMPR:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_AMPR);
-                set_mods(mods);
+                cs_tap_code16(KC_AMPR);
             }
             break;
         case CS_CIRC:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_CIRC);
-                set_mods(mods);
+                cs_tap_code16(KC_CIRC);
             }
             break;
         case CS_EXLM:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_EXLM);
-                set_mods(mods);
+                cs_tap_code16(KC_EXLM);
             }
             break;
         case CS_TILD:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(LSFT(KC_NUHS));
-                set_mods(mods);
+                cs_tap_code16(LSFT(KC_NUHS));
             }
             break;
         case CS_PLUS:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_PLUS);
-                set_mods(mods);
+                cs_tap_code16(KC_PLUS);
             }
             break;
         case CS_HASH:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_NUHS);
-                set_mods(mods);
+                cs_tap_code(KC_NUHS);
             }
             break;
         case CS_SLSH:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_SLSH);
-                set_mods(mods);
+                cs_tap_code(KC_SLSH);
             }
             break;
         case CS_EQL:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_EQL);
-                set_mods(mods);
+                cs_tap_code(KC_EQL);
             }
             break;
         case CS_AT:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_DQUO);
-                set_mods(mods);
+                cs_tap_code16(KC_DQUO);
             }
             break;
         case CS_QUOT:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_QUOT);
-                set_mods(mods);
+                cs_tap_code(KC_QUOT);
             }
             break;
         case CS_DQUO:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_AT);
-                set_mods(mods);
+                cs_tap_code16(KC_AT);
             }
             break;
         case CS_POUN:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_HASH);
-                set_mods(mods);
+                cs_tap_code16(KC_HASH);
             }
             break;
         case CS_BSLS:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_NUBS);
-                set_mods(mods);
+                cs_tap_code16(KC_NUBS);
             }
             break;
         case CS_MINS:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_MINS);
-                set_mods(mods);
+                cs_tap_code(KC_MINS);
             }
             break;
         case CS_DOT:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_DOT);
-                set_mods(mods);
+                cs_tap_code(KC_DOT);
             }
             break;
         case CS_COMM:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_COMM);
-                set_mods(mods);
+                cs_tap_code(KC_COMM);
             }
             break;
         case CS_QUES:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_QUES);
-                set_mods(mods);
+                cs_tap_code16(KC_QUES);
             }
             break;
         case CS_SCLN:
             if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_SCLN);
-                set_mods(mods);
+                cs_tap_code(KC_SCLN);
             }
             break;
 
@@ -3511,37 +3433,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         // Edit layer
         case RG_TILD:
             if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(LSFT(KC_NUHS));
-                set_mods(mods);
+                cs_tap_code16(LSFT(KC_NUHS));
             }
             return false;
 
         case RA_SCLN:
             if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_SCLN);
-                set_mods(mods);
+                cs_tap_code(KC_SCLN);
             }
             return false;
 
         case RC_LPRN:
             if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_LPRN);
-                set_mods(mods);
+                cs_tap_code16(KC_LPRN);
             }
             return false;
 
         case RS_RPRN:
             if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_RPRN);
-                set_mods(mods);
+                cs_tap_code16(KC_RPRN);
             }
             return false;
 
@@ -3550,44 +3460,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         // Data layer
         case LG_EXLM:
             if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_EXLM);
-                set_mods(mods);
+                cs_tap_code16(KC_EXLM);
             }
             return false;
         case LA_COLN:
             if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_COLN);
-                set_mods(mods);
+                cs_tap_code16(KC_COLN);
             }
             return false;
         case LC_DOT:
             if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_DOT);
-                set_mods(mods);
+                cs_tap_code(KC_DOT);
             }
             return false;
         case LS_COMM:
             if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code(KC_COMM);
-                set_mods(mods);
+                cs_tap_code(KC_COMM);
             }
             return false;
 
-            
+
+
         case RG_UNDS:
             if (record->tap.count && record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_SHIFT);
-                tap_code16(KC_UNDS);
-                set_mods(mods);
+                cs_tap_code16(KC_UNDS);
             }
             return false;
 
@@ -3683,7 +3579,7 @@ bool wpm_keycode_user(uint16_t keycode) {
 }
 
 
-void render_wpm(void) {
+static void render_wpm(void) {
     uint8_t n = get_current_wpm();
     char render_str[4];
 
@@ -3700,35 +3596,35 @@ void render_wpm(void) {
 // Animation
 //------------
 
-bool minor = true;
-bool major = false;
-uint8_t frame_count = 15;
-uint16_t render_timer;
-uint16_t anim_timer = 0;
-bool show_text = true;
+static bool minor = true;
+static bool major = false;
+static uint8_t frame_count = 15;
+static uint16_t render_timer;
+static uint16_t anim_timer = 0;
+static bool show_text = true;
 
 #include "frames.h"
 
-uint8_t clean_frame = 0;
+static uint8_t clean_frame = 0;
 
-void render_stats(void) {
+static void render_stats(void) {
     oled_set_cursor(0,14);
     render_wpm();
     render_clock(0,15);
 }
 
-void render_text_clean(void) {
+static void render_text_clean(void) {
     oled_write_raw_P(text_clean[clean_frame], frame_size);
 }
 
-void render_text_major(void) {
+static void render_text_major(void) {
     oled_write_raw_P(text_major[rand() % text_major_count], frame_size);
 }
 
 
 
 #define BIAS 2
-void render_text_minor(bool can_be_major) {
+static void render_text_minor(bool can_be_major) {
     clean_frame = rand() % 2;
     uint8_t frame = can_be_major ? rand() % (BIAS*text_minor_count + text_major_count) : rand() % text_minor_count;
     if (frame < BIAS*text_minor_count) {
@@ -3739,16 +3635,16 @@ void render_text_minor(bool can_be_major) {
     render_text_major();
 }
 
-void render_logo_clean(void) {
+static void render_logo_clean(void) {
     oled_write_raw_P(logo_clean, frame_size);
     render_stats();
 }
 
-void render_logo_major(void) {
+static void render_logo_major(void) {
     oled_write_raw_P(logo_major[rand() % logo_major_count], frame_size);
 }
 
-void render_logo_minor(bool can_be_major) {
+static void render_logo_minor(bool can_be_major) {
     uint8_t frame = can_be_major ? rand() % (logo_minor_count + logo_major_count) : rand() % logo_minor_count;
     if (frame < logo_minor_count) {
         oled_write_raw_P(logo_minor[frame], frame_size);
@@ -3761,8 +3657,8 @@ void render_logo_minor(bool can_be_major) {
 
 
 
-void render_draw(void) {
-    if (sync_data.oled_timeout_sync || sync_data.oled_disable_sync) {
+static void render_draw(void) {
+    if (sync_data.oled_timeout || sync_data.oled_disable) {
         return;
     }
     
@@ -3816,11 +3712,11 @@ void render_draw(void) {
 
 
 
-void render_linebreak(void) {
+static inline void render_linebreak(void) {
     oled_write_P(PSTR("__________"), false);
 }
 
-void render_mode(void) {
+static void render_mode(void) {
     if (IS_LAYER_ON(_MOUSE)) {
         oled_write_P(PSTR(" Mouse\n"), false);
     } else if (IS_LAYER_ON(_TOUHOU)) {
@@ -3838,7 +3734,7 @@ void render_mode(void) {
     }
 }
 
-void render_layer(void) {
+static void render_layer(void) {
     if (IS_LAYER_ON(_DATA) || IS_LAYER_ON(_DATA_OVERLAY)) {
         oled_write_P(PSTR(">Data\n"), false);
     } else {
@@ -3874,16 +3770,16 @@ void render_layer(void) {
 
 
 
-bool oneshot_shift_on = false;
+static bool oneshot_shift = false;
 void oneshot_mods_changed_user(uint8_t mods) {
     if (mods & MOD_MASK_SHIFT) {
-        oneshot_shift_on = true;
+        oneshot_shift = true;
     } else {
-        oneshot_shift_on = false;
+        oneshot_shift = false;
     }
 }
 
-void render_locking_key_state(led_t led_usb_state) {
+static void render_locking_key_state(led_t led_usb_state) {
     if (led_usb_state.caps_lock) {
         oled_write_char(203,false);
         oled_write_char(204,false);
@@ -3935,7 +3831,7 @@ void render_locking_key_state(led_t led_usb_state) {
     }
 }
 
-void render_modifier_state(uint8_t line) {
+static void render_modifier_state(uint8_t line) {
     oled_set_cursor(0,line);
     if (get_mods() & MOD_MASK_GUI) {
         oled_write_char(137,false);
@@ -3979,7 +3875,7 @@ void render_modifier_state(uint8_t line) {
         oled_write_char(168,false);
     }
     oled_set_cursor(6,line);
-    if ((get_mods() & MOD_MASK_SHIFT) || oneshot_shift_on) {
+    if ((get_mods() & MOD_MASK_SHIFT) || oneshot_shift) {
         oled_write_char(141,false);
         oled_write_char(142,false);
         oled_set_cursor(6,line+1);
@@ -3997,7 +3893,7 @@ void render_modifier_state(uint8_t line) {
     oled_set_cursor(8,line+1);
     oled_write_char(177,false);
     oled_set_cursor(9,line);
-    if (!muted) {
+    if (!oled_state.muted) {
         oled_write_char(146,false);
         oled_set_cursor(9,line+1);
         oled_write_char(178,false);
@@ -4016,7 +3912,7 @@ void render_modifier_state(uint8_t line) {
 #define overlay_mask ~((1 << _CONTROL_OVERLAY) | (1 << _NUMPAD) | (1 << _MOUSE))
 #define base_layer_mask ~((1 << _BASE) | (1 << _QWERTY) | (1 << _BASIC))
 
-void render_layout(void) {
+static void render_layout(void) {
     if (IS_LAYER_ON(_BASE)) {
         oled_set_cursor(0,3);
         oled_write_raw_P(menu_layout_base_left, layout_left_size);
@@ -4085,7 +3981,7 @@ void render_layout(void) {
     }
 }
 
-void render_right_thumb(const char* progmem_data) {
+static void render_right_thumb(const char* progmem_data) {
     oled_set_cursor(8,6);
     oled_write_raw_P(&progmem_data[0], 16);
     oled_set_cursor(8,7);
@@ -4096,7 +3992,7 @@ void render_right_thumb(const char* progmem_data) {
     oled_write_raw_P(&progmem_data[48], 16);
 }
 
-void render_overlays(void) {
+static void render_overlays(void) {
     if (IS_LAYER_ON(_UTILITY) || IS_LAYER_ON(_TOUHOU)){
         return;
     }
@@ -4139,12 +4035,12 @@ void render_overlays(void) {
     }
 }
 
-void render_status(void) {
-    if (menu == 0) {
+static void render_status(void) {
+    if (oled_state.menu == 0) {
         oled_set_cursor(0,3);
         oled_write_ln_P(PSTR("Layer:"), false); // 1
         render_layer(); // 7
-    } else if (menu == 1) {
+    } else if (oled_state.menu == 1) {
         render_layout();
         render_overlays();
     }
@@ -4172,22 +4068,22 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
 
 bool oled_task_user(void) {
-    if (oled_disable) {
+    if (oled_state.oled_disable) {
         oled_clear();
         return false;
     }
-    if (oled_timeout) {
+    if (oled_state.oled_timeout) {
         oled_off();
         return false;
     }
     if (is_keyboard_master()) {
-        if (static_display) {
+        if (oled_state.static_display) {
             oled_write_raw_P(static_right, frame_size);
         } else {
             render_status();
         }
     } else {
-        if (static_display || sync_data.static_display_sync) {
+        if (oled_state.static_display || sync_data.static_display) {
             /* intentionally blank */;
         } else {
             render_draw();
@@ -4203,7 +4099,7 @@ bool oled_task_user(void) {
 //==============================================================================
 
 // Wrapper around rgb_matrix_set_color to correct for split detection with MASTER_RIGHT defined
-void rgb_matrix_set_color_split(uint8_t index, uint8_t r, uint8_t g, uint8_t b) {
+static void rgb_matrix_set_color_split(uint8_t index, uint8_t r, uint8_t g, uint8_t b) {
     if ((!is_keyboard_master() && index < 27) || (is_keyboard_master() && index >= 27)) {
         rgb_matrix_set_color(index, r, g, b);
     }
@@ -4212,17 +4108,13 @@ void rgb_matrix_set_color_split(uint8_t index, uint8_t r, uint8_t g, uint8_t b) 
 
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-    // if (boot || sync_data.boot_sync) {
-    //     return false;
-    // }
-
-    if (case_lock_capture || sync_data.case_lock_capture_sync) {
+    if (case_lock_state.capturing || sync_data.capturing) {
         for (uint8_t index = 6; index < 27; index++) {
             RGB green = hsv_to_rgb((HSV){ 85, 255, 100 });
             rgb_matrix_set_color_split(index, green.r, green.g, green.b);
             rgb_matrix_set_color_split(index+27, green.r, green.g, green.b);
         }
-    } else if (case_lock_active || sync_data.case_lock_active_sync) {
+    } else if (case_lock_state.active || sync_data.active) {
         for (uint8_t index = 6; index < 27; index++) {
             RGB red = hsv_to_rgb((HSV){ 255, 255, 100 });
             rgb_matrix_set_color_split(index, red.r, red.g, red.b);
@@ -4381,7 +4273,7 @@ void keyboard_post_init_user(void) {
     transaction_register_rpc(USER_SYNC_A, user_config_sync_handler);
 }
 
-void oled_render_boot(bool bootloader) {
+static void oled_render_boot(bool bootloader) {
     oled_clear();
     if (bootloader) {
         oled_write_raw_P(bootloader_oled, frame_size);
@@ -4427,56 +4319,56 @@ void housekeeping_task_user(void) {
 
     // Reset macro timers
     if (last_input_activity_elapsed() > 200) {
-        if (last_key == SELECT) {
-            last_key = KC_NO;
+        if (key_state.last_key == SELECT) {
+            key_state.last_key = KC_NO;
         }
-        if (!arrow_flags) {
-            arrow_control = false;
+        if (!arrow_state.held_keys) {
+            arrow_state.active = false;
         }
     }
 
     // Reset key tracking
     if (last_input_activity_elapsed() > 500) {
         // Reset rollbacks
-        char_count = 1;
+        key_state.count = 1;
     }
     if (last_input_activity_elapsed() > 1000) {
         // Reset magic keys
-        last_key = KC_NO;
-        last_key_2 = KC_NO;
-        last_key_3 = KC_NO;
+        key_state.last_key = KC_NO;
+        key_state.last_key_2 = KC_NO;
+        key_state.last_key_3 = KC_NO;
 
         // Reset Case Lock capture
-        if (!case_lock_active) {
+        if (!case_lock_state.active) {
             case_lock_capture_off();
         }
     }
     if (last_input_activity_elapsed() > 2000) {
         // Reset Case Lock
-        if (case_lock_active) {
+        if (case_lock_state.active) {
             case_lock_off();
         }
     }
 
     if (last_input_activity_elapsed() > 3000) {
         // OLED timeout
-        time_setting = set_none;
-        oled_timeout = true;
+        clock_state.setting = set_none;
+        oled_state.oled_timeout = true;
         static uint32_t last_sync = 0;
         if (timer_elapsed32(last_sync) > 500) {
             update_sync();
             last_sync = timer_read32();
         }
     } else {
-        oled_timeout = false;
+        oled_state.oled_timeout = false;
     }
 
 
     // Alt tab key
-    if (alt_tab_active) {
+    if (misc_key_state.alt_tab_active) {
         if (IS_LAYER_OFF(_UTILITY)) {
             unregister_code(KC_LALT);
-            alt_tab_active = false;
+            misc_key_state.alt_tab_active = false;
         }
     }
 
@@ -4488,11 +4380,11 @@ void housekeeping_task_user(void) {
         static uint32_t last_sync = 0;
         if (timer_elapsed32(last_sync) > 500) { // Interact with slave every 500ms
             master_to_slave_t m2s = {
-                .static_display_sync = static_display,
-                .oled_timeout_sync = oled_timeout,
-                .oled_disable_sync = oled_disable,
-                .case_lock_capture_sync = case_lock_capture,
-                .case_lock_active_sync = case_lock_active,
+                .static_display = oled_state.static_display,
+                .oled_timeout = oled_state.oled_timeout,
+                .oled_disable = oled_state.oled_disable,
+                .capturing = case_lock_state.capturing,
+                .active = case_lock_state.active,
             };
             if (transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s)) {
                 last_sync = timer_read32();
@@ -4501,12 +4393,12 @@ void housekeeping_task_user(void) {
             }
         }
     } else { // slave side
-        if (sync_data.static_display_sync) { 
+        if (sync_data.static_display) { 
             oled_write_raw_P(static_left, frame_size);
         } else {
             // render_draw();
         }
-        if (sync_data.oled_timeout_sync || sync_data.oled_disable_sync) { 
+        if (sync_data.oled_timeout || sync_data.oled_disable) { 
             oled_off();
         } else {
             oled_on();
