@@ -42,8 +42,8 @@ Letters that are not commonly repeated (i.e. `I`, `U`, `A`) are overridden and i
 Left hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `Z` | `L` | `D` | `C` | `B`       | `N`  | `R` | `T`    | `S` | `G` | `Q` | `X` | `M`   | `W` | `V` |
-| Magic | `N` | `R` | `T` | `S` | `ECAUSE⎵` | `'T` | `L` | `MENT` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
+| Prev  | `Z` | `L` | `D` | `C` | `B`       | `N`  | `R` | `T`     | `S` | `G` | `Q` | `X` | `M`   | `W` | `V` |
+| Magic | `N` | `R` | `T` | `S` | `ECAUSE⎵` | `'T` | `L` | `MENT⎵` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
 
 Right hand overrides:
 |     |     |     |     |     |     |     |     |     |

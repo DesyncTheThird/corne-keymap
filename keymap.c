@@ -554,17 +554,17 @@ static void case_lock_off(void) {
 }
 
 typedef struct {
-    bool dynamic :1;
-    bool magic_override :1;
     uint8_t count;
     uint16_t last_key;
     uint16_t last_key_2;
     uint16_t last_key_3;
+    bool dynamic :1;
+    bool magic_space_override :1;
 } recent_key_state_t;
 
 recent_key_state_t key_state = {
     .dynamic = false,
-    .magic_override = false,
+    .magic_space_override = false,
     .count = 1,
     .last_key = KC_NO,
     .last_key_2 = KC_NO,
@@ -617,7 +617,7 @@ static inline bool is_alpha(uint16_t keycode) {
     return (keycode >= KC_A && keycode <= KC_Z);
 }
 
-static bool is_hrm(uint16_t keycode) {
+static inline bool is_hrm(uint16_t keycode) {
     switch (keycode) {
         case LG_A:
         case LA_S:
@@ -1359,7 +1359,6 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
     }
 }
 
-// 50ms default
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
         case L_NEW:
@@ -1369,7 +1368,7 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         case R_COMMA:
         case L_UNDERSCORE:
         case R_UNDERSCORE:
-            return 30;
+            return 40;
 
         case L_EXPONENT:
         case R_EXPONENT:
@@ -1668,7 +1667,6 @@ enum {
     ARROW_LEFT  = 1 << 2,
     ARROW_RIGHT = 1 << 3,
 };
-
 
 static inline void set_arrow(uint8_t arrow)    { arrow_state.held_keys |= arrow; }
 static inline void clear_arrow(uint8_t arrow)  { arrow_state.held_keys &= ~arrow; }
@@ -2166,16 +2164,16 @@ static bool process_rollback(void) {
         return true;
     }
 
-    if (is_bracket_wrap_macro(key_state.last_key) && (key_state.count == 2)) {
+    if (is_bracket_wrap_macro(key_state.last_key) && key_state.count == 2) {
         rollback_bracket_wrap_macro();
         return false;
     }
 
-    if (is_bracket_macro(key_state.last_key) && (key_state.count == 2)) {
+    if (is_bracket_macro(key_state.last_key) && key_state.count == 2) {
         tap_code(KC_RGHT);
     }
 
-    if (key_state.last_key == CY_BRC  && (key_state.count == 2)) {
+    if (key_state.last_key == CY_BRC && key_state.count == 2) {
         tap_code(KC_RGHT);
     }
 
@@ -2190,7 +2188,7 @@ static bool process_rollback(void) {
 static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     // Reset repeat space override if any non-magic key is pressed
     if (!is_magic(keycode)) {
-        key_state.magic_override = false;
+        key_state.magic_space_override = false;
     }
 
     // Ignore tracking if layer tap key is held
@@ -2202,8 +2200,10 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
 
     // Ignore tracking if ctrl mod is active and reset rollback counter
     if (ctrl_on() && keycode != CS_CONJ && keycode != CS_DISJ) {
-        key_state.count = 1;
-        return true;
+        if (record->tap.count && record->event.pressed) {
+            key_state.count = 1;
+            return true;
+        }
     }
 
     // Track alpha keys
@@ -2404,7 +2404,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 return false;
             }
 
-            key_state.magic_override = true;
+            key_state.magic_space_override = true;
 
             switch (key_state.last_key) {
                 // Left hand keys
@@ -2412,11 +2412,11 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_L: tap_code(KC_R); update_last_key(KC_R); break;
                 case KC_D: tap_code(KC_T); update_last_key(KC_T); break;
                 case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
-                case KC_B: SEND_STRING(/*b*/"ecause "); update_last_keys(KC_SPC, 7); key_state.magic_override = false; break;
+                case KC_B: SEND_STRING(/*b*/"ecause "); update_last_keys(KC_SPC, 7); key_state.magic_space_override = false; break;
 
-                case KC_N: send_nt(); key_state.magic_override = false; break;
+                case KC_N: send_nt(); key_state.magic_space_override = false; break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
-                case KC_T: SEND_STRING(/*t*/"ment"); update_last_keys(KC_N, 4); break;
+                case KC_T: SEND_STRING(/*t*/"ment "); update_last_keys(KC_SPC, 5); key_state.magic_space_override = false; break;
                 case KC_S: tap_code(KC_C); update_last_key(KC_C); break;
                 case KC_G: tap_code(KC_S); update_last_key(KC_S); break;
 
@@ -2434,15 +2434,15 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_E, 3); break;
                 case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
                 case KC_I: SEND_STRING(/*i*/"on"); update_last_keys(KC_N, 2); break;
-                case KC_A: SEND_STRING(/*a*/"nd "); update_last_keys(KC_SPC, 3); key_state.magic_override = false; break;
+                case KC_A: SEND_STRING(/*a*/"nd "); update_last_keys(KC_SPC, 3); key_state.magic_space_override = false; break;
 
                 case KC_NO:
-                case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); key_state.magic_override = false; break;
-                case KC_COMM: SEND_STRING(" and "); update_last_keys(KC_SPC, 4); key_state.magic_override = false; break;
-                case KC_DOT: start_sentence(); key_state.magic_override = false; break;
-                case KC_QUOT: SEND_STRING("ve "); update_last_keys(KC_SPC, 3); key_state.magic_override = false; break;
+                case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); key_state.magic_space_override = false; break;
+                case KC_COMM: SEND_STRING(" and "); update_last_keys(KC_SPC, 4); key_state.magic_space_override = false; break;
+                case KC_DOT: start_sentence(); key_state.magic_space_override = false; break;
+                case KC_QUOT: SEND_STRING("ve "); update_last_keys(KC_SPC, 3); key_state.magic_space_override = false; break;
 
-                default: tap_code(key_state.last_key); update_last_key(key_state.last_key); key_state.magic_override = false; break;
+                default: tap_code(key_state.last_key); update_last_key(key_state.last_key); key_state.magic_space_override = false; break;
             }
             set_mods(mods);
         }
@@ -2466,11 +2466,11 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
         if (record->tap.count && record->event.pressed) {
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_CTRL);
-            if (key_state.magic_override) {
             key_state.dynamic = true;
+            if (key_state.magic_space_override) {
                 tap_code(KC_SPC);
                 update_last_key(KC_SPC);
-                key_state.magic_override = false;
+                key_state.magic_space_override = false;
                 set_mods(mods);
                 return false;
             }
