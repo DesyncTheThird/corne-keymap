@@ -305,7 +305,7 @@ After cutting with `Select` or copying with `Select Right`, the `Enter` key on t
 
 The right thumb keys also have additional layering actions:
 - Activating both `Edit` and `Program` layers will activate the [Edit Overlay](#edit-overlay), which contains macros useful for editing, and also hold the `LCTL` or `LSFT` modifier for various keys on the left hand.
-- Activating both `Edit` and `Symbol` layers will replace the right hand with a copy of the `Data` layer.
+- Activating both `Edit` and `Symbol` layers will replace the right hand with a copy of the `Data` layer (with `_` replaced by `0`, since the thumb keys are not accessible in this configuration).
 
 These are both implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 

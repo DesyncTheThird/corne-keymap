@@ -165,6 +165,7 @@ enum custom_keycodes {
 #define RC_2 RCTL_T(KC_2)
 #define RA_3 LALT_T(KC_3)
 #define RG_UNDS LGUI_T(KC_UNDS)
+#define RG_0 LGUI_T(KC_0)
 
 // Data home row mods
 #define LG_EXLM LGUI_T(KC_EXLM)
@@ -359,11 +360,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_DATA_OVERLAY] = LAYOUT( //11
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, KC_CAPS,                      CY_MISC,    KC_7,    KC_8,    KC_9,  CS_EQL,  KC_DEL,
+          _______, _______, _______, _______, _______, KC_CAPS,                      CY_MISC,    KC_7,    KC_8,    KC_9,  CS_EQL,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                       CY_BRC,    RS_1,    RC_2,    RA_3, RG_UNDS, TABRSFT,
+          _______, _______, _______, _______, _______, _______,                       CY_BRC,    RS_1,    RC_2,    RA_3,    RG_0, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, KC_PGDN, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                      CY_COMP,    KC_4,    KC_5,    KC_6, CS_TILD,  KC_ENT,
+          _______, _______, _______, _______, _______, _______,                      CY_COMP,    KC_4,    KC_5,    KC_6, CS_TILD,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______, _______, KC_SLSH
                                           //`--------------------------'  `--------------------------'
@@ -646,6 +647,7 @@ static inline bool is_hrm(uint16_t keycode) {
         case RC_2:
         case RA_3:
         case RG_UNDS:
+        case RG_0:
 
         case LG_EXLM:
         case LA_COLN:
@@ -891,6 +893,7 @@ static bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
         case RG_A:
         case RG_TILD:
         case RG_UNDS:
+        case RG_0:
         case RG_DEL:
             homerow_mod(MOD_BIT(KC_RGUI), record);
             break;
@@ -3486,6 +3489,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 cs_tap_code16(KC_UNDS);
             }
             return false;
+        case RG_0:
+            if (record->tap.count && record->event.pressed) {
+                cs_tap_code16(KC_0);
+            }
+            return false;
 
 
 
@@ -3966,7 +3974,7 @@ static void render_layout(void) {
             oled_set_cursor(0,3);
             oled_write_raw_P(menu_layout_edit_left, layout_left_size);
             oled_set_cursor(0,6);
-            oled_write_raw_P(menu_layout_data_right, layout_right_size);
+            oled_write_raw_P(menu_layout_data_overlay_right, layout_right_size);
             break;
         case _UTILITY:
             oled_set_cursor(0,3);
@@ -4018,7 +4026,7 @@ static void render_overlays(void) {
     }
     if (IS_LAYER_ON(_DATA_OVERLAY)) {
         oled_set_cursor(5,3);
-        oled_write_raw_P(menu_layout_data_overlay, 18);
+        oled_write_raw_P(menu_layout_data_overlay_left, 18);
         return;
     }
     if (IS_LAYER_ON(_CONTROL_OVERLAY)) {
