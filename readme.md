@@ -371,10 +371,10 @@ Holding `LCTL` on any layer (including non-base layers) covers the left hand bot
 Activating the `Program` and `Edit` layers simultaneously will activate the `Edit Overlay` layer on top (of the `Edit` layer). This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
 The right hand is replaced with macros useful for editing:
-- The directional `Delete` macros delete in the indicated directions from the current cursor position to the beginning/end of the next word; holding shift deletes to the beginning/end of the current line instead.
+- The `++` macro outputs `1` on first press and increments on subsequent presses, rolling over to `0` after `9`, and resetting to `1` when the `Edit` layer is released.
+- The directional `Delete` macros delete in the indicated directions from the current cursor position to the beginning/end of the current line.
 - The `Line` macros add new lines above/below the current line.
 - The `Join` macro joins current line to following line with space between; omits the space if shifted.
-
 - The three bracket macros enclose the current word with the listed brackets. These macros also interoperate with the rollback feature.
 
 If an arrow key is held on the `Edit` layer while this layer is activated, the arrow key will be retriggered with a non-persistent control modifier, allowing quick horizontal navigation/vertical scrolling without having to manually re-press the arrow key after holding a modifier. If the modifier has been lost (see below), the arrow key will not be retriggered when the overlay is deactivated, avoiding the pause in motion.
