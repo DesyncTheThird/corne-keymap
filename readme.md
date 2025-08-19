@@ -180,7 +180,7 @@ Pressing `Space` plus a key on the left hand top row will output the function ke
 See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 
 ### Left:
-- Cycles between text and logo with cyberpunk glich aesthetic animation (based on [this code](https://gist.github.com/aleksbrgt/48a8eb932dc1b6aa8f4b36ecd7c380d0));
+- Cycles between text and logo with cyberpunk glitch aesthetic animation (based on [this code](https://gist.github.com/aleksbrgt/48a8eb932dc1b6aa8f4b36ecd7c380d0));
 - Logo displays WPM and current session time.
 
 ### Right:
@@ -460,6 +460,20 @@ See [here](https://docs.qmk.fm/squeezing_avr) for more ways to save space. (Most
    ```sh
    qmk compile -c -kb crkbd -km desync -e CONVERT_TO=rp2040_ce
    ```
+
+> [!TIP]
+> You can use
+>  ```sh
+>  qmk flash -c -kb crkbd -km desync -e CONVERT_TO=rp2040_ce -bl uf2-split-right
+>  ```
+>  and
+>  ```sh
+>  qmk flash -c -kb crkbd -km desync -e CONVERT_TO=rp2040_ce -bl uf2-split-left
+>  ```
+>  with RP2040 controllers to allow connections on both sides.
+
+> [!WARNING]
+> The `-bl` flag does not work with the `qmk compile` command, only `qmk flash`.
 
 6. OS Setup:
    - Regional layout: English (United Kingdom)

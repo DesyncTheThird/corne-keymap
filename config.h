@@ -1,13 +1,12 @@
 #pragma once
 
 #define SPLIT_USB_DETECT
-// #define SPLIT_WATCHDOG_ENABLE
+#define SPLIT_WATCHDOG_ENABLE
 
-// #define SPLIT_TRANSPORT_MIRROR
-// #define SPLIT_MODS_ENABLE
 #define SPLIT_LAYER_STATE_ENABLE
 #define SPLIT_OLED_ENABLE
 #define SPLIT_WPM_ENABLE
+#define SPLIT_ACTIVITY_ENABLE
 
 #define SPLIT_TRANSACTION_IDS_USER USER_SYNC_A
 
@@ -38,7 +37,6 @@ timeout managed manually in keymap instead.
 
 // #define MASTER_LEFT
 #define MASTER_RIGHT
-// #define EE_HANDS
 
 //#define QUICK_TAP_TERM 0
 //#define TAPPING_TERM 100
@@ -57,7 +55,6 @@ timeout managed manually in keymap instead.
     #define RGB_MATRIX_TIMEOUT 900000
     #define RGB_MATRIX_SLEEP
     
-    #define ENABLE_RGB_MATRIX_BAND_VAL
     #define ENABLE_RGB_MATRIX_RAINBOW_MOVING_CHEVRON
     #define ENABLE_RGB_MATRIX_RIVERFLOW
     #define ENABLE_RGB_MATRIX_TYPING_HEATMAP

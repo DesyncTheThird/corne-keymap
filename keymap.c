@@ -433,6 +433,7 @@ typedef struct _master_to_slave_t {
     bool oled_disable :1;
     bool capturing :1;
     bool active :1;
+    bool boot :1;
 } master_to_slave_t;
 
 master_to_slave_t sync_data;
@@ -718,12 +719,12 @@ static inline void cs_tap_code(uint16_t keycode) {
 
 static uint8_t current_rgb_mode = 0;
 static void set_rgb_mode(void) {
-    // dprintf("rgb_mode: %d\n", current_rgb_mode);
+    dprintf("rgb_mode: %d\n", current_rgb_mode);
     if (current_rgb_mode == 0) {
         rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_reactive_smooth);
     } else {
         // Skip 0/1 for off/solid background animations
-        rgb_matrix_mode_noeeprom(current_rgb_mode + 2);
+        rgb_matrix_mode_noeeprom(current_rgb_mode + 1);
     }
 }
 
@@ -738,10 +739,6 @@ static bool shifted(void) {
          || get_oneshot_mods() & MOD_BIT(KC_RSFT)
          );
 }
-
-static uint16_t boot_timer;
-static bool boot = false;
-static deferred_token boot_animation_token = INVALID_DEFERRED_TOKEN;
 
 
 
@@ -2679,23 +2676,6 @@ static bool process_vol_repeat(uint16_t keycode, keyrecord_t* record) {
 
 
 
-static bool process_boot_anim(uint16_t keycode, keyrecord_t* record) {
-    switch (keycode) {
-        case CS_LT3:
-        case CS_LT2:
-        case CS_LT1:
-        case CS_RT1:
-        case CS_RT2:
-        case CS_RT3:
-            if (!record->tap.count && record->event.pressed) {
-                cancel_deferred_exec(boot_animation_token);
-            }
-    }
-    return true;
-}
-
-
-
 //==============================================================================
 // Clock
 //==============================================================================
@@ -2847,7 +2827,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_edit_macros(keycode, record)) { return false; }
     if (!process_vol_repeat(keycode, record)) { return false; }
     if (!process_clock(keycode, record)) { return false; }
-    if (!process_boot_anim(keycode, record)) { return false; }
 
     switch (keycode) {
 
@@ -3101,9 +3080,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CS_RGBN:
             if (record->event.pressed) {
                 if (!shifted()) {
-                    current_rgb_mode = current_rgb_mode == 0 ? 3 : current_rgb_mode -1;
+                    current_rgb_mode = current_rgb_mode == 0 ? 5 : current_rgb_mode -1;
                 } else {
-                    current_rgb_mode = (current_rgb_mode + 1) % 3;
+                    current_rgb_mode = (current_rgb_mode + 1) % 6;
                 }
                 set_rgb_mode();
             }
@@ -4077,6 +4056,74 @@ bool oled_task_user(void) {
 
 
 
+// =============================================================================
+//  Boot/Shutdown
+// =============================================================================
+
+static bool boot = false;
+
+uint32_t stop_boot_animation(uint32_t trigger_time, void* cb_arg) {
+    boot = false;
+    rgb_matrix_set_speed_noeeprom(64);  
+    rgb_matrix_sethsv_noeeprom(165,255,255);
+    set_rgb_mode();
+    return 0;
+}
+
+uint32_t start_boot_animation(uint32_t trigger_time, void* cb_arg) {
+    rgb_matrix_sethsv_noeeprom(255,255,255);
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_boot_animation_effect);
+    defer_exec(1500, stop_boot_animation, NULL);
+    return 0;
+}
+
+void keyboard_post_init_user(void) {
+    boot = true;
+    layer_move(_BASE);
+
+    // Debug options
+    debug_enable = true;
+    // debug_matrix = true;
+    // debug_keyboard = true;
+    // debug_mouse = true;
+
+    update_sync();
+    defer_exec(500, start_boot_animation, NULL);
+    
+
+    // Clock
+    defer_exec(clock_callback(0,NULL), clock_callback, NULL);
+
+    // OLED sync
+    transaction_register_rpc(USER_SYNC_A, user_config_sync_handler);
+}
+
+static void oled_render_boot(bool bootloader) {
+    oled_clear();
+    if (bootloader) {
+        oled_write_raw_P(bootloader_oled, frame_size);
+    } else {
+        oled_write_P(PSTR("Rebooting"), false);
+    }
+    oled_render_dirty(true);
+}
+
+bool shutdown_user(bool jump_to_bootloader) {
+    oled_render_boot(jump_to_bootloader);
+    if (jump_to_bootloader) {
+        rgb_matrix_set_color_all(RGB_OFF);
+        // int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
+        // for (uint8_t i = 0; i < 12; i++) {
+        //     RGB underglow_rgb  = hsv_to_rgb((HSV){ 255, 255, 255 });
+        //     rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+        // }
+    }
+    rgb_matrix_update_pwm_buffers();
+    return false;
+}
+
+
+
 //==============================================================================
 // RGB
 //==============================================================================
@@ -4088,7 +4135,12 @@ static void rgb_matrix_set_color_split(uint8_t index, uint8_t r, uint8_t g, uint
     }
 }
 
-
+// int column1[] = {  6,  7,  8,  9, 33, 34, 35, 36};
+// int column2[] = { 13, 12, 11, 10, 40, 39, 38, 37};
+// int column3[] = { 14, 15, 16, 17, 41, 42, 43, 44};
+// int column4[] = {     20, 19, 18,     47, 46, 45};
+// int column5[] = {     21, 22, 23,     48, 49, 50};
+// int column6[] = {     26, 25, 24,     53, 52, 51};
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (case_lock_state.capturing || sync_data.capturing) {
@@ -4186,7 +4238,6 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 //                  `-----------'   `-----------'
 // Underglow:            00 - 05      27 - 32
 
-
 layer_state_t layer_state_set_user(layer_state_t state) {
     if (boot) {
         return state;
@@ -4211,89 +4262,12 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 
 // =============================================================================
-//  Boot/Shutdown
-// =============================================================================
-
-uint32_t boot_animation_fade(uint32_t trigger_time, void* cb_arg) {
-    static int fade = 0;
-    rgb_matrix_sethsv_noeeprom(255, 255, fade);
-    set_rgb_mode();
-    if (fade < 64) {
-        fade += 2;
-        return 50;
-    } else if (fade < 127) {
-        fade += 2;
-        return 100;
-    } else if (fade < 255) {
-        fade += 1;
-        return 100;
-    }
-    return 0;
-}
-
-void keyboard_post_init_user(void) {
-    boot_timer = timer_read();
-    boot = true;
-    layer_move(_BASE);
-
-    // Debug options
-    debug_enable = true;
-    // debug_matrix = true;
-    // debug_keyboard = true;
-    // debug_mouse = true;
-
-    // Boot animation
-    rgb_matrix_set_speed_noeeprom(64);
-    rgb_matrix_sethsv_noeeprom(255,255,255);
-    rgb_matrix_mode_noeeprom(RGB_MATRIX_BAND_VAL);
-
-    boot_animation_token = defer_exec(5200, boot_animation_fade, NULL);
-
-    // Clock
-    defer_exec(clock_callback(0,NULL), clock_callback, NULL);
-
-    // OLED sync
-    transaction_register_rpc(USER_SYNC_A, user_config_sync_handler);
-}
-
-static void oled_render_boot(bool bootloader) {
-    oled_clear();
-    if (bootloader) {
-        oled_write_raw_P(bootloader_oled, frame_size);
-    } else {
-    oled_write_P(PSTR("Rebooting"), false);
-    }
-    oled_render_dirty(true);
-}
-
-bool shutdown_user(bool jump_to_bootloader) {
-    oled_render_boot(jump_to_bootloader);
-    if (jump_to_bootloader) {
-        rgb_matrix_set_color_all(RGB_OFF);
-        int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
-        for (uint8_t i = 0; i < 12; i++) {
-            RGB underglow_rgb  = hsv_to_rgb((HSV){ 255, 255, 255 });
-            rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-        }
-    }
-    rgb_matrix_update_pwm_buffers();
-    return false;
-}
-
-
-
-// =============================================================================
 // Timers
 // =============================================================================
 
 #define IDLE_TIMEOUT 1000 * 60 * 5
 
 void housekeeping_task_user(void) {
-    // Exit boot animation
-    if (timer_elapsed(boot_timer) > 5000) {
-        boot = false;
-    }
-
     // Layer timeout
     if (last_input_activity_elapsed() > IDLE_TIMEOUT) {
         layer_off(_NUMPAD);
@@ -4374,6 +4348,7 @@ void housekeeping_task_user(void) {
                 .oled_disable = oled_state.oled_disable,
                 .capturing = case_lock_state.capturing,
                 .active = case_lock_state.active,
+                .boot = boot,
             };
             if (transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s)) {
                 last_sync = timer_read32();
