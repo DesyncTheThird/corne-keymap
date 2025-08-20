@@ -9,17 +9,20 @@ static bool plasma_flow(effect_params_t *params) {
     RGB_MATRIX_USE_LIMITS(led_min, led_max);
     const int16_t center_x = 112;
 
-    uint16_t step = scale16by8(g_rgb_timer, rgb_matrix_config.speed); 
+    const uint16_t period = 200;
+    const uint16_t pause  = 200;
+    const uint16_t total_cycle = period + pause;
 
-    uint16_t cycle = (center_x + 80) * 2 + 100;
-    uint16_t radius = step % cycle;
+    uint16_t step = scale16by8(g_rgb_timer, rgb_matrix_config.speed);
+    uint16_t cycle_pos = step % total_cycle;
+    uint16_t radius = cycle_pos * (center_x + 80) / period;
 
     for (uint8_t i = led_min; i < led_max; ++i) {
         RGB_MATRIX_TEST_LED_FLAGS();
 
         int16_t lx   = g_led_config.point[i].x;
-        uint16_t dist = (uint16_t)abs((int16_t)lx - center_x);
-        int16_t delta = (int16_t)radius - (int16_t)dist;
+        int16_t dist = abs(lx - center_x);
+        int16_t delta = radius - dist;
 
         hsv_t hsv = rgb_matrix_config.hsv;
 
@@ -48,28 +51,34 @@ static bool plasma_flow(effect_params_t *params) {
     return rgb_matrix_check_finished_leds(led_max);
 }
 
-
-
 static bool boot_animation_effect(effect_params_t *params) {
     RGB_MATRIX_USE_LIMITS(led_min, led_max);
     const int16_t center_x = 112;
 
-    uint16_t step = scale16by8(g_rgb_timer, rgb_matrix_config.speed); 
+    const uint16_t period = 200;
+    const uint16_t pause  = 200;
+    const uint16_t hold   = 1000;
+    const uint16_t total_cycle = period + pause + period + hold;
 
-    uint16_t cycle = (center_x + 80) * 2 + 500;
-    uint16_t radius = step % cycle;
-    
-    bool second_sweep = radius >= (center_x + 80);
-    if (second_sweep) {
-        radius -= (center_x + 80);
+    uint16_t step = scale16by8(g_rgb_timer, rgb_matrix_config.speed);
+    uint16_t cycle_pos = step % total_cycle;
+
+    bool first_wave  = cycle_pos < period;
+    bool second_wave = cycle_pos >= period + pause && cycle_pos < period + pause + period + hold;
+
+    uint16_t radius = 0;
+    if (first_wave) {
+        radius = cycle_pos * (center_x + 80) / period;
+    } else if (second_wave) {
+        radius = (cycle_pos - period - pause) * (center_x + 80) / period;
     }
 
     for (uint8_t i = led_min; i < led_max; ++i) {
         RGB_MATRIX_TEST_LED_FLAGS();
 
         int16_t lx   = g_led_config.point[i].x;
-        uint16_t dist = (uint16_t)abs((int16_t)lx - center_x);
-        int16_t delta = (int16_t)radius - (int16_t)dist;
+        int16_t dist = abs(lx - center_x);
+        int16_t delta = radius - dist;
 
         hsv_t hsv = rgb_matrix_config.hsv;
 
@@ -88,14 +97,10 @@ static bool boot_animation_effect(effect_params_t *params) {
                     hsv.v = (RGB_MATRIX_MAXIMUM_BRIGHTNESS / 2) - ((trail_delta - 15) * (RGB_MATRIX_MAXIMUM_BRIGHTNESS / 2) / 40);
                 }
             }
-        } else if (delta >= 65) {
-            if (!second_sweep) {
-                hsv.v = 0;
-            } else {
-                hsv.h = 200;
-                hsv.s = 255;
-                hsv.v = delta < 185 ? delta - 65 : 120;
-            }
+        } else if (delta >= 65 && second_wave) {
+            hsv.h = 200;
+            hsv.s = 255;
+            hsv.v = delta < 185 ? delta - 65 : 120;
         } else {
             hsv.v = 0;
         }
