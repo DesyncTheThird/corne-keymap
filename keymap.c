@@ -430,7 +430,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 typedef struct _master_to_slave_t {
     bool static_display :1;
     bool oled_timeout :1;
-    bool oled_disable :1;
+    bool oled_active :1;
     bool capturing :1;
     bool active :1;
     bool boot :1;
@@ -491,16 +491,16 @@ static clock_state_t clock_state = {
 typedef struct {
     uint8_t menu;
     bool static_display :1;
-    bool oled_timeout :1;
-    bool oled_disable :1;
+    bool timeout :1;
+    bool active :1;
     bool muted :1;
 } oled_flags_t;
 
 static oled_flags_t oled_state = {
     .menu = 0,
     .static_display = false,
-    .oled_timeout = false,
-    .oled_disable = false,
+    .timeout = false,
+    .active = true,
     .muted = false
 };
 
@@ -522,8 +522,8 @@ static void update_sync(void) {
     if (is_keyboard_master()) {
         master_to_slave_t m2s = {
             .static_display = oled_state.static_display,
-            .oled_timeout = oled_state.oled_timeout,
-            .oled_disable = oled_state.oled_disable,
+            .oled_timeout = oled_state.timeout,
+            .oled_active = oled_state.active,
             .capturing = case_lock_state.capturing,
             .active = case_lock_state.active,
         };
@@ -728,6 +728,16 @@ static bool shifted(void) {
          );
 }
 
+typedef struct {
+    bool timeout :1;
+    bool active :1;
+} rgb_flags_t;
+
+static rgb_flags_t rgb_state = {
+    .timeout = false,
+    .active = true
+};
+
 static uint8_t current_rgb_mode = 0;
 static void set_rgb_mode(void) {
     dprintf("rgb_mode: %d\n", current_rgb_mode);
@@ -744,6 +754,7 @@ static void rgb_matrix_set_color_split(uint8_t index, uint8_t r, uint8_t g, uint
         rgb_matrix_set_color(index, r, g, b);
     }
 }
+
 
 
 //==============================================================================
@@ -3095,6 +3106,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CS_RGBT:
             if (record->event.pressed) {
                 rgb_matrix_toggle_noeeprom();
+                rgb_state.active = !rgb_state.active;
             }
             break;
 
@@ -3120,7 +3132,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             break;
         case OLEDTOG:
             if (record->event.pressed) {
-                oled_state.oled_disable = !oled_state.oled_disable;
+                oled_state.active = !oled_state.active;
                 update_sync();
             }
             break;
@@ -3624,10 +3636,10 @@ static void render_logo_minor(bool can_be_major) {
 
 
 static void render_draw(void) {
-    if (sync_data.oled_timeout || sync_data.oled_disable) {
+    if (sync_data.oled_timeout || !sync_data.oled_active) {
         return;
     }
-    
+
     anim_timer = timer_elapsed(render_timer);
     if (anim_timer < 150) {
         show_text ? render_text_major() : render_logo_major();
@@ -4034,11 +4046,11 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
 
 bool oled_task_user(void) {
-    if (oled_state.oled_disable) {
+    if (!oled_state.active) {
         oled_clear();
         return false;
     }
-    if (oled_state.oled_timeout) {
+    if (oled_state.timeout) {
         oled_off();
         return false;
     }
@@ -4266,6 +4278,21 @@ void housekeeping_task_user(void) {
     if (last_input_activity_elapsed() > IDLE_TIMEOUT) {
         layer_off(_NUMPAD);
         layer_off(_TOUHOU);
+        layer_off(_MOUSE);
+        layer_off(_EDIT);
+
+        if (rgb_matrix_get_mode() != RGB_MATRIX_CUSTOM_timeout_animation_effect) {
+            rgb_state.timeout = true;
+            rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_timeout_animation_effect);
+        }
+    } else {
+        if (rgb_state.active) {
+            rgb_matrix_enable_noeeprom();
+        }
+        if (rgb_state.timeout) {
+            set_rgb_mode();
+            rgb_state.timeout = false;
+        }
     }
 
     // Reset macro timers
@@ -4304,14 +4331,14 @@ void housekeeping_task_user(void) {
     if (last_input_activity_elapsed() > 3000) {
         // OLED timeout
         clock_state.setting = set_none;
-        oled_state.oled_timeout = true;
+        oled_state.timeout = true;
         static uint32_t last_sync = 0;
         if (timer_elapsed32(last_sync) > 500) {
             update_sync();
             last_sync = timer_read32();
         }
     } else {
-        oled_state.oled_timeout = false;
+        oled_state.timeout = false;
     }
 
     // Reset alt-tab key
@@ -4338,8 +4365,8 @@ void housekeeping_task_user(void) {
         if (timer_elapsed32(last_sync) > 500) { // Interact with slave every 500ms
             master_to_slave_t m2s = {
                 .static_display = oled_state.static_display,
-                .oled_timeout = oled_state.oled_timeout,
-                .oled_disable = oled_state.oled_disable,
+                .oled_timeout = oled_state.timeout,
+                .oled_active = oled_state.active,
                 .capturing = case_lock_state.capturing,
                 .active = case_lock_state.active,
                 .boot = boot,
@@ -4356,7 +4383,7 @@ void housekeeping_task_user(void) {
         } else {
             // render_draw();
         }
-        if (sync_data.oled_timeout || sync_data.oled_disable) { 
+        if (sync_data.oled_timeout || !sync_data.oled_active) { 
             oled_off();
         } else {
             oled_on();

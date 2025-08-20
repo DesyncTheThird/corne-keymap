@@ -1,7 +1,7 @@
 RGB_MATRIX_EFFECT(plasma_flow)
 RGB_MATRIX_EFFECT(boot_animation_effect)
+RGB_MATRIX_EFFECT(timeout_animation_effect)
 RGB_MATRIX_EFFECT(reactive_smooth)
-
 
 #ifdef RGB_MATRIX_CUSTOM_EFFECT_IMPLS
 
@@ -95,9 +95,9 @@ static bool boot_animation_effect(effect_params_t *params) {
                 hsv.s = 255;
                 uint8_t trail_delta = delta - 10;
                 if (trail_delta < 15) {
-                    hsv.v = RGB_MATRIX_MAXIMUM_BRIGHTNESS - (trail_delta * (RGB_MATRIX_MAXIMUM_BRIGHTNESS / 2) / 15);
+                    hsv.v = RGB_MATRIX_MAXIMUM_BRIGHTNESS - (trail_delta * RGB_MATRIX_MAXIMUM_BRIGHTNESS / 30);
                 } else {
-                    hsv.v = (RGB_MATRIX_MAXIMUM_BRIGHTNESS / 2) - ((trail_delta - 15) * (RGB_MATRIX_MAXIMUM_BRIGHTNESS / 2) / 40);
+                    hsv.v = (RGB_MATRIX_MAXIMUM_BRIGHTNESS / 2) - ((trail_delta - 15) * RGB_MATRIX_MAXIMUM_BRIGHTNESS / 80);
                 }
             }
         } else if (delta >= 65 && second_wave) {
@@ -114,7 +114,41 @@ static bool boot_animation_effect(effect_params_t *params) {
     return rgb_matrix_check_finished_leds(led_max);
 }
 
+static uint16_t timeout_start = 0;
+static bool timeout_active = false;
 
+static bool timeout_animation_effect(effect_params_t *params) {
+    RGB_MATRIX_USE_LIMITS(led_min, led_max);
+
+    if (!timeout_active) {
+        timeout_start = timer_read();
+        timeout_active = true;
+    }
+
+    uint16_t elapsed = timer_elapsed(timeout_start);
+    const uint16_t fade_duration = 5000;
+
+    if (elapsed >= fade_duration) {
+        timeout_active = false;
+        rgb_matrix_set_color_all(0, 0, 0);
+        rgb_matrix_disable_noeeprom();
+        return rgb_matrix_check_finished_leds(led_max);
+    }
+
+    hsv_t hsv = rgb_matrix_config.hsv;
+
+    uint8_t progress = (uint32_t)elapsed * RGB_MATRIX_MAXIMUM_BRIGHTNESS / fade_duration;
+    hsv.v = RGB_MATRIX_MAXIMUM_BRIGHTNESS > progress ? RGB_MATRIX_MAXIMUM_BRIGHTNESS - progress : 0;
+    hsv.h += scale16by8(g_rgb_timer, qadd8(rgb_matrix_config.speed, 8) >> 4);
+
+    for (uint8_t i = led_min; i < led_max; ++i) {
+        RGB_MATRIX_TEST_LED_FLAGS();
+
+        rgb_t rgb = rgb_matrix_hsv_to_rgb(hsv);
+        rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+    }
+    return rgb_matrix_check_finished_leds(led_max);
+}
 
 #    ifdef RGB_MATRIX_KEYREACTIVE_ENABLED
 
