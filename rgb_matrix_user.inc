@@ -55,22 +55,25 @@ static bool boot_animation_effect(effect_params_t *params) {
     RGB_MATRIX_USE_LIMITS(led_min, led_max);
     const int16_t center_x = 112;
 
+    const uint16_t delay  = 250;
     const uint16_t period = 200;
     const uint16_t pause  = 200;
     const uint16_t hold   = 1000;
-    const uint16_t total_cycle = period + pause + period + hold;
+    const uint16_t total_cycle = delay + period + pause + period + hold;
 
     uint16_t step = scale16by8(g_rgb_timer, rgb_matrix_config.speed);
     uint16_t cycle_pos = step % total_cycle;
 
-    bool first_wave  = cycle_pos < period;
-    bool second_wave = cycle_pos >= period + pause && cycle_pos < period + pause + period + hold;
+    bool first_wave  = cycle_pos >= delay
+                    && cycle_pos <  delay + period;
+    bool second_wave = cycle_pos >= delay + period + pause
+                    && cycle_pos <  delay + period + pause + period + hold;
 
     uint16_t radius = 0;
     if (first_wave) {
-        radius = cycle_pos * (center_x + 80) / period;
+        radius = (cycle_pos - delay) * (center_x + 80) / period;
     } else if (second_wave) {
-        radius = (cycle_pos - period - pause) * (center_x + 80) / period;
+        radius = (cycle_pos - delay - period - pause) * (center_x + 80) / period;
     }
 
     for (uint8_t i = led_min; i < led_max; ++i) {

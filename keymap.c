@@ -716,18 +716,6 @@ static inline void cs_tap_code(uint16_t keycode) {
     set_mods(mods);
 }
 
-
-static uint8_t current_rgb_mode = 0;
-static void set_rgb_mode(void) {
-    dprintf("rgb_mode: %d\n", current_rgb_mode);
-    if (current_rgb_mode == 0) {
-        rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_reactive_smooth);
-    } else {
-        // Skip 0/1 for off/solid background animations
-        rgb_matrix_mode_noeeprom(current_rgb_mode + 1);
-    }
-}
-
 static bool ctrl_on(void) {
     return (get_mods() & MOD_BIT(KC_LCTL) || get_mods() & MOD_BIT(KC_RCTL));
 }
@@ -740,6 +728,22 @@ static bool shifted(void) {
          );
 }
 
+static uint8_t current_rgb_mode = 0;
+static void set_rgb_mode(void) {
+    dprintf("rgb_mode: %d\n", current_rgb_mode);
+    if (current_rgb_mode == 0) {
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_reactive_smooth);
+    } else {
+        // Skip 0/1 for off/solid background animations
+        rgb_matrix_mode_noeeprom(current_rgb_mode + 1);
+    }
+}
+
+static void rgb_matrix_set_color_split(uint8_t index, uint8_t r, uint8_t g, uint8_t b) {
+    if ((!is_keyboard_master() && index < 27) || (is_keyboard_master() && index >= 27)) {
+        rgb_matrix_set_color(index, r, g, b);
+    }
+}
 
 
 //==============================================================================
@@ -4065,15 +4069,9 @@ static bool boot = false;
 uint32_t stop_boot_animation(uint32_t trigger_time, void* cb_arg) {
     boot = false;
     rgb_matrix_set_speed_noeeprom(64);  
-    rgb_matrix_sethsv_noeeprom(165,255,255);
+    rgb_matrix_sethsv_noeeprom(110,255,255);
+    g_rgb_timer = 0;
     set_rgb_mode();
-    return 0;
-}
-
-uint32_t start_boot_animation(uint32_t trigger_time, void* cb_arg) {
-    rgb_matrix_sethsv_noeeprom(255,255,255);
-    rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_boot_animation_effect);
-    defer_exec(1500, stop_boot_animation, NULL);
     return 0;
 }
 
@@ -4088,8 +4086,11 @@ void keyboard_post_init_user(void) {
     // debug_mouse = true;
 
     update_sync();
-    defer_exec(500, start_boot_animation, NULL);
-    
+
+    rgb_matrix_enable_noeeprom();
+    rgb_matrix_sethsv_noeeprom(255,255,255);
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_boot_animation_effect);
+    defer_exec(4200, stop_boot_animation, NULL);
 
     // Clock
     defer_exec(clock_callback(0,NULL), clock_callback, NULL);
@@ -4112,11 +4113,11 @@ bool shutdown_user(bool jump_to_bootloader) {
     oled_render_boot(jump_to_bootloader);
     if (jump_to_bootloader) {
         rgb_matrix_set_color_all(RGB_OFF);
-        // int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
-        // for (uint8_t i = 0; i < 12; i++) {
-        //     RGB underglow_rgb  = hsv_to_rgb((HSV){ 255, 255, 255 });
-        //     rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
-        // }
+        int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
+        for (uint8_t i = 0; i < 12; i++) {
+            RGB underglow_rgb  = hsv_to_rgb((HSV){ 255, 255, 255 });
+            rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
+        }
     }
     rgb_matrix_update_pwm_buffers();
     return false;
@@ -4127,13 +4128,6 @@ bool shutdown_user(bool jump_to_bootloader) {
 //==============================================================================
 // RGB
 //==============================================================================
-
-// Wrapper around rgb_matrix_set_color to correct for split detection with MASTER_RIGHT defined
-static void rgb_matrix_set_color_split(uint8_t index, uint8_t r, uint8_t g, uint8_t b) {
-    if ((!is_keyboard_master() && index < 27) || (is_keyboard_master() && index >= 27)) {
-        rgb_matrix_set_color(index, r, g, b);
-    }
-}
 
 // int column1[] = {  6,  7,  8,  9, 33, 34, 35, 36};
 // int column2[] = { 13, 12, 11, 10, 40, 39, 38, 37};
