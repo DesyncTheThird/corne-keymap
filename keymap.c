@@ -4295,7 +4295,6 @@ void housekeeping_task_user(void) {
         }
     } else {
         if (rgb_state.active && rgb_state.timeout) {
-            fade_out_active = false;
             rgb_matrix_enable_noeeprom();
             rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_fade_in_effect);
         }
