@@ -1,6 +1,7 @@
 RGB_MATRIX_EFFECT(plasma_flow)
 RGB_MATRIX_EFFECT(boot_animation_effect)
-RGB_MATRIX_EFFECT(timeout_animation_effect)
+RGB_MATRIX_EFFECT(fade_out_effect)
+RGB_MATRIX_EFFECT(fade_in_effect)
 RGB_MATRIX_EFFECT(reactive_smooth)
 
 #ifdef RGB_MATRIX_CUSTOM_EFFECT_IMPLS
@@ -114,31 +115,65 @@ static bool boot_animation_effect(effect_params_t *params) {
     return rgb_matrix_check_finished_leds(led_max);
 }
 
-static uint16_t timeout_start = 0;
-static bool timeout_active = false;
+bool fade_out_active = false;
+bool fade_in_active = false;
 
-static bool timeout_animation_effect(effect_params_t *params) {
+static bool fade_out_effect(effect_params_t *params) {
     RGB_MATRIX_USE_LIMITS(led_min, led_max);
 
-    if (!timeout_active) {
-        timeout_start = timer_read();
-        timeout_active = true;
+    static uint16_t fade_out_start = 0;
+    if (!fade_out_active) {
+        fade_out_start = timer_read();
+        fade_out_active = true;
     }
 
-    uint16_t elapsed = timer_elapsed(timeout_start);
-    const uint16_t fade_duration = 5000;
+    uint16_t elapsed = timer_elapsed(fade_out_start);
+    const uint16_t duration = 5000;
 
-    if (elapsed >= fade_duration) {
-        timeout_active = false;
-        rgb_matrix_set_color_all(0, 0, 0);
+    if (elapsed >= duration) {
+        fade_out_active = false;
         rgb_matrix_disable_noeeprom();
         return rgb_matrix_check_finished_leds(led_max);
     }
 
     hsv_t hsv = rgb_matrix_config.hsv;
 
-    uint8_t progress = (uint32_t)elapsed * RGB_MATRIX_MAXIMUM_BRIGHTNESS / fade_duration;
-    hsv.v = RGB_MATRIX_MAXIMUM_BRIGHTNESS > progress ? RGB_MATRIX_MAXIMUM_BRIGHTNESS - progress : 0;
+    uint8_t progress = (uint32_t)elapsed * RGB_MATRIX_MAXIMUM_BRIGHTNESS / duration;
+    hsv.v = progress < RGB_MATRIX_MAXIMUM_BRIGHTNESS ? RGB_MATRIX_MAXIMUM_BRIGHTNESS - progress : 0;
+    hsv.h += scale16by8(g_rgb_timer, qadd8(rgb_matrix_config.speed, 8) >> 4);
+
+    for (uint8_t i = led_min; i < led_max; ++i) {
+        RGB_MATRIX_TEST_LED_FLAGS();
+
+        rgb_t rgb = rgb_matrix_hsv_to_rgb(hsv);
+        rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+    }
+    return rgb_matrix_check_finished_leds(led_max);
+}
+
+
+static bool fade_in_effect(effect_params_t *params) {
+    RGB_MATRIX_USE_LIMITS(led_min, led_max);
+
+    static uint16_t fade_in_start = 0;
+    if (!fade_in_active) {
+        fade_in_start = timer_read();
+        fade_in_active = true;
+    }
+
+    uint16_t elapsed = timer_elapsed(fade_in_start);
+    const uint16_t duration = 2500;
+
+    if (elapsed >= duration) {
+        fade_in_active = false;
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_reactive_smooth);
+        return rgb_matrix_check_finished_leds(led_max);
+    }
+
+    hsv_t hsv = rgb_matrix_config.hsv;
+
+    uint8_t progress = (uint32_t)elapsed * RGB_MATRIX_MAXIMUM_BRIGHTNESS / duration;
+    hsv.v = progress < RGB_MATRIX_MAXIMUM_BRIGHTNESS ? progress : RGB_MATRIX_MAXIMUM_BRIGHTNESS;
     hsv.h += scale16by8(g_rgb_timer, qadd8(rgb_matrix_config.speed, 8) >> 4);
 
     for (uint8_t i = led_min; i < led_max; ++i) {

@@ -433,7 +433,6 @@ typedef struct _master_to_slave_t {
     bool oled_active :1;
     bool capturing :1;
     bool active :1;
-    bool boot :1;
 } master_to_slave_t;
 
 master_to_slave_t sync_data;
@@ -459,7 +458,7 @@ typedef struct {
     bool alt_tab_active :1;
 } misc_key_flags_t;
 
-misc_key_flags_t misc_key_state = {
+static misc_key_flags_t misc_key_state = {
     .LT3_active = false,
     .RT3_active = false,
     .left_eager_shift = false,
@@ -564,7 +563,7 @@ typedef struct {
     bool magic_space_override :1;
 } recent_key_state_t;
 
-recent_key_state_t key_state = {
+static recent_key_state_t key_state = {
     .dynamic = false,
     .magic_space_override = false,
     .count = 1,
@@ -1910,7 +1909,7 @@ typedef struct {
     uint num :4;
 } cycling_macro_state_t;
 
-cycling_macro_state_t cycle_state = {
+static cycling_macro_state_t cycle_state = {
     .misc = 0,
     .bracket = 0,
     .comp = 0,
@@ -4080,7 +4079,7 @@ static bool boot = false;
 
 uint32_t stop_boot_animation(uint32_t trigger_time, void* cb_arg) {
     boot = false;
-    rgb_matrix_set_speed_noeeprom(64);  
+    rgb_matrix_set_speed_noeeprom(64);
     rgb_matrix_sethsv_noeeprom(110,255,255);
     g_rgb_timer = 0;
     set_rgb_mode();
@@ -4244,8 +4243,14 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 //                  `-----------'   `-----------'
 // Underglow:            00 - 05      27 - 32
 
+extern bool fade_out_active;
+extern bool fade_in_active;
+
 layer_state_t layer_state_set_user(layer_state_t state) {
     if (boot) {
+        return state;
+    }
+    if (fade_out_active || fade_in_active) {
         return state;
     }
 
@@ -4274,25 +4279,27 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #define IDLE_TIMEOUT 1000 * 60 * 5
 
 void housekeeping_task_user(void) {
-    // Layer timeout
+    // Layer timeouts
     if (last_input_activity_elapsed() > IDLE_TIMEOUT) {
         layer_off(_NUMPAD);
         layer_off(_TOUHOU);
         layer_off(_MOUSE);
         layer_off(_EDIT);
+    }
 
-        if (rgb_matrix_get_mode() != RGB_MATRIX_CUSTOM_timeout_animation_effect) {
+    // RGB matrix timeout
+    if (last_input_activity_elapsed() > IDLE_TIMEOUT) {
+        if (rgb_matrix_get_mode() != RGB_MATRIX_CUSTOM_fade_out_effect) {
             rgb_state.timeout = true;
-            rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_timeout_animation_effect);
+            rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_fade_out_effect);
         }
     } else {
-        if (rgb_state.active) {
+        if (rgb_state.active && rgb_state.timeout) {
+            fade_out_active = false;
             rgb_matrix_enable_noeeprom();
+            rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_fade_in_effect);
         }
-        if (rgb_state.timeout) {
-            set_rgb_mode();
-            rgb_state.timeout = false;
-        }
+        rgb_state.timeout = false;
     }
 
     // Reset macro timers
@@ -4368,8 +4375,7 @@ void housekeeping_task_user(void) {
                 .oled_timeout = oled_state.timeout,
                 .oled_active = oled_state.active,
                 .capturing = case_lock_state.capturing,
-                .active = case_lock_state.active,
-                .boot = boot,
+                .active = case_lock_state.active
             };
             if (transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s)) {
                 last_sync = timer_read32();
