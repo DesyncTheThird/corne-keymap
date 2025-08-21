@@ -34,9 +34,8 @@ timeout managed manually in keymap instead.
 #define OLED_DISPLAY_64X128
 // #define OLED_COLUMN_OFFSET 1
 
-
-// #define MASTER_LEFT
-#define MASTER_RIGHT
+// #define MASTER_RIGHT
+#define EE_HANDS
 
 //#define QUICK_TAP_TERM 0
 //#define TAPPING_TERM 100
