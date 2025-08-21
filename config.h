@@ -10,49 +10,26 @@
 
 #define SPLIT_TRANSACTION_IDS_USER USER_SYNC_A
 
-
-
-
 #define WPM_SAMPLE_SECONDS 10
 #define WPM_SAMPLE_PERIODS 50
 #define WPM_LAUNCH_CONTROL
 
+#define LAYER_LOCK_IDLE_TIMEOUT 300000
 
-#define LAYER_LOCK_IDLE_TIMEOUT 900000
-
-// #define OLED_SCROLL_TIMEOUT 0
-// #define OLED_TIMEOUT 10000
-/*
-Animations/deferred executions seem to interfere
-with last_input_activity_elapsed();
-timeout managed manually in keymap instead.
-*/
-
-// #define OLED_UPDATE_INTERVAL 25
-
-//#define USE_MATRIX_I2C
 #define OLED_DISPLAY_64X128
 // #define OLED_COLUMN_OFFSET 1
 
 // #define MASTER_RIGHT
 #define EE_HANDS
 
-//#define QUICK_TAP_TERM 0
-//#define TAPPING_TERM 100
-
 #ifdef RGB_MATRIX_ENABLE
-    // #define RGB_MATRIX_KEYPRESSES
-    // #define RGB_DISABLE_WHEN_USB_SUSPENDED
-    // #define RGB_MATRIX_FRAMEBUFFER_EFFECTS
     #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 120
     #define RGB_MATRIX_HUE_STEP 8
     #define RGB_MATRIX_SAT_STEP 8
     #define RGB_MATRIX_VAL_STEP 8
     #define RGB_MATRIX_SPD_STEP 10
 
-    // #define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_SOLID_REACTIVE
-    #define RGB_MATRIX_TIMEOUT 900000
-    #define RGB_MATRIX_SLEEP
+    #define RGB_MATRIX_TIMEOUT 310000
     
     #define ENABLE_RGB_MATRIX_RAINBOW_MOVING_CHEVRON
     #define ENABLE_RGB_MATRIX_RIVERFLOW
@@ -62,8 +39,6 @@ timeout managed manually in keymap instead.
     #define RGB_MATRIX_SOLID_REACTIVE_GRADIENT_MODE
 #endif
 
-
-
 #undef TAPPING_TOGGLE
 #define TAPPING_TOGGLE 2
 
@@ -71,7 +46,6 @@ timeout managed manually in keymap instead.
 #define ONESHOT_TAP_TOGGLE 3
 #undef ONESHOT_TIMEOUT
 #define ONESHOT_TIMEOUT 1000
-// #define NO_ACTION_ONESHOT
 
 //#define COMBO_TERM 20
 #define COMBO_TERM_PER_COMBO
@@ -79,11 +53,10 @@ timeout managed manually in keymap instead.
 #define COMBO_ONLY_FROM_LAYER 0
 #define COMBO_MUST_TAP_PER_COMBO
 // #define COMBO_MUST_HOLD_PER_COMBO
-// #define EXTRA_SHORT_COMBOS // Saves space, but only 6 keys per combo
+// #define EXTRA_SHORT_COMBOS
 
 #define COMBO_TERM_PER_COMBO
 // #define COMBO_MUST_PRESS_IN_ORDER_PER_COMBO
-
 
 // Timer for mod and layer taps
 #undef TAPPING_TERM
@@ -92,19 +65,11 @@ timeout managed manually in keymap instead.
 
 #define FLOW_TAP_TERM 100
 
-// Perform hold action if other keys are pressed (nested/rolled activations).
 #define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
-
-// Perform hold action if other keys are pressed (nested only).
 #define PERMISSIVE_HOLD_PER_KEY
-
 #define CHORDAL_HOLD
-
-// Disable repeating tap function on tap-hold keys.
-// #define QUICK_TAP_TERM 0
 #define QUICK_TAP_TERM_PER_KEY
 
-// N-key rollover
 #define NKRO_DEFAULT_ON true
 
 // Auto Shift
@@ -139,8 +104,6 @@ timeout managed manually in keymap instead.
 #undef MOUSEKEY_WHEEL_TIME_TO_MAX
 #define MOUSEKEY_WHEEL_TIME_TO_MAX 40
 
-
-
 #define OLED_FONT_H "keyboards/crkbd/keymaps/desync/font.c"
 
 #undef LOCKING_SUPPORT_ENABLE
@@ -152,8 +115,6 @@ timeout managed manually in keymap instead.
 
 // #define LAYER_STATE_8BIT
 #define LAYER_STATE_16BIT
-
-
 
 // #define PS2_CLOCK_PIN B5
 // #define PS2_DATA_PIN  B4

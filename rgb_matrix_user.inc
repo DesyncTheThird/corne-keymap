@@ -123,13 +123,15 @@ static const int16_t duration = 5000;
 static bool fade_out_effect(effect_params_t *params) {
     RGB_MATRIX_USE_LIMITS(led_min, led_max);
 
-    if (timer_elapsed(fade_start) > duration && !fade_out_active) {
+    int32_t elapsed = timer_elapsed(fade_start);
+
+    if (elapsed > duration && !fade_out_active) {
         fade_start = timer_read();
         fade_out_active = true;
         fade_in_active = false;
     }
-
-    int32_t elapsed = timer_elapsed(fade_start);
+    
+    elapsed = timer_elapsed(fade_start);
 
     if (elapsed > duration) {
         fade_out_active = false;
@@ -140,31 +142,28 @@ static bool fade_out_effect(effect_params_t *params) {
     hsv_t hsv = rgb_matrix_config.hsv;
     hsv.v = RGB_MATRIX_MAXIMUM_BRIGHTNESS - elapsed * RGB_MATRIX_MAXIMUM_BRIGHTNESS / duration;
     hsv.h += scale16by8(g_rgb_timer, qadd8(rgb_matrix_config.speed, 8) >> 4);
-
-    for (uint8_t i = led_min; i < led_max; ++i) {
-        RGB_MATRIX_TEST_LED_FLAGS();
-
-        rgb_t rgb = rgb_matrix_hsv_to_rgb(hsv);
-        rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
-    }
+    
+    rgb_t rgb = rgb_matrix_hsv_to_rgb(hsv);
+    rgb_matrix_set_color_all(rgb.r, rgb.g, rgb.b);
     return rgb_matrix_check_finished_leds(led_max);
 }
 
 static bool fade_in_effect(effect_params_t *params) {
     RGB_MATRIX_USE_LIMITS(led_min, led_max);
+    
+    int32_t elapsed = timer_elapsed(fade_start);
 
-    if (timer_elapsed(fade_start) > duration && !fade_in_active) {
+    if (elapsed > duration && !fade_in_active) {
         fade_start = timer_read();
         fade_in_active = true;
         fade_out_active = false;
     }
-
     if (fade_out_active) {
-        fade_start = timer_read() - (duration - timer_elapsed(fade_start)) / 2;
+        fade_start = timer_read() - (duration - elapsed) / 2;
         fade_out_active = false;
     }
 
-    int32_t elapsed = timer_elapsed(fade_start);
+    elapsed = timer_elapsed(fade_start);
 
     if (elapsed > duration / 2) {
         fade_in_active = false;
@@ -176,11 +175,8 @@ static bool fade_in_effect(effect_params_t *params) {
     hsv.v = 2 * elapsed * RGB_MATRIX_MAXIMUM_BRIGHTNESS / duration;
     hsv.h += scale16by8(g_rgb_timer, qadd8(rgb_matrix_config.speed, 8) >> 4);
 
-    for (uint8_t i = led_min; i < led_max; ++i) {
-        RGB_MATRIX_TEST_LED_FLAGS();
-        rgb_t rgb = rgb_matrix_hsv_to_rgb(hsv);
-        rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
-    }
+    rgb_t rgb = rgb_matrix_hsv_to_rgb(hsv);
+    rgb_matrix_set_color_all(rgb.r, rgb.g, rgb.b);
     return rgb_matrix_check_finished_leds(led_max);
 }
 
