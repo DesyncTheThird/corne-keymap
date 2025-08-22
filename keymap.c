@@ -728,23 +728,22 @@ static bool shifted(void) {
 }
 
 typedef struct {
-    bool timeout :1;
+    uint8_t mode;
     bool active :1;
 } rgb_flags_t;
 
 static rgb_flags_t rgb_state = {
-    .timeout = false,
+    .mode = 0,
     .active = true
 };
 
-static uint8_t current_rgb_mode = 0;
 static void set_rgb_mode(void) {
-    dprintf("rgb_mode: %d\n", current_rgb_mode);
-    if (current_rgb_mode == 0) {
+    // dprintf("rgb_mode: %d\n", rgb_state.mode);
+    if (rgb_state.mode == 0) {
         rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_reactive_smooth);
     } else {
         // Skip 0/1 for off/solid background animations
-        rgb_matrix_mode_noeeprom(current_rgb_mode + 1);
+        rgb_matrix_mode_noeeprom(rgb_state.mode + 1);
     }
 }
 
@@ -3094,9 +3093,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case CS_RGBN:
             if (record->event.pressed) {
                 if (!shifted()) {
-                    current_rgb_mode = current_rgb_mode == 0 ? 5 : current_rgb_mode -1;
+                    rgb_state.mode = rgb_state.mode == 0 ? 5 : rgb_state.mode -1;
                 } else {
-                    current_rgb_mode = (current_rgb_mode + 1) % 6;
+                    rgb_state.mode = (rgb_state.mode + 1) % 6;
                 }
                 set_rgb_mode();
             }
@@ -4279,8 +4278,13 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #define IDLE_TIMEOUT 1000 * 60 * 5
 
 void housekeeping_task_user(void) {
-    // Layer timeouts
-    if (last_input_activity_elapsed() > IDLE_TIMEOUT) {
+    static bool was_idle = false;
+    bool is_idle = last_input_activity_elapsed() > IDLE_TIMEOUT;
+    bool fall = !is_idle && was_idle;
+    bool rise = is_idle && !was_idle;
+
+    // Layer timeout
+    if (is_idle && !was_idle) {
         layer_off(_NUMPAD);
         layer_off(_TOUHOU);
         layer_off(_MOUSE);
@@ -4288,18 +4292,15 @@ void housekeeping_task_user(void) {
     }
 
     // RGB matrix timeout
-    if (last_input_activity_elapsed() > IDLE_TIMEOUT) {
-        if (rgb_matrix_get_mode() != RGB_MATRIX_CUSTOM_fade_out_effect) {
-            rgb_state.timeout = true;
-            rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_fade_out_effect);
-        }
-    } else {
-        if (rgb_state.active && rgb_state.timeout) {
-            rgb_matrix_enable_noeeprom();
-            rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_fade_in_effect);
-        }
-        rgb_state.timeout = false;
+    if (rise) {
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_fade_out_effect);
     }
+    if (fall && rgb_state.active) {
+        rgb_matrix_enable_noeeprom();
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_fade_in_effect);
+    }
+
+    was_idle = is_idle;
 
     // Reset macro timers
     if (last_input_activity_elapsed() > 200) {

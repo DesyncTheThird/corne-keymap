@@ -33,9 +33,9 @@ static bool plasma_flow(effect_params_t *params) {
                 hsv.s = 255;
                 hsv.v = RGB_MATRIX_MAXIMUM_BRIGHTNESS;
             } else {
-                hsv.h = 200 + (30 * (delta - 10)) / 30;
-                hsv.s = 255;
                 uint8_t trail_delta = delta - 10;
+                hsv.h = 200 + (30 * trail_delta) / 30;
+                hsv.s = 255;
                 if (trail_delta < 15) {
                     hsv.v = RGB_MATRIX_MAXIMUM_BRIGHTNESS - (trail_delta * (RGB_MATRIX_MAXIMUM_BRIGHTNESS / 2) / 15);
                 } else {
@@ -92,9 +92,9 @@ static bool boot_animation_effect(effect_params_t *params) {
                 hsv.s = 255;
                 hsv.v = RGB_MATRIX_MAXIMUM_BRIGHTNESS;
             } else {
-                hsv.h = 200 + (30 * (delta - 10)) / 30;
-                hsv.s = 255;
                 uint8_t trail_delta = delta - 10;
+                hsv.h = 200 + (30 * trail_delta) / 30;
+                hsv.s = 255;
                 if (trail_delta < 15) {
                     hsv.v = RGB_MATRIX_MAXIMUM_BRIGHTNESS - (trail_delta * RGB_MATRIX_MAXIMUM_BRIGHTNESS / 30);
                 } else {
@@ -117,24 +117,21 @@ static bool boot_animation_effect(effect_params_t *params) {
 
 bool fade_out_active = false;
 bool fade_in_active = false;
-static uint16_t fade_start = 0;
+static uint32_t fade_start = 0;
 static const int16_t duration = 5000;
 
 static bool fade_out_effect(effect_params_t *params) {
     RGB_MATRIX_USE_LIMITS(led_min, led_max);
 
-    int32_t elapsed = timer_elapsed(fade_start);
-
-    if (elapsed > duration && !fade_out_active) {
-        fade_start = timer_read();
+    if (timer_elapsed32(fade_start) > duration && !fade_out_active) {
+        fade_start = timer_read32();
         fade_out_active = true;
         fade_in_active = false;
     }
-    
-    elapsed = timer_elapsed(fade_start);
+
+    int32_t elapsed = timer_elapsed32(fade_start);
 
     if (elapsed > duration) {
-        fade_out_active = false;
         rgb_matrix_disable_noeeprom();
         return rgb_matrix_check_finished_leds(led_max);
     }
@@ -150,20 +147,18 @@ static bool fade_out_effect(effect_params_t *params) {
 
 static bool fade_in_effect(effect_params_t *params) {
     RGB_MATRIX_USE_LIMITS(led_min, led_max);
-    
-    int32_t elapsed = timer_elapsed(fade_start);
 
-    if (elapsed > duration && !fade_in_active) {
-        fade_start = timer_read();
+    if (timer_elapsed32(fade_start) > duration && !fade_in_active) {
+        fade_start = timer_read32();
         fade_in_active = true;
         fade_out_active = false;
     }
     if (fade_out_active) {
-        fade_start = timer_read() - (duration - elapsed) / 2;
+        fade_start = timer_read32() - (duration - timer_elapsed32(fade_start)) / 2;
         fade_out_active = false;
     }
 
-    elapsed = timer_elapsed(fade_start);
+    int32_t elapsed = timer_elapsed32(fade_start);
 
     if (elapsed > duration / 2) {
         fade_in_active = false;
