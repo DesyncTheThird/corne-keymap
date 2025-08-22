@@ -4074,16 +4074,7 @@ bool oled_task_user(void) {
 //  Boot/Shutdown
 // =============================================================================
 
-static bool boot = false;
-
-uint32_t stop_boot_animation(uint32_t trigger_time, void* cb_arg) {
-    boot = false;
-    rgb_matrix_set_speed_noeeprom(64);
-    rgb_matrix_sethsv_noeeprom(110,255,255);
-    g_rgb_timer = 0;
-    set_rgb_mode();
-    return 0;
-}
+bool boot = false;
 
 void keyboard_post_init_user(void) {
     boot = true;
@@ -4100,7 +4091,6 @@ void keyboard_post_init_user(void) {
     rgb_matrix_enable_noeeprom();
     rgb_matrix_sethsv_noeeprom(255,255,255);
     rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_boot_animation_effect);
-    defer_exec(4200, stop_boot_animation, NULL);
 
     // Clock
     defer_exec(clock_callback(0,NULL), clock_callback, NULL);

@@ -52,29 +52,38 @@ static bool plasma_flow(effect_params_t *params) {
     return rgb_matrix_check_finished_leds(led_max);
 }
 
+extern bool boot;
+
 static bool boot_animation_effect(effect_params_t *params) {
     RGB_MATRIX_USE_LIMITS(led_min, led_max);
     const int16_t center_x = 112;
 
-    const uint16_t delay  = 250;
+    const uint16_t delay  = 600;
     const uint16_t period = 200;
     const uint16_t pause  = 200;
-    const uint16_t hold   = 1000;
-    const uint16_t total_cycle = delay + period + pause + period + hold;
+    const uint16_t hold   = 100;
+    // const uint16_t total_cycle = delay + period + pause + period + hold;
 
     uint16_t step = scale16by8(g_rgb_timer, rgb_matrix_config.speed);
-    uint16_t cycle_pos = step % total_cycle;
 
-    bool first_wave  = cycle_pos >= delay
-                    && cycle_pos <  delay + period;
-    bool second_wave = cycle_pos >= delay + period + pause
-                    && cycle_pos <  delay + period + pause + period + hold;
+    bool first_wave  = step >= delay
+                    && step <  delay + period;
+    bool second_wave = step >= delay + period + pause
+                    && step <  delay + period + pause + period + hold;
+    bool complete    = step >= delay + period + pause + period + hold;
 
     uint16_t radius = 0;
     if (first_wave) {
-        radius = (cycle_pos - delay) * (center_x + 80) / period;
+        radius = (step - delay) * (center_x + 80) / period;
     } else if (second_wave) {
-        radius = (cycle_pos - delay - period - pause) * (center_x + 80) / period;
+        radius = (step - delay - period - pause) * (center_x + 80) / period;
+    } else if (complete) {
+        // Exit boot animation
+        boot = false;
+        rgb_matrix_set_speed_noeeprom(64);
+        rgb_matrix_sethsv_noeeprom(150,255,255);
+        g_rgb_timer = 0;
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_reactive_smooth);
     }
 
     for (uint8_t i = led_min; i < led_max; ++i) {
