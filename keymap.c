@@ -1131,76 +1131,51 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
     }
 }
 
-bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
+static void tap_hold_tri_layer(keyrecord_t* record, uint8_t hold_layer,
+                         uint8_t tri_layer2, uint8_t tri_layer3) {
+    if (!record->tap.count && record->event.pressed) {
+        layer_on(hold_layer);
+        update_tri_layer(hold_layer, tri_layer2, tri_layer3);
+    } else {
+        layer_off(hold_layer);
+        update_tri_layer(hold_layer, tri_layer2, tri_layer3);
+    }
+}
+
+static bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         case CS_LT1:
-            if (!record->tap.count && record->event.pressed) {
-                layer_on(_DATA);
-                update_tri_layer(_DATA, _PROGRAM, _EDIT);
-            } else {
-                layer_off(_DATA);
-                update_tri_layer(_DATA, _PROGRAM, _EDIT);
-            }
+            tap_hold_tri_layer(record, _DATA, _PROGRAM, _EDIT);
             if (record->tap.count && record->event.pressed) {
                 tap_code(KC_SPC);
             }
             return false;
         case CS_RT1:
-            if (!record->tap.count && record->event.pressed) {
-                layer_on(_SYMBOL);
-                update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
-            } else {
-                layer_off(_SYMBOL);
-                update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
-            }
+            tap_hold_tri_layer(record, _SYMBOL, _EDIT, _DATA_OVERLAY);
             if (record->tap.count && record->event.pressed) {
                 tap_code(KC_BSPC);
             }
             return false;
         case CS_AL1:
-            if (!record->tap.count && record->event.pressed) {
-                layer_on(_PROGRAM);
-                update_tri_layer(_DATA, _PROGRAM, _EDIT);
-            } else {
-                layer_off(_PROGRAM);
-                update_tri_layer(_DATA, _PROGRAM, _EDIT);
-            }
+            tap_hold_tri_layer(record, _PROGRAM, _DATA, _EDIT);
             if (record->tap.count && record->event.pressed) {
                 cs_tap_code(KC_0);
             }
             return false;
         case CS_AL2:
-            if (!record->tap.count && record->event.pressed) {
-                layer_on(_EDIT);
-                update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
-            } else {
-                layer_off(_EDIT);
-                update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
-            }
+            tap_hold_tri_layer(record, _EDIT, _SYMBOL, _DATA_OVERLAY);
             if (record->tap.count && record->event.pressed) {
                 cs_tap_code16(KC_NUBS);
             }
             return false;
         case CS_AL3:
-            if (!record->tap.count && record->event.pressed) {
-                layer_on(_EDIT);
-                update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
-            } else {
-                layer_off(_EDIT);
-                update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
-            }
+            tap_hold_tri_layer(record, _EDIT, _PROGRAM, _EDIT_OVERLAY);
             if (record->tap.count && record->event.pressed) {
                 cs_tap_code16(KC_NUBS);
             }
             return false;
         case CS_AL4:
-            if (!record->tap.count && record->event.pressed) {
-                layer_on(_PROGRAM);
-                update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
-            } else {
-                layer_off(_PROGRAM);
-                update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
-            }
+            tap_hold_tri_layer(record, _PROGRAM, _EDIT, _EDIT_OVERLAY);
             if (record->tap.count && record->event.pressed) {
                 cs_tap_code(KC_0);
             }
@@ -1739,75 +1714,9 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-
-
 static bool edit_clip = false;
-static bool select_line = false;
 
 static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
-    if (IS_LAYER_OFF(_EDIT_OVERLAY)) {
-        select_line = false;
-    }
-    switch (keycode) {
-        case DELWORD:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_RGHT);
-                add_mods(MOD_MASK_CTRL);
-                tap_code(KC_LEFT);
-                tap_code(KC_DEL);
-                set_mods(mods);
-            }
-            break;
-
-        case SELLEFT:
-            if (record->event.pressed) {
-                register_code16(LSFT(LCTL(KC_LEFT)));
-                update_last_key(SELLEFT);
-            } else {
-                unregister_code16(LSFT(LCTL(KC_LEFT)));
-            }
-            break;
-
-        case SELECT:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                if (is_select_macro(key_state.last_key)) {
-                    tap_code16(LCTL(KC_X));
-                    edit_clip = true;
-                } else {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code(KC_RGHT);
-                    tap_code16(LCTL(KC_LEFT));
-                    tap_code16(LSFT(LCTL(KC_RGHT)));
-                }
-                set_mods(mods);
-                update_last_key(SELECT);
-            }
-            break;
-
-        case SELRGHT:
-            if (record->event.pressed) {
-                register_code16(LSFT(LCTL(KC_RGHT)));
-                update_last_key(SELRGHT);
-            } else {
-                unregister_code16(LSFT(LCTL(KC_RGHT)));
-            }
-            break;
-
-        case EO_ENT:
-            if (record->event.pressed) {
-                register_code(KC_ENT);
-            } else {
-                unregister_code(KC_ENT);
-            }
-            break;
-    }
-    return true;
-}
-
-static bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
     if (IS_LAYER_OFF(_EDIT)) {
         edit_clip = false;
     }
@@ -1821,38 +1730,59 @@ static bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (ctrl_on()) {
                     register_code16(LCTL(KC_Y));
-                    return false;
                 } else {
-                    return true;
+                    const uint8_t mods = get_mods();
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_RGHT);
+                    add_mods(MOD_MASK_CTRL);
+                    tap_code(KC_LEFT);
+                    tap_code(KC_DEL);
+                    set_mods(mods);
                 }
             } else {
                 unregister_code16(LCTL(KC_Y));
-                return true;
             }
+            return false;
+
         case SELLEFT:
             if (record->event.pressed) {
                 if (ctrl_on()) {
                     register_code16(LCTL(KC_Z));
                     return false;
                 } else {
-                    return true;
+                    register_code16(LSFT(LCTL(KC_LEFT)));
+                    update_last_key(SELLEFT);
                 }
             } else {
                 unregister_code16(LCTL(KC_Z));
-                return true;
+                unregister_code16(LSFT(LCTL(KC_LEFT)));
             }
+            return false;
+
         case SELECT:
             if (record->event.pressed) {
                 if (ctrl_on()) {
                     register_code16(LCTL(KC_X));
                     return false;
                 } else {
-                    return true;
+                    const uint8_t mods = get_mods();
+                    if (is_select_macro(key_state.last_key)) {
+                        tap_code16(LCTL(KC_X));
+                        edit_clip = true;
+                    } else {
+                        del_mods(MOD_MASK_CSAG);
+                        tap_code(KC_RGHT);
+                        tap_code16(LCTL(KC_LEFT));
+                        tap_code16(LSFT(LCTL(KC_RGHT)));
+                    }
+                    set_mods(mods);
+                    update_last_key(SELECT);
                 }
             } else {
                 unregister_code16(LCTL(KC_X));
-                return true;
             }
+            return false;
+
         case SELRGHT:
             if (record->event.pressed) {
                 if (ctrl_on() || key_state.last_key == SELECT) {
@@ -1860,12 +1790,15 @@ static bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
                     edit_clip = true;
                     return false;
                 } else {
-                    return true;
+                    register_code16(LSFT(LCTL(KC_RGHT)));
+                    update_last_key(SELRGHT);
                 }
             } else {
                 unregister_code16(LCTL(KC_C));
-                return true;
+                unregister_code16(LSFT(LCTL(KC_RGHT)));
             }
+            return false;
+
         case EO_ENT:
             if (record->event.pressed) {
                 if (ctrl_on() || edit_clip) {
@@ -1873,12 +1806,13 @@ static bool process_edit_controls(uint16_t keycode, keyrecord_t* record) {
                     edit_clip = false;
                     return false;
                 } else {
-                    return true;
+                    register_code(KC_ENT);
                 }
             } else {
                 unregister_code16(LCTL(KC_V));
-                return true;
+                unregister_code(KC_ENT);
             }
+            return false;
     }
     return true;
 }
@@ -2380,11 +2314,11 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
             layer_lock_off(_EDIT);
             layer_on(_EDIT);
             update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
-            update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
+            update_tri_layer(_EDIT, _PROGRAM, _EDIT_OVERLAY);
         } else if (!is_layer_locked(_EDIT)) {
             layer_off(_EDIT);
             update_tri_layer(_EDIT, _SYMBOL, _DATA_OVERLAY);
-            update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
+            update_tri_layer(_EDIT, _PROGRAM, _EDIT_OVERLAY);
         }
 
         if (record->tap.count && record->event.pressed) {
@@ -2450,14 +2384,14 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_RT2) {
         if (!record->tap.count && record->event.pressed) {
             layer_on(_PROGRAM);
-            update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
+            update_tri_layer(_EDIT, _PROGRAM, _EDIT_OVERLAY);
             update_tri_layer(_DATA, _PROGRAM, _EDIT);
         } else {
             layer_off(_PROGRAM);
             if (IS_LAYER_OFF(_EDIT_OVERLAY)) {
                 update_tri_layer(_DATA, _PROGRAM, _EDIT);
             }
-            update_tri_layer(_PROGRAM, _EDIT, _EDIT_OVERLAY);
+            update_tri_layer(_EDIT, _PROGRAM, _EDIT_OVERLAY);
             layer_off(_DATA_OVERLAY);
         }
 
@@ -2836,7 +2770,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_magic(keycode, record)) { return false; }
     if (!process_homerow_mod_tap(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
-    if (!process_edit_controls(keycode, record)) { return false; }
     if (!process_edit_macros(keycode, record)) { return false; }
     if (!process_vol_repeat(keycode, record)) { return false; }
     if (!process_clock(keycode, record)) { return false; }
