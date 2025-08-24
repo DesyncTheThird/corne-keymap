@@ -100,37 +100,26 @@ enum custom_keycodes {
     CS_PRNS,
     CS_BRCS,
 
-    // Home block mods
-    CS_RBRC,
-    CS_RPRN,
-    CS_LPRN,
-
-    // Combos
-    CM_MOUSE,
     DELWORD,
-
-
     // Edit overlay keys
     WORDCBR,
     WORDPRN,
     WORDBRC,
 
-    CY_WRAP,
-    
     SPC_DN,
     JOIN,
     SPC_UP,
-
 
     EO_HOME,
     EO_END,
     EO_ENT,
 
-    CY_NUM,
+    // Cycling macros
     CY_MISC,
     CY_BRC,
-    CY_ENUM,
     CY_COMP,
+    CY_WRAP,
+    CY_ENUM,
 };
 
 // Home row mods
@@ -675,7 +664,7 @@ static inline bool is_bracket_wrap_macro(uint16_t keycode) {
 }
 
 static inline bool is_cycling_macro(uint16_t keycode) {
-    return (keycode >= CY_NUM && keycode <= CY_COMP);
+    return (keycode >= CY_MISC && keycode <= CY_ENUM);
 }
 
 static inline bool is_select_macro(uint16_t keycode) {
@@ -1273,8 +1262,8 @@ combo_t key_combos[] = {
     [STENO]         = COMBO_ACTION(steno),
     [NUMPAD]        = COMBO_ACTION(numpad),
 
-    [MOUSE]         = COMBO(mouse,          CM_MOUSE),
-    [MOUSE2]        = COMBO(mouse2,         CM_MOUSE),
+    [MOUSE]         = COMBO_ACTION(mouse),
+    [MOUSE2]        = COMBO_ACTION(mouse2),
 
     [L_EXPONENT]    = COMBO(l_exponent,     CS_CIRC),
     [L_COMMA]       = COMBO(l_comma,        CS_COMM),
@@ -1339,6 +1328,15 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 } else {
                     layer_on(_NUMPAD);
                 }
+            }
+            break;
+        case MOUSE:
+        case MOUSE2:
+            if (pressed) {
+                layer_lock_off(_MOUSE);
+                layer_on(_MOUSE);
+            } else if (!is_layer_locked(_MOUSE)) {
+                layer_off(_MOUSE);
             }
             break;
     }
@@ -3474,19 +3472,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
             }
             return false;
-
-        // =====================================================================
-        // Combos
-        // =====================================================================
-
-        case CM_MOUSE:
-            if (record->event.pressed) {
-                layer_lock_off(_MOUSE);
-                layer_on(_MOUSE);
-            } else if (!is_layer_locked(_MOUSE)) {
-                layer_off(_MOUSE);
-            }
-            break;
     }
     return true;
 }
@@ -3510,8 +3495,8 @@ bool wpm_keycode_user(uint16_t keycode) {
     
     switch (keycode) {
         case KC_A ... KC_0:
-        case KC_TAB ... KC_NUBS:
-        case COM_EXL ... CS_LPRN:
+        case KC_TAB ... KC_SLSH:
+        case COM_EXL ... EO_ENT:
         case MAGIC:
         case REP:
         case NEWSENT:
