@@ -191,7 +191,7 @@ enum custom_keycodes {
 
 #define CS_AL1 LT(_PROGRAM,KC_0)
 #define CS_AL2 LT(_EDIT,CS_BSLS)
-#define CS_AL3 LT(_EDIT,CS_SCLN)
+#define CS_AL3 LT(_EDIT,KC_NUBS)
 #define CS_AL4 LT(_EDIT_OVERLAY,KC_0)
 
 // Custom tap-hold keys
@@ -503,17 +503,31 @@ static oled_flags_t oled_state = {
     .muted = false
 };
 
+typedef enum {
+    SEP_DEF,
+    SEP_SYM,
+    SEP_SPC,
+    SEP_LSFT,
+    SEP_RSFT
+} sep_kind_t;
+
+typedef struct {
+    uint16_t keycode;
+    sep_kind_t kind;
+    uint16_t output;
+} sep_rule_t;
+
 typedef struct {
     bool active :1;
     bool capturing :1;
-    uint16_t separator;
+    const sep_rule_t *rule;
     int16_t distance;
 } case_lock_flags_t;
 
 static case_lock_flags_t case_lock_state = {
     .active = false,
     .capturing = false,
-    .separator = KC_UNDS,
+    .rule = NULL,
     .distance = 0
 };
 
@@ -528,30 +542,6 @@ static void update_sync(void) {
         };
         transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
     }
-}
-
-static void case_lock_capture_on(void) {
-    case_lock_state.capturing = true;
-    update_sync();
-}
-
-static void case_lock_capture_off(void) {
-    case_lock_state.capturing = false;
-    update_sync();
-}
-
-static void case_lock_on(void) {
-    case_lock_state.active = true;
-    update_sync();
-    dprintf("case lock on!\n");
-}
-
-static void case_lock_off(void) {
-    case_lock_state.active = false;
-    case_lock_state.capturing = false;
-    update_sync();
-    case_lock_state.separator = KC_NO;
-    dprintf("case lock off!\n");
 }
 
 typedef struct {
@@ -976,11 +966,11 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t* record,
 
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        // enable key repeating on numerical home row mod keys
+        // Enable key repeating on numerical home row mod keys
         case RS_1:
         case RC_2:
         case RA_3:
-        // case RG_0:
+        case RG_0:
             return TAPPING_TERM;
 
         case CS_LT3:
@@ -1001,7 +991,7 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
             return 0;
     }
 
-    // disable key repeating on other home row mod keys
+    // Disable key repeating on other home row mod keys
     if (is_hrm(keycode)) {
         return 0;
     }
@@ -1436,203 +1426,247 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo,
 // Case Lock
 //==============================================================================
 
-static void send_separator(void) {
-    switch (case_lock_state.separator) {
-        case KC_LSFT:
-            set_oneshot_mods(MOD_BIT(KC_LSFT));
-            break;
-        case KC_RSFT:
-            tap_code(KC_SPC);
-            set_oneshot_mods(MOD_BIT(KC_LSFT));
-        default:
-            tap_code16(case_lock_state.separator);
-            break;
-    }
+static const sep_rule_t separator_rules[] = {
+    { KC_NO,   SEP_DEF,  KC_UNDS },
+
+    { CS_UNDS, SEP_SYM,  KC_UNDS },
+    { KC_UNDS, SEP_SYM,  KC_UNDS },
+
+    { CS_MINS, SEP_SYM,  KC_MINS },
+    { KC_MINS, SEP_SYM,  KC_MINS },
+
+    { CS_DOT,  SEP_SYM,  KC_DOT  },
+    { KC_DOT,  SEP_SYM,  KC_DOT  },
+
+    { CS_RT3,  SEP_SYM,  KC_SLSH },
+    { KC_SLSH, SEP_SYM,  KC_SLSH },
+
+    { CS_LT2,  SEP_SYM,  KC_NUBS },
+    { KC_NUBS, SEP_SYM,  KC_NUBS },
+
+    { CS_LT1,  SEP_SPC,  KC_UNDS },
+    { KC_SPC,  SEP_SPC,  KC_UNDS },
+
+    { TABLSFT, SEP_LSFT, KC_NO   },
+    { KC_LSFT, SEP_LSFT, KC_NO   },
+
+    { TABRSFT, SEP_RSFT, KC_SPC  },
+    { KC_RSFT, SEP_RSFT, KC_SPC  },
+};
+
+static inline void case_lock_capture_on(void) {
+    case_lock_state.capturing = true;
+    update_sync();
+    // dprintf("Case lock capturing\n");
 }
 
-static uint16_t separator_map(uint16_t keycode) {
-    switch (keycode) {
-        case CS_LT1:  return KC_SPC;
-        case CS_UNDS: return KC_UNDS;
-        case CS_MINS: return KC_MINS;
-        case CS_DOT:  return KC_DOT;
-        case CS_SLSH:
-        case CS_RT3:  return KC_SLSH;
-        case KC_Q:
-        case KC_Z:    return KC_NUBS;
-        case TABLSFT: return KC_LSFT;
-        case TABRSFT: return KC_RSFT;
-        case RS_SCLN: return KC_SCLN;
-        default:      return keycode;
+static inline void case_lock_capture_off(void) {
+    case_lock_state.capturing = false;
+    update_sync();
+    // dprintf("Case lock captured\n");
+}
+
+static inline void case_lock_on(void) {
+    case_lock_state.active = true;
+    case_lock_state.distance = 0;
+    update_sync();
+    // dprintf("Case lock on\n");
+}
+
+static inline void case_lock_off(void) {
+    case_lock_state.active = false;
+    case_lock_state.capturing = false;
+    update_sync();
+    case_lock_state.rule = NULL;
+    // dprintf("Case lock off\n");
+}
+
+static const sep_rule_t* get_separator_rule(uint16_t keycode) {
+    for (size_t i = 0; i < ARRAY_SIZE(separator_rules); i++) {
+        if (separator_rules[i].keycode == keycode) {
+            return &separator_rules[i];
+        }
     }
+    return NULL;
+}
+
+static void send_separator(void){
+    switch (case_lock_state.rule->kind) {
+        case SEP_SPC:
+        case SEP_DEF:
+        case SEP_SYM:
+            tap_code16(case_lock_state.rule->output);
+            break;
+        case SEP_LSFT:
+            set_oneshot_mods(MOD_BIT(KC_LSFT));
+            break;
+        case SEP_RSFT:
+            tap_code(KC_SPC);
+            set_oneshot_mods(MOD_BIT(KC_LSFT));
+            break;
+    }
+    case_lock_state.distance = 0;
 }
 
 static bool process_case_capture(uint16_t keycode) {
-    keycode = separator_map(keycode);
-    switch (keycode) {
-        default:
-            case_lock_state.separator = KC_UNDS;
-            case_lock_capture_off();
-            case_lock_on();
+    case_lock_state.rule = get_separator_rule(keycode);
+    if (!case_lock_state.rule) {
+        // Default to { KC_NO, SEP_DEF, KC_UNDS }
+        case_lock_state.rule = &separator_rules[0];
+    }
+
+    // Update flags
+    case_lock_capture_off();
+    case_lock_on();
+
+    // Immediate behaviours
+    switch (case_lock_state.rule->kind) {
+        case SEP_DEF:
             return true;
 
-        case KC_SPC:
-            case_lock_state.separator = KC_UNDS;
-            case_lock_capture_off();
-            case_lock_on();
-            tap_code16(KC_UNDS);
+        case SEP_SYM:
             return false;
 
-        case KC_RSFT:
+        case SEP_SPC:
+            tap_code16(case_lock_state.rule->output);
+            return false;
+
+        case SEP_LSFT:
+            unregister_mods(MOD_BIT(KC_LSFT));
+            return false;
+
+        case SEP_RSFT:
             unregister_mods(MOD_BIT(KC_RSFT));
             set_oneshot_mods(MOD_BIT(KC_RSFT));
-            
-        case KC_LSFT:
-            unregister_mods(MOD_BIT(KC_LSFT));
-
-        case KC_UNDS:
-        case KC_MINS:
-        case KC_DOT:
-        case KC_SLSH:
-        case KC_NUBS:
-            case_lock_state.separator = keycode;
-            case_lock_capture_off();
-            case_lock_on();
             return false;
     }
+    return true;
 }
 
 static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
-    keycode = separator_map(keycode);
-
-    if (record->event.pressed) {
-        if (keycode == CS_CASE) {;
-            if (case_lock_state.capturing) {
-                tap_code(KC_CAPS);
-                case_lock_off();
-            } else {
-                case_lock_capture_on();
-            }
-            return true;
-        }
-
-        if (case_lock_state.capturing) {
-            dprintf("capture start\n");
-            return process_case_capture(keycode);
-        }
-
-        if (!case_lock_state.active) {
-            return true;
-        }
-
-        // Track distance for rollbacks
-        if (is_hrm(keycode)) {
-            if (record->tap.count) {
-                case_lock_state.distance += 1;
-                // dprintf("separator distance = %d\n", case_lock_state.distance);
-                return true;
-            }
-        }
-        switch (keycode) {
-            case KC_A ... KC_Z:
-            case KC_1 ... KC_0:
-            case KC_SCLN:
-                case_lock_state.distance += 1;
-                // dprintf("separator distance = %d\n", case_lock_state.distance);
-                return true;
-
-            case KC_UNDS:
-            case KC_MINS:
-            case KC_DOT:
-            case KC_SLSH:
-            case KC_NUBS:
-                if (case_lock_state.separator == keycode) {
-                    case_lock_state.distance = 0;
-                } else {
-                    case_lock_state.distance += 1;
-                    // dprintf("separator distance = %d\n", case_lock_state.distance);
-                }
-                return true;
-                
-            case CS_LT2:
-            case CS_RT2:
-                if (record->tap.count) {
-                    case_lock_state.distance += 1;
-                    // dprintf("separator distance = %d\n", case_lock_state.distance);
-                }
-                return true;
-        }
-
-        if (keycode == KC_SPC) {
-            if (record->tap.count) {
-                if (case_lock_state.active) {
-                    if (is_spc(key_state.last_key)) {
-                        if (case_lock_state.separator == KC_LSFT) {
-                            clear_oneshot_mods();
-                            case_lock_off();
-                            return true;
-                        }
-                        if (case_lock_state.separator == KC_RSFT) {
-                            clear_oneshot_mods();
-                            case_lock_off();
-                            return false;
-                        }
-                        cs_tap_code16_mods(KC_BSPC, MOD_MASK_CSAG);
-                        case_lock_off();
-                        return true;
-                    } else {
-                        send_separator();
-                        case_lock_state.distance = 0;
-                        update_last_key(KC_SPC);
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        if (keycode == CS_RT1) {
-            if (record->tap.count) {
-                if (ctrl_on() && case_lock_state.distance > 0) {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_CSAG);
-                    for (int i = 0; i < case_lock_state.distance; i++) {
-                        tap_code(KC_BSPC);
-                    }
-                    set_mods(mods);
-                    // dprintf("rolled back case!");
-                    case_lock_state.distance = 0;
-                    if (case_lock_state.separator == KC_LSFT || case_lock_state.separator == KC_RSFT) {
-                        set_oneshot_mods(MOD_BIT(KC_LSFT));
-                    }
-                    return false;
-                } else {
-                    if (case_lock_state.distance > 0) {
-                        case_lock_state.distance -= 1;
-                    }
-                    return true;
-                }
-            }
-        }
-
-        // Ignore modifier keys
-        if (keycode == KC_LSFT || keycode == KC_RSFT ||
-            keycode == CS_LCTL || keycode == KC_LCTL) {
-            return true;
-        }
-        // Ignore Data layer
-        if (keycode == CS_LT1 && !record->tap.count) {
-            return true;
-        }
-        // Disable Case Lock on Symbol, Program, and Edit layers
-        if ((keycode == CS_RT1 || is_magic(keycode)) && !record->tap.count) {
-            case_lock_off();
-            return true;
-        }
-
-        // Disable case lock on other keys
-        case_lock_off();
+    if (!record->event.pressed) {
+        return true;
     }
+
+    if (keycode == CS_CASE) {
+        if (!case_lock_state.capturing) {
+            case_lock_capture_on();
+        } else {
+            tap_code(KC_CAPS);
+            case_lock_capture_off();
+        }
+        return true;
+    }
+
+    if (case_lock_state.capturing) {
+        return process_case_capture(keycode);
+    }
+
+    if (!case_lock_state.active) {
+        return true;
+    }
+
+    if (keycode == KC_SPC || (keycode == CS_LT1 && record->tap.count)) {
+        if (is_spc(key_state.last_key)) {
+            switch (case_lock_state.rule->kind) {
+                case SEP_LSFT:
+                    clear_oneshot_mods();
+                    case_lock_off();
+                    return true;
+
+                case SEP_RSFT:
+                    clear_oneshot_mods();
+                    case_lock_off();
+                    return false;
+
+                case SEP_DEF:
+                case SEP_SYM:
+                case SEP_SPC:
+                    cs_tap_code16_mods(KC_BSPC, MOD_MASK_CSAG);
+                    tap_code(KC_SPC);
+                    case_lock_off();
+                    return false;
+            }
+        } else {
+            send_separator();
+            case_lock_state.distance = 0;
+            update_last_key(KC_SPC);
+            return false;
+        }
+    }
+
+    if (keycode == KC_BSPC || (keycode == CS_RT1 && record->tap.count)) {
+        if (ctrl_on() && case_lock_state.distance > 0) {
+            const uint8_t mods = get_mods();
+            del_mods(MOD_MASK_CSAG);
+            for (int i = 0; i < case_lock_state.distance; i++) {
+                tap_code(KC_BSPC);
+            }
+            set_mods(mods);
+            case_lock_state.distance = 0;
+            if (case_lock_state.rule->kind == SEP_LSFT || case_lock_state.rule->kind == SEP_RSFT) {
+                set_oneshot_mods(MOD_BIT(KC_LSFT));
+            }
+            return false;
+        } else {
+            if (case_lock_state.distance > 0) {
+                case_lock_state.distance--;
+            }
+            return true;
+        }
+    }
+
+    if (is_hrm(keycode) && record->tap.count) {
+        case_lock_state.distance++;
+        // dprintf("separator distance = %d\n", case_lock_state.distance);
+        return true;
+    }
+    switch (keycode) {
+        case KC_A ... KC_Z:
+        case KC_1 ... KC_0:
+            case_lock_state.distance++;
+            // dprintf("separator distance = %d\n", case_lock_state.distance);
+            return true;
+
+        case TABLSFT:
+        case TABRSFT:
+            if (record->tap.count) {
+                clear_oneshot_mods();
+                case_lock_off();
+            }
+            return true;
+    }
+
+    const sep_rule_t* translate = get_separator_rule(keycode);
+    if (translate) {
+        if (translate->output == case_lock_state.rule->output) {
+            // Same as captured separator
+            case_lock_state.distance = 0;
+        } else {
+            // Other separators
+            case_lock_state.distance++;
+            // dprintf("separator distance = %d\n", case_lock_state.distance);
+        }
+        return true;
+    }
+
+    // Ignore modifier keys
+    if (keycode == KC_LSFT || keycode == KC_RSFT ||
+        keycode == CS_LCTL || keycode == KC_LCTL) {
+        return true;
+    }
+    // Ignore Data layer
+    if (keycode == CS_LT1 && !record->tap.count) {
+        return true;
+    }
+    // Disable Case Lock on Symbol, Program, and Edit layers
+    if ((keycode == CS_RT1 || is_magic(keycode)) && !record->tap.count) {
+        case_lock_off();
+        return true;
+    }
+
+    // Disable case lock on other keys
+    case_lock_off();
     return true;
 }
 

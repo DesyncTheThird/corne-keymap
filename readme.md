@@ -137,7 +137,7 @@ By default, the only keys that can be captured are:
 - `-` (kebab-case),
 - `.` (dot.case),
 - `/` (unix/file/path),
-- `\` (win\file\path) [activated by `Q` or `Z` since `\` is not on base layer],
+- `\` (win\file\path) [activated by `Magic`],
 - `LSFT` (camelCase),
 - `RSFT` (Title Case),
 - `Case Lock` (enables `Caps Lock`).
