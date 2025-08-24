@@ -276,7 +276,7 @@ Number grid with `1`, `2`, and `3` on right hand home row, along with common num
 The inner column on the right hand has *cycling macros* which cycle between different outputs on repeated presses:
 - `Misc`: `@` -> `£` -> `@` -> ...
 - `Bracket`: `()` -> `{}` -> `[]` -> `()` -> ...
-  
+
   This macro places the cursor between the two brackets with each press.
 
 - `Comp`: `>` -> `<` -> `=` -> `>` -> ...
@@ -297,11 +297,17 @@ The `Lock` key activates the [Layer Lock](https://docs.qmk.fm/features/layer_loc
 
 The bottom row of the [Control Overlay](#control-overlay) can also be activated with home row mods on this layer.
 
+The left hand bracket macro surrounds the current word with brackets, and cycles the bracket type on subsequent presses:
+- `⟦⟳⟧`: `(-)` -> `{-}` -> `[-]` -> `(-)` -> ...
+
 The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
 
-The `Select` macro selects the current word; pressing it again within 200ms will cut (`Ctrl`+`X`) the selection. Pressing the `Select Right` key within 200ms of the `Select` key will copy (`Ctrl`+`C`) the selection. Pressing it after one of the two other directional `Select` macros will also immediately cut the selection.
+The `Select` macro selects the current word; pressing it again within 200ms will cut (`Ctrl`+`X`) the selection. Pressing `Select` within 500ms of either of the other two directional `Select` macros will also immediately cut the selection.
 
-After cutting with `Select` or copying with `Select Right`, the `Enter` key on this layer will act as paste (without having to hold control), resetting after the first use, or if the `Edit` layer is disabled.
+Pressing the `Select Right` key within 200ms of the `Select` key will copy (`Ctrl`+`C`) the selection; pressing `Select Left` will delete the selection; and pressing `Enter` will paste over the selection.
+
+After cutting with `Select`, copying with `Select Right`, or deleting with `Select Left`, the `Enter` key on this layer will act as paste, resetting after the first use or if the `Edit` layer is disabled.
+
 
 The right thumb keys also have additional layering actions:
 - Activating both `Edit` and `Program` layers will activate the [Edit Overlay](#edit-overlay), which contains macros useful for editing, and also hold the `LCTL` or `LSFT` modifier for various keys on the left hand.
@@ -456,21 +462,18 @@ See [here](https://docs.qmk.fm/squeezing_avr) for more ways to save space. (Most
 4. To use a drop-in replacement controller, additionally use a [converter](https://docs.qmk.fm/feature_converters#supported-converters) flag: `-e CONVERT_TO=<converter>`.
 
    For instance, I use a (non-Sparkfun) RP2040 controller, so my full build command is:
-
    ```sh
    qmk compile -c -kb crkbd -km desync -e CONVERT_TO=rp2040_ce
    ```
 
-> [!TIP]
-> You can use
->  ```sh
->  qmk flash -c -kb crkbd -km desync -e CONVERT_TO=rp2040_ce -bl uf2-split-right
->  ```
->  and
->  ```sh
->  qmk flash -c -kb crkbd -km desync -e CONVERT_TO=rp2040_ce -bl uf2-split-left
->  ```
->  with RP2040 controllers to allow connections on both sides.
+5. By default, the keymap is set up to use `EE_HANDS`. To enable this on RP2040 controllers, you need to flash each side using different commands as follows:
+   ```sh
+   qmk flash -c -kb crkbd -km desync -e CONVERT_TO=rp2040_ce -bl uf2-split-right
+   ```
+   and
+   ```sh
+   qmk flash -c -kb crkbd -km desync -e CONVERT_TO=rp2040_ce -bl uf2-split-left
+   ```
 
 > [!WARNING]
 > The `-bl` flag does not work with the `qmk compile` command, only `qmk flash`.

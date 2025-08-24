@@ -100,7 +100,6 @@ enum custom_keycodes {
     CS_PRNS,
     CS_BRCS,
 
-    DELWORD,
     // Edit overlay keys
     WORDCBR,
     WORDPRN,
@@ -327,7 +326,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, KC_COLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, RS_RPRN, RC_LPRN, RA_SCLN, RG_UNDS, TABRSFT,
+          _______, CY_WRAP, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, RS_RPRN, RC_LPRN, RA_SCLN, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, KC_PGDN, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                        CS_GT, KC_RBRC, KC_LBRC, CS_COMM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -339,9 +338,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                      CY_ENUM,  SPC_UP,    JOIN,  SPC_DN, WORDCBR, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, DELWORD, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      KC_BSPC, RS_DELL, RC_DELW, RA_DELR, WORDPRN, _______,
+          _______, CY_WRAP, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      KC_BSPC, RS_DELL, RC_DELW, RA_DELR, WORDPRN, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, PRV_TAB, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                       KC_SPC,   PASTE,     CUT,    UNDO, WORDBRC, _______,
+          _______, PRV_TAB, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                       KC_SPC,   PASTE,     CUT,    COPY, WORDBRC, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -660,7 +659,7 @@ static inline bool is_bracket_macro(uint16_t keycode) {
 }
 
 static inline bool is_bracket_wrap_macro(uint16_t keycode) {
-    return (keycode >= WORDCBR && keycode <= WORDBRC);
+    return ((keycode >= WORDCBR && keycode <= WORDBRC) || keycode == CY_WRAP);
 }
 
 static inline bool is_cycling_macro(uint16_t keycode) {
@@ -1758,29 +1757,15 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
     switch (keycode) {
-        case DELWORD:
-            if (record->event.pressed) {
-                if (ctrl_on()) {
-                    register_code16(LCTL(KC_Y));
-                } else {
-                    const uint8_t mods = get_mods();
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code(KC_RGHT);
-                    add_mods(MOD_MASK_CTRL);
-                    tap_code(KC_LEFT);
-                    tap_code(KC_DEL);
-                    set_mods(mods);
-                }
-            } else {
-                unregister_code16(LCTL(KC_Y));
-            }
-            return false;
-
         case SELLEFT:
             if (record->event.pressed) {
                 if (ctrl_on()) {
                     register_code16(LCTL(KC_Z));
                     return false;
+                } else if (key_state.last_key == SELECT) {
+                    tap_code(KC_DEL);
+                    edit_clip = true;
+                    update_last_key(KC_DEL);
                 } else {
                     register_code16(LSFT(LCTL(KC_LEFT)));
                     update_last_key(SELLEFT);
@@ -1820,7 +1805,6 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
                 if (ctrl_on() || key_state.last_key == SELECT) {
                     register_code16(LCTL(KC_C));
                     edit_clip = true;
-                    return false;
                 } else {
                     register_code16(LSFT(LCTL(KC_RGHT)));
                     update_last_key(SELRGHT);
@@ -1833,10 +1817,9 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
 
         case EO_ENT:
             if (record->event.pressed) {
-                if (ctrl_on() || edit_clip) {
+                if (ctrl_on() || edit_clip || key_state.last_key == SELECT) {
                     register_code16(LCTL(KC_V));
                     edit_clip = false;
-                    return false;
                 } else {
                     register_code(KC_ENT);
                 }
@@ -2264,7 +2247,7 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     }
 
     // Tracking handled in macro for reactive events
-    if (is_select_macro(keycode)) {
+    if (is_select_macro(keycode) || keycode == EO_ENT) {
         return true;
     }
     if (is_cycling_macro(keycode)) {
