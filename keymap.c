@@ -4043,31 +4043,37 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
 
 bool oled_task_user(void) {
-    if (!oled_state.active) {
-        oled_clear();
-        return false;
-    }
-    if (oled_state.timeout) {
-        oled_off();
-        return false;
-    }
     if (is_keyboard_master()) {
+        if (!oled_state.active) {
+            oled_clear();
+            return false;
+        }
+        if (oled_state.timeout) {
+            oled_off();
+            return false;
+        }
         if (oled_state.static_display) {
             oled_write_raw_P(static_right, frame_size);
         } else {
             render_status();
         }
     } else {
-        if (oled_state.static_display || sync_data.static_display) {
-            /* intentionally blank */;
+        if (!sync_data.oled_active) {
+            oled_clear();
+            return false;
+        }
+        if (sync_data.oled_timeout) {
+            oled_off();
+            return false;
+        }
+        if (sync_data.static_display) {
+            oled_write_raw_P(static_left, frame_size);
         } else {
             render_draw();
         }
     }
     return false;
 }
-
-
 
 // =============================================================================
 //  Boot/Shutdown
@@ -4264,35 +4270,81 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 // Timers
 // =============================================================================
 
-#define IDLE_TIMEOUT 1000 * 60 * 5
+typedef enum {
+    EDGE_NONE,
+    EDGE_RISE,
+    EDGE_FALL
+} edge_t;
+
+typedef struct {
+    uint32_t duration;
+    bool active;
+    edge_t edge;
+} timeout_t;
+
+enum {
+    TIMEOUT_IDLE,
+    TIMEOUT_MACRO,
+    TIMEOUT_TRACKING,
+    TIMEOUT_MAGIC,
+    TIMEOUT_CASE_CAPTURE,
+    TIMEOUT_CASE_LOCK,
+    TIMEOUT_OLED,
+    TIMEOUT_COUNT,
+};
+
+static timeout_t timeouts[TIMEOUT_COUNT] = {
+    [TIMEOUT_IDLE]         = { .duration = 300000 },
+    [TIMEOUT_MACRO]        = { .duration = 200 },
+    [TIMEOUT_TRACKING]     = { .duration = 500 },
+    [TIMEOUT_MAGIC]        = { .duration = 1000 },
+    [TIMEOUT_CASE_CAPTURE] = { .duration = 1000 },
+    [TIMEOUT_CASE_LOCK]    = { .duration = 2000 },
+    [TIMEOUT_OLED]         = { .duration = 3000 },
+};
+
+static void update_timeouts(void) {
+    uint32_t elapsed = last_input_activity_elapsed();
+
+    for (int i = 0; i < TIMEOUT_COUNT; i++) {
+        bool new_active = (elapsed > timeouts[i].duration);
+        if (new_active != timeouts[i].active) {
+            timeouts[i].active = new_active;
+            timeouts[i].edge = new_active ? EDGE_RISE : EDGE_FALL;
+        } else {
+            timeouts[i].edge = EDGE_NONE;
+        }
+    }
+}
+
+
 
 void housekeeping_task_user(void) {
-    static bool was_idle = false;
-    bool is_idle = last_input_activity_elapsed() > IDLE_TIMEOUT;
-    bool fall = !is_idle && was_idle;
-    bool rise = is_idle && !was_idle;
+    update_timeouts();
 
-    // Layer timeout
-    if (is_idle && !was_idle) {
-        layer_off(_NUMPAD);
-        layer_off(_TOUHOU);
-        layer_off(_MOUSE);
-        layer_off(_EDIT);
-    }
+    switch (timeouts[TIMEOUT_IDLE].edge) {
+        case EDGE_RISE:
+            layer_off(_NUMPAD);
+            layer_off(_TOUHOU);
+            layer_off(_MOUSE);
+            layer_off(_EDIT);
 
-    // RGB matrix timeout
-    if (rise) {
-        rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_fade_out_effect);
-    }
-    if (fall && rgb_state.active) {
-        rgb_matrix_enable_noeeprom();
-        rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_fade_in_effect);
-    }
+            rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_fade_out_effect);
+            break;
 
-    was_idle = is_idle;
+        case EDGE_FALL:
+            if (rgb_state.active) {
+                rgb_matrix_enable_noeeprom();
+                rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_fade_in_effect);
+            }
+            break;
+
+        default:
+            break;
+    }
 
     // Reset macro timers
-    if (last_input_activity_elapsed() > 200) {
+    if (timeouts[TIMEOUT_MACRO].active) {
         if (key_state.last_key == SELECT) {
             key_state.last_key = KC_NO;
         }
@@ -4302,39 +4354,48 @@ void housekeeping_task_user(void) {
     }
 
     // Reset key tracking
-    if (last_input_activity_elapsed() > 500) {
+    if (timeouts[TIMEOUT_TRACKING].active) {
         // Reset rollbacks
         key_state.count = 1;
     }
-    if (last_input_activity_elapsed() > 1000) {
+    if (timeouts[TIMEOUT_MAGIC].active) {
         // Reset magic keys
         key_state.last_key = KC_NO;
         key_state.last_key_2 = KC_NO;
         key_state.last_key_3 = KC_NO;
+    }
 
-        // Reset Case Lock capture
+    // Reset Case Lock capture
+    if (timeouts[TIMEOUT_CASE_CAPTURE].active) {
         if (!case_lock_state.active) {
             case_lock_capture_off();
         }
     }
-    if (last_input_activity_elapsed() > 2000) {
-        // Reset Case Lock
+    // Reset Case Lock
+    if (timeouts[TIMEOUT_CASE_LOCK].active) {
         if (case_lock_state.active) {
             case_lock_off();
         }
     }
 
-    if (last_input_activity_elapsed() > 3000) {
-        // OLED timeout
-        clock_state.setting = set_none;
-        oled_state.timeout = true;
-        static uint32_t last_sync = 0;
-        if (timer_elapsed32(last_sync) > 500) {
+    // OLED timeout
+    switch (timeouts[TIMEOUT_OLED].edge) {
+        case EDGE_RISE:
+            if (clock_state.setting != set_none && (clock_up_action.token || clock_dn_action.token)) {
+                oled_state.timeout = false;
+            } else {
+                clock_state.setting = set_none;
+                oled_state.timeout = true;
+            }
+            break;
+
+        case EDGE_FALL:
+            oled_state.timeout = false;
             update_sync();
-            last_sync = timer_read32();
-        }
-    } else {
-        oled_state.timeout = false;
+            break;
+
+        default:
+            break;
     }
 
     // Reset alt-tab key
@@ -4358,7 +4419,7 @@ void housekeeping_task_user(void) {
 
     if (is_keyboard_master()) {
         static uint32_t last_sync = 0;
-        if (timer_elapsed32(last_sync) > 500) { // Interact with slave every 500ms
+        if (timer_elapsed32(last_sync) > 500) {
             master_to_slave_t m2s = {
                 .static_display = oled_state.static_display,
                 .oled_timeout = oled_state.timeout,
@@ -4371,17 +4432,6 @@ void housekeeping_task_user(void) {
             } else {
                 dprint("Slave sync failed!\n");
             }
-        }
-    } else { // slave side
-        if (sync_data.static_display) { 
-            oled_write_raw_P(static_left, frame_size);
-        } else {
-            // render_draw();
-        }
-        if (sync_data.oled_timeout || !sync_data.oled_active) { 
-            oled_off();
-        } else {
-            oled_on();
         }
     }
 }
