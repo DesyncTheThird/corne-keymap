@@ -416,11 +416,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #include "transactions.h"
 
 typedef struct _master_to_slave_t {
-    bool static_display :1;
-    bool oled_timeout :1;
-    bool oled_active :1;
-    bool capturing :1;
-    bool active :1;
+    struct {
+        bool static_display :1;
+        bool timeout :1;
+        bool active :1;
+    } oled;
+    struct {
+        bool capturing :1;
+        bool active :1;
+    } case_lock;
 } master_to_slave_t;
 
 master_to_slave_t sync_data;
@@ -522,11 +526,15 @@ static case_lock_flags_t case_lock_state = {
 static void update_sync(void) {
     if (is_keyboard_master()) {
         master_to_slave_t m2s = {
-            .static_display = oled_state.static_display,
-            .oled_timeout = oled_state.timeout,
-            .oled_active = oled_state.active,
-            .capturing = case_lock_state.capturing,
-            .active = case_lock_state.active,
+            .oled = {
+                .static_display = oled_state.static_display,
+                .timeout = oled_state.timeout,
+                .active = oled_state.active,
+            },
+            .case_lock = {
+                .capturing = case_lock_state.capturing,
+                .active = case_lock_state.active
+            }
         };
         transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
     }
@@ -3635,7 +3643,7 @@ static void render_logo_minor(bool can_be_major) {
 
 
 static void render_draw(void) {
-    if (sync_data.oled_timeout || !sync_data.oled_active) {
+    if (sync_data.oled.timeout || !sync_data.oled.active) {
         return;
     }
 
@@ -4058,15 +4066,15 @@ bool oled_task_user(void) {
             render_status();
         }
     } else {
-        if (!sync_data.oled_active) {
+        if (!sync_data.oled.active) {
             oled_clear();
             return false;
         }
-        if (sync_data.oled_timeout) {
+        if (sync_data.oled.timeout) {
             oled_off();
             return false;
         }
-        if (sync_data.static_display) {
+        if (sync_data.oled.static_display) {
             oled_write_raw_P(static_left, frame_size);
         } else {
             render_draw();
@@ -4142,13 +4150,13 @@ bool shutdown_user(bool jump_to_bootloader) {
 // int column6[] = {     26, 25, 24,     53, 52, 51};
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-    if (case_lock_state.capturing || sync_data.capturing) {
+    if (case_lock_state.capturing || sync_data.case_lock.capturing) {
         for (uint8_t index = 6; index < 27; index++) {
             RGB green = hsv_to_rgb((HSV){ 85, 255, 100 });
             rgb_matrix_set_color_split(index, green.r, green.g, green.b);
             rgb_matrix_set_color_split(index+27, green.r, green.g, green.b);
         }
-    } else if (case_lock_state.active || sync_data.active) {
+    } else if (case_lock_state.active || sync_data.case_lock.active) {
         for (uint8_t index = 6; index < 27; index++) {
             RGB red = hsv_to_rgb((HSV){ 255, 255, 100 });
             rgb_matrix_set_color_split(index, red.r, red.g, red.b);
@@ -4421,11 +4429,15 @@ void housekeeping_task_user(void) {
         static uint32_t last_sync = 0;
         if (timer_elapsed32(last_sync) > 500) {
             master_to_slave_t m2s = {
-                .static_display = oled_state.static_display,
-                .oled_timeout = oled_state.timeout,
-                .oled_active = oled_state.active,
-                .capturing = case_lock_state.capturing,
-                .active = case_lock_state.active
+                .oled = {
+                    .static_display = oled_state.static_display,
+                    .timeout = oled_state.timeout,
+                    .active = oled_state.active,
+                },
+                .case_lock = {
+                    .capturing = case_lock_state.capturing,
+                    .active = case_lock_state.active
+                }
             };
             if (transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s)) {
                 last_sync = timer_read32();
