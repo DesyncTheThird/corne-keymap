@@ -2480,6 +2480,63 @@ static bool process_pre_key_tracking(uint16_t keycode, keyrecord_t* record) {
 // Deferred Executions
 //==============================================================================
 
+// Generic interface for repeating actions on hold
+
+typedef struct repeat_action_s repeat_action_t;
+
+typedef void (*repeat_func_t)(bool start);
+
+typedef uint32_t (*interval_func_t)(repeat_action_t*);
+
+struct repeat_action_s {
+    bool active;
+    deferred_token token;
+    repeat_func_t func;
+    uint32_t interval;
+    interval_func_t get_interval;
+};
+
+static uint32_t repeat_callback(uint32_t trigger_time, void* cb_arg) {
+    repeat_action_t* action = (repeat_action_t*)cb_arg;
+
+    if (!action->active) {
+        action->func(true);
+        action->active = true;
+    } else {
+        action->func(false);
+        action->active = false;
+    }
+
+    if (action->get_interval) {
+        return action->get_interval(action);
+    }
+
+    return action->interval;
+}
+
+static void repeat_start(repeat_action_t* action) {
+    if (action->token == INVALID_DEFERRED_TOKEN) {
+        uint32_t delay = repeat_callback(0, action);
+        action->token = defer_exec(delay, repeat_callback, action);
+    }
+}
+
+static void repeat_stop(repeat_action_t* action) {
+    if (action->token != INVALID_DEFERRED_TOKEN) {
+        cancel_deferred_exec(action->token);
+        action->token = INVALID_DEFERRED_TOKEN;
+
+        if (action->active) {
+            action->func(false);
+            action->active = false;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+// Lingering modifiers
+//------------------------------------------------------------------------------
+
 static bool ctrl_linger = false;
 
 static uint32_t ctrl_linger_callback(uint32_t trigger_time, void *cb_arg) {
@@ -2530,105 +2587,74 @@ static bool process_lingering_mods(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-static bool VOLD_active = false;
-static bool VOLU_active = false;
-static deferred_token VOLD_token = INVALID_DEFERRED_TOKEN;
-static deferred_token VOLU_token = INVALID_DEFERRED_TOKEN;
+//------------------------------------------------------------------------------
+// Volume keys
+//------------------------------------------------------------------------------
 
-#define interval 15
-
-static uint32_t VOLD_callback(uint32_t trigger_time, void* cb_arg) {
-    if (!VOLD_active) {
+static void vold_func(bool start) {
+    if (start) {
         register_code16(KC_VOLD);
-        VOLD_active = true;
     } else {
         unregister_code16(KC_VOLD);
-        VOLD_active = false;
     }
-    return interval;
 }
-static uint32_t VOLU_callback(uint32_t trigger_time, void* cb_arg) {
-    if (!VOLU_active) {
+
+static void volu_func(bool start) {
+    if (start) {
         register_code16(KC_VOLU);
-        VOLU_active = true;
     } else {
         unregister_code16(KC_VOLU);
-        VOLU_active = false;
-    }
-    return interval * 1.5;
-}
-
-static void VOLD_start(void) {
-    if (VOLD_token == INVALID_DEFERRED_TOKEN) {
-        uint32_t delay = VOLD_callback(0, NULL);
-        VOLD_token = defer_exec(delay, VOLD_callback, NULL);
-    }
-}
-static void VOLU_start(void) {
-    if (VOLU_token == INVALID_DEFERRED_TOKEN) {
-        uint32_t delay = VOLU_callback(0, NULL);
-        VOLU_token = defer_exec(delay, VOLU_callback, NULL);
     }
 }
 
-static void VOLD_stop(void) {
-    if (VOLD_token != INVALID_DEFERRED_TOKEN) {
-        cancel_deferred_exec(VOLD_token);
-        VOLD_token = INVALID_DEFERRED_TOKEN;
-        if (VOLD_active) {
-            unregister_code16(KC_VOLD);
-            VOLD_active = false;
-        }
-    }
-}
-static void VOLU_stop(void) {
-    if (VOLU_token != INVALID_DEFERRED_TOKEN) {
-        cancel_deferred_exec(VOLU_token);
-        VOLU_token = INVALID_DEFERRED_TOKEN;
-        if (VOLU_active) {
-            unregister_code16(KC_VOLU);
-            VOLU_active = false;
-        }
-    }
-}
+static repeat_action_t vold_action = {
+    .active = false,
+    .token = INVALID_DEFERRED_TOKEN,
+    .func = vold_func,
+    .interval = 15
+};
 
-static bool process_vol_repeat(uint16_t keycode, keyrecord_t* record) {
-    if (keycode == CS_VOLD) {
-        if (record->event.pressed) {
-            oled_state.muted = false;
-            if (!shifted()) {
-                VOLD_start();
-            } else {
-                register_code16(KC_VOLD);
-            }
+static repeat_action_t volu_action = {
+    .active = false,
+    .token = INVALID_DEFERRED_TOKEN,
+    .func = volu_func,
+    .interval = 20
+};
+
+static bool process_vol_controls(uint16_t keycode, keyrecord_t* record) {
+    repeat_action_t* action = NULL;
+
+    switch (keycode) {
+        case CS_VOLD:
+            action = &vold_action;
+            break;
+        case CS_VOLU:
+            action = &volu_action;
+            break;
+        default:
+            return true;
+    }
+    
+    if (record->event.pressed) {
+        oled_state.muted = false;
+        if (!shifted()) {
+            repeat_start(action);
         } else {
-            VOLD_stop();
-            unregister_code16(KC_VOLD);
+            action->func(true);
         }
-        return false;
+    } else {
+        repeat_stop(action);
+        action->func(false);
     }
-    if (keycode == CS_VOLU) {
-        if (record->event.pressed) {
-            oled_state.muted = false;
-            if (!shifted()) {
-                VOLU_start();
-            } else {
-                register_code16(KC_VOLU);
-            }
-        } else {
-            VOLU_stop();
-            unregister_code16(KC_VOLU);
-        }
-        return false;
-    }
+
     return true;
 }
 
 
 
-//==============================================================================
+//------------------------------------------------------------------------------
 // Clock
-//==============================================================================
+//------------------------------------------------------------------------------
 
 static uint32_t clock_callback(uint32_t trigger_time, void* cb_arg) {
     clock_state.sec++;
@@ -2646,94 +2672,102 @@ static uint32_t clock_callback(uint32_t trigger_time, void* cb_arg) {
     return 1000;
 }
 
-static bool process_clock(uint16_t keycode, keyrecord_t* record) {
-    if (keycode == CLOCKUP) {
-        if (record->event.pressed) {
-            switch (clock_state.setting) {
-                case set_none:
-                    break;
-                case set_hour:
-                    clock_state.hrs = (clock_state.hrs + 1) % 24;
-                    break;
-                case set_min:
-                    clock_state.min = (clock_state.min + 1) % 60;
-                    break;
-                case set_sec:
-                    clock_state.sec = (clock_state.sec + 1) % 60;
-                    break;
-            }
-        }
-        return false;
+static void clock_up_func(bool start) {
+    if (!start) {
+        return;
     }
-    if (keycode == CLOCKDN) {
-        if (record->event.pressed) {
-            switch (clock_state.setting) {
-                case set_none:
-                    break;
-                case set_hour:
-                    clock_state.hrs = clock_state.hrs == 0 ? 23 : clock_state.hrs - 1;
-                    break;
-                case set_min:
-                    clock_state.min = clock_state.min == 0 ? 59 : clock_state.min - 1;
-                    break;
-                case set_sec:
-                    clock_state.sec = clock_state.sec == 0 ? 59 : clock_state.sec - 1;
-                    break;
-            }
-        }
-        return false;
+    switch (clock_state.setting) {
+        case set_none:
+            break;
+        case set_hour:
+            clock_state.hrs = (clock_state.hrs + 1) % 24;
+            break;
+        case set_min:
+            clock_state.min = (clock_state.min + 1) % 60;
+            break;
+        case set_sec:
+            clock_state.sec = (clock_state.sec + 1) % 60;
+            break;
     }
-    if (keycode == CLOCKNX) {
-        if (record->event.pressed) {
-            if (!shifted()) {
-                clock_state.setting = (clock_state.setting + 1) % 4;
-            } else {
-                clock_state.setting = clock_state.setting == 0 ? 3 : clock_state.setting - 1;
-            }
-        }
-        return false;
-    }
-    return true;
 }
 
-static void render_clock(uint8_t shift, uint8_t line) {
-    char time_str[9];
+static void clock_dn_func(bool start) {
+    if (!start) {
+        return;
+    }
+    switch (clock_state.setting) {
+        case set_none:
+            break;
+        case set_hour:
+            clock_state.hrs = clock_state.hrs == 0 ? 23 : clock_state.hrs - 1;
+            break;
+        case set_min:
+            clock_state.min = clock_state.min == 0 ? 59 : clock_state.min - 1;
+            break;
+        case set_sec:
+            clock_state.sec = clock_state.sec == 0 ? 59 : clock_state.sec - 1;
+            break;
+    }
+}
 
-    time_str[8] = '\0';
-    time_str[7] = '0' + clock_state.sec % 10;
-    time_str[6] = '0' + clock_state.sec / 10;
-    time_str[5] = ':';
-    time_str[4] = '0' + clock_state.min % 10;
-    time_str[3] = '0' + clock_state.min / 10;
-    time_str[2] = ':';
-    time_str[1] = '0' + clock_state.hrs % 10;
-    time_str[0] = '0' + clock_state.hrs / 10;
+static uint32_t get_clock_interval(repeat_action_t* action) {
+    switch (clock_state.setting) {
+        case set_hour:
+            return 100;
+        case set_min:
+        case set_sec:
+            return 75;
+        default:
+            return action->interval;
+    }
+}
 
-    if (clock_state.setting == set_hour) {
-        oled_set_cursor(shift,line-1);
-        oled_write_char(148,false);
-        oled_write_char(149,false);
-        oled_set_cursor(shift,line+1);
-        oled_write_char(180,false);
-        oled_write_char(181,false);
-    } else if (clock_state.setting == set_min) {
-        oled_set_cursor(shift+3,line-1);
-        oled_write_char(148,false);
-        oled_write_char(149,false);
-        oled_set_cursor(shift+3,line+1);
-        oled_write_char(180,false);
-        oled_write_char(181,false);
-    } else if (clock_state.setting == set_sec) {
-        oled_set_cursor(shift+6,line-1);
-        oled_write_char(148,false);
-        oled_write_char(149,false);
-        oled_set_cursor(shift+6,line+1);
-        oled_write_char(180,false);
-        oled_write_char(181,false);
+static repeat_action_t clock_up_action = {
+    .active = false,
+    .token = INVALID_DEFERRED_TOKEN,
+    .func = clock_up_func,
+    .interval = 100,
+    .get_interval = get_clock_interval
+};
+
+static repeat_action_t clock_dn_action = {
+    .active = false,
+    .token = INVALID_DEFERRED_TOKEN,
+    .func = clock_dn_func,
+    .interval = 100,
+    .get_interval = get_clock_interval
+};
+
+static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
+    repeat_action_t* action = NULL;
+
+    switch (keycode) {
+        case CLOCKNX:
+            if (record->event.pressed) {
+                if (!shifted()) {
+                    clock_state.setting = (clock_state.setting + 1) % 4;
+                } else {
+                    clock_state.setting = clock_state.setting == 0 ? 3 : clock_state.setting - 1;
+                }
+            }
+            break;
+        case CLOCKUP: 
+            action = &clock_up_action;
+            break;
+        case CLOCKDN: 
+            action = &clock_dn_action;
+            break;
+        default: 
+            return true;
     }
 
-    oled_set_cursor(shift,line);
-    oled_write(time_str, false);
+    if (record->event.pressed) {
+        repeat_start(action);
+    } else {
+        repeat_stop(action);
+    }
+
+    return false;
 }
 
 
@@ -2774,8 +2808,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_homerow_mod_tap(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
     if (!process_edit_macros(keycode, record)) { return false; }
-    if (!process_vol_repeat(keycode, record)) { return false; }
-    if (!process_clock(keycode, record)) { return false; }
+    if (!process_vol_controls(keycode, record)) { return false; }
+    if (!process_clock_controls(keycode, record)) { return false; }
 
     switch (keycode) {
 
@@ -3451,9 +3485,53 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 // OLED
 //==============================================================================
 
-//------------
+//------------------------------------------------------------------------------
+// Clock
+//------------------------------------------------------------------------------
+
+static void render_clock(uint8_t shift, uint8_t line) {
+    char time_str[9];
+
+    time_str[8] = '\0';
+    time_str[7] = '0' + clock_state.sec % 10;
+    time_str[6] = '0' + clock_state.sec / 10;
+    time_str[5] = ':';
+    time_str[4] = '0' + clock_state.min % 10;
+    time_str[3] = '0' + clock_state.min / 10;
+    time_str[2] = ':';
+    time_str[1] = '0' + clock_state.hrs % 10;
+    time_str[0] = '0' + clock_state.hrs / 10;
+
+    if (clock_state.setting == set_hour) {
+        oled_set_cursor(shift,line-1);
+        oled_write_char(148,false);
+        oled_write_char(149,false);
+        oled_set_cursor(shift,line+1);
+        oled_write_char(180,false);
+        oled_write_char(181,false);
+    } else if (clock_state.setting == set_min) {
+        oled_set_cursor(shift+3,line-1);
+        oled_write_char(148,false);
+        oled_write_char(149,false);
+        oled_set_cursor(shift+3,line+1);
+        oled_write_char(180,false);
+        oled_write_char(181,false);
+    } else if (clock_state.setting == set_sec) {
+        oled_set_cursor(shift+6,line-1);
+        oled_write_char(148,false);
+        oled_write_char(149,false);
+        oled_set_cursor(shift+6,line+1);
+        oled_write_char(180,false);
+        oled_write_char(181,false);
+    }
+
+    oled_set_cursor(shift,line);
+    oled_write(time_str, false);
+}
+
+//------------------------------------------------------------------------------
 // WPM
-//------------
+//------------------------------------------------------------------------------
 
 bool wpm_keycode_user(uint16_t keycode) {
     if ((keycode >= QK_MOD_TAP && keycode <= QK_MOD_TAP_MAX)
@@ -3491,9 +3569,9 @@ static void render_wpm(void) {
     oled_write(render_str, false);
 }
 
-//------------
-// Animation
-//------------
+//------------------------------------------------------------------------------
+// OLED animation
+//------------------------------------------------------------------------------
 
 static bool minor = true;
 static bool major = false;
@@ -3610,6 +3688,10 @@ static void render_draw(void) {
 }
 
 
+
+//------------------------------------------------------------------------------
+// OLED menu
+//------------------------------------------------------------------------------
 
 static inline void render_linebreak(void) {
     oled_write_P(PSTR("__________"), false);
@@ -3896,8 +3978,6 @@ static void render_overlays(void) {
         return;
     }
 
-
-
     if (IS_LAYER_ON(_NUMPAD)) {
         oled_set_cursor(0,6);
         oled_write_raw_P(menu_layout_numpad, layout_right_size);
@@ -3909,8 +3989,6 @@ static void render_overlays(void) {
         render_right_thumb(menu_layout_mouse_right);
         return;
     }
-
-
 
     if (get_highest_layer(layer_state & overlay_mask & base_layer_mask) < 3) {
         return;
@@ -3949,8 +4027,6 @@ static void render_status(void) {
     render_mode(); // 1
 
     render_linebreak(); // 1
-
-
 
     oled_set_cursor(0,10);
     render_linebreak(); // 1
@@ -4018,7 +4094,7 @@ void keyboard_post_init_user(void) {
     // Clock
     defer_exec(clock_callback(0,NULL), clock_callback, NULL);
 
-    // OLED sync
+    // Data sync
     transaction_register_rpc(USER_SYNC_A, user_config_sync_handler);
 }
 
