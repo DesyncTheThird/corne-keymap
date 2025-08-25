@@ -2133,6 +2133,10 @@ static bool process_rollback(void) {
 }
 
 static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
+    if (!record->event.pressed) {
+        return true;
+    }
+
     // Reset repeat space override if any non-magic key is pressed
     if (!is_magic(keycode)) {
         key_state.magic_space_override = false;
@@ -2140,14 +2144,14 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
 
     // Ignore tracking if layer tap key is held
     if (is_layer_tap(keycode)) {
-        if (!record->tap.count && record->event.pressed) {
+        if (!record->tap.count) {
             return true;
         }
     }
 
     // Ignore tracking if ctrl mod is active and reset rollback counter
     if (ctrl_on() && keycode != CS_CONJ && keycode != CS_DISJ) {
-        if (record->tap.count && record->event.pressed) {
+        if (record->tap.count) {
             key_state.count = 1;
             return true;
         }
@@ -2155,14 +2159,12 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
 
     // Track alpha keys
     if (is_alpha(keycode)) {
-        if (record->event.pressed) {
-            update_last_key(keycode);
-        }
+        update_last_key(keycode);
         return true;
     }
     // Track mod-taps
     if (is_hrm(keycode)) {
-        if (record->tap.count && record->event.pressed) {
+        if (record->tap.count) {
             update_last_key(QK_MOD_TAP_GET_TAP_KEYCODE(keycode));
         }
         return true;
@@ -2170,78 +2172,62 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
 
     // Track spaces
     if (keycode == CS_LT1) {
-        if (record->tap.count && record->event.pressed) {
+        if (record->tap.count) {
             update_last_key(KC_SPC);
         }
         return true;
     }
     if (keycode == KC_SPC) {
-        if (record->event.pressed) {
-            update_last_key(KC_SPC);
-        }
+        update_last_key(KC_SPC);
         return true;
     }
     if (keycode == NEWSENT) {
-        if (record->event.pressed) {
-            update_last_keys(KC_SPC, 2);
-        }
+        update_last_keys(KC_SPC, 2);
         return true;
     }
 
     // Track enter key
     if (keycode == KC_ENT) {
-        if (record->event.pressed) {
-            update_last_key(KC_NO);
-        }
+        update_last_key(KC_NO);
         return true;
     }
 
     // Handle tap action of tab-shift keys
     if (keycode == TABLSFT || keycode == TABRSFT) {
-        if (record->tap.count && record->event.pressed) {
+        if (record->tap.count) {
             update_last_key(KC_SPC);
         }
         return true;
     }
 
     // Track punctuation
-    if (keycode == KC_COMM || keycode == CS_COMM) {
-        if (record->event.pressed) {
-            update_last_key(KC_COMM);
-        }
+    if (keycode == KC_COMM || keycode == CS_COMM || (keycode == COM_EXL && !shifted())) {
+        update_last_key(KC_COMM);
         return true;
     }
-    if (keycode == KC_DOT || keycode == CS_DOT) {
-        if (record->event.pressed) {
-            update_last_key(KC_DOT);
-        }
+    if (keycode == KC_DOT || keycode == CS_DOT || (keycode == DOT_QUE && !shifted())) {
+        update_last_key(KC_DOT);
         return true;
     }
     if (keycode == KC_QUOT || keycode == CS_QUOT) {
-        if (record->event.pressed) {
-            update_last_key(KC_QUOT);
-        }
+        update_last_key(KC_QUOT);
         return true;
     }
 
     // Track various macros
     if (is_bracket_macro(keycode) || is_bracket_wrap_macro(keycode)) {
-        if (record->event.pressed) {
-            update_last_keys(keycode, 2);
-        }
+        update_last_keys(keycode, 2);   
         return true;
     }
     if (keycode == CS_CONJ || keycode == CS_DISJ) {
-        if (record->event.pressed) {
-            if (ctrl_on() && shifted()) {
-                update_last_keys(KC_NO, 4);
-            } else if (ctrl_on()) {
-                update_last_keys(KC_NO, 3);
-            } else if (shifted()) {
-                update_last_keys(KC_NO, 2);
-            } else {
-                update_last_key(KC_NO);
-            }
+        if (ctrl_on() && shifted()) {
+            update_last_keys(KC_NO, 4);
+        } else if (ctrl_on()) {
+            update_last_keys(KC_NO, 3);
+        } else if (shifted()) {
+            update_last_keys(KC_NO, 2);
+        } else {
+            update_last_key(KC_NO);
         }
         return true;
     }
@@ -2256,15 +2242,13 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
 
     // Handle deletes
     if (keycode == CS_RT1) {
-        if (record->tap.count && record->event.pressed) {
+        if (record->tap.count) {
             return process_rollback();
         }
         return true;
     }
     if (keycode == KC_BSPC) {
-        if (record->event.pressed) {
-            return process_rollback();
-        }
+        return process_rollback();
         return true;
     }
 
@@ -2280,9 +2264,7 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     }
 
     // Reset rollback counter and recorded key on any other keypress
-    if (record->event.pressed) {
-        update_last_key(KC_NO);
-    }
+    update_last_key(KC_NO);
     return true;
 }
 
@@ -2506,16 +2488,19 @@ static uint32_t ctrl_linger_callback(uint32_t trigger_time, void *cb_arg) {
 }
 
 static bool process_lingering_mods(uint16_t keycode, keyrecord_t* record) {
-    if (keycode == CS_LCTL) {
-        if (record->event.pressed) {
-            ctrl_linger = true;
-            defer_exec(500, ctrl_linger_callback, NULL);
-            clear_oneshot_mods();
-        }
+    if (!record->event.pressed) {
         return true;
     }
+
+    if (keycode == CS_LCTL) {
+        ctrl_linger = true;
+        defer_exec(500, ctrl_linger_callback, NULL);
+        clear_oneshot_mods();
+        return true;
+    }
+
     if (keycode == CS_RT1) {
-        if (record->tap.count && record->event.pressed) {
+        if (record->tap.count) {
             if (ctrl_linger) {
                 const uint8_t mods = get_mods();
                 register_mods(MOD_BIT(KC_LCTL));
@@ -2527,6 +2512,7 @@ static bool process_lingering_mods(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
+
     if (keycode == KC_BSPC) {
         if (ctrl_linger) {
             const uint8_t mods = get_mods();
@@ -2538,6 +2524,8 @@ static bool process_lingering_mods(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
+
+    // Reset on any other keypress
     ctrl_linger = false;
     return true;
 }
