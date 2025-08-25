@@ -1595,6 +1595,7 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
         } else {
             send_separator();
             case_lock_state.distance = 0;
+            dprintf("separator distance = %d\n", case_lock_state.distance);
             update_last_key(KC_SPC);
             return false;
         }
@@ -1616,6 +1617,7 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
         } else {
             if (case_lock_state.distance > 0) {
                 case_lock_state.distance--;
+                dprintf("separator distance = %d\n", case_lock_state.distance);
             }
             return true;
         }
@@ -1623,14 +1625,14 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
 
     if (is_hrm(keycode) && record->tap.count) {
         case_lock_state.distance++;
-        // dprintf("separator distance = %d\n", case_lock_state.distance);
+        dprintf("separator distance = %d\n", case_lock_state.distance);
         return true;
     }
     switch (keycode) {
         case KC_A ... KC_Z:
         case KC_1 ... KC_0:
             case_lock_state.distance++;
-            // dprintf("separator distance = %d\n", case_lock_state.distance);
+            dprintf("separator distance = %d\n", case_lock_state.distance);
             return true;
 
         case TABLSFT:
@@ -1642,18 +1644,25 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
             return true;
     }
 
+    if (is_magic(keycode) && record->tap.count) {
+        // Handle variable-length outputs elsewhere
+        return true;
+    }
+
     const sep_rule_t* translate = get_separator_rule(keycode);
     if (translate) {
         if (translate->output == case_lock_state.rule->output) {
             // Same as captured separator
             case_lock_state.distance = 0;
+            dprintf("separator distance = %d\n", case_lock_state.distance);
         } else {
             // Other separators
             case_lock_state.distance++;
-            // dprintf("separator distance = %d\n", case_lock_state.distance);
+            dprintf("separator distance = %d\n", case_lock_state.distance);
         }
         return true;
     }
+
 
     // Ignore modifier keys
     if (keycode == KC_LSFT || keycode == KC_RSFT ||
@@ -2260,10 +2269,12 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
 
-    // Do nothing:
+    // Don't track magic keys
     if (is_magic(keycode)) {
         return true;
     }
+
+    // Don't track modifier keys
     if (keycode == KC_LSFT || keycode == OSMLSFT ||
         keycode == KC_LCTL || keycode == CS_LCTL ||
         keycode == TABLSFT || keycode == TABRSFT) {
@@ -2382,6 +2393,11 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 default: tap_code(key_state.last_key); update_last_key(key_state.last_key); key_state.magic_space_override = false; break;
             }
             set_mods(mods);
+            // Update case lock separator distance
+            if (case_lock_state.active) {
+                case_lock_state.distance += key_state.count;
+                dprintf("separator distance = %d\n", case_lock_state.distance);
+            }
         }
         return false;
     }
@@ -2449,6 +2465,11 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 default: tap_code(key_state.last_key); update_last_key(key_state.last_key); break;
             }
             set_mods(mods);
+            // Update case lock separator distance
+            if (case_lock_state.active) {
+                case_lock_state.distance += key_state.count;
+                dprintf("separator distance = %d\n", case_lock_state.distance);
+            }
         }
         return false;
     }
