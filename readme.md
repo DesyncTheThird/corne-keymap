@@ -98,7 +98,7 @@ Modifiers are not tracked (but the dynamic keys may be modified):
 
 Any keys pressed while the control modifier is active are not tracked. This does not reset key tracking:
 
-> `a [CTRL] b [Release CTRL] [Magic]` produces `a ^b a`.
+> `a [Ctrl] b [Release Ctrl] [Magic]` produces `a ^b a`.
 
 `Backspace` reverts the tracked key to the previous key:
 
@@ -267,7 +267,7 @@ I find it difficult to press upper row keys with my pinkies and end up alt finge
 
 A copy of `Tab` is placed on the right hand to reduce left hand contortions. The two `Tab` keys also function as `LShift` and `RShift` when held. The shift modifiers are applied eagerly on keydown to improve interaction with pointing devices; these eager shift modifiers do not overwrite home row mods, so you can still shift-tab with one hand.
 
-The `LCTL` key also sets a weak one shot `ctrl` modifier for the `Backspace` key only to allow for faster usage while typing. The one shot modifier lingers for 500ms and is removed on any other keypress (without being applied).
+The `LCTL` key also sets a weak one shot `Ctrl` modifier for the `Backspace` key only to allow for faster usage while typing. The one shot modifier lingers for 500ms and is removed on any other keypress (without being applied).
 
 ### Data
 ![Data](images/data.png?raw=true)
@@ -383,9 +383,12 @@ The right hand is replaced with macros useful for editing:
 - The `Join` macro joins current line to following line with space between; omits the space if shifted.
 - The three bracket macros enclose the current word with the listed brackets. These macros also interoperate with the rollback feature.
 
-If an arrow key is held on the `Edit` layer while this layer is activated, the arrow key will be retriggered with a non-persistent control modifier, allowing quick horizontal navigation/vertical scrolling without having to manually re-press the arrow key after holding a modifier. If the modifier has been lost (see below), the arrow key will not be retriggered when the overlay is deactivated, avoiding the pause in motion.
+If an arrow key is held on the `Edit` layer while this layer is activated, the arrow key will be retriggered with a non-persistent `Ctrl` modifier, allowing quick horizontal navigation/vertical scrolling without having to manually re-press the arrow key after holding a modifier. If the modifier has been lost, retriggering on layer-off is disabled, avoiding pauses in motion.
 
-If the arrow key is released, it will not retain the control modifier on subsequent presses, apart from the `Up`/`Down` keys, which will retain the modifier when alternating between the two keys within 200ms of release. e.g. if `Up` is has the overlay control modifier activated, then `Down` will retain the control modifier if pressed within 200ms of releasing `Up`.
+Released arrow keys do not retain the overlay modifier on subsequent presses, except for `Up`/`Down`, which retain the modifier between the two keys if pressed within 1000ms of release. Pressing any other key will disable the modifier. Quickly double-tapping the same directional key within 100ms will also forcibly disable the modifier.
+
+For example, if `Up` is released while the overlay modifier is active, then `Up` and `Down` will retain the overlay modifier if pressed within 1000ms -- unless `Up` is pressed within 100ms, which disables the modifier.
+
 
 > [!NOTE]
 > You can modify this feature in the `process_arrow_retrigger` function.

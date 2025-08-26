@@ -1674,73 +1674,114 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
 // Edit Control Keys
 //==============================================================================
 
-typedef struct {
-    uint16_t last_key;
-    uint8_t held_keys;
-    bool active;
-} arrow_state_t;
-
-static arrow_state_t arrow_state = {
-    .last_key = KC_NO,
-    .held_keys = 0,
-    .active = false
-};
-
-static uint16_t arrows[4] = {KC_UP, KC_DOWN, KC_LEFT, KC_RGHT};
-
-enum {
+typedef enum {
+    ARROW_NONE  = 0,
     ARROW_UP    = 1 << 0,
     ARROW_DOWN  = 1 << 1,
     ARROW_LEFT  = 1 << 2,
-    ARROW_RIGHT = 1 << 3,
+    ARROW_RIGHT = 1 << 3
+} arrow_bit_t;
+
+#define VERTICAL_MASK (ARROW_UP | ARROW_DOWN)
+
+typedef struct {
+    arrow_bit_t last_key;
+    uint8_t held_keys;
+    bool mod_active;
+    uint32_t last_press;
+} arrow_state_t;
+
+
+static arrow_state_t arrow_state = {
+    .last_key = ARROW_NONE,
+    .held_keys = 0,
+    .mod_active = false,
+    .last_press = 0
 };
 
-static inline void set_arrow(uint8_t arrow)    { arrow_state.held_keys |= arrow; }
-static inline void clear_arrow(uint8_t arrow)  { arrow_state.held_keys &= ~arrow; }
-static inline bool check_arrow(uint8_t arrow)  { return arrow_state.held_keys & arrow; }
-static inline uint8_t arrow_bit(uint16_t keycode) {
+static inline void set_arrow(arrow_bit_t arrow)    { arrow_state.held_keys |= arrow; }
+static inline void clear_arrow(arrow_bit_t arrow)  { arrow_state.held_keys &= ~arrow; }
+static inline bool check_arrow(arrow_bit_t arrow)  { return arrow_state.held_keys & arrow; }
+
+static inline arrow_bit_t arrow_bit(uint16_t keycode) {
     switch (keycode) {
         case KC_UP:   return ARROW_UP;
         case KC_DOWN: return ARROW_DOWN;
         case KC_LEFT: return ARROW_LEFT;
         case KC_RGHT: return ARROW_RIGHT;
-        default:      return 0;
+        default:      return ARROW_NONE;
+    }
+}
+
+static uint16_t arrows[4] = {KC_UP, KC_DOWN, KC_LEFT, KC_RGHT};
+
+static void arrow_mod_on(void) {
+    arrow_state.mod_active = true;
+    arrow_state.last_key = ARROW_NONE;
+
+    for (int i = 0; i < 4; i++ ) {
+        if (arrow_state.held_keys & 1 << i) {
+            unregister_code(arrows[i]);
+            register_code16(LCTL(arrows[i]));
+        }
+    }
+}
+
+static void arrow_mod_off(void) {
+    arrow_state.mod_active = false;
+    arrow_state.last_key = ARROW_NONE;
+
+    for (int i = 0; i < 4; i++ ) {
+        if (arrow_state.held_keys & 1 << i) {
+            unregister_code16(LCTL(arrows[i]));
+            register_code(arrows[i]);
+        }
     }
 }
 
 static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
     if (is_arrow(keycode)) {
-        uint8_t bit = arrow_bit(keycode);
+        arrow_bit_t arrow = arrow_bit(keycode);
+
         if (record->event.pressed) {
-            set_arrow(bit);
-            if ((arrow_state.held_keys & (ARROW_UP | ARROW_DOWN)) && arrow_state.active && arrow_state.last_key != keycode) {
-                register_code16(LCTL(keycode));
-                arrow_state.last_key = keycode;
-                return false;
+            set_arrow(arrow);
+
+            if (arrow_state.mod_active) {
+                uint32_t now = timer_read();
+
+                // Retain mod state on alternating vertical keys
+                if (arrow_state.held_keys & VERTICAL_MASK &&
+                    arrow_state.last_key != arrow) {
+                    register_code16(LCTL(keycode));
+                    arrow_state.last_key = arrow;
+                    return false;
+                }
+
+                if ((arrow & VERTICAL_MASK) &&
+                    arrow_state.last_key == arrow) {
+                    // Retain mod state on double taps...
+                    if (now - arrow_state.last_press > 100) {
+                        register_code16(LCTL(keycode));
+                        arrow_state.last_key = arrow;
+                        return false;
+                    } else { // ...unless within 100ms
+                        arrow_state.mod_active = false;
+                    }
+                }
             }
-            arrow_state.active = false;
-            arrow_state.last_key = keycode;
+            arrow_state.mod_active = false;
+            arrow_state.last_key = arrow;
         } else {
-            clear_arrow(bit);
+            clear_arrow(arrow);
+            arrow_state.last_press = timer_read();
         }
     }
+
     if (keycode == CS_AL4) {
         if (!record->tap.count && record->event.pressed) {
-            arrow_state.active = true;
-            for (int i = 0; i < 4; i++ ) {
-                if (arrow_state.held_keys & 1 << i) {
-                    unregister_code(arrows[i]);
-                    register_code16(LCTL(arrows[i]));
-                }
-            }
-        } else if (!record->tap.count && !record->event.pressed && arrow_state.active) {
-            arrow_state.active = false;
-            for (int i = 0; i < 4; i++ ) {
-                if (arrow_state.held_keys & 1 << i) {
-                    unregister_code16(LCTL(arrows[i]));
-                    register_code(arrows[i]);
-                }
-            }
+            arrow_mod_on();
+        } else if (!record->tap.count && !record->event.pressed && arrow_state.mod_active) {
+            arrow_mod_off();
         }
     }
     return true;
@@ -4351,6 +4392,7 @@ typedef struct {
 enum {
     TIMEOUT_IDLE,
     TIMEOUT_MACRO,
+    TIMEOUT_ARROW,
     TIMEOUT_TRACKING,
     TIMEOUT_MAGIC,
     TIMEOUT_CASE_CAPTURE,
@@ -4362,6 +4404,7 @@ enum {
 static timeout_t timeouts[TIMEOUT_COUNT] = {
     [TIMEOUT_IDLE]         = { .duration = 300000 },
     [TIMEOUT_MACRO]        = { .duration = 200 },
+    [TIMEOUT_ARROW]        = { .duration = 1000 },
     [TIMEOUT_TRACKING]     = { .duration = 500 },
     [TIMEOUT_MAGIC]        = { .duration = 1000 },
     [TIMEOUT_CASE_CAPTURE] = { .duration = 1000 },
@@ -4414,8 +4457,11 @@ void housekeeping_task_user(void) {
         if (key_state.last_key == SELECT) {
             key_state.last_key = KC_NO;
         }
+    }
+
+    if (timeouts[TIMEOUT_ARROW].active) {
         if (!arrow_state.held_keys) {
-            arrow_state.active = false;
+            arrow_state.mod_active = false;
         }
     }
 
