@@ -445,17 +445,23 @@ void user_config_sync_handler(uint8_t initiator2target_buffer_size, const void* 
 typedef struct {
     bool LT3_active :1;
     bool RT3_active :1;
+    bool alt_tab_active :1;
     bool left_eager_shift :1;
     bool right_eager_shift :1;
-    bool alt_tab_active :1;
+    int8_t left_row, left_col;
+    int8_t right_row, right_col;
 } misc_key_flags_t;
 
 static misc_key_flags_t misc_key_state = {
     .LT3_active = false,
     .RT3_active = false,
+    .alt_tab_active = false,
     .left_eager_shift = false,
     .right_eager_shift = false,
-    .alt_tab_active = false
+    .left_row = -1,
+    .left_col = -1,
+    .right_row = -1,
+    .right_col = -1
 };
 
 typedef enum {
@@ -2803,26 +2809,65 @@ static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
 
 
 //==============================================================================
-// Events
+// Eager mods
 //==============================================================================
 
 bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
+    if (!record->event.pressed) {
+        return true;
+    }
+
     switch (keycode) {
         case TABLSFT:
-            if (record->event.pressed && !(get_mods() & MOD_BIT(KC_LSFT))) {
+            if (!(get_mods() & MOD_BIT(KC_LSFT))) {
                 register_mods(MOD_BIT(KC_LSFT));
                 misc_key_state.left_eager_shift = true;
+                misc_key_state.left_row = record->event.key.row;
+                misc_key_state.left_col = record->event.key.col;
             }
             break;
         case TABRSFT:
-            if (record->event.pressed && !(get_mods() & MOD_BIT(KC_RSFT))) {
+            if (!(get_mods() & MOD_BIT(KC_RSFT))) {
                 register_mods(MOD_BIT(KC_RSFT));
                 misc_key_state.right_eager_shift = true;
+                misc_key_state.right_row = record->event.key.row;
+                misc_key_state.right_col = record->event.key.col;
             }
             break;
     }
     return true;
 }
+
+bool process_eager_mods(uint16_t keycode, keyrecord_t* record) {
+    if (record->event.pressed) {
+        return true;
+    }
+    uint8_t r = record->event.key.row;
+    uint8_t c = record->event.key.col;
+
+    if (misc_key_state.left_eager_shift &&
+        r == misc_key_state.left_row &&
+        c == misc_key_state.left_col) {
+        unregister_mods(MOD_BIT(KC_LSFT));
+        misc_key_state.left_row = -1;
+        misc_key_state.left_col = -1;
+        misc_key_state.left_eager_shift = false;
+    }
+    if (misc_key_state.right_eager_shift &&
+        r == misc_key_state.right_row &&
+        c == misc_key_state.right_col) {
+        unregister_mods(MOD_BIT(KC_RSFT));
+        misc_key_state.right_row = -1;
+        misc_key_state.right_col = -1;
+        misc_key_state.right_eager_shift = false;
+    }
+
+    return true;
+}
+
+//==============================================================================
+// Events
+//==============================================================================
 
 
 
@@ -2834,6 +2879,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     // Reactive features go before key tracking
     if (!process_key_tracking(keycode, record)) { return false; }
     if (!process_lingering_mods(keycode, record)) { return false; }
+    if (!process_eager_mods(keycode, record)) { return false; }
     if (!process_magic(keycode, record)) { return false; }
     if (!process_homerow_mod_tap(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
