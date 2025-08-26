@@ -1527,6 +1527,7 @@ static bool process_case_capture(uint16_t keycode) {
     // Immediate behaviours
     switch (case_lock_state.rule->kind) {
         case SEP_DEF:
+            case_lock_state.distance++;
             return true;
 
         case SEP_SYM:
