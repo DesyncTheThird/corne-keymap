@@ -442,28 +442,6 @@ void user_config_sync_handler(uint8_t initiator2target_buffer_size, const void* 
 // Variables
 //==============================================================================
 
-typedef struct {
-    bool LT3_active :1;
-    bool RT3_active :1;
-    bool alt_tab_active :1;
-    bool left_eager_shift :1;
-    bool right_eager_shift :1;
-    int8_t left_row, left_col;
-    int8_t right_row, right_col;
-} misc_key_flags_t;
-
-static misc_key_flags_t misc_key_state = {
-    .LT3_active = false,
-    .RT3_active = false,
-    .alt_tab_active = false,
-    .left_eager_shift = false,
-    .right_eager_shift = false,
-    .left_row = -1,
-    .left_col = -1,
-    .right_row = -1,
-    .right_col = -1
-};
-
 typedef enum {
     set_none,
     set_hour,
@@ -1670,7 +1648,6 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
 
-
     // Ignore modifier keys
     if (keycode == KC_LSFT || keycode == KC_RSFT ||
         keycode == CS_LCTL || keycode == KC_LCTL) {
@@ -2812,54 +2789,84 @@ static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
 // Eager mods
 //==============================================================================
 
+typedef struct {
+    uint16_t keycode;
+    uint8_t mods;
+    bool active :1;
+    int8_t row, col;
+} eager_key_t;
+
+static eager_key_t eager_keys[] = {
+    { TABLSFT, MOD_BIT(KC_LSFT), false, -1, -1 },
+    { TABRSFT, MOD_BIT(KC_RSFT), false, -1, -1 }
+};
+
+static eager_key_t* eager_keycode(uint16_t keycode) {
+    for (size_t i = 0; i < ARRAY_SIZE(eager_keys); i++) {
+        if (eager_keys[i].keycode == keycode) {
+            return &eager_keys[i];
+        }
+    }
+    return NULL;
+}
+
+static eager_key_t* eager_keypos(uint8_t row, uint8_t col) {
+    for (size_t i = 0; i < ARRAY_SIZE(eager_keys); i++) {
+        if (eager_keys[i].row == row && eager_keys[i].col == col) {
+            return &eager_keys[i];
+        }
+    }
+    return NULL;
+}
+
 bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!record->event.pressed) {
         return true;
     }
 
-    switch (keycode) {
-        case TABLSFT:
-            if (!(get_mods() & MOD_BIT(KC_LSFT))) {
-                register_mods(MOD_BIT(KC_LSFT));
-                misc_key_state.left_eager_shift = true;
-                misc_key_state.left_row = record->event.key.row;
-                misc_key_state.left_col = record->event.key.col;
-            }
-            break;
-        case TABRSFT:
-            if (!(get_mods() & MOD_BIT(KC_RSFT))) {
-                register_mods(MOD_BIT(KC_RSFT));
-                misc_key_state.right_eager_shift = true;
-                misc_key_state.right_row = record->event.key.row;
-                misc_key_state.right_col = record->event.key.col;
-            }
-            break;
+    eager_key_t *ek = eager_keycode(keycode);
+
+    if (ek && !(get_mods() & ek->mods)) {
+        register_mods(ek->mods);
+        ek->active = true;
+        ek->row = record->event.key.row;
+        ek->col = record->event.key.col;
     }
     return true;
 }
 
 bool process_eager_mods(uint16_t keycode, keyrecord_t* record) {
-    if (record->event.pressed) {
-        return true;
-    }
-    uint8_t r = record->event.key.row;
-    uint8_t c = record->event.key.col;
+    eager_key_t *ek = eager_keycode(keycode);
 
-    if (misc_key_state.left_eager_shift &&
-        r == misc_key_state.left_row &&
-        c == misc_key_state.left_col) {
-        unregister_mods(MOD_BIT(KC_LSFT));
-        misc_key_state.left_row = -1;
-        misc_key_state.left_col = -1;
-        misc_key_state.left_eager_shift = false;
+    if (ek) {
+        if (!record->tap.count && !record->event.pressed) {
+            unregister_mods(ek->mods);
+        }
+        if (record->tap.count & record->event.pressed) {
+            if (ek->active) {
+                unregister_mods(ek->mods);
+            }
+            switch (ek->keycode) {
+                case TABLSFT:
+                    if (IS_LAYER_OFF(_CONTROL_OVERLAY)) {
+                        tap_code(KC_TAB);
+                    }
+                    break;
+                case TABRSFT:
+                    tap_code(KC_TAB);
+                    break;
+            }
+        }
+        ek->active = false;
+        return false;
     }
-    if (misc_key_state.right_eager_shift &&
-        r == misc_key_state.right_row &&
-        c == misc_key_state.right_col) {
-        unregister_mods(MOD_BIT(KC_RSFT));
-        misc_key_state.right_row = -1;
-        misc_key_state.right_col = -1;
-        misc_key_state.right_eager_shift = false;
+
+    if (!record->event.pressed) {
+        ek = eager_keypos(record->event.key.row, record->event.key.col);
+        if (ek && ek->active) {
+            unregister_mods(ek->mods);
+            ek->active = false;
+        }
     }
 
     return true;
@@ -2869,7 +2876,17 @@ bool process_eager_mods(uint16_t keycode, keyrecord_t* record) {
 // Events
 //==============================================================================
 
+typedef struct {
+    bool LT3_active :1;
+    bool RT3_active :1;
+    bool alt_tab_active :1;
+} misc_key_flags_t;
 
+static misc_key_flags_t misc_key_state = {
+    .LT3_active = false,
+    .RT3_active = false,
+    .alt_tab_active = false,
+};
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_case_lock(keycode, record)) { return false; }
@@ -3256,33 +3273,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 cs_tap_code16_mods(LSFT(KC_HOME), MOD_MASK_CTRL);
             }
             break;
-
-        case TABLSFT:
-            if (!record->tap.count && !record->event.pressed) {
-                unregister_mods(MOD_BIT(KC_LSFT));
-            }
-            if (record->tap.count && record->event.pressed) {
-                if (misc_key_state.left_eager_shift) {
-                    unregister_mods(MOD_BIT(KC_LSFT));
-                }
-                if (IS_LAYER_OFF(_CONTROL_OVERLAY)) {
-                    tap_code(KC_TAB);
-                }
-            }
-            misc_key_state.left_eager_shift = false;
-            return false;
-        case TABRSFT:
-            if (!record->tap.count && !record->event.pressed) {
-                unregister_mods(MOD_BIT(KC_RSFT));
-            }
-            if (record->tap.count && record->event.pressed) {
-                if (misc_key_state.right_eager_shift) {
-                    unregister_mods(MOD_BIT(KC_RSFT));
-                }
-                tap_code(KC_TAB);
-            }
-            misc_key_state.right_eager_shift = false;
-            return false;
 
         // =====================================================================
         // Custom shifts
