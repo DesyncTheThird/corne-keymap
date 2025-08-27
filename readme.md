@@ -164,12 +164,15 @@ To indicate that the feature is active, the per-key LEDs will glow green while t
 
 ---
 
-- Common punctuation is accessible from combos on or near home row;
-- Mouse emulation layer accessible on pinky key combos to allow mouse control without moving from home row.
-- Uncommon locking layers (numpad/steno) also accessible from large combos;
-- `New` combo presses `DOT`, `Space`, then sets a one shot shift.
-
 Pressing `Space` plus a key on the left hand top row will output the function keys `F1` to `F5` for left-hand-only usage. (Not shown on image due to reduce clutter.)
+
+Common punctuation is accessible from combos on or near home row. Mouse emulation layer is accessible on pinky key combos to allow mouse control without moving from home row. Uncommon locking layers (numpad/steno) are also accessible from large combos.
+
+- `New` combo emits `Dot`, `Space`, then sets a one shot shift;
+- `«` thumb combo emits `Ctrl`+`Bspc`;
+- `⇪` thumb combo activates capsword.
+
+Capsword shifts letter keys (including `Magic` and `Repeat` outputs) and is disabled at the end of the word. The shift modifier will be retained while the [Case Lock](#case-lock) feature is active.
 
 
 

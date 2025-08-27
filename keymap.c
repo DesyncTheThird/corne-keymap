@@ -60,6 +60,8 @@ enum custom_keycodes {
 
     DB_INFO,
 
+    CAPSWRD,
+
     // Custom Symbols
     COM_EXL,
     DOT_QUE,
@@ -441,6 +443,20 @@ void user_config_sync_handler(uint8_t initiator2target_buffer_size, const void* 
 //==============================================================================
 // Variables
 //==============================================================================
+
+typedef struct {
+    bool LT3_active :1;
+    bool RT3_active :1;
+    bool alt_tab_active :1;
+    bool capsword_active :1;
+} misc_key_flags_t;
+
+static misc_key_flags_t misc_key_state = {
+    .LT3_active = false,
+    .RT3_active = false,
+    .alt_tab_active = false,
+    .capsword_active = false
+};
 
 typedef enum {
     set_none,
@@ -1006,7 +1022,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case RC_K:
         case LC_T:
         case RC_E:
-            return 150;
+            return 200;
 
         // Alt mod-taps
         case LA_S:
@@ -1178,6 +1194,9 @@ enum combo_events {
     MOUSE,
     MOUSE2,
 
+    BACKSPACE,
+    CAPSWORD,
+
     L_EXPONENT,
     L_COMMA,
     L_DOT,
@@ -1186,9 +1205,9 @@ enum combo_events {
     L_PLUS,
     L_EQUALS,
     L_MINUS,
-    L_NEW,
+    L_NEWSENT,
+    EXCLAMATION,
     COLON,
-    AMPERSAND,
 
     R_EXPONENT,
     R_COMMA,
@@ -1198,9 +1217,9 @@ enum combo_events {
     R_PLUS,
     R_EQUALS,
     R_MINUS,
-    R_NEW,
-    EXCLAMATION,
+    R_NEWSENT,
     SEMICOLON,
+    AMPERSAND,
 
     SPC_F1,
     SPC_F2,
@@ -1212,41 +1231,43 @@ enum combo_events {
 };
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
-const uint16_t PROGMEM touhou[]         = {KC_P, CS_HASH, KC_ESC, COMBO_END};
-const uint16_t PROGMEM steno[]          = {KC_P, CS_HASH, KC_SCLN, TABRSFT, COMBO_END};
-const uint16_t PROGMEM numpad[]         = {KC_O, KC_P, CS_HASH, COMBO_END};
-const uint16_t PROGMEM mouse[]          = {KC_SCLN, DOT_QUE, COMBO_END};
-const uint16_t PROGMEM mouse2[]         = {KC_A, KC_Z, COMBO_END};
+const uint16_t PROGMEM touhou[]       = {    KC_P, CS_HASH,  KC_ESC,          COMBO_END};
+const uint16_t PROGMEM steno[]        = {    KC_P, CS_HASH, KC_SCLN, TABRSFT, COMBO_END};
+const uint16_t PROGMEM numpad[]       = {    KC_O,    KC_P, CS_HASH,          COMBO_END};
+const uint16_t PROGMEM mouse[]        = { KC_SCLN, DOT_QUE,                   COMBO_END};
+const uint16_t PROGMEM mouse2[]       = {    KC_A,    KC_Z,                   COMBO_END};
+const uint16_t PROGMEM backspace[]    = {  CS_RT1,  CS_RT2,                   COMBO_END};
+const uint16_t PROGMEM capsword[]     = {  KC_SPC,  CS_LT2,                   COMBO_END};
 
-const uint16_t PROGMEM l_exponent[]     = {KC_W, KC_E, COMBO_END};
-const uint16_t PROGMEM l_comma[]        = {KC_D, KC_V, COMBO_END};
-const uint16_t PROGMEM l_dot[]          = {KC_S, KC_D, COMBO_END};
-const uint16_t PROGMEM l_underscore[]   = {KC_C, KC_V, COMBO_END};
-const uint16_t PROGMEM l_asterisk[]     = {KC_F, KC_B, COMBO_END};
-const uint16_t PROGMEM l_equals[]       = {KC_E, KC_R, COMBO_END};
-const uint16_t PROGMEM l_plus[]         = {KC_F, KC_G, COMBO_END};
-const uint16_t PROGMEM l_minus[]        = {KC_D, KC_F, COMBO_END};
-const uint16_t PROGMEM l_new[]          = {KC_X, KC_C, COMBO_END};
-const uint16_t PROGMEM ampersand[]      = {KC_S, KC_E, COMBO_END};
-const uint16_t PROGMEM colon[]          = {KC_E, KC_F, COMBO_END};
+const uint16_t PROGMEM l_exponent[]   = {    KC_W,    KC_E,                   COMBO_END};
+const uint16_t PROGMEM l_comma[]      = {    KC_D,    KC_V,                   COMBO_END};
+const uint16_t PROGMEM l_dot[]        = {    KC_S,    KC_D,                   COMBO_END};
+const uint16_t PROGMEM l_underscore[] = {    KC_C,    KC_V,                   COMBO_END};
+const uint16_t PROGMEM l_asterisk[]   = {    KC_F,    KC_B,                   COMBO_END};
+const uint16_t PROGMEM l_equals[]     = {    KC_E,    KC_R,                   COMBO_END};
+const uint16_t PROGMEM l_plus[]       = {    KC_F,    KC_G,                   COMBO_END};
+const uint16_t PROGMEM l_minus[]      = {    KC_D,    KC_F,                   COMBO_END};
+const uint16_t PROGMEM l_newsent[]    = {    KC_X,    KC_D,                   COMBO_END};
+const uint16_t PROGMEM exclamation[]  = {    KC_S,    KC_E,                   COMBO_END};
+const uint16_t PROGMEM colon[]        = {    KC_E,    KC_F,                   COMBO_END};
 
-const uint16_t PROGMEM r_exponent[]     = {KC_I, KC_O, COMBO_END};
-const uint16_t PROGMEM r_comma[]        = {KC_M, KC_K, COMBO_END};
-const uint16_t PROGMEM r_dot[]          = {KC_K, KC_L, COMBO_END};
-const uint16_t PROGMEM r_underscore[]   = {KC_M, KC_QUOT, COMBO_END};
-const uint16_t PROGMEM r_asterisk[]     = {KC_N, KC_J, COMBO_END};
-const uint16_t PROGMEM r_equals[]       = {KC_U, KC_I, COMBO_END};
-const uint16_t PROGMEM r_plus[]         = {KC_H, KC_J, COMBO_END};
-const uint16_t PROGMEM r_minus[]        = {KC_J, KC_K, COMBO_END};
-const uint16_t PROGMEM r_new[]          = {KC_QUOT, COM_EXL, COMBO_END};
-const uint16_t PROGMEM semicolon[]      = {KC_J, KC_I, COMBO_END};
-const uint16_t PROGMEM exclamation[]    = {KC_I, KC_L, COMBO_END};
+const uint16_t PROGMEM r_exponent[]   = {    KC_I,    KC_O,                   COMBO_END};
+const uint16_t PROGMEM r_comma[]      = {    KC_M,    KC_K,                   COMBO_END};
+const uint16_t PROGMEM r_dot[]        = {    KC_K,    KC_L,                   COMBO_END};
+const uint16_t PROGMEM r_underscore[] = {    KC_M, KC_QUOT,                   COMBO_END};
+const uint16_t PROGMEM r_asterisk[]   = {    KC_N,    KC_J,                   COMBO_END};
+const uint16_t PROGMEM r_equals[]     = {    KC_U,    KC_I,                   COMBO_END};
+const uint16_t PROGMEM r_plus[]       = {    KC_H,    KC_J,                   COMBO_END};
+const uint16_t PROGMEM r_minus[]      = {    KC_J,    KC_K,                   COMBO_END};
+const uint16_t PROGMEM r_newsent[]    = {    KC_K, COM_EXL,                   COMBO_END};
+const uint16_t PROGMEM semicolon[]    = {    KC_J,    KC_I,                   COMBO_END};
+const uint16_t PROGMEM ampersand[]    = {    KC_I,    KC_L,                   COMBO_END};
 
-const uint16_t PROGMEM spc_f1[]         = {KC_SPC, KC_Q, COMBO_END};
-const uint16_t PROGMEM spc_f2[]         = {KC_SPC, KC_W, COMBO_END};
-const uint16_t PROGMEM spc_f3[]         = {KC_SPC, KC_E, COMBO_END};
-const uint16_t PROGMEM spc_f4[]         = {KC_SPC, KC_R, COMBO_END};
-const uint16_t PROGMEM spc_f5[]         = {KC_SPC, KC_T, COMBO_END};
+const uint16_t PROGMEM spc_f1[]       = {  KC_SPC,    KC_Q,                   COMBO_END};
+const uint16_t PROGMEM spc_f2[]       = {  KC_SPC,    KC_W,                   COMBO_END};
+const uint16_t PROGMEM spc_f3[]       = {  KC_SPC,    KC_E,                   COMBO_END};
+const uint16_t PROGMEM spc_f4[]       = {  KC_SPC,    KC_R,                   COMBO_END};
+const uint16_t PROGMEM spc_f5[]       = {  KC_SPC,    KC_T,                   COMBO_END};
 
 combo_t key_combos[] = {
     [TOUHOU]        = COMBO_ACTION(touhou),
@@ -1256,42 +1277,42 @@ combo_t key_combos[] = {
     [MOUSE]         = COMBO_ACTION(mouse),
     [MOUSE2]        = COMBO_ACTION(mouse2),
 
-    [L_EXPONENT]    = COMBO(l_exponent,     CS_CIRC),
-    [L_COMMA]       = COMBO(l_comma,        CS_COMM),
-    [L_DOT]         = COMBO(l_dot,          CS_DOT),
-    [L_UNDERSCORE]  = COMBO(l_underscore,   CS_UNDS),
-    [L_ASTERISK]    = COMBO(l_asterisk,     CS_ASTR),
-    [L_EQUALS]      = COMBO(l_equals,       CS_EQL),
-    [L_PLUS]        = COMBO(l_plus,         CS_PLUS),
-    [L_MINUS]       = COMBO(l_minus,        CS_MINS),
-    
-    [AMPERSAND]     = COMBO(ampersand,      CS_AMPR),
-    [COLON]         = COMBO(colon,          CS_COLN),
-    
-    [R_EXPONENT]    = COMBO(r_exponent,     CS_CIRC),
-    [R_COMMA]       = COMBO(r_comma,        CS_COMM),
-    [R_DOT]         = COMBO(r_dot,          CS_DOT),
-    [R_UNDERSCORE]  = COMBO(r_underscore,   CS_UNDS),
-    [R_ASTERISK]    = COMBO(r_asterisk,     CS_ASTR),
-    [R_EQUALS]      = COMBO(r_equals,       CS_EQL),
-    [R_PLUS]        = COMBO(r_plus,         CS_PLUS),
-    [R_MINUS]       = COMBO(r_minus,        CS_MINS),
+    [BACKSPACE]     = COMBO_ACTION(backspace),
+    [CAPSWORD]      = COMBO(capsword,     CAPSWRD),
 
-    [SEMICOLON]     = COMBO(semicolon,      CS_SCLN),
-    [EXCLAMATION]   = COMBO(exclamation,    CS_EXLM),
+    [L_EXPONENT]    = COMBO(l_exponent,   CS_CIRC),
+    [L_COMMA]       = COMBO(l_comma,      CS_COMM),
+    [L_DOT]         = COMBO(l_dot,        CS_DOT),
+    [L_UNDERSCORE]  = COMBO(l_underscore, CS_UNDS),
+    [L_ASTERISK]    = COMBO(l_asterisk,   CS_ASTR),
+    [L_EQUALS]      = COMBO(l_equals,     CS_EQL),
+    [L_PLUS]        = COMBO(l_plus,       CS_PLUS),
+    [L_MINUS]       = COMBO(l_minus,      CS_MINS),
+    [L_NEWSENT]     = COMBO(r_newsent,    NEWSENT),
+    [EXCLAMATION]   = COMBO(exclamation,  CS_EXLM),
+    [COLON]         = COMBO(colon,        CS_COLN),
 
-    [L_NEW]         = COMBO(r_new,          NEWSENT),
-    [R_NEW]         = COMBO(l_new,          NEWSENT),
+    [R_EXPONENT]    = COMBO(r_exponent,   CS_CIRC),
+    [R_COMMA]       = COMBO(r_comma,      CS_COMM),
+    [R_DOT]         = COMBO(r_dot,        CS_DOT),
+    [R_UNDERSCORE]  = COMBO(r_underscore, CS_UNDS),
+    [R_ASTERISK]    = COMBO(r_asterisk,   CS_ASTR),
+    [R_EQUALS]      = COMBO(r_equals,     CS_EQL),
+    [R_PLUS]        = COMBO(r_plus,       CS_PLUS),
+    [R_MINUS]       = COMBO(r_minus,      CS_MINS),
+    [R_NEWSENT]     = COMBO(l_newsent,    NEWSENT),
+    [SEMICOLON]     = COMBO(semicolon,    CS_SCLN),
+    [AMPERSAND]     = COMBO(ampersand,    CS_AMPR),
 
-    [SPC_F1]        = COMBO(spc_f1,         KC_F1),
-    [SPC_F2]        = COMBO(spc_f2,         KC_F2),
-    [SPC_F3]        = COMBO(spc_f3,         KC_F3),
-    [SPC_F4]        = COMBO(spc_f4,         KC_F4),
-    [SPC_F5]        = COMBO(spc_f5,         KC_F5),
+    [SPC_F1]        = COMBO(spc_f1,       KC_F1),
+    [SPC_F2]        = COMBO(spc_f2,       KC_F2),
+    [SPC_F3]        = COMBO(spc_f3,       KC_F3),
+    [SPC_F4]        = COMBO(spc_f4,       KC_F4),
+    [SPC_F5]        = COMBO(spc_f5,       KC_F5),
 };
 
 void process_combo_event(uint16_t combo_index, bool pressed) {
-    switch(combo_index) {
+    switch (combo_index) {
         case TOUHOU:
             if (pressed) {
                 oled_state.menu = 1;
@@ -1304,21 +1325,13 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
             break;
         case STENO:
             if (pressed) {
-                if (IS_LAYER_ON(_STENO)) {
-                    layer_off(_STENO);
-                } else {
-                    layer_on(_STENO);
-                    unregister_mods(MOD_BIT(KC_RSFT));
-                }
+                layer_invert(_STENO);
+                unregister_mods(MOD_BIT(KC_RSFT));
             }
             break;
         case NUMPAD:
             if (pressed) {
-                if (IS_LAYER_ON(_NUMPAD)) {
-                    layer_off(_NUMPAD);
-                } else {
-                    layer_on(_NUMPAD);
-                }
+                layer_invert(_NUMPAD);
             }
             break;
         case MOUSE:
@@ -1330,13 +1343,20 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 layer_off(_MOUSE);
             }
             break;
+        case BACKSPACE:
+            if (pressed) {
+                register_code16(LCTL(KC_BSPC));
+            } else {
+                unregister_code16(LCTL(KC_BSPC));
+            }
+            break;
     }
 }
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
-        case L_NEW:
-        case R_NEW:
+        case L_NEWSENT:
+        case R_NEWSENT:
 
         case L_COMMA:
         case R_COMMA:
@@ -1350,6 +1370,8 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         case R_MINUS:
             return 15;
 
+        case BACKSPACE:
+        case CAPSWORD:
         case MOUSE:
         case MOUSE2:
             return 75;
@@ -1361,6 +1383,7 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
 
 bool get_combo_must_tap(uint16_t index, combo_t *combo) {
     switch (index) {
+        case BACKSPACE:
         case MOUSE:
         case MOUSE2:
             return false;
@@ -1392,7 +1415,7 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo,
         case L_MINUS:
         case AMPERSAND:
         case COLON:
-        case L_NEW:
+        case L_NEWSENT:
             if (layer_state_is(_EDIT)) { 
                 return false;
             }
@@ -1665,6 +1688,69 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
 
     // Disable case lock on other keys
     case_lock_off();
+    return true;
+}
+
+
+
+//==============================================================================
+// Caps Word
+//==============================================================================
+
+static bool process_capsword(uint16_t keycode, keyrecord_t* record) {
+    if (keycode == CAPSWRD) {
+        if (record->event.pressed) {
+            misc_key_state.capsword_active = !misc_key_state.capsword_active;
+        }
+        return false;
+    }
+
+    if (is_hrm(keycode)) {
+        keycode = QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
+    }
+
+    if (misc_key_state.capsword_active) {
+        switch (keycode) {
+            // Add shift mod
+            case CS_LT2:
+            case CS_RT2:
+                if (!record->tap.count) { break; }
+            case KC_A ... KC_Z:
+                if (record->event.pressed) {
+                    add_mods(MOD_BIT(KC_LSFT));
+                    break;
+                }
+
+            // Shift keys
+            case TABLSFT:
+            case TABRSFT:
+            case OSMLSFT:
+            case KC_LSFT:
+                if (record->event.pressed) {
+                    misc_key_state.capsword_active = false;
+                } else {
+                    del_mods(MOD_BIT(KC_LSFT));
+                }
+                break;
+
+            // Ignore keys
+            case KC_BSPC:
+            case CS_RT1:
+            case CS_CASE:
+                break;
+
+                // Exit capsword
+            case CS_LT1:
+            case KC_SPC:
+                if (case_lock_state.active) {
+                    break;
+                }
+            default:
+                del_mods(MOD_BIT(KC_LSFT));
+                misc_key_state.capsword_active = false;
+                break;
+        }
+    }
     return true;
 }
 
@@ -2420,6 +2506,10 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
             set_mods(mods);
 
             if (key_state.last_key == KC_SPC) {
+                if (misc_key_state.capsword_active) {
+                    del_mods(MOD_BIT(KC_LSFT));
+                }
+                misc_key_state.capsword_active = false;
                 key_state.magic_space_override = false;
             }
 
@@ -2495,6 +2585,14 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 default: tap_code(key_state.last_key); update_last_key(key_state.last_key); break;
             }
             set_mods(mods);
+
+            if (key_state.last_key == KC_SPC) {
+                if (misc_key_state.capsword_active) {
+                    del_mods(MOD_BIT(KC_LSFT));
+                }
+                misc_key_state.capsword_active = false;
+            }
+
             // Update case lock separator distance
             if (case_lock_state.active) {
                 case_lock_state.distance += key_state.count;
@@ -2924,22 +3022,11 @@ bool process_eager_mods(uint16_t keycode, keyrecord_t* record) {
 // Events
 //==============================================================================
 
-typedef struct {
-    bool LT3_active :1;
-    bool RT3_active :1;
-    bool alt_tab_active :1;
-} misc_key_flags_t;
-
-static misc_key_flags_t misc_key_state = {
-    .LT3_active = false,
-    .RT3_active = false,
-    .alt_tab_active = false,
-};
-
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_case_lock(keycode, record)) { return false; }
     if (!process_cycling_macros(keycode, record)) { return false; }
     if (!process_arrow_retrigger(keycode, record)) { return false; }
+    if (!process_capsword(keycode, record)) { return false; }
     if (!process_punctuation_space(keycode, record)) { return false; }
     // Reactive features go before key tracking
     if (!process_key_tracking(keycode, record)) { return false; }
@@ -4398,25 +4485,28 @@ typedef struct {
 
 enum {
     TIMEOUT_IDLE,
-    TIMEOUT_MACRO,
+    TIMEOUT_SELECT,
     TIMEOUT_ARROW,
     TIMEOUT_TRACKING,
     TIMEOUT_MAGIC,
     TIMEOUT_CASE_CAPTURE,
     TIMEOUT_CASE_LOCK,
     TIMEOUT_OLED,
-    TIMEOUT_COUNT,
+    TIMEOUT_CAPSWORD,
+
+    TIMEOUT_COUNT
 };
 
 static timeout_t timeouts[TIMEOUT_COUNT] = {
     [TIMEOUT_IDLE]         = { .duration = 300000 },
-    [TIMEOUT_MACRO]        = { .duration = 200 },
+    [TIMEOUT_SELECT]       = { .duration = 200 },
     [TIMEOUT_ARROW]        = { .duration = 1000 },
     [TIMEOUT_TRACKING]     = { .duration = 500 },
     [TIMEOUT_MAGIC]        = { .duration = 1000 },
     [TIMEOUT_CASE_CAPTURE] = { .duration = 1000 },
     [TIMEOUT_CASE_LOCK]    = { .duration = 2000 },
     [TIMEOUT_OLED]         = { .duration = 3000 },
+    [TIMEOUT_CAPSWORD]     = { .duration = 5000 },
 };
 
 static void update_timeouts(void) {
@@ -4459,13 +4549,14 @@ void housekeeping_task_user(void) {
             break;
     }
 
-    // Reset macro timers
-    if (timeouts[TIMEOUT_MACRO].active) {
+    // Reset select timers
+    if (timeouts[TIMEOUT_SELECT].active) {
         if (key_state.last_key == SELECT) {
             key_state.last_key = KC_NO;
         }
     }
 
+    // Reset arrow retriggering
     if (timeouts[TIMEOUT_ARROW].active) {
         if (!arrow_state.held_keys) {
             arrow_state.mod_active = false;
@@ -4495,6 +4586,11 @@ void housekeeping_task_user(void) {
         if (case_lock_state.active) {
             case_lock_off();
         }
+    }
+
+    // Reset Capsword
+    if (timeouts[TIMEOUT_CAPSWORD].active) {
+        misc_key_state.capsword_active = false;
     }
 
     // OLED timeout
