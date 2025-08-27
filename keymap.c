@@ -2385,11 +2385,11 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_L: tap_code(KC_R); update_last_key(KC_R); break;
                 case KC_D: tap_code(KC_T); update_last_key(KC_T); break;
                 case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
-                case KC_B: SEND_STRING(/*b*/"ecause "); update_last_keys(KC_SPC, 7); key_state.magic_space_override = false; break;
+                case KC_B: SEND_STRING(/*b*/"ecause "); update_last_keys(KC_SPC, 7); break;
 
                 case KC_N: send_nt(); key_state.magic_space_override = false; break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
-                case KC_T: SEND_STRING(/*t*/"ment "); update_last_keys(KC_SPC, 5); key_state.magic_space_override = false; break;
+                case KC_T: SEND_STRING(/*t*/"ment "); update_last_keys(KC_SPC, 5); break;
                 case KC_S: tap_code(KC_C); update_last_key(KC_C); break;
                 case KC_G: tap_code(KC_S); update_last_key(KC_S); break;
 
@@ -2407,17 +2407,22 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_H: SEND_STRING(/*h*/"ere"); update_last_keys(KC_E, 3); break;
                 case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
                 case KC_I: SEND_STRING(/*i*/"on"); update_last_keys(KC_N, 2); break;
-                case KC_A: SEND_STRING(/*a*/"nd "); update_last_keys(KC_SPC, 3); key_state.magic_space_override = false; break;
+                case KC_A: SEND_STRING(/*a*/"nd "); update_last_keys(KC_SPC, 3); break;
 
                 case KC_NO:
-                case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); key_state.magic_space_override = false; break;
-                case KC_COMM: SEND_STRING(" and "); update_last_keys(KC_SPC, 4); key_state.magic_space_override = false; break;
+                case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
+                case KC_COMM: SEND_STRING(" and "); update_last_keys(KC_SPC, 4); break;
                 case KC_DOT: start_sentence(); key_state.magic_space_override = false; break;
-                case KC_QUOT: SEND_STRING("ve "); update_last_keys(KC_SPC, 3); key_state.magic_space_override = false; break;
+                case KC_QUOT: SEND_STRING("ve "); update_last_keys(KC_SPC, 3); break;
 
-                default: tap_code(key_state.last_key); update_last_key(key_state.last_key); key_state.magic_space_override = false; break;
+                default: tap_code(key_state.last_key); update_last_key(key_state.last_key); break;
             }
             set_mods(mods);
+
+            if (key_state.last_key == KC_SPC) {
+                key_state.magic_space_override = false;
+            }
+
             // Update case lock separator distance
             if (case_lock_state.active) {
                 case_lock_state.distance += key_state.count;
@@ -2505,7 +2510,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
 
 
 
-static bool process_pre_key_tracking(uint16_t keycode, keyrecord_t* record) {
+static bool process_punctuation_space(uint16_t keycode, keyrecord_t* record) {
     if (key_state.last_key == KC_SPC && key_state.dynamic) {
         switch (keycode) {
             case KC_DOT:
@@ -2913,6 +2918,8 @@ bool process_eager_mods(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
+
+
 //==============================================================================
 // Events
 //==============================================================================
@@ -2933,7 +2940,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_case_lock(keycode, record)) { return false; }
     if (!process_cycling_macros(keycode, record)) { return false; }
     if (!process_arrow_retrigger(keycode, record)) { return false; }
-    if (!process_pre_key_tracking(keycode, record)) { return false; }
+    if (!process_punctuation_space(keycode, record)) { return false; }
     // Reactive features go before key tracking
     if (!process_key_tracking(keycode, record)) { return false; }
     if (!process_lingering_mods(keycode, record)) { return false; }
