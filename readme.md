@@ -151,8 +151,8 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Either | Any      | `M`        | `[-]'m⎵`        |
 | Either | Any      | `S`        | `[-]'s⎵`        |
 | Either | Any      | `R`        | `[-]'re⎵`       |
-| Left   | Either   | Immediate  | `'`             |
-| Right  | Either   | Immediate  | `,`             |
+| Left   | Right    | Immediate  | `''`            |
+| Right  | Left     | Immediate  | `,`             |
 | Left   | Any      | Any        | `[-]'[-]`       |
 | Right  | Any      | Any        | `[-],[-]`       |
 
@@ -167,6 +167,8 @@ The rules have been set up such that pressing whichever punctuation key is more 
 
 > [!WARNING]
 > Immediate rules should always return true in the `track_t` attribute despite not having a following key to consume, or else other tracking systems will not function.
+
+When shifted, the left magic key always outputs `@`, and the right magic key always outputs `!`.
 
 
 

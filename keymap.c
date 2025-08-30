@@ -2716,7 +2716,7 @@ static const keymatch_rule_t match_rules[] = {
     { EITHER, { ANY_KEY       }, { JUST, KC_R    }, "'re ", { true, KC_SPC, 4  } }, // -> [-]'re⎵
 
     // Double taps and rolls
-    { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE     }, "'",    { true, KC_QUOT, 1 } }, // -> [-]'
+    { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE     }, "''",   { true, KC_QUOT, 2 } }, // -> [-]'
     { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
 
     // Fallback rules
