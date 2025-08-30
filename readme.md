@@ -135,34 +135,38 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 
 | Key    | Previous | Next       | Output          |
 | ------ | -------- | ---------- | --------------- |
-| Left   | `I`      | `E`        | `[i].e.`        |
-| Left   | `A`      | `M`        | `[a].m.`        |
-| Left   | Any      | `⎵`        | `[-],⎵`         |
-| Left   | Any      | `Enter`    | `[-];`+`Enter`  |
-| Right  | `⎵`      | Immediate  | `[⎵]-⎵`         |
-| Right  | `E`      | `G`        | `[e].g.`        |
-| Right  | Any      | `⎵`        | `[-],⎵`         |
 | Either | `N`      | `T`        | `[n]'t⎵`        |
 | Either | `S`      | `⎵`        | `[s]'⎵`         |
 | Either | `P`      | `M`        | `[p].m.`        |
+| Left   | `I`      | `E`        | `[i].e.`        |
+| Left   | `A`      | `M`        | `[a].m.`        |
+| Right  | `⎵`      | Immediate  | `[⎵]-⎵`         |
+| Right  | `E`      | `G`        | `[e].g.`        |
+| Left   | Any      | `Enter`    | `[-];`+`Enter`  |
+| Left   | Any      | `⎵`        | `[-],⎵`         |
+| Right  | Any      | `⎵`        | `[-],⎵`         |
 | Either | Any      | `D`        | `[-]'d⎵`        |
 | Either | Any      | `L`        | `[-]'ll⎵`       |
 | Either | Any      | `V`        | `[-]'ve⎵`       |
 | Either | Any      | `M`        | `[-]'m⎵`        |
 | Either | Any      | `S`        | `[-]'s⎵`        |
 | Either | Any      | `R`        | `[-]'re⎵`       |
-| Either | Any      | `V`        | `[-]'ve⎵`       |
 | Left   | Either   | Immediate  | `'`             |
 | Right  | Either   | Immediate  | `,`             |
 | Left   | Any      | Any        | `[-]'[-]`       |
 | Right  | Any      | Any        | `[-],[-]`       |
 
-The following key must be pressed within 500ms for the dynamic output to activate; otherwise, the keys will default to `'` (left) and `,` (right).
+The following key must be pressed within 500ms for the dynamic output to activate; otherwise, the keys will default to `'` (left) and `,` (right). Immediate rules eagerly trigger on magic key-down if matched.
 
 The rules have been set up such that pressing whichever punctuation key is more comfortable while typing (i.e. sequences that aren't SFBs) will generally produce contextually sensible punctuation.
 
 > [!NOTE]
-> New rules can be added to the `keymatch_rule_t match_rules[]` table. The rules are matched greedily top down, so more general rules should go lower in the table.
+> New rules can be added to the `keymatch_rule_t match_rules[]` table. The rules are matched greedily top down, so more general rules should go lower in the table and specific rules higher up.
+>
+> For example, `S`+`Left`+`Spc` will return `s'⎵` rather than `s,⎵`, because the specific rule `Either`+`S`+`⎵` is above the general rule `Left`+`Any`+`⎵`. If the rules were reversed, the latter would never be matched as a subset of the former.
+
+> [!WARNING]
+> Immediate rules should always return true in the `track_t` attribute despite not having a following key to consume, or else other tracking systems will not function.
 
 
 
