@@ -154,8 +154,8 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Either | Any      | `V`        | `[-]'ve⎵`       |
 | Left   | Either   | Immediate  | `'`             |
 | Right  | Either   | Immediate  | `,`             |
-| Left   | Any      | Any        | `'`             |
-| Right  | Any      | Any        | `,`             |
+| Left   | Any      | Any        | `[-]'[-]`       |
+| Right  | Any      | Any        | `[-],[-]`       |
 
 The following key must be pressed within 500ms for the dynamic output to activate; otherwise, the keys will default to `'` (left) and `,` (right).
 

@@ -2711,19 +2711,19 @@ static const keymatch_rule_t match_rules[] = {
     { EITHER, { ANY_KEY       }, { JUST, KC_S    }, "'s ",  { true, KC_SPC, 3  } }, // -> [-]'s⎵
     { EITHER, { ANY_KEY       }, { JUST, LA_R    }, "'re ", { true, KC_SPC, 4  } }, // -> [-]'re⎵
     { EITHER, { ANY_KEY       }, { JUST, KC_R    }, "'re ", { true, KC_SPC, 4  } }, // -> [-]'re⎵
-  
+
     // Double taps and rolls
-    { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE     }, "'",    { true, KC_QUOT, 1 } }, // -> [-]'
+    // { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE     }, "'",    { true, KC_QUOT, 1 } }, // -> [-]'
     { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE     }, "'",    { true, KC_QUOT, 1 } }, // -> [-]'
     { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
-    { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
+    // { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
 
     // Fallback rules
-    { LEFT,   { ANY_KEY       }, { ANY_KEY       }, "'",    { true, KC_QUOT, 1 } }, // -> [-]'
-    { RIGHT,  { ANY_KEY       }, { ANY_KEY       }, ",",    { true, KC_COMM, 1 } }, // -> [-],
+    { LEFT,   { ANY_KEY       }, { ANY_KEY       }, "'",    { false            } }, // -> [-]'
+    { RIGHT,  { ANY_KEY       }, { ANY_KEY       }, ",",    { false            } }, // -> [-],
 };
 
-static inline bool is_magic_keycode(uint16_t keycode) {
+static inline bool is_magic_punct(uint16_t keycode) {
     return keycode == PCTLEFT || keycode == PCTRGHT;
 }
 
@@ -2736,7 +2736,7 @@ static bool pattern_match_key(keymatch_t key, uint16_t keycode) {
                                keycode == KC_I || keycode == KC_O ||
                                keycode == KC_U;
         case ANY_SPACE: return keycode == KC_SPC || keycode == KC_TAB;
-        case ANY_KEY:   return !is_magic_keycode(keycode) && keycode != KC_NO;
+        case ANY_KEY:   return !is_magic_punct(keycode) && keycode != KC_NO;
         default:        return false;
     }
 }
@@ -2756,44 +2756,47 @@ static magic_flag_t magic_state = {
 };
 
 static inline void update_pct_history(uint16_t keycode) {
-    if (!is_magic_keycode(keycode)) {
+    if (!is_magic_punct(keycode)) {
         magic_state.active = NONE;
     }
     magic_state.last_key = magic_state.current;
     magic_state.current = keycode;
 }
 
-static inline void reset_pct(void) {
+static inline void reset_pct_history(void) {
     magic_state.active = NONE;
     magic_state.last_key = KC_NO;
     magic_state.current = KC_NO;
 };
 
+static inline void resolve_pct_fallback(void) {
+    cancel_deferred_exec(magic_state.token);
+    if (magic_state.active == LEFT) {
+        cs_tap_code(KC_QUOT);
+    } else if (magic_state.active == RIGHT) {
+        cs_tap_code(KC_COMM);
+    }
+}
+
 uint32_t PCTLEFT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_QUOT);
-    reset_pct();
+    reset_pct_history();
     return 0;
 }
 
 uint32_t PCTRGHT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_COMM);
-    reset_pct();
+    reset_pct_history();
     return 0;
 }
 
 static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
-    dprintf("last_key=%u keycode=%u active=%d\n", magic_state.last_key, keycode, magic_state.active);
+    // dprintf("last_key=%u keycode=%u active=%d\n", magic_state.last_key, keycode, magic_state.active);
     if (!record->event.pressed) {
         return true;
     }
+    // Ignore holds
     if ((IS_QK_MOD_TAP(keycode) || IS_QK_LAYER_TAP(keycode)) && !record->tap.count) {
-        reset_pct();
-        return true;
-    }
-
-    if (!is_hrm(keycode) && !is_alpha(keycode) &&
-        !is_magic_keycode(keycode) && !is_magic(keycode)) {
-        reset_pct();
         return true;
     }
 
@@ -2801,17 +2804,17 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
         case PCTLEFT:
             if (shifted()) {
                 tap_code16(S(KC_QUOT));
-                return false;
+                return true;
             }
             magic_state.active = LEFT;
             cancel_deferred_exec(magic_state.token);
             magic_state.token = defer_exec(500, PCTLEFT_fallback, NULL);
             break;
-            
+
         case PCTRGHT:
             if (shifted()) {
                 tap_code16(KC_EXLM);
-                return false;
+                return true;
             }
             magic_state.active = RIGHT;
             cancel_deferred_exec(magic_state.token);
@@ -2819,7 +2822,6 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
             break;
 
         default:
-            cancel_deferred_exec(magic_state.token);
             break;
     }
 
@@ -2837,14 +2839,34 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
 
         if (pattern_match_key(rule->prev, prev) && next_match) {
             cs_send_string_punct(rule->output);
-            reset_pct();
+            reset_pct_history();
             cancel_deferred_exec(magic_state.token);
             if (rule->track.val) {
                 update_last_keys(rule->track.keycode, rule->track.length);
             }
+            dprintf("rule matched: %d\n", i);
             return !rule->track.val;
         }
     }
+
+    // If a deferred execution is pending but no rules were matched,
+    // then resolve it immediately before current key outputs.
+    if (magic_state.token) {
+        if (!is_magic_punct(keycode)) {
+            cancel_deferred_exec(magic_state.token);
+            resolve_pct_fallback();
+            reset_pct_history();
+            update_pct_history(keycode);
+            return true;
+        }
+        if (keycode == magic_state.current) {
+            cancel_deferred_exec(magic_state.token);
+            resolve_pct_fallback();
+            reset_pct_history();
+            return true;
+        }
+    }
+
     update_pct_history(keycode);
     return true;
 }
