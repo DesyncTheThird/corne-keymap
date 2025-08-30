@@ -2670,52 +2670,62 @@ typedef struct {
 } keymatch_t;
 
 typedef struct {
+    bool val;
+    uint16_t keycode;
+    uint8_t length;
+} track_t;
+
+typedef struct {
     magic_key_t key;
     keymatch_t prev;
     keymatch_t next;
     const char* output;
-    bool consume_next;
+    track_t track;
 } keymatch_rule_t;
 
 static const keymatch_rule_t match_rules[] = {
-    { LEFT,   { JUST, RA_I    }, { JUST, RC_E    }, ".e.",  true  }, // -> [i].e.
-    { LEFT,   { JUST, KC_I    }, { JUST, KC_E    }, ".e.",  true  }, // -> [i].e.
-    { LEFT,   { JUST, RG_A    }, { JUST, KC_M    }, ".m.",  true  }, // -> [a].m.
-    { LEFT,   { JUST, KC_A    }, { JUST, KC_M    }, ".m.",  true  }, // -> [a].m.
-    { LEFT,   { ANY_KEY       }, { JUST, CS_LT1  }, ",",    false }, // -> [-],⎵
-    { LEFT,   { ANY_KEY       }, { JUST, KC_SPC  }, ",",    false }, // -> [-],⎵
-    { LEFT,   { ANY_KEY       }, { JUST, KC_ENT  }, ";",    false }, // -> [-];*newline*
-    { LEFT,   { ANY_KEY       }, { JUST, CS_LT3  }, ";",    false }, // -> [-];*newline*
-    { RIGHT,  { JUST, CS_LT1  }, { IMMEDIATE     }, "- ",   false }, // -> [⎵]-⎵
-    { RIGHT,  { JUST, KC_SPC  }, { IMMEDIATE     }, "- ",   false }, // -> [⎵]-⎵
-    { RIGHT,  { JUST, RC_E    }, { JUST, KC_G    }, ".g.",  true  }, // -> [e].g.
-    { RIGHT,  { JUST, KC_E    }, { JUST, KC_G    }, ".g.",  true  }, // -> [e].g.
-    { RIGHT,  { ANY_KEY       }, { JUST, CS_LT1  }, ",",    false }, // -> [-],⎵
-    { RIGHT,  { ANY_KEY       }, { JUST, KC_SPC  }, ",",    false }, // -> [-],⎵
-    { EITHER, { JUST, LG_N    }, { JUST, LC_T    }, "'t ",  true  }, // -> [n]'t⎵
-    { EITHER, { JUST, KC_N    }, { JUST, KC_T    }, "'t ",  true  }, // -> [n]'t⎵
-    { EITHER, { JUST, LS_S    }, { ANY_SPACE     }, "' ",   false }, // -> [s]'⎵
-    { EITHER, { JUST, KC_S    }, { ANY_SPACE     }, "' ",   false }, // -> [s]'⎵
-    { EITHER, { JUST, KC_P    }, { JUST, KC_M    }, ".m.",  true  }, // -> [p].m.
-    { EITHER, { ANY_KEY       }, { JUST, KC_D    }, "'d ",  true  }, // -> [-]'d⎵
-    { EITHER, { ANY_KEY       }, { JUST, KC_L    }, "'ll ", true  }, // -> [-]'ll⎵
-    { EITHER, { ANY_KEY       }, { JUST, KC_V    }, "'ve ", true  }, // -> [-]'ve⎵
-    { EITHER, { ANY_KEY       }, { JUST, KC_M    }, "'m ",  true  }, // -> [-]'m⎵
-    { EITHER, { ANY_KEY       }, { JUST, LS_S    }, "'s ",  true  }, // -> [-]'s⎵
-    { EITHER, { ANY_KEY       }, { JUST, KC_S    }, "'s ",  true  }, // -> [-]'s⎵
-    { EITHER, { ANY_KEY       }, { JUST, LA_R    }, "'re ", true  }, // -> [-]'re⎵
-    { EITHER, { ANY_KEY       }, { JUST, KC_R    }, "'re ", true  }, // -> [-]'re⎵
-
+    { LEFT,   { JUST, RA_I    }, { JUST, RC_E    }, ".e.",  { true, KC_DOT, 3  }  }, // -> [i].e.
+    { LEFT,   { JUST, KC_I    }, { JUST, KC_E    }, ".e.",  { true, KC_DOT, 3  }  }, // -> [i].e.
+    { LEFT,   { JUST, RG_A    }, { JUST, KC_M    }, ".m.",  { true, KC_DOT, 3  } }, // -> [a].m.
+    { LEFT,   { JUST, KC_A    }, { JUST, KC_M    }, ".m.",  { true, KC_DOT, 3  } }, // -> [a].m.
+    { LEFT,   { ANY_KEY       }, { JUST, CS_LT1  }, ",",    { false            } }, // -> [-],⎵
+    { LEFT,   { ANY_KEY       }, { JUST, KC_SPC  }, ",",    { false            } }, // -> [-],⎵
+    { LEFT,   { ANY_KEY       }, { JUST, KC_ENT  }, ";",    { false            } }, // -> [-];*newline*
+    { LEFT,   { ANY_KEY       }, { JUST, CS_LT3  }, ";",    { false            } }, // -> [-];*newline*
+    { RIGHT,  { JUST, CS_LT1  }, { IMMEDIATE     }, "- ",   { false            } }, // -> [⎵]-⎵
+    { RIGHT,  { JUST, KC_SPC  }, { IMMEDIATE     }, "- ",   { false            } }, // -> [⎵]-⎵
+    { RIGHT,  { JUST, RC_E    }, { JUST, KC_G    }, ".g.",  { true, KC_DOT, 3  } }, // -> [e].g.
+    { RIGHT,  { JUST, KC_E    }, { JUST, KC_G    }, ".g.",  { true, KC_DOT, 3  } }, // -> [e].g.
+    { RIGHT,  { ANY_KEY       }, { JUST, CS_LT1  }, ",",    { false            } }, // -> [-],⎵
+    { RIGHT,  { ANY_KEY       }, { JUST, KC_SPC  }, ",",    { false            } }, // -> [-],⎵
+    { EITHER, { JUST, LG_N    }, { JUST, LC_T    }, "'t ",  { true, KC_SPC, 3  } }, // -> [n]'t⎵
+    { EITHER, { JUST, KC_N    }, { JUST, KC_T    }, "'t ",  { true, KC_SPC, 3  } }, // -> [n]'t⎵
+    { EITHER, { JUST, LS_S    }, { ANY_SPACE     }, "' ",   { false            } }, // -> [s]'⎵
+    { EITHER, { JUST, KC_S    }, { ANY_SPACE     }, "' ",   { false            } }, // -> [s]'⎵
+    { EITHER, { JUST, KC_P    }, { JUST, KC_M    }, ".m.",  { true, KC_DOT, 3  } }, // -> [p].m.
+    { EITHER, { ANY_KEY       }, { JUST, KC_D    }, "'d ",  { true, KC_SPC, 3  } }, // -> [-]'d⎵
+    { EITHER, { ANY_KEY       }, { JUST, KC_L    }, "'ll ", { true, KC_SPC, 4  } }, // -> [-]'ll⎵
+    { EITHER, { ANY_KEY       }, { JUST, KC_V    }, "'ve ", { true, KC_SPC, 4  } }, // -> [-]'ve⎵
+    { EITHER, { ANY_KEY       }, { JUST, KC_M    }, "'m ",  { true, KC_SPC, 3  } }, // -> [-]'m⎵
+    { EITHER, { ANY_KEY       }, { JUST, LS_S    }, "'s ",  { true, KC_SPC, 3  } }, // -> [-]'s⎵
+    { EITHER, { ANY_KEY       }, { JUST, KC_S    }, "'s ",  { true, KC_SPC, 3  } }, // -> [-]'s⎵
+    { EITHER, { ANY_KEY       }, { JUST, LA_R    }, "'re ", { true, KC_SPC, 4  } }, // -> [-]'re⎵
+    { EITHER, { ANY_KEY       }, { JUST, KC_R    }, "'re ", { true, KC_SPC, 4  } }, // -> [-]'re⎵
+  
     // Double taps and rolls
-    { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE     }, "'",    false }, // -> [-]'
-    { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE     }, "'",    false }, // -> [-]'
-    { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE     }, ",",    false }, // -> [-],
-    { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, ",",    false }, // -> [-],
+    { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE     }, "'",    { true, KC_QUOT, 1 } }, // -> [-]'
+    { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE     }, "'",    { true, KC_QUOT, 1 } }, // -> [-]'
+    { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
+    { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
 
     // Fallback rules
-    { LEFT,   { ANY_KEY       }, { ANY_KEY       }, "'",    false }, // -> [-]'
-    { RIGHT,  { ANY_KEY       }, { ANY_KEY       }, ",",    false }, // -> [-],
+    { LEFT,   { ANY_KEY       }, { ANY_KEY       }, "'",    { true, KC_QUOT, 1 } }, // -> [-]'
+    { RIGHT,  { ANY_KEY       }, { ANY_KEY       }, ",",    { true, KC_COMM, 1 } }, // -> [-],
 };
+
+static inline bool is_magic_keycode(uint16_t keycode) {
+    return keycode == PCTLEFT || keycode == PCTRGHT;
+}
 
 static bool pattern_match_key(keymatch_t key, uint16_t keycode) {
     switch (key.kind) {
@@ -2726,7 +2736,7 @@ static bool pattern_match_key(keymatch_t key, uint16_t keycode) {
                                keycode == KC_I || keycode == KC_O ||
                                keycode == KC_U;
         case ANY_SPACE: return keycode == KC_SPC || keycode == KC_TAB;
-        case ANY_KEY:   return keycode != PCTLEFT && keycode != PCTRGHT;
+        case ANY_KEY:   return !is_magic_keycode(keycode) && keycode != KC_NO;
         default:        return false;
     }
 }
@@ -2746,7 +2756,7 @@ static magic_flag_t magic_state = {
 };
 
 static inline void update_pct_history(uint16_t keycode) {
-    if (keycode != PCTLEFT && keycode != PCTRGHT) {
+    if (!is_magic_keycode(keycode)) {
         magic_state.active = NONE;
     }
     magic_state.last_key = magic_state.current;
@@ -2777,7 +2787,13 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
     if ((IS_QK_MOD_TAP(keycode) || IS_QK_LAYER_TAP(keycode)) && !record->tap.count) {
-        extend_deferred_exec(magic_state.token, 0);
+        reset_pct();
+        return true;
+    }
+
+    if (!is_hrm(keycode) && !is_alpha(keycode) &&
+        !is_magic_keycode(keycode) && !is_magic(keycode)) {
+        reset_pct();
         return true;
     }
 
@@ -2823,8 +2839,10 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
             cs_send_string_punct(rule->output);
             reset_pct();
             cancel_deferred_exec(magic_state.token);
-            
-            return !rule->consume_next;
+            if (rule->track.val) {
+                update_last_keys(rule->track.keycode, rule->track.length);
+            }
+            return !rule->track.val;
         }
     }
     update_pct_history(keycode);
