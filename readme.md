@@ -127,29 +127,43 @@ This feature is also reused to rollback various macro outputs in a single keypre
 > [!NOTE]
 > You can hook into this feature with the `process_key_tracking` and `rollback_last_key` functions.
 
+
+
 ## Magic Punctuation
 
-The two punctuation keys under the vowel cluster emit different outputs depending on the previous *and* following key:
+The two punctuation keys beneath the vowel cluster emit different outputs depending on both the previous *and* following keys:
 
-| Which? | Previous | Next       | Output |
-| ------ | -------- | ---------- | ------ |
-| Either | Any      | `D`        | `'d⎵`  |
-| Either | Any      | `L`        | `'ll⎵` |
-| Either | Any      | `V`        | `'ve⎵` |
-| Either | Any      | `M`        | `'m⎵`  |
-| Either | Any      | `S`        | `'s⎵`  |
-| Either | Any      | `R`        | `'re⎵` |
-| Either | Any      | `V`        | `'ve⎵` |
-| Either | `N`      | `T`        | `'t⎵`  |
-| Either | `S`      | `⎵`        | `'⎵`   |
-| Either | `P`      | `m`        | `.m.`  |
-| Left   | `⎵`      | Immediate  | `-⎵`   |
-| Left   | Any      | `Enter`    | `;`+`Enter`  |
-| Left   | `I`      | `E`        | `.e.`  |
-| Left   | `A`      | `M`        | `.m.`  |
-| Right  | `⎵`      | Immediate  | `--⎵`  |
-| Right  | `⎵`      | `⎵`        | `.⎵`   |
-| Right  | `E`      | `G`        | `.g.`  |
+| Key    | Previous | Next       | Output          |
+| ------ | -------- | ---------- | --------------- |
+| Left   | `I`      | `E`        | `[i].e.`        |
+| Left   | `A`      | `M`        | `[a].m.`        |
+| Left   | Any      | `⎵`        | `[-],⎵`         |
+| Left   | Any      | `Enter`    | `[-];`+`Enter`  |
+| Right  | `⎵`      | Immediate  | `[⎵]-⎵`         |
+| Right  | `E`      | `G`        | `[e].g.`        |
+| Right  | Any      | `⎵`        | `[-],⎵`         |
+| Either | `N`      | `T`        | `[n]'t⎵`        |
+| Either | `S`      | `⎵`        | `[s]'⎵`         |
+| Either | `P`      | `M`        | `[p].m.`        |
+| Either | Any      | `D`        | `[-]'d⎵`        |
+| Either | Any      | `L`        | `[-]'ll⎵`       |
+| Either | Any      | `V`        | `[-]'ve⎵`       |
+| Either | Any      | `M`        | `[-]'m⎵`        |
+| Either | Any      | `S`        | `[-]'s⎵`        |
+| Either | Any      | `R`        | `[-]'re⎵`       |
+| Either | Any      | `V`        | `[-]'ve⎵`       |
+| Left   | Either   | Immediate  | `'`             |
+| Right  | Either   | Immediate  | `,`             |
+| Left   | Any      | Any        | `'`             |
+| Right  | Any      | Any        | `,`             |
+
+The following key must be pressed within 500ms for the dynamic output to activate; otherwise, the keys will default to `'` (left) and `,` (right).
+
+The rules have been set up such that pressing whichever punctuation key is more comfortable while typing (i.e. sequences that aren't SFBs) will generally produce contextually sensible punctuation.
+
+> [!NOTE]
+> New rules can be added to the `keymatch_rule_t match_rules[]` table. The rules are matched greedily top down, so more general rules should go lower in the table.
+
 
 
 ## Case Lock

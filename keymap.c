@@ -2671,15 +2671,13 @@ typedef struct {
 
 typedef struct {
     magic_key_t key;
-    keymatch_t previous;
+    keymatch_t prev;
     keymatch_t next;
     const char* output;
     bool consume_next;
 } keymatch_rule_t;
 
 static const keymatch_rule_t match_rules[] = {
-    // { LEFT,   { JUST, CS_LT1 }, { IMMEDIATE     }, "- ",   false }, // -> [⎵]-⎵
-    // { LEFT,   { JUST, KC_SPC }, { IMMEDIATE     }, "- ",   false }, // -> [⎵]-⎵
     { LEFT,   { JUST, RA_I    }, { JUST, RC_E    }, ".e.",  true  }, // -> [i].e.
     { LEFT,   { JUST, KC_I    }, { JUST, KC_E    }, ".e.",  true  }, // -> [i].e.
     { LEFT,   { JUST, RG_A    }, { JUST, KC_M    }, ".m.",  true  }, // -> [a].m.
@@ -2688,12 +2686,12 @@ static const keymatch_rule_t match_rules[] = {
     { LEFT,   { ANY_KEY       }, { JUST, KC_SPC  }, ",",    false }, // -> [-],⎵
     { LEFT,   { ANY_KEY       }, { JUST, KC_ENT  }, ";",    false }, // -> [-];*newline*
     { LEFT,   { ANY_KEY       }, { JUST, CS_LT3  }, ";",    false }, // -> [-];*newline*
-    { RIGHT,  { JUST, CS_LT1  }, { IMMEDIATE     }, "- ",   false }, // -> [⎵]--⎵
-    { RIGHT,  { JUST, KC_SPC  }, { IMMEDIATE     }, "- ",   false }, // -> [⎵]--⎵
+    { RIGHT,  { JUST, CS_LT1  }, { IMMEDIATE     }, "- ",   false }, // -> [⎵]-⎵
+    { RIGHT,  { JUST, KC_SPC  }, { IMMEDIATE     }, "- ",   false }, // -> [⎵]-⎵
     { RIGHT,  { JUST, RC_E    }, { JUST, KC_G    }, ".g.",  true  }, // -> [e].g.
     { RIGHT,  { JUST, KC_E    }, { JUST, KC_G    }, ".g.",  true  }, // -> [e].g.
-    { RIGHT,  { ANY_KEY       }, { JUST, CS_LT1  }, ".",    false }, // -> [-].⎵
-    { RIGHT,  { ANY_KEY       }, { JUST, KC_SPC  }, ".",    false }, // -> [-].⎵
+    { RIGHT,  { ANY_KEY       }, { JUST, CS_LT1  }, ",",    false }, // -> [-],⎵
+    { RIGHT,  { ANY_KEY       }, { JUST, KC_SPC  }, ",",    false }, // -> [-],⎵
     { EITHER, { JUST, LG_N    }, { JUST, LC_T    }, "'t ",  true  }, // -> [n]'t⎵
     { EITHER, { JUST, KC_N    }, { JUST, KC_T    }, "'t ",  true  }, // -> [n]'t⎵
     { EITHER, { JUST, LS_S    }, { ANY_SPACE     }, "' ",   false }, // -> [s]'⎵
@@ -2707,12 +2705,16 @@ static const keymatch_rule_t match_rules[] = {
     { EITHER, { ANY_KEY       }, { JUST, KC_S    }, "'s ",  true  }, // -> [-]'s⎵
     { EITHER, { ANY_KEY       }, { JUST, LA_R    }, "'re ", true  }, // -> [-]'re⎵
     { EITHER, { ANY_KEY       }, { JUST, KC_R    }, "'re ", true  }, // -> [-]'re⎵
-    { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE     }, "'",     false }, // -> [-]'
-    { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE     }, ",",     false }, // -> [-],
+
+    // Double taps and rolls
+    { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE     }, "'",    false }, // -> [-]'
+    { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE     }, "'",    false }, // -> [-]'
+    { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE     }, ",",    false }, // -> [-],
+    { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, ",",    false }, // -> [-],
 
     // Fallback rules
-    { LEFT,   { ANY_KEY       }, { ANY_KEY       }, "'",     false }, // -> [-]'
-    { RIGHT,  { ANY_KEY       }, { ANY_KEY       }, ",",     false }, // -> [-],
+    { LEFT,   { ANY_KEY       }, { ANY_KEY       }, "'",    false }, // -> [-]'
+    { RIGHT,  { ANY_KEY       }, { ANY_KEY       }, ",",    false }, // -> [-],
 };
 
 static bool pattern_match_key(keymatch_t key, uint16_t keycode) {
@@ -2724,7 +2726,7 @@ static bool pattern_match_key(keymatch_t key, uint16_t keycode) {
                                keycode == KC_I || keycode == KC_O ||
                                keycode == KC_U;
         case ANY_SPACE: return keycode == KC_SPC || keycode == KC_TAB;
-        case ANY_KEY:   return true;
+        case ANY_KEY:   return keycode != PCTLEFT && keycode != PCTRGHT;
         default:        return false;
     }
 }
@@ -2732,62 +2734,75 @@ static bool pattern_match_key(keymatch_t key, uint16_t keycode) {
 typedef struct {
     magic_key_t active;
     uint16_t last_key;
+    uint16_t current;
     deferred_token token;
 } magic_flag_t;
 
 static magic_flag_t magic_state = {
     .active = NONE,
     .last_key = KC_NO,
+    .current = KC_NO,
     .token = INVALID_DEFERRED_TOKEN
+};
+
+static inline void update_pct_history(uint16_t keycode) {
+    if (keycode != PCTLEFT && keycode != PCTRGHT) {
+        magic_state.active = NONE;
+    }
+    magic_state.last_key = magic_state.current;
+    magic_state.current = keycode;
+}
+
+static inline void reset_pct(void) {
+    magic_state.active = NONE;
+    magic_state.last_key = KC_NO;
+    magic_state.current = KC_NO;
 };
 
 uint32_t PCTLEFT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_QUOT);
-    magic_state.active = NONE;
-    magic_state.last_key = KC_NO;
+    reset_pct();
     return 0;
 }
 
 uint32_t PCTRGHT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_COMM);
-    magic_state.active = NONE;
-    magic_state.last_key = KC_NO;
+    reset_pct();
     return 0;
 }
 
 static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
-    
     dprintf("last_key=%u keycode=%u active=%d\n", magic_state.last_key, keycode, magic_state.active);
-
     if (!record->event.pressed) {
         return true;
     }
     if ((IS_QK_MOD_TAP(keycode) || IS_QK_LAYER_TAP(keycode)) && !record->tap.count) {
+        extend_deferred_exec(magic_state.token, 0);
         return true;
     }
 
     switch (keycode) {
         case PCTLEFT:
-            if (magic_state.active != NONE) {
-                magic_state.last_key = keycode;
+            if (shifted()) {
+                tap_code16(S(KC_QUOT));
+                return false;
             }
             magic_state.active = LEFT;
-            magic_state.token = defer_exec(200, PCTLEFT_fallback, NULL);
+            cancel_deferred_exec(magic_state.token);
+            magic_state.token = defer_exec(500, PCTLEFT_fallback, NULL);
             break;
             
         case PCTRGHT:
-            if (magic_state.active != NONE) {
-                magic_state.last_key = keycode;
+            if (shifted()) {
+                tap_code16(KC_EXLM);
+                return false;
             }
             magic_state.active = RIGHT;
-            magic_state.token = defer_exec(200, PCTRGHT_fallback, NULL);
+            cancel_deferred_exec(magic_state.token);
+            magic_state.token = defer_exec(500, PCTRGHT_fallback, NULL);
             break;
 
         default:
-            if (magic_state.active == NONE) {
-                magic_state.last_key = keycode;
-                return true;
-            }
             cancel_deferred_exec(magic_state.token);
             break;
     }
@@ -2796,24 +2811,23 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
         keymatch_rule_t const *rule = &match_rules[i];
 
         // Skip if key doesn't match
-        if (rule->key != magic_state.active && rule->key != EITHER) {
+        if (magic_state.active == NONE || (rule->key != magic_state.active && rule->key != EITHER)) {
             continue;
         }
 
-        if (pattern_match_key(rule->previous, magic_state.last_key) &&
-           (rule->next.kind == IMMEDIATE || pattern_match_key(rule->next, keycode))) {
+        const bool immediate = rule->next.kind == IMMEDIATE;
+        const uint16_t prev = immediate ? magic_state.current : magic_state.last_key;
+        const bool next_match = immediate ? true : pattern_match_key(rule->next, keycode);
+
+        if (pattern_match_key(rule->prev, prev) && next_match) {
             cs_send_string_punct(rule->output);
-            magic_state.active = NONE;
-            magic_state.last_key = KC_NO;
+            reset_pct();
             cancel_deferred_exec(magic_state.token);
             
             return !rule->consume_next;
         }
     }
-
-    if (keycode != PCTLEFT && keycode != PCTRGHT) {
-        magic_state.last_key = keycode;
-    }
+    update_pct_history(keycode);
     return true;
 }
 
