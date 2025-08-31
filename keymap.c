@@ -2670,7 +2670,7 @@ typedef struct {
 } keymatch_t;
 
 typedef struct {
-    bool val;
+    bool consume_next;
     uint16_t keycode;
     uint8_t length;
 } track_t;
@@ -2700,10 +2700,8 @@ static const keymatch_rule_t match_rules[] = {
     { RIGHT,  { JUST, KC_E    }, { JUST, KC_G    }, ".g.",  { true, KC_DOT, 3  } }, // -> [e].g.
     { LEFT,   { ANY_KEY       }, { JUST, KC_ENT  }, ";",    { false            } }, // -> [-];↵
     { LEFT,   { ANY_KEY       }, { JUST, CS_LT3  }, ";",    { false            } }, // -> [-];↵
-    { LEFT,   { ANY_LETTER    }, { JUST, CS_LT1  }, ",",    { false            } }, // -> [-],⎵
-    { LEFT,   { ANY_LETTER    }, { JUST, KC_SPC  }, ",",    { false            } }, // -> [-],⎵
-    { RIGHT,  { ANY_LETTER    }, { JUST, CS_LT1  }, ",",    { false            } }, // -> [-],⎵
-    { RIGHT,  { ANY_LETTER    }, { JUST, KC_SPC  }, ",",    { false            } }, // -> [-],⎵
+    { EITHER, { ANY_LETTER    }, { JUST, CS_LT1  }, ",",    { false            } }, // -> [-],⎵
+    { EITHER, { ANY_LETTER    }, { JUST, KC_SPC  }, ",",    { false            } }, // -> [-],⎵
     { EITHER, { ANY_LETTER    }, { JUST, KC_D    }, "'d ",  { true, KC_SPC, 3  } }, // -> [-]'d⎵
     { EITHER, { ANY_LETTER    }, { JUST, KC_L    }, "'ll ", { true, KC_SPC, 4  } }, // -> [-]'ll⎵
     { EITHER, { ANY_LETTER    }, { JUST, KC_V    }, "'ve ", { true, KC_SPC, 4  } }, // -> [-]'ve⎵
@@ -2797,11 +2795,11 @@ static inline bool apply_pct_rule(size_t i) {
     cs_send_string_punct(rule->output);
     reset_pct_history();
     cancel_deferred_exec(magic_state.token);
-    if (rule->track.val) {
+    if (rule->track.consume_next) {
         update_last_keys(rule->track.keycode, rule->track.length);
     }
     dprintf("rule matched: %d\n", i);
-    return !rule->track.val;
+    return !rule->track.consume_next;
 }
 
 static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {

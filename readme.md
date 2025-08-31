@@ -116,22 +116,10 @@ Punctuation following a dynamic output that ends with a space will remove the sp
 
 In QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality.
 
+---
 
 
-## Rollbacks
-
-For longer dynamic key outputs (e.g. `W -> WITH`), there is a short window (default 500ms) in which `Backspace` will delete ("rollback") the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`).
-
-Pressing any other key will instantly close this window.
-
-This feature is also reused to rollback various macro outputs in a single keypress.
-
-> [!NOTE]
-> You can hook into this feature with the `process_key_tracking` and `rollback_last_key` functions.
-
-
-
-## Magic Punctuation
+### Magic Punctuation
 
 The two punctuation keys beneath the vowel cluster emit different outputs depending on both the previous *and* following keys:
 
@@ -146,8 +134,7 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Right  | `⎵`        | Immediate  | `[⎵]-`          |
 | Right  | `E`        | `G`        | `[e].g.`        |
 | Left   | Any Key    | `Enter`    | `[-];`+`Enter`  |
-| Left   | Any Letter | `⎵`        | `[-],⎵`         |
-| Right  | Any Letter | `⎵`        | `[-],⎵`         |
+| Either | Any Letter | `⎵`        | `[-],⎵`         |
 | Either | Any Letter | `D`        | `[-]'d⎵`        |
 | Either | Any Letter | `L`        | `[-]'ll⎵`       |
 | Either | Any Letter | `V`        | `[-]'ve⎵`       |
@@ -156,8 +143,8 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Either | Any Letter | `R`        | `[-]'re⎵`       |
 | Left   | Either     | Immediate  | `''`            |
 | Right  | Either     | Immediate  | `,`             |
-| Left   | Any Key    | Any        | `[-]'[-]`       |
-| Right  | Any Key    | Any        | `[-],[-]`       |
+| Left   | Any Key    | Any Key    | `[-]'[-]`       |
+| Right  | Any Key    | Any Key    | `[-],[-]`       |
 
 The following key must be pressed within 500ms for the dynamic output to activate; otherwise, the keys will default to `'` (left) and `,` (right). Immediate rules eagerly trigger on magic key-down if matched.
 
@@ -166,12 +153,25 @@ The rules have been set up such that pressing whichever punctuation key is more 
 > [!NOTE]
 > New rules can be added to the `keymatch_rule_t match_rules[]` table. The rules are matched greedily top down, so more general rules should go lower in the table and specific rules higher up.
 >
-> For example, `S`+`Left`+`Spc` will return `s'⎵` rather than `s,⎵`, because the specific rule `Either`+`S`+`⎵` is above the general rule `Left`+`Any`+`⎵`. If the rules were reversed, the latter would never be matched as a subset of the former.
+> For example, `S`+`Left`+`Spc` will return `s'⎵` rather than `s,⎵`, because the specific rule `Either`+`S`+`⎵` is above the general rule `Either`+`Any`+`⎵`. If the rules were reversed, the latter would never be matched as a subset of the former.
 
 > [!WARNING]
 > Immediate rules should always return true in the `track_t` attribute despite not having a following key to consume, or else other tracking systems will not function.
 
 When shifted, the left magic key always outputs `@`, and the right magic key always outputs `~`.
+
+
+
+## Rollbacks
+
+For longer dynamic key outputs (e.g. `W -> WITH`), there is a short window (default 500ms) in which `Backspace` will delete ("rollback") the entire magic output (i.e. `WITH -> W` rather than `WITH -> WIT`).
+
+Pressing any other key will instantly close this window.
+
+This feature is also reused to rollback various macro outputs in a single keypress.
+
+> [!NOTE]
+> You can hook into this feature with the `process_key_tracking` and `rollback_last_key` functions.
 
 
 
