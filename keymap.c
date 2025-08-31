@@ -151,13 +151,12 @@ enum custom_keycodes {
 // Symbol home row mods
 #define RS_RPRN RSFT_T(KC_RPRN)
 #define RC_LPRN RCTL_T(KC_LPRN)
-#define RA_SCLN LALT_T(KC_UNDS)
-#define RG_TILD RGUI_T(KC_TILD)
+#define RA_TILD LALT_T(KC_TILD)
+#define RG_UNDS LGUI_T(KC_UNDS)
 
 #define RS_1 RSFT_T(KC_1)
 #define RC_2 RCTL_T(KC_2)
 #define RA_3 LALT_T(KC_3)
-#define RG_UNDS LGUI_T(KC_UNDS)
 #define RG_0 LGUI_T(KC_0)
 
 // Data home row mods
@@ -293,11 +292,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_SYMBOL] = LAYOUT( //6
       //,-----------------------------------------------------.                    ,---------------------------------------------------.
-           KC_GRV,  CS_DLR, CS_EXLM, CS_DQUO, CS_AMPR, CS_HASH,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_COLN,  KC_DEL,
+           KC_GRV,  CS_DLR, CS_EXLM, CS_DQUO, CS_AMPR, CS_HASH,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          OSMLSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT, RS_RPRN, RC_LPRN, RA_SCLN, RG_UNDS, TABRSFT,
+          OSMLSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT, RS_RPRN, RC_LPRN, RA_TILD, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, CS_CIRC, CS_COLN,  CS_DOT, CS_COMM, CS_TILD,                        CS_GT, KC_RBRC, KC_LBRC, CS_COMM, CS_QUES,  KC_ENT,
+          CS_LCTL, CS_CIRC, CS_COLN,  CS_DOT, CS_COMM, CS_TILD,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               CS_SLSH,  CS_AL2, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -305,11 +304,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_PROGRAM] = LAYOUT( //7
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_GRV, CS_PERC, CS_MINS, CS_PLUS,  CS_DLR, CS_CONJ,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, CS_COLN,  KC_DEL,
+           KC_GRV, CS_PERC, CS_MINS, CS_PLUS,  CS_DLR, CS_CONJ,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          OSMLSFT, CS_EXLM,   CS_LT,   CS_GT,  CS_EQL, CS_DISJ,                        CS_LT, RS_RPRN, RC_LPRN, RA_SCLN, RG_UNDS, TABRSFT,
+          OSMLSFT, CS_EXLM,   CS_LT,   CS_GT,  CS_EQL, CS_DISJ,                        CS_LT, RS_RPRN, RC_LPRN, RA_TILD, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, CS_CIRC, CS_SLSH, CS_ASTR, CS_HASH, CS_TILD,                        CS_GT, KC_RBRC, KC_LBRC, CS_COMM, CS_QUES,  KC_ENT,
+          CS_LCTL, CS_CIRC, CS_SLSH, CS_ASTR, CS_HASH, CS_TILD,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               CS_SLSH,  CS_AL3, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -329,11 +328,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT] = LAYOUT( //9
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, KC_COLN,  KC_DEL,
+          _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CY_WRAP, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, RS_RPRN, RC_LPRN, RA_SCLN, RG_UNDS, TABRSFT,
+          _______, CY_WRAP, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, RS_RPRN, RC_LPRN, RA_TILD, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, KC_PGDN, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                        CS_GT, KC_RBRC, KC_LBRC, CS_COMM, CS_QUES,  KC_ENT,
+          _______, KC_PGDN, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______,  CS_AL4,  KC_SPC
                                           //`--------------------------'  `--------------------------'
@@ -674,13 +673,12 @@ static inline bool is_hrm(uint16_t keycode) {
 
         case RS_RPRN:
         case RC_LPRN:
-        case RA_SCLN:
-        case RG_TILD:
+        case RA_TILD:
+        case RG_UNDS:
 
         case RS_1:
         case RC_2:
         case RA_3:
-        case RG_UNDS:
         case RG_0:
 
         case LG_EXLM:
@@ -927,7 +925,7 @@ static bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
         // RALT
         case RA_L:
         case RA_I:
-        case RA_SCLN:
+        case RA_TILD:
         case RA_3:
         case RA_DELR:
             homerow_mod(MOD_BIT(KC_LALT), record);
@@ -935,7 +933,6 @@ static bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
         // RGUI
         case RS_SCLN:
         case RG_A:
-        case RG_TILD:
         case RG_UNDS:
         case RG_0:
         case RG_DEL:
@@ -3835,24 +3832,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         // =====================================================================
 
         // Edit layer
-        case RG_TILD:
+        case RG_UNDS:
+            if (record->tap.count && record->event.pressed) {
+                cs_tap_code16(KC_UNDS);
+            }
+            return false;
+        case RA_TILD:
             if (record->tap.count && record->event.pressed) {
                 cs_tap_code16(LSFT(KC_NUHS));
             }
             return false;
-
-        case RA_SCLN:
-            if (record->tap.count && record->event.pressed) {
-                cs_tap_code(KC_SCLN);
-            }
-            return false;
-
         case RC_LPRN:
             if (record->tap.count && record->event.pressed) {
                 cs_tap_code16(KC_LPRN);
             }
             return false;
-
         case RS_RPRN:
             if (record->tap.count && record->event.pressed) {
                 cs_tap_code16(KC_RPRN);
@@ -3885,11 +3879,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
 
 
-        case RG_UNDS:
-            if (record->tap.count && record->event.pressed) {
-                cs_tap_code16(KC_UNDS);
-            }
-            return false;
         case RG_0:
             if (record->tap.count && record->event.pressed) {
                 cs_tap_code16(KC_0);
