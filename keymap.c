@@ -2691,11 +2691,12 @@ static const keymatch_rule_t match_rules[] = {
     { EITHER, { JUST, KC_N    }, { JUST, KC_T    }, "'t ",  { true, KC_SPC, 3  } }, // -> [n]'t⎵
     { EITHER, { JUST, LS_S    }, { ANY_SPACE     }, "'",    { false            } }, // -> [s]'⎵
     { EITHER, { JUST, KC_S    }, { ANY_SPACE     }, "'",    { false            } }, // -> [s]'⎵
-    { EITHER, { JUST, KC_P    }, { JUST, KC_M    }, ".m.",  { true, KC_DOT, 3  } }, // -> [p].m.
-    { LEFT,   { JUST, RA_I    }, { JUST, RC_E    }, ".e.",  { true, KC_DOT, 3  }  }, // -> [i].e.
-    { LEFT,   { JUST, KC_I    }, { JUST, KC_E    }, ".e.",  { true, KC_DOT, 3  }  }, // -> [i].e.
+    { EITHER, { JUST, KC_N    }, { JUST, KC_B    }, ".b.",  { true, KC_DOT, 3  } }, // -> [n].b.
+    { LEFT,   { JUST, RA_I    }, { JUST, RC_E    }, ".e.",  { true, KC_DOT, 3  } }, // -> [i].e.
+    { LEFT,   { JUST, KC_I    }, { JUST, KC_E    }, ".e.",  { true, KC_DOT, 3  } }, // -> [i].e.
     { LEFT,   { JUST, RG_A    }, { JUST, KC_M    }, ".m.",  { true, KC_DOT, 3  } }, // -> [a].m.
     { LEFT,   { JUST, KC_A    }, { JUST, KC_M    }, ".m.",  { true, KC_DOT, 3  } }, // -> [a].m.
+    { EITHER, { JUST, KC_P    }, { JUST, KC_M    }, ".m.",  { true, KC_DOT, 3  } }, // -> [p].m.
     { RIGHT,  { JUST, CS_LT1  }, { IMMEDIATE     }, "- ",   { true, KC_SPC, 2  } }, // -> [⎵]-⎵
     { RIGHT,  { JUST, KC_SPC  }, { IMMEDIATE     }, "- ",   { true, KC_SPC, 2  } }, // -> [⎵]-⎵
     { RIGHT,  { JUST, RC_E    }, { JUST, KC_G    }, ".g.",  { true, KC_DOT, 3  } }, // -> [e].g.
@@ -2716,8 +2717,10 @@ static const keymatch_rule_t match_rules[] = {
     { EITHER, { ANY_KEY       }, { JUST, KC_R    }, "'re ", { true, KC_SPC, 4  } }, // -> [-]'re⎵
 
     // Double taps and rolls
+    { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE     }, "''",   { true, KC_QUOT, 2 } }, // -> [-]'
     { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE     }, "''",   { true, KC_QUOT, 2 } }, // -> [-]'
     { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
+    { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
 
     // Fallback rules
     { LEFT,   { ANY_KEY       }, { ANY_KEY       }, "'",    { false            } }, // -> [-]'
@@ -2769,7 +2772,7 @@ static inline void reset_pct_history(void) {
     magic_state.active = NONE;
     magic_state.last_key = KC_NO;
     magic_state.current = KC_NO;
-};
+}
 
 static inline void resolve_pct_fallback(void) {
     cancel_deferred_exec(magic_state.token);
@@ -2790,6 +2793,18 @@ uint32_t PCTRGHT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_COMM);
     reset_pct_history();
     return 0;
+}
+
+static inline bool apply_pct_rule(size_t i) {
+    keymatch_rule_t const *rule = &match_rules[i];
+    cs_send_string_punct(rule->output);
+    reset_pct_history();
+    cancel_deferred_exec(magic_state.token);
+    if (rule->track.val) {
+        update_last_keys(rule->track.keycode, rule->track.length);
+    }
+    dprintf("rule matched: %d\n", i);
+    return !rule->track.val;
 }
 
 static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
@@ -2835,19 +2850,13 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
             continue;
         }
 
-        const bool immediate = rule->next.kind == IMMEDIATE;
-        const uint16_t prev = immediate ? magic_state.current : magic_state.last_key;
-        const bool next_match = immediate ? true : pattern_match_key(rule->next, keycode);
+        bool immediate = rule->next.kind == IMMEDIATE && is_magic_punct(keycode) &&
+            pattern_match_key(rule->prev, magic_state.current);
+        bool sequential = pattern_match_key(rule->prev, magic_state.last_key) &&
+            pattern_match_key(rule->next, keycode);
 
-        if (pattern_match_key(rule->prev, prev) && next_match) {
-            cs_send_string_punct(rule->output);
-            reset_pct_history();
-            cancel_deferred_exec(magic_state.token);
-            if (rule->track.val) {
-                update_last_keys(rule->track.keycode, rule->track.length);
-            }
-            dprintf("rule matched: %d\n", i);
-            return !rule->track.val;
+        if (immediate || sequential) {
+            return apply_pct_rule(i);
         }
     }
 
