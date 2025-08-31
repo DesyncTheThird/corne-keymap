@@ -2697,24 +2697,24 @@ static const keymatch_rule_t match_rules[] = {
     { LEFT,   { JUST, RG_A    }, { JUST, KC_M    }, ".m.",  { true, KC_DOT, 3  } }, // -> [a].m.
     { LEFT,   { JUST, KC_A    }, { JUST, KC_M    }, ".m.",  { true, KC_DOT, 3  } }, // -> [a].m.
     { EITHER, { JUST, KC_P    }, { JUST, KC_M    }, ".m.",  { true, KC_DOT, 3  } }, // -> [p].m.
-    { RIGHT,  { JUST, CS_LT1  }, { IMMEDIATE     }, "- ",   { true, KC_SPC, 2  } }, // -> [⎵]-⎵
-    { RIGHT,  { JUST, KC_SPC  }, { IMMEDIATE     }, "- ",   { true, KC_SPC, 2  } }, // -> [⎵]-⎵
+    { RIGHT,  { JUST, CS_LT1  }, { IMMEDIATE     }, "-",    { true, KC_MINS, 1 } }, // -> [⎵]-
+    { RIGHT,  { JUST, KC_SPC  }, { IMMEDIATE     }, "-",    { true, KC_MINS, 1 } }, // -> [⎵]-
     { RIGHT,  { JUST, RC_E    }, { JUST, KC_G    }, ".g.",  { true, KC_DOT, 3  } }, // -> [e].g.
     { RIGHT,  { JUST, KC_E    }, { JUST, KC_G    }, ".g.",  { true, KC_DOT, 3  } }, // -> [e].g.
     { LEFT,   { ANY_KEY       }, { JUST, KC_ENT  }, ";",    { false            } }, // -> [-];↵
     { LEFT,   { ANY_KEY       }, { JUST, CS_LT3  }, ";",    { false            } }, // -> [-];↵
-    { LEFT,   { ANY_KEY       }, { JUST, CS_LT1  }, ",",    { false            } }, // -> [-],⎵
-    { LEFT,   { ANY_KEY       }, { JUST, KC_SPC  }, ",",    { false            } }, // -> [-],⎵
-    { RIGHT,  { ANY_KEY       }, { JUST, CS_LT1  }, ",",    { false            } }, // -> [-],⎵
-    { RIGHT,  { ANY_KEY       }, { JUST, KC_SPC  }, ",",    { false            } }, // -> [-],⎵
-    { EITHER, { ANY_KEY       }, { JUST, KC_D    }, "'d ",  { true, KC_SPC, 3  } }, // -> [-]'d⎵
-    { EITHER, { ANY_KEY       }, { JUST, KC_L    }, "'ll ", { true, KC_SPC, 4  } }, // -> [-]'ll⎵
-    { EITHER, { ANY_KEY       }, { JUST, KC_V    }, "'ve ", { true, KC_SPC, 4  } }, // -> [-]'ve⎵
-    { EITHER, { ANY_KEY       }, { JUST, KC_M    }, "'m ",  { true, KC_SPC, 3  } }, // -> [-]'m⎵
-    { EITHER, { ANY_KEY       }, { JUST, LS_S    }, "'s ",  { true, KC_SPC, 3  } }, // -> [-]'s⎵
-    { EITHER, { ANY_KEY       }, { JUST, KC_S    }, "'s ",  { true, KC_SPC, 3  } }, // -> [-]'s⎵
-    { EITHER, { ANY_KEY       }, { JUST, LA_R    }, "'re ", { true, KC_SPC, 4  } }, // -> [-]'re⎵
-    { EITHER, { ANY_KEY       }, { JUST, KC_R    }, "'re ", { true, KC_SPC, 4  } }, // -> [-]'re⎵
+    { LEFT,   { ANY_LETTER    }, { JUST, CS_LT1  }, ",",    { false            } }, // -> [-],⎵
+    { LEFT,   { ANY_LETTER    }, { JUST, KC_SPC  }, ",",    { false            } }, // -> [-],⎵
+    { RIGHT,  { ANY_LETTER    }, { JUST, CS_LT1  }, ",",    { false            } }, // -> [-],⎵
+    { RIGHT,  { ANY_LETTER    }, { JUST, KC_SPC  }, ",",    { false            } }, // -> [-],⎵
+    { EITHER, { ANY_LETTER    }, { JUST, KC_D    }, "'d ",  { true, KC_SPC, 3  } }, // -> [-]'d⎵
+    { EITHER, { ANY_LETTER    }, { JUST, KC_L    }, "'ll ", { true, KC_SPC, 4  } }, // -> [-]'ll⎵
+    { EITHER, { ANY_LETTER    }, { JUST, KC_V    }, "'ve ", { true, KC_SPC, 4  } }, // -> [-]'ve⎵
+    { EITHER, { ANY_LETTER    }, { JUST, KC_M    }, "'m ",  { true, KC_SPC, 3  } }, // -> [-]'m⎵
+    { EITHER, { ANY_LETTER    }, { JUST, LS_S    }, "'s ",  { true, KC_SPC, 3  } }, // -> [-]'s⎵
+    { EITHER, { ANY_LETTER    }, { JUST, KC_S    }, "'s ",  { true, KC_SPC, 3  } }, // -> [-]'s⎵
+    { EITHER, { ANY_LETTER    }, { JUST, LA_R    }, "'re ", { true, KC_SPC, 4  } }, // -> [-]'re⎵
+    { EITHER, { ANY_LETTER    }, { JUST, KC_R    }, "'re ", { true, KC_SPC, 4  } }, // -> [-]'re⎵
 
     // Double taps and rolls
     { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE     }, "''",   { true, KC_QUOT, 2 } }, // -> [-]'
@@ -2820,7 +2820,7 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         case PCTLEFT:
             if (shifted()) {
-                tap_code16(S(KC_QUOT));
+                cs_tap_code16(LSFT(KC_QUOT));
                 return true;
             }
             magic_state.active = LEFT;
@@ -2830,7 +2830,7 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
 
         case PCTRGHT:
             if (shifted()) {
-                tap_code16(KC_EXLM);
+                cs_tap_code16(LSFT(KC_NUHS));
                 return true;
             }
             magic_state.active = RIGHT;

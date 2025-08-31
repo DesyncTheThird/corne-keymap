@@ -27,9 +27,11 @@ See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 
 ![Base](images/base.png?raw=true)
 
-`Repeat` and `Magic` are dynamic keys that return different outputs depending on the previous key.
+This keymap features four *dynamic keys* that emit different characters depending on the surrounding context. Two are on the home thumb keys, and two are under the vowel cluster on the right hand.
 
-As the name suggests, the Repeat key repeats the last key pressed; while the Magic key swaps the first and second rows, along with various keys on the index columns (with some exceptions, listed below). This eliminates many SFBs and double-taps, turning them into alternations and rolls.
+---
+
+The `Repeat` key generally repeats the last key pressed, while the `Magic` key generally swaps the first and second rows, along with various keys on the index columns (with some exceptions, listed below). This eliminates many SFBs and double-taps, turning them into alternations and rolls.
 
 The most common use-case for the swapping-rows behaviour is for the vowel block on the right side, turning the `OE`, `EO`, `IU`, and `UI` SFBs into rolls and alternations, as well as eliminating various index finger SFBs on both sides (i.e., in the words `T[YP]E`, `[SC]IENCE`, `[HYP]HEN`, etc.).
 
@@ -81,7 +83,7 @@ Other:
 | `Magic`* | `Non-alpha` | `⎵`   | `,`     | `.`   | `'`   |
 | `⎵`      | `THE`       | `THE` | `⎵BUT⎵` | `COM` | `RE⎵` |
 
-*Unless the previous magic output already ended with a space, in which case the repeat key will default to the `Non-alpha` state; or if the previous magic output was a basic repeat (`F`, `K`, and `P`), in which case the repeat key will treat the magic key as an ordinary alpha key.
+*Unless the previous magic output already ended with a space, in which case the repeat key will default to the `Non-alpha` state; or if the previous magic output was a basic repeat (e.g. `F`, `K`, and `P`), in which case the repeat key will treat the magic key as an ordinary alpha key.
 
 ---
 ### Details
@@ -133,29 +135,29 @@ This feature is also reused to rollback various macro outputs in a single keypre
 
 The two punctuation keys beneath the vowel cluster emit different outputs depending on both the previous *and* following keys:
 
-| Key    | Previous | Next       | Output          |
-| ------ | -------- | ---------- | --------------- |
-| Either | `N`      | `T`        | `[n]'t⎵`        |
-| Either | `S`      | `⎵`        | `[s]'⎵`         |
-| Either | `N`      | `B`        | `[n].b.`        |
-| Left   | `I`      | `E`        | `[i].e.`        |
-| Left   | `A`      | `M`        | `[a].m.`        |
-| Either | `P`      | `M`        | `[p].m.`        |
-| Right  | `⎵`      | Immediate  | `[⎵]-⎵`         |
-| Right  | `E`      | `G`        | `[e].g.`        |
-| Left   | Any      | `Enter`    | `[-];`+`Enter`  |
-| Left   | Any      | `⎵`        | `[-],⎵`         |
-| Right  | Any      | `⎵`        | `[-],⎵`         |
-| Either | Any      | `D`        | `[-]'d⎵`        |
-| Either | Any      | `L`        | `[-]'ll⎵`       |
-| Either | Any      | `V`        | `[-]'ve⎵`       |
-| Either | Any      | `M`        | `[-]'m⎵`        |
-| Either | Any      | `S`        | `[-]'s⎵`        |
-| Either | Any      | `R`        | `[-]'re⎵`       |
-| Left   | Either   | Immediate  | `''`            |
-| Right  | Either   | Immediate  | `,`             |
-| Left   | Any      | Any        | `[-]'[-]`       |
-| Right  | Any      | Any        | `[-],[-]`       |
+| Key    | Previous   | Next       | Output          |
+| ------ | ---------- | ---------- | --------------- |
+| Either | `N`        | `T`        | `[n]'t⎵`        |
+| Either | `S`        | `⎵`        | `[s]'⎵`         |
+| Either | `N`        | `B`        | `[n].b.`        |
+| Left   | `I`        | `E`        | `[i].e.`        |
+| Left   | `A`        | `M`        | `[a].m.`        |
+| Either | `P`        | `M`        | `[p].m.`        |
+| Right  | `⎵`        | Immediate  | `[⎵]-`          |
+| Right  | `E`        | `G`        | `[e].g.`        |
+| Left   | Any Key    | `Enter`    | `[-];`+`Enter`  |
+| Left   | Any Letter | `⎵`        | `[-],⎵`         |
+| Right  | Any Letter | `⎵`        | `[-],⎵`         |
+| Either | Any Letter | `D`        | `[-]'d⎵`        |
+| Either | Any Letter | `L`        | `[-]'ll⎵`       |
+| Either | Any Letter | `V`        | `[-]'ve⎵`       |
+| Either | Any Letter | `M`        | `[-]'m⎵`        |
+| Either | Any Letter | `S`        | `[-]'s⎵`        |
+| Either | Any Letter | `R`        | `[-]'re⎵`       |
+| Left   | Either     | Immediate  | `''`            |
+| Right  | Either     | Immediate  | `,`             |
+| Left   | Any Key    | Any        | `[-]'[-]`       |
+| Right  | Any Key    | Any        | `[-],[-]`       |
 
 The following key must be pressed within 500ms for the dynamic output to activate; otherwise, the keys will default to `'` (left) and `,` (right). Immediate rules eagerly trigger on magic key-down if matched.
 
@@ -169,7 +171,7 @@ The rules have been set up such that pressing whichever punctuation key is more 
 > [!WARNING]
 > Immediate rules should always return true in the `track_t` attribute despite not having a following key to consume, or else other tracking systems will not function.
 
-When shifted, the left magic key always outputs `@`, and the right magic key always outputs `!`.
+When shifted, the left magic key always outputs `@`, and the right magic key always outputs `~`.
 
 
 
