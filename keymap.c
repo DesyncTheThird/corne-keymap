@@ -460,27 +460,6 @@ static misc_key_flags_t misc_key_state = {
     .capsword_active = false
 };
 
-typedef enum {
-    set_none,
-    set_hour,
-    set_min,
-    set_sec,
-} time_setting_t;
-
-typedef struct {
-    time_setting_t setting;
-    uint8_t hrs;
-    uint8_t min;
-    uint8_t sec;
-} clock_state_t;
-
-static clock_state_t clock_state = {
-    .setting = set_none,
-    .hrs     = 0,
-    .min     = 0,
-    .sec     = 0
-};
-
 typedef struct {
     uint8_t menu;
     bool static_display :1;
@@ -497,110 +476,14 @@ static oled_flags_t oled_state = {
     .muted = false
 };
 
-typedef enum {
-    SEP_DEF,
-    SEP_SYM,
-    SEP_SPC,
-    SEP_LSFT,
-    SEP_RSFT
-} sep_kind_t;
+static void update_sync(void);
 
-typedef struct {
-    uint16_t keycode;
-    sep_kind_t kind;
-    uint16_t output;
-} sep_rule_t;
+static inline bool is_last_key(uint16_t);
+static inline uint16_t get_last_key(void);
 
-typedef struct {
-    bool active :1;
-    bool capturing :1;
-    const sep_rule_t *rule;
-    int16_t distance;
-} case_lock_flags_t;
-
-static case_lock_flags_t case_lock_state = {
-    .active = false,
-    .capturing = false,
-    .rule = NULL,
-    .distance = 0
-};
-
-static void update_sync(void) {
-    if (is_keyboard_master()) {
-        master_to_slave_t m2s = {
-            .oled = {
-                .static_display = oled_state.static_display,
-                .timeout = oled_state.timeout,
-                .active = oled_state.active,
-            },
-            .case_lock = {
-                .capturing = case_lock_state.capturing,
-                .active = case_lock_state.active
-            }
-        };
-        transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
-    }
-}
-
-typedef struct {
-    uint8_t count;
-    uint16_t last_key;
-    uint16_t last_key_2;
-    uint16_t last_key_3;
-    bool dynamic :1;
-    bool magic_space_override :1;
-} recent_key_state_t;
-
-static recent_key_state_t key_state = {
-    .dynamic = false,
-    .magic_space_override = false,
-    .count = 1,
-    .last_key = KC_NO,
-    .last_key_2 = KC_NO,
-    .last_key_3 = KC_NO
-};
-
-static void rollback_last_key(void) {
-    key_state.count = 1;
-
-    key_state.last_key = key_state.last_key_2;
-    key_state.last_key_2 = key_state.last_key_3;
-    key_state.last_key_3 = KC_NO;
-
-    // dprintf("rolled back!\n");
-    // dprintf("key_state.last_key:   %d\n", key_state.last_key);
-    // dprintf("key_state.last_key_2: %d\n", key_state.last_key_2);
-    // dprintf("key_state.last_key_3: %d\n", key_state.last_key_3);
-    // dprintf("key_state.count: %d\n", key_state.count);
-}
-
-static void update_last_key(uint16_t new_keycode) {
-    key_state.last_key_3 = key_state.last_key_2;
-    key_state.last_key_2 = key_state.last_key;
-    key_state.last_key = new_keycode;
-
-    key_state.count = 1;
-
-    // dprintf("updated keys!\n");
-    // dprintf("key_state.last_key:   %d\n", key_state.last_key);
-    // dprintf("key_state.last_key_2: %d\n", key_state.last_key_2);
-    // dprintf("key_state.last_key_3: %d\n", key_state.last_key_3);
-    // dprintf("key_state.count: %d\n", key_state.count);
-}
-
-static void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
-    key_state.last_key_3 = key_state.last_key_2;
-    key_state.last_key_2 = key_state.last_key;
-    key_state.last_key = new_keycode;
-
-    key_state.count = new_count;
-
-    // dprintf("updated multiple keys!\n");
-    // dprintf("key_state.last_key:   %d\n", key_state.last_key);
-    // dprintf("key_state.last_key_2: %d\n", key_state.last_key_2);
-    // dprintf("key_state.last_key_3: %d\n", key_state.last_key_3);
-    // dprintf("key_state.count: %d\n", key_state.count);
-}
+static void rollback_last_key(void);
+static void update_last_key(uint16_t);
+static void update_last_keys(uint16_t, uint8_t);
 
 static void cs_send_char(char c) {
     const uint8_t mods = get_mods();
@@ -747,11 +630,11 @@ static inline void cs_tap_code(uint16_t keycode) {
     set_mods(mods);
 }
 
-static bool ctrl_on(void) {
+static inline bool ctrl_on(void) {
     return (get_mods() & MOD_BIT(KC_LCTL) || get_mods() & MOD_BIT(KC_RCTL));
 }
 
-static bool shifted(void) {
+static inline bool shifted(void) {
     return (get_mods() & MOD_BIT(KC_LSFT)
          || get_mods() & MOD_BIT(KC_RSFT)
          || get_oneshot_mods() & MOD_BIT(KC_LSFT)
@@ -1483,6 +1366,34 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo,
 // Case Lock
 //==============================================================================
 
+typedef enum {
+    SEP_DEF,
+    SEP_SYM,
+    SEP_SPC,
+    SEP_LSFT,
+    SEP_RSFT
+} sep_kind_t;
+
+typedef struct {
+    uint16_t keycode;
+    sep_kind_t kind;
+    uint16_t output;
+} sep_rule_t;
+
+typedef struct {
+    bool active :1;
+    bool capturing :1;
+    const sep_rule_t *rule;
+    int16_t distance;
+} case_lock_flags_t;
+
+static case_lock_flags_t case_lock_state = {
+    .active = false,
+    .capturing = false,
+    .rule = NULL,
+    .distance = 0
+};
+
 static const sep_rule_t separator_rules[] = {
     { KC_NO,   SEP_DEF,  KC_UNDS },
 
@@ -1625,7 +1536,7 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
     }
 
     if (keycode == KC_SPC || (keycode == CS_LT1 && record->tap.count)) {
-        if (is_spc(key_state.last_key)) {
+        if (is_spc(get_last_key())) {
             switch (case_lock_state.rule->kind) {
                 case SEP_LSFT:
                     clear_oneshot_mods();
@@ -1935,7 +1846,7 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
                 if (ctrl_on()) {
                     register_code16(LCTL(KC_Z));
                     return false;
-                } else if (key_state.last_key == SELECT) {
+                } else if (is_last_key(SELECT)) {
                     tap_code(KC_DEL);
                     edit_clip = true;
                     update_last_key(KC_DEL);
@@ -1956,7 +1867,7 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
                     return false;
                 } else {
                     const uint8_t mods = get_mods();
-                    if (is_select_macro(key_state.last_key)) {
+                    if (is_select_macro(get_last_key())) {
                         tap_code16(LCTL(KC_X));
                         edit_clip = true;
                     } else {
@@ -1975,7 +1886,7 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
 
         case SELRGHT:
             if (record->event.pressed) {
-                if (ctrl_on() || key_state.last_key == SELECT) {
+                if (ctrl_on() || is_last_key(SELECT)) {
                     register_code16(LCTL(KC_C));
                     edit_clip = true;
                 } else {
@@ -1990,7 +1901,7 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
 
         case EO_ENT:
             if (record->event.pressed) {
-                if (ctrl_on() || edit_clip || key_state.last_key == SELECT) {
+                if (ctrl_on() || edit_clip || is_last_key(SELECT)) {
                     register_code16(LCTL(KC_V));
                     edit_clip = false;
                 } else {
@@ -2275,22 +2186,90 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
 // Repeat and Magic keys
 //==============================================================================
 
+typedef struct {
+    uint8_t count;
+    uint16_t last_key;
+    uint16_t last_key_2;
+    uint16_t last_key_3;
+    bool dynamic :1;
+    bool magic_space_override :1;
+} recent_key_state_t;
+
+static recent_key_state_t key_state = {
+    .dynamic = false,
+    .magic_space_override = false,
+    .count = 1,
+    .last_key = KC_NO,
+    .last_key_2 = KC_NO,
+    .last_key_3 = KC_NO
+};
+
+static inline bool is_last_key(uint16_t keycode) {
+    return keycode == key_state.last_key;
+}
+
+static inline uint16_t get_last_key(void) {
+    return key_state.last_key;
+}
+
+static void rollback_last_key(void) {
+    key_state.count = 1;
+
+    key_state.last_key = key_state.last_key_2;
+    key_state.last_key_2 = key_state.last_key_3;
+    key_state.last_key_3 = KC_NO;
+
+    // dprintf("rolled back!\n");
+    // dprintf("key_state.last_key:   %d\n", key_state.last_key);
+    // dprintf("key_state.last_key_2: %d\n", key_state.last_key_2);
+    // dprintf("key_state.last_key_3: %d\n", key_state.last_key_3);
+    // dprintf("key_state.count: %d\n", key_state.count);
+}
+
+static void update_last_key(uint16_t new_keycode) {
+    key_state.last_key_3 = key_state.last_key_2;
+    key_state.last_key_2 = key_state.last_key;
+    key_state.last_key = new_keycode;
+
+    key_state.count = 1;
+
+    // dprintf("updated keys!\n");
+    // dprintf("key_state.last_key:   %d\n", key_state.last_key);
+    // dprintf("key_state.last_key_2: %d\n", key_state.last_key_2);
+    // dprintf("key_state.last_key_3: %d\n", key_state.last_key_3);
+    // dprintf("key_state.count: %d\n", key_state.count);
+}
+
+static void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
+    key_state.last_key_3 = key_state.last_key_2;
+    key_state.last_key_2 = key_state.last_key;
+    key_state.last_key = new_keycode;
+
+    key_state.count = new_count;
+
+    // dprintf("updated multiple keys!\n");
+    // dprintf("key_state.last_key:   %d\n", key_state.last_key);
+    // dprintf("key_state.last_key_2: %d\n", key_state.last_key_2);
+    // dprintf("key_state.last_key_3: %d\n", key_state.last_key_3);
+    // dprintf("key_state.count: %d\n", key_state.count);
+}
+
 static bool process_rollback(void) {
     if (ctrl_on()) {
         rollback_last_key();
         return true;
     }
 
-    if (is_bracket_wrap_macro(key_state.last_key) && key_state.count == 2) {
+    if (is_bracket_wrap_macro(get_last_key()) && key_state.count == 2) {
         rollback_bracket_wrap_macro();
         return false;
     }
 
-    if (is_bracket_macro(key_state.last_key) && key_state.count == 2) {
+    if (is_bracket_macro(get_last_key()) && key_state.count == 2) {
         tap_code(KC_RGHT);
     }
 
-    if (key_state.last_key == CY_BRC && key_state.count == 2) {
+    if (is_last_key(CY_BRC) && key_state.count == 2) {
         tap_code(KC_RGHT);
     }
 
@@ -2516,7 +2495,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
             }
             set_mods(mods);
 
-            if (key_state.last_key == KC_SPC) {
+            if (is_last_key(KC_SPC)) {
                 if (misc_key_state.capsword_active) {
                     del_mods(MOD_BIT(KC_LSFT));
                 }
@@ -2597,7 +2576,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
             }
             set_mods(mods);
 
-            if (key_state.last_key == KC_SPC) {
+            if (is_last_key(KC_SPC)) {
                 if (misc_key_state.capsword_active) {
                     del_mods(MOD_BIT(KC_LSFT));
                 }
@@ -2618,7 +2597,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
 }
 
 static bool process_punctuation_space(uint16_t keycode, keyrecord_t* record) {
-    if (key_state.last_key == KC_SPC && key_state.dynamic) {
+    if (is_last_key(KC_SPC) && key_state.dynamic) {
         switch (keycode) {
             case KC_DOT:
             case CS_DOT:
@@ -3058,6 +3037,27 @@ static bool process_vol_controls(uint16_t keycode, keyrecord_t* record) {
 //------------------------------------------------------------------------------
 // Clock
 //------------------------------------------------------------------------------
+
+typedef enum {
+    set_none,
+    set_hour,
+    set_min,
+    set_sec,
+} time_setting_t;
+
+typedef struct {
+    time_setting_t setting;
+    uint8_t hrs;
+    uint8_t min;
+    uint8_t sec;
+} clock_state_t;
+
+static clock_state_t clock_state = {
+    .setting = set_none,
+    .hrs     = 0,
+    .min     = 0,
+    .sec     = 0
+};
 
 static uint32_t clock_callback(uint32_t trigger_time, void* cb_arg) {
     clock_state.sec++;
@@ -4790,7 +4790,7 @@ void housekeeping_task_user(void) {
 
     // Reset select timers
     if (timeouts[TIMEOUT_SELECT].active) {
-        if (key_state.last_key == SELECT) {
+        if (is_last_key(SELECT)) {
             key_state.last_key = KC_NO;
         }
     }
@@ -4891,5 +4891,22 @@ void housekeeping_task_user(void) {
                 dprint("Slave sync failed!\n");
             }
         }
+    }
+}
+
+static void update_sync(void) {
+    if (is_keyboard_master()) {
+        master_to_slave_t m2s = {
+            .oled = {
+                .static_display = oled_state.static_display,
+                .timeout = oled_state.timeout,
+                .active = oled_state.active,
+            },
+            .case_lock = {
+                .capturing = case_lock_state.capturing,
+                .active = case_lock_state.active
+            }
+        };
+        transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave_t), &m2s);
     }
 }
