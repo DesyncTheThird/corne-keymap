@@ -2695,10 +2695,6 @@ static const keymatch_rule_t match_rules[] = {
     { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE     }, "''",   { true, KC_QUOT, 2 } }, // -> [-]'
     { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
     { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
-
-    // Fallback rules
-    { LEFT,   { ANY_KEY       }, { ANY_KEY       }, "'",    { false            } }, // -> [-]'
-    { RIGHT,  { ANY_KEY       }, { ANY_KEY       }, ",",    { false            } }, // -> [-],
 };
 
 static inline bool is_magic_punct(uint16_t keycode) {
@@ -2714,7 +2710,7 @@ static bool pattern_match_key(keymatch_t key, uint16_t keycode) {
                                 keycode == KC_I || keycode == KC_O ||
                                 keycode == KC_U;
         case ANY_SPACE:  return keycode == KC_SPC || keycode == KC_TAB || keycode == CS_LT1;
-        case ANY_LETTER: return is_alpha(keycode) || is_magic(keycode);
+        case ANY_LETTER: return is_alpha(keycode) || is_magic(keycode) || is_hrm(keycode);
         case ANY_KEY:    return !is_magic_punct(keycode) && keycode != KC_NO;
         default:         return false;
     }
@@ -2752,19 +2748,23 @@ static inline void resolve_pct_fallback(void) {
     cancel_deferred_exec(magic_state.token);
     if (magic_state.active == LEFT) {
         cs_tap_code(KC_QUOT);
+        update_last_key(KC_QUOT);
     } else if (magic_state.active == RIGHT) {
         cs_tap_code(KC_COMM);
+        update_last_key(KC_COMM);
     }
 }
 
 uint32_t PCTLEFT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_QUOT);
+    update_last_key(KC_QUOT);
     reset_pct_history();
     return 0;
 }
 
 uint32_t PCTRGHT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_COMM);
+    update_last_key(KC_COMM);
     reset_pct_history();
     return 0;
 }
