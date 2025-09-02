@@ -2465,7 +2465,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
 
                 case KC_N: cs_send_string_punct("'t "); update_last_keys(KC_SPC,3); break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
-                case KC_T: send_string(/*t*/"ment "); update_last_keys(KC_SPC, 5); break;
+                case KC_T: send_string(/*t*/"ment"); update_last_keys(KC_T, 4); break;
                 case KC_S: tap_code(KC_C); update_last_key(KC_C); break;
                 case KC_G: tap_code(KC_S); update_last_key(KC_S); break;
 
