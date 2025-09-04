@@ -133,7 +133,7 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Either | `P`        | `M`        | `[p].m.`        |
 | Right  | `⎵`        | Immediate  | `[⎵]-`          |
 | Right  | `E`        | `G`        | `[e].g.`        |
-| Left   | Any Key    | `Enter`    | `[-];`+`Enter`  |
+| Either | Any Key    | `Enter`    | `[-];`+`Enter`  |
 | Either | Any Letter | `⎵`        | `[-],⎵`         |
 | Either | Any Letter | `D`        | `[-]'d⎵`        |
 | Either | Any Letter | `L`        | `[-]'ll⎵`       |

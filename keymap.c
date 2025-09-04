@@ -2693,8 +2693,8 @@ static const keymatch_rule_t match_rules[] = {
     { RIGHT,  { JUST, KC_SPC  }, { IMMEDIATE     }, "-",    { true, KC_MINS, 1 } }, // -> [⎵]-
     { RIGHT,  { JUST, RC_E    }, { JUST, KC_G    }, ".g.",  { true, KC_DOT, 3  } }, // -> [e].g.
     { RIGHT,  { JUST, KC_E    }, { JUST, KC_G    }, ".g.",  { true, KC_DOT, 3  } }, // -> [e].g.
-    { LEFT,   { ANY_KEY       }, { JUST, KC_ENT  }, ";",    { false            } }, // -> [-];↵
-    { LEFT,   { ANY_KEY       }, { JUST, CS_LT3  }, ";",    { false            } }, // -> [-];↵
+    { EITHER, { ANY_KEY       }, { JUST, KC_ENT  }, ";",    { false            } }, // -> [-];↵
+    { EITHER, { ANY_KEY       }, { JUST, CS_LT3  }, ";",    { false            } }, // -> [-];↵
     { EITHER, { ANY_LETTER    }, { JUST, CS_LT1  }, ",",    { false            } }, // -> [-],⎵
     { EITHER, { ANY_LETTER    }, { JUST, KC_SPC  }, ",",    { false            } }, // -> [-],⎵
     { EITHER, { ANY_LETTER    }, { JUST, KC_D    }, "'d ",  { true, KC_SPC, 3  } }, // -> [-]'d⎵
