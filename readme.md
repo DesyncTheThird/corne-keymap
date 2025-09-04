@@ -144,7 +144,7 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Left   | Either     | Immediate  | `''`            |
 | Right  | Either     | Immediate  | `,`             |
 
-The following key must be pressed within 500ms for the dynamic output to activate; otherwise, the keys will default to `'` (left) and `,` (right). Immediate rules eagerly trigger on magic key-down if matched.
+Immediate rules eagerly trigger on magic-key-down if matched.
 
 The rules have been set up such that pressing whichever punctuation key is more comfortable while typing (i.e. sequences that aren't SFBs) will generally produce contextually sensible punctuation.
 
@@ -155,6 +155,11 @@ The rules have been set up such that pressing whichever punctuation key is more 
 
 > [!WARNING]
 > Immediate rules should always return true in the `track_t` attribute despite not having a following key to consume, or else other tracking systems will not function.
+
+The following key must be pressed within 500ms for the dynamic output to activate; otherwise, the keys will default to emitting `'` (left) or `,` (right) after the timer expires. If a following key is pressed, but no rules are matched, the timer will immediately resolve, and `'` or `,` will be placed immediately before the next key's output.
+
+> [!NOTE]
+> In these fallthrough cases, the `Magic` and `Repeat` keys will track these punctuation keys as `'` and `,`, e.g. pressing `Right`+`Repeat` will emit `,⎵but⎵`.
 
 When shifted, the left magic key always outputs `@`, and the right magic key always outputs `~`.
 
@@ -300,9 +305,9 @@ This feature adds a toggle on the `Data` layer(s) that replaces the number keys 
 # Layers
 ### Base
 ![Base](images/base.png?raw=true)
-Base layer alphas is a slightly modified graphite layout, with home row mods, and magic/repeat keys on middle thumb keys.
+Base layer alphas is a modified graphite layout, with home row mods, [magic/repeat keys](#dynamic-keys) on home thumb keys, and [magic punctuation keys](#magic-punctuation) under the right hand vowel cluster.
 
-I find it difficult to press upper row keys with my pinkies and end up alt fingering them with my ring fingers, which introduces some SFBs (`BL`, `BR`) with the default Graphite layout. So, `J` and `B` have been moved off the outer top row; `B` has also been placed next to `C` to make the common `B_C` string not a skipgram. Also, I don't like `E` on the ring finger, so `HEIA` is used over `HAEI`.
+I find it difficult to press upper row keys with my pinkies and end up alt fingering them with my ring fingers, which introduces some SFBs (`BL`, `BR`) with the default graphite layout. I also find the upper inner index column keys much easier to press, so I have swapped the less common keys placed there with these pinky keys. The `C` and `W` keys have also been swapped to place `C` next to `B` to make the common `B_C` string not a skipgram. Also, I don't like `E` on the ring finger, so `HEIA` is used over `HAEI`.
 
 > [!NOTE]
 > The keymap internally uses a QWERTY layer (specifically, the `_BASIC` layer) for combo tracking, so this `Base` layer can be modified easily without needing any changes to combo code.
@@ -310,11 +315,13 @@ I find it difficult to press upper row keys with my pinkies and end up alt finge
 > [!WARNING]
 > However, per-key mod-tap settings and Chordal Hold config will still need to be handled separately if home row mods are changed.
 
-`Comma`, `Dot`, `Scln`, `Colon`, `Dash`, and `Exlm` are compressed together or omitted, as they accessible from combos near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a LaTeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/(reverse) leader key.
+Many punctuation marks common in prose are accessible through [combos](#combos) near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a LaTeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/(reverse) leader key.
 
 A copy of `Tab` is placed on the right hand to reduce left hand contortions. The two `Tab` keys also function as `LShift` and `RShift` when held. The shift modifiers are applied eagerly on keydown to improve interaction with pointing devices; these eager shift modifiers do not overwrite home row mods, so you can still shift-tab with one hand.
 
 The `LCTL` key also sets a weak one shot `Ctrl` modifier for the `Backspace` key only to allow for faster usage while typing. The one shot modifier lingers for 500ms and is removed on any other keypress (without being applied).
+
+
 
 ### Data
 ![Data](images/data.png?raw=true)
