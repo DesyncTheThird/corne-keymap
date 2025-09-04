@@ -3938,6 +3938,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
+
+
 //==============================================================================
 // OLED
 //==============================================================================
@@ -4055,9 +4057,8 @@ static void render_text_major(void) {
     oled_write_raw_P(text_major[rand() % text_major_count], frame_size);
 }
 
-
-
 #define BIAS 2
+
 static void render_text_minor(bool can_be_major) {
     clean_frame = rand() % 2;
     uint8_t frame = can_be_major ? rand() % (BIAS*text_minor_count + text_major_count) : rand() % text_minor_count;
@@ -4088,8 +4089,6 @@ static void render_logo_minor(bool can_be_major) {
 
     render_logo_major();
 }
-
-
 
 static void render_draw(void) {
     if (sync_data.oled.timeout || !sync_data.oled.active) {
@@ -4143,8 +4142,6 @@ static void render_draw(void) {
         major = frame_count > 5;
     }
 }
-
-
 
 //------------------------------------------------------------------------------
 // OLED menu
@@ -4343,8 +4340,6 @@ static void render_modifier_state(uint8_t line) {
     oled_advance_page(false);
 }
 
-
-
 #include "menu.inc"
 
 #define overlay_mask ~((1 << _CONTROL_OVERLAY) | (1 << _NUMPAD) | (1 << _MOUSE))
@@ -4532,6 +4527,8 @@ bool oled_task_user(void) {
     return false;
 }
 
+
+
 // =============================================================================
 //  Boot/Shutdown
 // =============================================================================
@@ -4590,6 +4587,17 @@ bool shutdown_user(bool jump_to_bootloader) {
 //==============================================================================
 // RGB
 //==============================================================================
+
+//  ,-----------------------.           ,-----------------------.
+//    24, 23, 18, 17, 10, 09,             36, 37, 44, 45, 50, 51,
+//  |---+---+---+---+---+---|           |---+---+---+---+---+---|
+//    25, 22, 19, 16, 11, 08,             35, 38, 43, 46, 49, 52,
+//  |---+---+---+---+---+---|           |---+---+---+---+---+---|
+//    26, 21, 20, 15, 12, 07,             34, 39, 42, 47, 48, 53,
+//  |---+---+---+---+---+---+---|   |---+---+---+---+---+---+---|
+//                    14, 13, 06,     33, 40, 41
+//                  `-----------'   `-----------'
+// Underglow:            00 - 05      27 - 32
 
 // int column1[] = {  6,  7,  8,  9, 33, 34, 35, 36};
 // int column2[] = { 13, 12, 11, 10, 40, 39, 38, 37};
@@ -4683,38 +4691,37 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     }
     return false;
 }
-//  ,-----------------------.           ,-----------------------.
-//    24, 23, 18, 17, 10, 09,             36, 37, 44, 45, 50, 51,
-//  |---+---+---+---+---+---|           |---+---+---+---+---+---|
-//    25, 22, 19, 16, 11, 08,             35, 38, 43, 46, 49, 52,
-//  |---+---+---+---+---+---|           |---+---+---+---+---+---|
-//    26, 21, 20, 15, 12, 07,             34, 39, 42, 47, 48, 53,
-//  |---+---+---+---+---+---+---|   |---+---+---+---+---+---+---|
-//                    14, 13, 06,     33, 40, 41
-//                  `-----------'   `-----------'
-// Underglow:            00 - 05      27 - 32
 
 extern bool fade_out_active;
 extern bool fade_in_active;
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    if (boot) {
-        return state;
-    }
-    if (fade_out_active || fade_in_active) {
+    static layer_state_t previous_state = 0;
+    
+    const layer_state_t check_layers = 
+        (1UL << _MOUSE) |
+        (1UL << _BASIC) |
+        (1UL << _TOUHOU) |
+        (1UL << _QWERTY) |
+        (1UL << _BASE);
+
+    if (boot || fade_out_active || fade_in_active ||
+        !((state ^ previous_state) & check_layers)) {
+        previous_state = state;
         return state;
     }
 
     if (IS_LAYER_ON_STATE(state, _MOUSE)) {
         rgb_matrix_sethsv_noeeprom(209,255,192);
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
-    } else if (IS_LAYER_ON_STATE(state, _BASIC) || IS_LAYER_ON_STATE(state, _TOUHOU)) {
+    } else if (IS_LAYER_ON_STATE(state, _BASIC) ||
+               IS_LAYER_ON_STATE(state, _TOUHOU)) {
         rgb_matrix_sethsv_noeeprom(127,255,255);
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
     } else if (IS_LAYER_ON_STATE(state, _QWERTY)) {
         rgb_matrix_sethsv_noeeprom(255,255,255);
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
-    } else if (IS_LAYER_ON_STATE(state, _BASE)) {
+    } else {
         rgb_matrix_sethsv_noeeprom(110,255,255);
         set_rgb_mode();
     }
