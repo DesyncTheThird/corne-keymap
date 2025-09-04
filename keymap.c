@@ -1360,6 +1360,22 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo,
     return false;
 }
 
+bool process_mouse_lock(uint16_t keycode, keyrecord_t* record) {
+    if (!record->event.pressed) {
+        return true;
+    }
+    if ((IS_QK_MOD_TAP(keycode) || IS_QK_LAYER_TAP(keycode)) && !record->tap.count) {
+        return true;
+    }
+    if (record->event.pressed &&
+        is_layer_locked(_MOUSE) &&
+        record->event.key.row >= 4 &&
+        record->event.key.row <= 6) {
+        layer_off(_MOUSE);
+    }
+    return true;
+}
+
 
 
 //==============================================================================
@@ -3285,6 +3301,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_edit_macros(keycode, record)) { return false; }
     if (!process_vol_controls(keycode, record)) { return false; }
     if (!process_clock_controls(keycode, record)) { return false; }
+    if (!process_mouse_lock(keycode, record)) { return false; }
 
     switch (keycode) {
 
