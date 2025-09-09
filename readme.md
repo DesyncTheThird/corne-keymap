@@ -85,7 +85,13 @@ Other:
 
 *Unless the previous magic output already ended with a space, in which case the repeat key will default to the `Non-alpha` state; or if the previous magic output was a basic repeat (e.g. `F`, `K`, and `P`), in which case the repeat key will treat the magic key as an ordinary alpha key.
 
+> [!NOTE]
+> These outputs can be adjusted in the `process_magic` function.
+
+
+
 ---
+
 ### Details
 
 Only the keys listed above are tracked (including those from combos). Pressing any other key resets the key to the default `Non-alpha` state (i.e. `OSM Shift`/`THE`).
@@ -114,9 +120,11 @@ After a short duration (default 1000ms) of no keyboard input, both dynamic keys 
 
 Punctuation following a dynamic output that ends with a space will remove the space within the timeout duration.
 
-In QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality.
+> [!NOTE]
+> In QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality. This behaviour can also be changed in `process_magic`, though the default output tables as above will not make much sense for QWERTY layouts.
 
 ---
+
 
 
 ### Magic Punctuation
@@ -144,7 +152,7 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Left   | Either     | Immediate  | `''`            |
 | Right  | Either     | Immediate  | `,`             |
 
-Immediate rules eagerly trigger on magic-key-down if matched.
+Immediate rules eagerly trigger on magic-key-down if matched; other rules trigger on next-key-down.
 
 The rules have been set up such that pressing whichever punctuation key is more comfortable while typing (i.e. sequences that aren't SFBs) will generally produce contextually sensible punctuation.
 
@@ -155,6 +163,8 @@ The rules have been set up such that pressing whichever punctuation key is more 
 
 > [!WARNING]
 > Immediate rules should always return true in the `track_t` attribute despite not having a following key to consume, or else other tracking systems will not function.
+
+If your language uses dicritics, more rules can be added to these keys to support these outputs.
 
 The following key must be pressed within 500ms for the dynamic output to activate; otherwise, the keys will default to emitting `'` (left) or `,` (right) after the timer expires. If a following key is pressed, but no rules are matched, the timer will immediately resolve, and `'` or `,` will be placed immediately before the next key's output.
 
