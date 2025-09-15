@@ -20,6 +20,8 @@ See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 - [Control key overrides](#control-overlay) for easier left-hand only use; overrides disabled on home row mods.
 - Locking numpad and Steno (GeminiPR) layers accessible through combos.
 
+### [⬇️ Download compiled binaries (for RP2040-CE)](/compiled/)
+
 
 
 # Features
@@ -228,10 +230,10 @@ Pressing `Space` plus a key on the left hand top row will output the function ke
 Common punctuation is accessible from combos on or near home row. Mouse emulation layer is accessible on pinky key combos to allow mouse control without moving from home row. Uncommon locking layers (numpad/steno) are also accessible from large combos.
 
 - `New` combo emits `Dot`, `Space`, then sets a one shot shift;
+- `⇄` thumb combo transposes the previous two characters.
 - `«` thumb combo emits `Ctrl`+`Bspc`;
-- `⇪` thumb combo activates capsword.
 
-Capsword shifts letter keys (including `Magic` and `Repeat` outputs) and is disabled at the end of the word. The shift modifier will be retained while the [Case Lock](#case-lock) feature is active.
+The Caps Word feature shifts letter keys (including `Magic` and `Repeat` outputs) and is automatically disabled at the end of the word. The shift modifier will also be retained between separators while the [Case Lock](#case-lock) feature is active.
 
 
 
@@ -499,6 +501,8 @@ If you find a way to clean up some of my code or fix some bugs, that's lovely, a
 
 
 # Building
+
+Precompiled binaries for RP2040 controllers can be found [here](/compiled/). Otherwise:
 
 1. Set up a [local installation of QMK](https://docs.qmk.fm/newbs).
 
