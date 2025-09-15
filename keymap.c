@@ -479,6 +479,7 @@ static void update_sync(void);
 
 static inline bool is_last_key(uint16_t);
 static inline uint16_t get_last_key(void);
+static inline uint16_t get_last_key_2(void);
 
 static void rollback_last_key(void);
 static void update_last_key(uint16_t);
@@ -1134,6 +1135,7 @@ enum combo_events {
     MOUSE2,
 
     BACKSPACE,
+    TRANSPOSE,
     CAPSWORD,
 
     L_EXPONENT,
@@ -1176,7 +1178,8 @@ const uint16_t PROGMEM numpad[]       = {    KC_O,    KC_P, CS_HASH,          CO
 const uint16_t PROGMEM mouse[]        = { KC_SCLN, DOT_QUE,                   COMBO_END};
 const uint16_t PROGMEM mouse2[]       = {    KC_A,    KC_Z,                   COMBO_END};
 const uint16_t PROGMEM backspace[]    = {  CS_RT1,  CS_RT2,                   COMBO_END};
-const uint16_t PROGMEM capsword[]     = {  KC_SPC,  CS_LT2,                   COMBO_END};
+const uint16_t PROGMEM capsword[]     = { KC_LSFT, TABRSFT,                   COMBO_END};
+const uint16_t PROGMEM transpose[]    = {  KC_SPC,  CS_LT2,                   COMBO_END};
 
 const uint16_t PROGMEM l_exponent[]   = {    KC_W,    KC_E,                   COMBO_END};
 const uint16_t PROGMEM l_comma[]      = {    KC_D,    KC_V,                   COMBO_END};
@@ -1217,6 +1220,7 @@ combo_t key_combos[] = {
     [MOUSE2]        = COMBO_ACTION(mouse2),
 
     [BACKSPACE]     = COMBO_ACTION(backspace),
+    [TRANSPOSE]     = COMBO_ACTION(transpose),
     [CAPSWORD]      = COMBO(capsword,     CAPSWRD),
 
     [L_EXPONENT]    = COMBO(l_exponent,   CS_CIRC),
@@ -1289,13 +1293,29 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 unregister_code16(LCTL(KC_BSPC));
             }
             break;
+        case TRANSPOSE:
+            if (pressed && get_last_key() != KC_NO && get_last_key_2() != KC_NO) {
+                const uint16_t key1 = get_last_key();
+                const uint16_t key2 = get_last_key_2();
+                cs_tap_code(KC_BSPC);
+                cs_tap_code(KC_BSPC);
+                cs_tap_code16(key1);
+                cs_tap_code16(key2);
+                update_last_key(key1);
+                update_last_key(key2);
+            }
+            break;
     }
 }
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
+        case CAPSWORD:
+            return 30;
+
         case L_NEWSENT:
         case R_NEWSENT:
+            return 50;
 
         case L_COMMA:
         case R_COMMA:
@@ -1310,7 +1330,7 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
             return 15;
 
         case BACKSPACE:
-        case CAPSWORD:
+        case TRANSPOSE:
         case MOUSE:
         case MOUSE2:
             return 75;
@@ -1672,6 +1692,7 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
 static bool process_capsword(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CAPSWRD) {
         if (record->event.pressed) {
+            unregister_mods(MOD_MASK_SHIFT);
             misc_key_state.capsword_active = !misc_key_state.capsword_active;
         }
         return false;
@@ -2226,6 +2247,10 @@ static inline bool is_last_key(uint16_t keycode) {
 
 static inline uint16_t get_last_key(void) {
     return key_state.last_key;
+}
+
+static inline uint16_t get_last_key_2(void) {
+    return key_state.last_key_2;
 }
 
 static void rollback_last_key(void) {
