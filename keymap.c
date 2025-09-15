@@ -2676,6 +2676,7 @@ static const keymatch_rule_t match_rules[] = {
     { EITHER, { JUST, KC_N    }, { JUST, KC_T    }, /*n*/"'t ",  { true, KC_SPC, 3  } },
     { EITHER, { JUST, LS_S    }, { ANY_SPACE     }, /*s*/"'",    { false            } },
     { EITHER, { JUST, KC_S    }, { ANY_SPACE     }, /*s*/"'",    { false            } },
+    { EITHER, { JUST, LG_N    }, { JUST, KC_B    }, /*n*/".b.",  { true, KC_DOT, 3  } },
     { EITHER, { JUST, KC_N    }, { JUST, KC_B    }, /*n*/".b.",  { true, KC_DOT, 3  } },
     { LEFT,   { JUST, RA_I    }, { JUST, RC_E    }, /*i*/".e.",  { true, KC_DOT, 3  } },
     { LEFT,   { JUST, KC_I    }, { JUST, KC_E    }, /*i*/".e.",  { true, KC_DOT, 3  } },
