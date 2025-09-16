@@ -1484,6 +1484,7 @@ static inline void case_lock_on(void) {
 }
 
 static inline void case_lock_off(void) {
+    clear_oneshot_mods();
     case_lock_state.active = false;
     case_lock_state.capturing = false;
     update_sync();
@@ -1579,12 +1580,10 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
         if (is_spc(get_last_key())) {
             switch (case_lock_state.rule->kind) {
                 case SEP_LSFT:
-                    clear_oneshot_mods();
                     case_lock_off();
                     return true;
 
                 case SEP_RSFT:
-                    clear_oneshot_mods();
                     case_lock_off();
                     return false;
 
@@ -1632,19 +1631,12 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
         dprintf("separator distance = %d\n", case_lock_state.distance);
         return true;
     }
+
     switch (keycode) {
         case KC_A ... KC_Z:
         case KC_1 ... KC_0:
             case_lock_state.distance++;
             dprintf("separator distance = %d\n", case_lock_state.distance);
-            return true;
-
-        case TABLSFT:
-        case TABRSFT:
-            if (record->tap.count) {
-                clear_oneshot_mods();
-                case_lock_off();
-            }
             return true;
     }
 
@@ -1656,11 +1648,9 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
     const sep_rule_t* translate = get_separator_rule(keycode);
     if (translate) {
         if (translate->output == case_lock_state.rule->output) {
-            // Same as captured separator
             case_lock_state.distance = 0;
             dprintf("separator distance = %d\n", case_lock_state.distance);
         } else {
-            // Other separators
             case_lock_state.distance++;
             dprintf("separator distance = %d\n", case_lock_state.distance);
         }
@@ -1671,10 +1661,17 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
         keycode == CS_LCTL || keycode == KC_LCTL) {
         return true;
     }
+    if (keycode == CAPSWRD) {
+        return true;
+    }
     if (keycode == CS_LT1 && !record->tap.count) {
         return true;
     }
     if ((keycode == CS_RT1 || is_magic(keycode)) && !record->tap.count) {
+        return true;
+    }
+
+    if ((keycode == TABLSFT || keycode == TABRSFT) && record->tap.count) {
         case_lock_off();
         return true;
     }
@@ -1732,12 +1729,13 @@ static bool process_capsword(uint16_t keycode, keyrecord_t* record) {
             case CS_CASE:
                 break;
 
-                // Exit capsword
+            // Exit capsword
             case CS_LT1:
             case KC_SPC:
                 if (case_lock_state.active) {
                     break;
                 }
+
             default:
                 del_mods(MOD_BIT(KC_LSFT));
                 misc_key_state.capsword_active = false;
@@ -2232,7 +2230,7 @@ typedef struct {
     bool magic_space_override :1;
 } recent_key_state_t;
 
-static recent_key_state_t key_state = {
+static recent_key_state_t recent_key_state = {
     .dynamic = false,
     .magic_space_override = false,
     .count = 1,
@@ -2242,39 +2240,39 @@ static recent_key_state_t key_state = {
 };
 
 static inline bool is_last_key(uint16_t keycode) {
-    return keycode == key_state.last_key;
+    return keycode == recent_key_state.last_key;
 }
 
 static inline uint16_t get_last_key(void) {
-    return key_state.last_key;
+    return recent_key_state.last_key;
 }
 
 static inline uint16_t get_last_key_2(void) {
-    return key_state.last_key_2;
+    return recent_key_state.last_key_2;
 }
 
 static void rollback_last_key(void) {
-    key_state.count = 1;
+    recent_key_state.count = 1;
 
-    key_state.last_key = key_state.last_key_2;
-    key_state.last_key_2 = key_state.last_key_3;
-    key_state.last_key_3 = KC_NO;
+    recent_key_state.last_key = recent_key_state.last_key_2;
+    recent_key_state.last_key_2 = recent_key_state.last_key_3;
+    recent_key_state.last_key_3 = KC_NO;
 }
 
 static void update_last_key(uint16_t new_keycode) {
-    key_state.last_key_3 = key_state.last_key_2;
-    key_state.last_key_2 = key_state.last_key;
-    key_state.last_key = new_keycode;
+    recent_key_state.last_key_3 = recent_key_state.last_key_2;
+    recent_key_state.last_key_2 = recent_key_state.last_key;
+    recent_key_state.last_key = new_keycode;
 
-    key_state.count = 1;
+    recent_key_state.count = 1;
 }
 
 static void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
-    key_state.last_key_3 = key_state.last_key_2;
-    key_state.last_key_2 = key_state.last_key;
-    key_state.last_key = new_keycode;
+    recent_key_state.last_key_3 = recent_key_state.last_key_2;
+    recent_key_state.last_key_2 = recent_key_state.last_key;
+    recent_key_state.last_key = new_keycode;
 
-    key_state.count = new_count;
+    recent_key_state.count = new_count;
 }
 
 static bool process_rollback(void) {
@@ -2283,20 +2281,20 @@ static bool process_rollback(void) {
         return true;
     }
 
-    if (is_bracket_wrap_macro(get_last_key()) && key_state.count == 2) {
+    if (is_bracket_wrap_macro(get_last_key()) && recent_key_state.count == 2) {
         rollback_bracket_wrap_macro();
         return false;
     }
 
-    if (is_bracket_macro(get_last_key()) && key_state.count == 2) {
+    if (is_bracket_macro(get_last_key()) && recent_key_state.count == 2) {
         tap_code(KC_RGHT);
     }
 
-    if (is_last_key(CY_BRC) && key_state.count == 2) {
+    if (is_last_key(CY_BRC) && recent_key_state.count == 2) {
         tap_code(KC_RGHT);
     }
 
-    for (int i = 1; i < key_state.count; i++) {
+    for (int i = 1; i < recent_key_state.count; i++) {
         tap_code(KC_BSPC);
     }
     rollback_last_key();
@@ -2311,7 +2309,7 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
 
     // Reset repeat space override if any non-magic key is pressed
     if (!is_magic(keycode)) {
-        key_state.magic_space_override = false;
+        recent_key_state.magic_space_override = false;
     }
 
     // Ignore tracking if layer tap key is held
@@ -2323,7 +2321,7 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
 
     if (ctrl_on() && keycode != CS_CONJ && keycode != CS_DISJ) {
         if (record->tap.count) {
-            key_state.count = 1;
+            recent_key_state.count = 1;
             return true;
         }
     }
@@ -2456,7 +2454,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
             }
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_CTRL);
-            key_state.dynamic = true;
+            recent_key_state.dynamic = true;
             if (IS_LAYER_ON(_QWERTY) || IS_LAYER_ON(_BASIC)) {
                 tap_code(get_last_key());
                 update_last_key(get_last_key());
@@ -2464,9 +2462,9 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 return false;
             }
 
-            key_state.magic_space_override = true;
+            recent_key_state.magic_space_override = true;
 
-            switch (key_state.last_key) {
+            switch (recent_key_state.last_key) {
                 // Left hand keys
                 case KC_Z: tap_code(KC_N); update_last_key(KC_N); break;
                 case KC_L: tap_code(KC_R); update_last_key(KC_R); break;
@@ -2499,7 +2497,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_NO:
                 case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
                 case KC_COMM: send_string(" and "); update_last_keys(KC_SPC, 4); break;
-                case KC_DOT: start_sentence(); key_state.magic_space_override = false; break;
+                case KC_DOT: start_sentence(); recent_key_state.magic_space_override = false; break;
                 case KC_QUOT: send_string("ve "); update_last_keys(KC_SPC, 3); break;
 
                 default: tap_code(get_last_key()); update_last_key(get_last_key()); break;
@@ -2511,11 +2509,11 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                     del_mods(MOD_BIT(KC_LSFT));
                 }
                 misc_key_state.capsword_active = false;
-                key_state.magic_space_override = false;
+                recent_key_state.magic_space_override = false;
             }
 
             if (case_lock_state.active) {
-                case_lock_state.distance += key_state.count;
+                case_lock_state.distance += recent_key_state.count;
                 dprintf("separator distance = %d\n", case_lock_state.distance);
             }
         }
@@ -2539,11 +2537,11 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
         if (record->tap.count && record->event.pressed) {
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_CTRL);
-            key_state.dynamic = true;
-            if (key_state.magic_space_override) {
+            recent_key_state.dynamic = true;
+            if (recent_key_state.magic_space_override) {
                 tap_code(KC_SPC);
                 update_last_key(KC_SPC);
-                key_state.magic_space_override = false;
+                recent_key_state.magic_space_override = false;
                 set_mods(mods);
                 return false;
             }
@@ -2594,19 +2592,19 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
             }
 
             if (case_lock_state.active) {
-                case_lock_state.distance += key_state.count;
+                case_lock_state.distance += recent_key_state.count;
                 dprintf("separator distance = %d\n", case_lock_state.distance);
             }
         }
         return false;
     }
 
-    key_state.dynamic = false;
+    recent_key_state.dynamic = false;
     return true;
 }
 
 static bool process_punctuation_space(uint16_t keycode, keyrecord_t* record) {
-    if (is_last_key(KC_SPC) && key_state.dynamic) {
+    if (is_last_key(KC_SPC) && recent_key_state.dynamic) {
         switch (keycode) {
             case KC_DOT:
             case CS_DOT:
@@ -2740,7 +2738,7 @@ static magic_flag_t magic_state = {
     .token = INVALID_DEFERRED_TOKEN
 };
 
-static inline void update_pct_history(uint16_t keycode) {
+static inline void update_magic_punctuation_history(uint16_t keycode) {
     if (!is_magic_punct(keycode)) {
         magic_state.active = NONE;
     }
@@ -2748,13 +2746,13 @@ static inline void update_pct_history(uint16_t keycode) {
     magic_state.current = keycode;
 }
 
-static inline void reset_pct_history(void) {
+static inline void reset_magic_punctuation_history(void) {
     magic_state.active = NONE;
     magic_state.last_key = KC_NO;
     magic_state.current = KC_NO;
 }
 
-static inline void resolve_pct_fallback(void) {
+static inline void resolve_magic_punctuation_fallback(void) {
     cancel_deferred_exec(magic_state.token);
     if (magic_state.active == LEFT) {
         cs_tap_code(KC_QUOT);
@@ -2768,21 +2766,21 @@ static inline void resolve_pct_fallback(void) {
 uint32_t PCTLEFT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_QUOT);
     update_last_key(KC_QUOT);
-    reset_pct_history();
+    reset_magic_punctuation_history();
     return 0;
 }
 
 uint32_t PCTRGHT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_COMM);
     update_last_key(KC_COMM);
-    reset_pct_history();
+    reset_magic_punctuation_history();
     return 0;
 }
 
-static inline bool apply_pct_rule(size_t i) {
+static inline bool apply_magic_punctuation_rule(size_t i) {
     keymatch_rule_t const *rule = &match_rules[i];
     cs_send_string_punct(rule->output);
-    reset_pct_history();
+    reset_magic_punctuation_history();
     cancel_deferred_exec(magic_state.token);
     if (rule->track.consume_next) {
         update_last_keys(rule->track.keycode, rule->track.length);
@@ -2832,35 +2830,36 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
             continue;
         }
 
-        bool immediate = rule->next.kind == IMMEDIATE && is_magic_punct(keycode) &&
+        const bool immediate = rule->next.kind == IMMEDIATE && is_magic_punct(keycode) &&
             pattern_match_key(rule->prev, magic_state.current);
-        bool sequential = pattern_match_key(rule->prev, magic_state.last_key) &&
+        const bool sequential = pattern_match_key(rule->prev, magic_state.last_key) &&
             pattern_match_key(rule->next, keycode);
 
         if (immediate || sequential) {
-            return apply_pct_rule(i);
+            return apply_magic_punctuation_rule(i);
         }
     }
 
-    // If a deferred execution is pending but no rules were matched,
-    // then resolve it immediately before current key outputs.
-    if (magic_state.token) {
-        if (!is_magic_punct(keycode)) {
-            cancel_deferred_exec(magic_state.token);
-            resolve_pct_fallback();
-            reset_pct_history();
-            update_pct_history(keycode);
-            return true;
-        }
-        if (keycode == magic_state.current) {
-            cancel_deferred_exec(magic_state.token);
-            resolve_pct_fallback();
-            reset_pct_history();
-            return true;
-        }
+    if (!magic_state.token) {
+        update_magic_punctuation_history(keycode);
+        return true;
     }
 
-    update_pct_history(keycode);
+    if (!is_magic_punct(keycode)) {
+        cancel_deferred_exec(magic_state.token);
+        resolve_magic_punctuation_fallback();
+        reset_magic_punctuation_history();
+        update_magic_punctuation_history(keycode);
+        return true;
+    }
+    if (keycode == magic_state.current) {
+        cancel_deferred_exec(magic_state.token);
+        resolve_magic_punctuation_fallback();
+        reset_magic_punctuation_history();
+        return true;
+    }
+
+    update_magic_punctuation_history(keycode);
     return true;
 }
 
@@ -4786,7 +4785,7 @@ void housekeeping_task_user(void) {
 
     if (timeouts[TIMEOUT_SELECT].active) {
         if (is_last_key(SELECT)) {
-            key_state.last_key = KC_NO;
+            recent_key_state.last_key = KC_NO;
         }
     }
 
@@ -4797,12 +4796,12 @@ void housekeeping_task_user(void) {
     }
 
     if (timeouts[TIMEOUT_TRACKING].active) {
-        key_state.count = 1;
+        recent_key_state.count = 1;
     }
     if (timeouts[TIMEOUT_MAGIC].active) {
-        key_state.last_key = KC_NO;
-        key_state.last_key_2 = KC_NO;
-        key_state.last_key_3 = KC_NO;
+        recent_key_state.last_key = KC_NO;
+        recent_key_state.last_key_2 = KC_NO;
+        recent_key_state.last_key_3 = KC_NO;
     }
 
     if (timeouts[TIMEOUT_CASE_CAPTURE].active) {
