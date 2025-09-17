@@ -583,6 +583,10 @@ static inline bool is_magic(uint16_t keycode) {
     return (keycode == CS_LT2 || keycode == CS_RT2);
 }
 
+static inline bool is_magic_punct(uint16_t keycode) {
+    return keycode == PCTLEFT || keycode == PCTRGHT;
+}
+
 static inline bool is_layer_tap(uint16_t keycode) {
     return (keycode == CS_AL1 || keycode == CS_AL2 || keycode == CS_AL3 || keycode == CS_AL4);
 }
@@ -1768,7 +1772,6 @@ typedef struct {
     uint32_t last_press;
 } arrow_state_t;
 
-
 static arrow_state_t arrow_state = {
     .last_key = ARROW_NONE,
     .held_keys = 0,
@@ -1837,7 +1840,7 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
                 if ((arrow & VERTICAL_MASK) &&
                     arrow_state.last_key == arrow) {
                     // Retain mod state on double taps...
-                    if (now - arrow_state.last_press > 100) {
+                    if (now - arrow_state.last_press > 150) {
                         register_code16(LCTL(keycode));
                         arrow_state.last_key = arrow;
                         return false;
@@ -1864,9 +1867,8 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-static bool edit_clip = false;
-
 static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
+    static bool edit_clip = false;
     if (IS_LAYER_OFF(_EDIT)) {
         edit_clip = false;
     }
@@ -2704,10 +2706,6 @@ static const keymatch_rule_t match_rules[] = {
     { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
     { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
 };
-
-static inline bool is_magic_punct(uint16_t keycode) {
-    return keycode == PCTLEFT || keycode == PCTRGHT;
-}
 
 static bool pattern_match_key(keymatch_t key, uint16_t keycode) {
     switch (key.kind) {

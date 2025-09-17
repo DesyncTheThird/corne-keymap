@@ -451,9 +451,9 @@ The right hand is replaced with macros useful for editing:
 
 If an arrow key is held on the `Edit` layer while this layer is activated, the arrow key will be retriggered with a non-persistent `Ctrl` modifier, allowing quick horizontal navigation/vertical scrolling without having to manually re-press the arrow key after holding a modifier. If the modifier has been lost, retriggering on layer-off is disabled, avoiding pauses in motion.
 
-Released arrow keys do not retain the overlay modifier on subsequent presses, except for `Up`/`Down`, which retain the modifier between the two keys if pressed within 1000ms of release. Pressing any other key will disable the modifier. Quickly double-tapping the same directional key within 100ms will also forcibly disable the modifier.
+Released arrow keys do not retain the overlay modifier on subsequent presses, except for `Up`/`Down`, which retain the modifier between the two keys if pressed within 1000ms of release. Pressing any other key will disable the modifier. Double-tapping the same directional key (within 150ms) will also forcibly disable the modifier.
 
-For example, if `Up` is released while the overlay modifier is active, then `Up` and `Down` will retain the overlay modifier if pressed within 1000ms -- unless `Up` is pressed within 100ms, which disables the modifier.
+For example, if `Up` is released while the overlay modifier is active, then the vertical keys `Up` and `Down` will retain the overlay modifier if pressed within 1000ms -- unless `Up` is pressed within 150ms, which disables the modifier instead.
 
 
 > [!NOTE]
