@@ -4,4 +4,4 @@
 menu
 OLED frames
 case
-build.sh
+*.sh
