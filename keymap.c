@@ -2867,59 +2867,6 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
 // Deferred Executions
 //==============================================================================
 
-// Generic interface for repeating actions on hold
-
-typedef struct repeat_action_s repeat_action_t;
-
-typedef void (*repeat_func_t)(bool start);
-
-typedef uint32_t (*interval_func_t)(repeat_action_t*);
-
-struct repeat_action_s {
-    bool active;
-    deferred_token token;
-    repeat_func_t func;
-    uint32_t interval;
-    interval_func_t get_interval;
-};
-
-static uint32_t repeat_callback(uint32_t trigger_time, void* cb_arg) {
-    repeat_action_t* action = (repeat_action_t*)cb_arg;
-
-    if (!action->active) {
-        action->func(true);
-        action->active = true;
-    } else {
-        action->func(false);
-        action->active = false;
-    }
-
-    if (action->get_interval) {
-        return action->get_interval(action);
-    }
-
-    return action->interval;
-}
-
-static void repeat_start(repeat_action_t* action) {
-    if (action->token == INVALID_DEFERRED_TOKEN) {
-        uint32_t delay = repeat_callback(0, action);
-        action->token = defer_exec(delay, repeat_callback, action);
-    }
-}
-
-static void repeat_stop(repeat_action_t* action) {
-    if (action->token != INVALID_DEFERRED_TOKEN) {
-        cancel_deferred_exec(action->token);
-        action->token = INVALID_DEFERRED_TOKEN;
-
-        if (action->active) {
-            action->func(false);
-            action->active = false;
-        }
-    }
-}
-
 //------------------------------------------------------------------------------
 // Lingering modifiers
 //------------------------------------------------------------------------------
@@ -2978,66 +2925,51 @@ static bool process_lingering_mods(uint16_t keycode, keyrecord_t* record) {
 // Volume keys
 //------------------------------------------------------------------------------
 
-static void vold_func(bool start) {
-    if (start) {
-        register_code16(KC_VOLD);
-    } else {
-        unregister_code16(KC_VOLD);
-    }
+uint32_t vold_action(uint32_t trigger_time, void *cb_arg) {
+    tap_code16(KC_VOLD);
+    return 30;
 }
 
-static void volu_func(bool start) {
-    if (start) {
-        register_code16(KC_VOLU);
-    } else {
-        unregister_code16(KC_VOLU);
-    }
+uint32_t volu_action(uint32_t trigger_time, void *cb_arg) {
+    tap_code16(KC_VOLU);
+    return 50;
 }
-
-static repeat_action_t vold_action = {
-    .active = false,
-    .token = INVALID_DEFERRED_TOKEN,
-    .func = vold_func,
-    .interval = 15
-};
-
-static repeat_action_t volu_action = {
-    .active = false,
-    .token = INVALID_DEFERRED_TOKEN,
-    .func = volu_func,
-    .interval = 20
-};
 
 static bool process_vol_controls(uint16_t keycode, keyrecord_t* record) {
-    repeat_action_t* action = NULL;
+    static deferred_token vold_token = INVALID_DEFERRED_TOKEN;
+    static deferred_token volu_token = INVALID_DEFERRED_TOKEN;
 
     switch (keycode) {
         case CS_VOLD:
-            action = &vold_action;
-            break;
+            if (record->event.pressed) {
+                if (!shifted()) {
+                    vold_action(0,NULL);
+                    vold_token = defer_exec(30,vold_action,NULL);
+                } else {
+                    tap_code16(KC_VOLD);
+                }
+            } else {
+                cancel_deferred_exec(vold_token);
+            }
+            return false;
+
         case CS_VOLU:
-            action = &volu_action;
-            break;
+            if (record->event.pressed) {
+                if (!shifted()) {
+                    volu_action(0,NULL);
+                    volu_token = defer_exec(15,volu_action,NULL);
+                } else {
+                    tap_code16(KC_VOLU);
+                }
+            } else {
+                cancel_deferred_exec(volu_token);
+            }
+            return false;
+
         default:
             return true;
     }
-    
-    if (record->event.pressed) {
-        oled_state.muted = false;
-        if (!shifted()) {
-            repeat_start(action);
-        } else {
-            action->func(true);
-        }
-    } else {
-        repeat_stop(action);
-        action->func(false);
-    }
-
-    return true;
 }
-
-
 
 //------------------------------------------------------------------------------
 // Clock
@@ -3080,75 +3012,46 @@ static uint32_t clock_callback(uint32_t trigger_time, void* cb_arg) {
     return 1000;
 }
 
-static void clock_up_func(bool start) {
-    if (!start) {
-        return;
-    }
+static uint32_t clock_up_action(uint32_t trigger_time, void *cb_arg) {
     switch (clock_state.setting) {
-        case set_none:
-            break;
         case set_hour:
             clock_state.hrs = (clock_state.hrs + 1) % 24;
-            break;
+            return 200;
         case set_min:
             clock_state.min = (clock_state.min + 1) % 60;
-            break;
+            return 150;
         case set_sec:
             clock_state.sec = (clock_state.sec + 1) % 60;
-            break;
+            return 150;
+
+        default:
+        case set_none:
+            return 0;
     }
 }
 
-static void clock_dn_func(bool start) {
-    if (!start) {
-        return;
-    }
+static uint32_t clock_dn_action(uint32_t trigger_time, void *cb_arg) {
     switch (clock_state.setting) {
-        case set_none:
-            break;
         case set_hour:
             clock_state.hrs = clock_state.hrs == 0 ? 23 : clock_state.hrs - 1;
-            break;
+            return 200;
         case set_min:
             clock_state.min = clock_state.min == 0 ? 59 : clock_state.min - 1;
-            break;
+            return 150;
         case set_sec:
             clock_state.sec = clock_state.sec == 0 ? 59 : clock_state.sec - 1;
-            break;
-    }
-}
+            return 150;
 
-static uint32_t get_clock_interval(repeat_action_t* action) {
-    switch (clock_state.setting) {
-        case set_hour:
-            return 100;
-        case set_min:
-        case set_sec:
-            return 75;
         default:
-            return action->interval;
+        case set_none:
+            return 0;
     }
 }
 
-static repeat_action_t clock_up_action = {
-    .active = false,
-    .token = INVALID_DEFERRED_TOKEN,
-    .func = clock_up_func,
-    .interval = 100,
-    .get_interval = get_clock_interval
-};
-
-static repeat_action_t clock_dn_action = {
-    .active = false,
-    .token = INVALID_DEFERRED_TOKEN,
-    .func = clock_dn_func,
-    .interval = 100,
-    .get_interval = get_clock_interval
-};
+static deferred_token clock_up_token = INVALID_DEFERRED_TOKEN;
+static deferred_token clock_dn_token = INVALID_DEFERRED_TOKEN;
 
 static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
-    repeat_action_t* action = NULL;
-
     switch (keycode) {
         case CLOCKNX:
             if (record->event.pressed) {
@@ -3158,24 +3061,29 @@ static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
                     clock_state.setting = clock_state.setting == 0 ? 3 : clock_state.setting - 1;
                 }
             }
-            break;
-        case CLOCKUP: 
-            action = &clock_up_action;
-            break;
-        case CLOCKDN: 
-            action = &clock_dn_action;
-            break;
+            return false;
+
+        case CLOCKUP:
+            if (record->event.pressed) {
+                clock_up_action(0, NULL);
+                clock_up_token = defer_exec(100, clock_up_action, NULL);
+            } else {
+                cancel_deferred_exec(clock_up_token);
+            }
+            return false;
+
+        case CLOCKDN:
+            if (record->event.pressed) {
+                clock_dn_action(0, NULL);
+                clock_dn_token = defer_exec(100, clock_dn_action, NULL);
+            } else {
+                cancel_deferred_exec(clock_dn_token);
+            }
+            return false;
+
         default: 
             return true;
     }
-
-    if (record->event.pressed) {
-        repeat_start(action);
-    } else {
-        repeat_stop(action);
-    }
-
-    return false;
 }
 
 
@@ -4819,7 +4727,7 @@ void housekeeping_task_user(void) {
 
     switch (timeouts[TIMEOUT_OLED].edge) {
         case EDGE_RISE:
-            if (clock_state.setting != set_none && (clock_up_action.token || clock_dn_action.token)) {
+            if (clock_state.setting != set_none && (clock_up_token || clock_dn_token)) {
                 oled_state.timeout = false;
             } else {
                 clock_state.setting = set_none;
