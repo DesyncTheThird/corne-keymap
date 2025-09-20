@@ -531,7 +531,11 @@ static void cs_send_string_punct(const char *str) {
 }
 
 static inline bool is_alpha(uint16_t keycode) {
-    return (keycode >= KC_A && keycode <= KC_Z);
+    return keycode >= KC_A && keycode <= KC_Z;
+}
+
+static inline bool is_num(uint16_t keycode) {
+    return keycode >= KC_1 && keycode <= KC_0;
 }
 
 static inline bool is_hrm(uint16_t keycode) {
@@ -2309,12 +2313,10 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
 
-    // Reset repeat space override if any non-magic key is pressed
     if (!is_magic(keycode)) {
         recent_key_state.magic_space_override = false;
     }
 
-    // Ignore tracking if layer tap key is held
     if (is_layer_tap(keycode)) {
         if (!record->tap.count) {
             return true;
@@ -2328,7 +2330,7 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         }
     }
 
-    if (is_alpha(keycode)) {
+    if (is_alpha(keycode) || is_num(keycode)) {
         update_last_key(keycode);
         return true;
     }
