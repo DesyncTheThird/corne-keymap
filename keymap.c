@@ -3071,6 +3071,7 @@ static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
                 clock_up_token = defer_exec(100, clock_up_action, NULL);
             } else {
                 cancel_deferred_exec(clock_up_token);
+                clock_up_token = INVALID_DEFERRED_TOKEN;
             }
             return false;
 
@@ -3080,6 +3081,7 @@ static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
                 clock_dn_token = defer_exec(100, clock_dn_action, NULL);
             } else {
                 cancel_deferred_exec(clock_dn_token);
+                clock_dn_token = INVALID_DEFERRED_TOKEN;
             }
             return false;
 
