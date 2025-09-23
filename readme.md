@@ -80,12 +80,10 @@ Left hand overrides:
 (Other left hand keys are repeated.)
 
 Other:
-|     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- |
-| `Magic`* | `Non-alpha` | `⎵`   | `,`     | `.`   | `'`   |
-| `⎵`      | `THE`       | `THE` | `⎵BUT⎵` | `COM` | `RE⎵` |
-
-*Unless the previous magic output already ended with a space, in which case the repeat key will default to the `Non-alpha` state; or if the previous magic output was a basic repeat (e.g. `F`, `K`, and `P`), in which case the repeat key will treat the magic key as an ordinary alpha key.
+|     |     |     |     |     |
+| --- | --- | --- | --- | --- |
+| `Non-alpha` | `⎵`   | `,`     | `.`   | `'`   |
+| `THE`       | `THE` | `⎵BUT⎵` | `COM` | `RE⎵` |
 
 > [!NOTE]
 > These outputs can be adjusted in the `process_magic` function.

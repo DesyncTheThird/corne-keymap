@@ -62,12 +62,14 @@ enum custom_keycodes {
 
     CAPSWRD,
 
-    // Custom Symbols
     COM_EXL,
     DOT_QUE,
     APO_QUO,
     CS_CONJ,
     CS_DISJ,
+
+    // Custom Symbols Basic
+    CS_SYMBOLS_START,
 
     CS_COLN,
     CS_UNDS,
@@ -82,19 +84,31 @@ enum custom_keycodes {
     CS_EXLM,
     CS_TILD,
     CS_PLUS,
-    CS_HASH,
-    CS_SLSH,
-    CS_EQL,
     CS_AT,
-    CS_QUOT,
     CS_DQUO,
     CS_POUN,
     CS_BSLS,
+    CS_QUES,
+
+    CS_LCBR,
+    CS_RCBR,
+    CS_LPRN,
+    CS_RPRN,
+
+    // 
+    CS_HASH,
+    CS_SLSH,
+    CS_EQL,
+    CS_QUOT,
     CS_MINS,
     CS_DOT,
     CS_COMM,
-    CS_QUES,
     CS_SCLN,
+
+    CS_LBRC,
+    CS_RBRC,
+
+    CS_SYMBOLS_END,
 
     // Bracket macros
     CS_NORM,
@@ -216,6 +230,101 @@ enum custom_keycodes {
 #define PRV_TAB LCTL(KC_PGUP)
 #define OSMLSFT OSM(MOD_LSFT)
 
+static inline uint16_t cs_map(uint16_t keycode) {
+    switch (keycode) { 
+        case CS_COLN:
+            return KC_COLN;
+        case CS_UNDS:
+            return KC_UNDS;
+        case CS_PIPE:
+            return LSFT(KC_NUBS);
+        case CS_LT:
+            return KC_LT;
+        case CS_GT:
+            return KC_GT;
+        case CS_PERC:
+            return KC_PERC;
+        case CS_ASTR:
+            return KC_ASTR;
+        case CS_DLR:
+            return KC_DLR;
+        case CS_AMPR:
+            return KC_AMPR;
+        case CS_CIRC:
+            return KC_CIRC;
+        case CS_EXLM:
+            return KC_EXLM;
+        case CS_TILD:
+            return LSFT(KC_NUHS);
+        case CS_PLUS:
+            return KC_PLUS;
+        case CS_DQUO:
+            return KC_AT;
+        case CS_POUN:
+            return KC_HASH;
+        case CS_BSLS:
+            return KC_NUBS;
+        case CS_QUES:
+            return KC_QUES;
+        case CS_LCBR:
+            return KC_LCBR;
+        case CS_RCBR:
+            return KC_RCBR;
+        case CS_HASH:
+            return KC_NUHS;
+        case CS_SLSH:
+            return KC_SLSH;
+        case CS_EQL:
+            return KC_EQL;
+        case CS_QUOT:
+            return KC_QUOT;
+        case CS_MINS:
+            return KC_MINS;
+        case CS_DOT:
+            return KC_DOT;
+        case CS_COMM:
+            return KC_COMM;
+        case CS_SCLN:
+            return KC_SCLN;
+        case CS_LBRC:
+            return KC_LBRC;
+        case CS_RBRC:
+            return KC_RBRC;
+        case CS_RPRN:
+            return KC_RPRN;
+        case CS_LPRN:
+            return KC_LPRN;
+
+        case RC_LPRN:
+            return CS_LPRN;
+        case LA_COLN:
+            return CS_COLN;
+        case RG_UNDS:
+            return CS_UNDS;
+        case LG_EXLM:
+            return CS_EXLM;
+        case RA_TILD:
+            return CS_TILD;
+        case LC_DOT:
+            return CS_DOT;
+        case LS_COMM:
+            return CS_COMM;
+        case RS_RPRN:
+            return CS_RPRN;
+
+        case RS_1:
+            return KC_1;
+        case RC_2:
+            return KC_2;
+        case RA_3:
+            return KC_3;
+        case RG_0:
+            return KC_0;
+        default:
+            return keycode;
+    }
+}
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASIC] = LAYOUT( //0
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
@@ -291,11 +400,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_SYMBOL] = LAYOUT( //6
       //,-----------------------------------------------------.                    ,---------------------------------------------------.
-           KC_GRV,  CS_DLR, CS_EXLM, CS_DQUO, CS_AMPR, CS_HASH,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
+           KC_GRV,  CS_DLR, CS_EXLM, CS_DQUO, CS_AMPR, CS_HASH,                       CS_EQL, CS_RCBR, CS_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           OSMLSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT, RS_RPRN, RC_LPRN, RA_TILD, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, CS_CIRC, CS_COLN,  CS_DOT, CS_COMM, CS_TILD,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
+          CS_LCTL, CS_CIRC, CS_COLN,  CS_DOT, CS_COMM, CS_TILD,                        CS_GT, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               CS_SLSH,  CS_AL2, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -303,11 +412,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_PROGRAM] = LAYOUT( //7
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_GRV, CS_PERC, CS_MINS, CS_PLUS,  CS_DLR, CS_CONJ,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
+           KC_GRV, CS_PERC, CS_MINS, CS_PLUS,  CS_DLR, CS_CONJ,                       CS_EQL, CS_RCBR, CS_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           OSMLSFT, CS_EXLM,   CS_LT,   CS_GT,  CS_EQL, CS_DISJ,                        CS_LT, RS_RPRN, RC_LPRN, RA_TILD, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, CS_CIRC, CS_SLSH, CS_ASTR, CS_HASH, CS_TILD,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
+          CS_LCTL, CS_CIRC, CS_SLSH, CS_ASTR, CS_HASH, CS_TILD,                        CS_GT, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               CS_SLSH,  CS_AL3, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -327,11 +436,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT] = LAYOUT( //9
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, KC_RCBR, KC_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
+          _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, CS_RCBR, CS_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, CY_WRAP, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, RS_RPRN, RC_LPRN, RA_TILD, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, KC_PGDN, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                        CS_GT, KC_RBRC, KC_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
+          _______, KC_PGDN, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                        CS_GT, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______,  CS_AL4,  KC_SPC
                                           //`--------------------------'  `--------------------------'
@@ -538,6 +647,58 @@ static inline bool is_num(uint16_t keycode) {
     return keycode >= KC_1 && keycode <= KC_0;
 }
 
+static inline bool is_cs_symbol(uint16_t keycode) {
+    return keycode >= CS_SYMBOLS_START && keycode <= CS_SYMBOLS_END;
+}
+
+static inline bool is_base_hrm(uint16_t keycode) { 
+    switch(keycode) {
+        case LG_A:
+        case LA_S:
+        case LC_D:
+        case LS_F:
+        case RS_J:
+        case RC_K:
+        case RA_L:
+        case RS_SCLN:
+
+        case LG_N:
+        case LA_R:
+        case LC_T:
+        case LS_S:
+        case RS_H:
+        case RC_E:
+        case RA_I:
+        case RG_A:
+            return true;
+        default:
+            return false;
+    }
+}
+
+static inline bool is_symbol_hrm(uint16_t keycode) {
+    switch (keycode) {
+        case RS_RPRN:
+        case RC_LPRN:
+        case RA_TILD:
+        case RG_UNDS:
+
+        case RS_1:
+        case RC_2:
+        case RA_3:
+        case RG_0:
+
+        case LG_EXLM:
+        case LA_COLN:
+        case LC_DOT:
+        case LS_COMM:
+            return true;
+
+        default:
+            return false;
+    }
+}
+
 static inline bool is_hrm(uint16_t keycode) {
     switch (keycode) {
         case LG_A:
@@ -619,21 +780,30 @@ static inline bool is_arrow(uint16_t keycode) {
     return (keycode == KC_UP || keycode == KC_DOWN || keycode == KC_LEFT || keycode == KC_RGHT);
 }
 
-static inline void cs_tap_code16_mods(uint16_t keycode, uint8_t mod_mask) {
+static inline void cs_tap_code16_del_mods(uint16_t keycode, uint8_t mod_mask) {
     const uint8_t mods = get_mods();
     del_mods(mod_mask);
+    if (is_cs_symbol(keycode)) {
+        keycode = cs_map(keycode);
+    }
     tap_code16(keycode);
     set_mods(mods);
 }
 static inline void cs_tap_code16(uint16_t keycode) {
     const uint8_t mods = get_mods();
     del_mods(MOD_MASK_SHIFT);
+    if (is_cs_symbol(keycode)) {
+        keycode = cs_map(keycode);
+    }
     tap_code16(keycode);
     set_mods(mods);
 }
 static inline void cs_tap_code(uint16_t keycode) {
     const uint8_t mods = get_mods();
     del_mods(MOD_MASK_SHIFT);
+    if (is_cs_symbol(keycode)) {
+        keycode = cs_map(keycode);
+    }
     tap_code16(keycode);
     set_mods(mods);
 }
@@ -910,12 +1080,12 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case CS_RT1:
         case CS_RT2:
         case CS_RT3:
-        
+
         case CS_AL1:
         case CS_AL2:
         case CS_AL3:
         case CS_AL4:
-        
+
         case TABLSFT:
         case TABRSFT:
             return 0;
@@ -1598,7 +1768,7 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
                 case SEP_DEF:
                 case SEP_SYM:
                 case SEP_SPC:
-                    cs_tap_code16_mods(KC_BSPC, MOD_MASK_CSAG);
+                    cs_tap_code16_del_mods(KC_BSPC, MOD_MASK_CSAG);
                     tap_code(KC_SPC);
                     case_lock_off();
                     return false;
@@ -2106,7 +2276,7 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 switch (cycle_state.comp) {
                     case 0: {
-                        cs_tap_code16_mods(KC_GT, MOD_MASK_CSAG);
+                        cs_tap_code16_del_mods(KC_GT, MOD_MASK_CSAG);
 
                         update_last_key(KC_GT);
                         cycle_state.comp = 1;
@@ -2233,16 +2403,14 @@ typedef struct {
     uint16_t last_key_2;
     uint16_t last_key_3;
     bool dynamic :1;
-    bool magic_space_override :1;
 } recent_key_state_t;
 
 static recent_key_state_t recent_key_state = {
-    .dynamic = false,
-    .magic_space_override = false,
-    .count = 1,
-    .last_key = KC_NO,
-    .last_key_2 = KC_NO,
-    .last_key_3 = KC_NO
+    .count       = 1,
+    .last_key    = KC_NO,
+    .last_key_2  = KC_NO,
+    .last_key_3  = KC_NO,
+    .dynamic     = false
 };
 
 static inline bool is_last_key(uint16_t keycode) {
@@ -2260,7 +2428,7 @@ static inline uint16_t get_last_key_2(void) {
 static void rollback_last_key(void) {
     recent_key_state.count = 1;
 
-    recent_key_state.last_key = recent_key_state.last_key_2;
+    recent_key_state.last_key   = recent_key_state.last_key_2;
     recent_key_state.last_key_2 = recent_key_state.last_key_3;
     recent_key_state.last_key_3 = KC_NO;
 }
@@ -2268,7 +2436,7 @@ static void rollback_last_key(void) {
 static void update_last_key(uint16_t new_keycode) {
     recent_key_state.last_key_3 = recent_key_state.last_key_2;
     recent_key_state.last_key_2 = recent_key_state.last_key;
-    recent_key_state.last_key = new_keycode;
+    recent_key_state.last_key   = new_keycode;
 
     recent_key_state.count = 1;
 }
@@ -2276,7 +2444,7 @@ static void update_last_key(uint16_t new_keycode) {
 static void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
     recent_key_state.last_key_3 = recent_key_state.last_key_2;
     recent_key_state.last_key_2 = recent_key_state.last_key;
-    recent_key_state.last_key = new_keycode;
+    recent_key_state.last_key   = new_keycode;
 
     recent_key_state.count = new_count;
 }
@@ -2313,25 +2481,36 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
 
-    if (!is_magic(keycode)) {
-        recent_key_state.magic_space_override = false;
-    }
-
     if (is_layer_tap(keycode)) {
         if (!record->tap.count) {
             return true;
         }
     }
 
-    if (ctrl_on() && keycode != CS_CONJ && keycode != CS_DISJ) {
-        if (record->tap.count) {
-            recent_key_state.count = 1;
-            return true;
+    if (ctrl_on()) {
+        switch (keycode) {
+            case KC_Z:
+                update_last_key(UNDO);
+                return true;
+            case KC_Y:
+                update_last_key(REDO);
+                return true;
+            case CS_CONJ:
+            case CS_DISJ:
+                break;
+            default:
+                recent_key_state.count = 1;
         }
     }
 
-    if (is_alpha(keycode) || is_num(keycode)) {
+    if (is_alpha(keycode) || is_num(keycode) || is_cs_symbol(keycode)) {
         update_last_key(keycode);
+        return true;
+    }
+    if (is_symbol_hrm(keycode)) {
+        if (record->tap.count) {
+            update_last_key(cs_map(keycode));
+        }
         return true;
     }
     if (is_hrm(keycode)) {
@@ -2382,7 +2561,7 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     }
 
     if (is_bracket_macro(keycode) || is_bracket_wrap_macro(keycode)) {
-        update_last_keys(keycode, 2);   
+        update_last_keys(keycode, 2);
         return true;
     }
     if (keycode == CS_CONJ || keycode == CS_DISJ) {
@@ -2459,14 +2638,13 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_CTRL);
             recent_key_state.dynamic = true;
+
             if (IS_LAYER_ON(_QWERTY) || IS_LAYER_ON(_BASIC)) {
                 tap_code(get_last_key());
                 update_last_key(get_last_key());
                 set_mods(mods);
                 return false;
             }
-
-            recent_key_state.magic_space_override = true;
 
             switch (recent_key_state.last_key) {
                 // Left hand keys
@@ -2501,10 +2679,16 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_NO:
                 case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
                 case KC_COMM: send_string(" and "); update_last_keys(KC_SPC, 4); break;
-                case KC_DOT: start_sentence(); recent_key_state.magic_space_override = false; break;
+                case KC_DOT: start_sentence(); break;
                 case KC_QUOT: send_string("ve "); update_last_keys(KC_SPC, 3); break;
 
-                default: tap_code(get_last_key()); update_last_key(get_last_key()); break;
+                case CS_SYMBOLS_START ... CS_SYMBOLS_END:
+                    cs_tap_code16(get_last_key()); update_last_key(get_last_key()); break;
+
+                case UNDO:
+                case REDO: tap_code16(LCTL(KC_Y)); update_last_key(REDO); break;
+
+                default: tap_code16(get_last_key()); update_last_key(get_last_key()); break;
             }
             set_mods(mods);
 
@@ -2513,7 +2697,6 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                     del_mods(MOD_BIT(KC_LSFT));
                 }
                 misc_key_state.capsword_active = false;
-                recent_key_state.magic_space_override = false;
             }
 
             if (case_lock_state.active) {
@@ -2542,13 +2725,6 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_CTRL);
             recent_key_state.dynamic = true;
-            if (recent_key_state.magic_space_override) {
-                tap_code(KC_SPC);
-                update_last_key(KC_SPC);
-                recent_key_state.magic_space_override = false;
-                set_mods(mods);
-                return false;
-            }
 
             if (IS_LAYER_ON(_QWERTY) || IS_LAYER_ON(_BASIC)) {
                 tap_code(get_last_key());
@@ -2584,7 +2760,13 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_DOT: send_string("com"); update_last_keys(KC_NO, 3); break;
                 case KC_QUOT: send_string("re "); update_last_keys(KC_SPC, 3); break;
 
-                default: tap_code(get_last_key()); update_last_key(get_last_key()); break;
+                case CS_SYMBOLS_START ... CS_SYMBOLS_END:
+                    cs_tap_code16(get_last_key()); update_last_key(get_last_key()); break;
+
+                case UNDO:
+                case REDO: tap_code16(LCTL(KC_Z)); update_last_key(UNDO); break;
+
+                default: tap_code16(get_last_key()); update_last_key(get_last_key()); break;
             }
             set_mods(mods);
 
@@ -3205,6 +3387,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_mouse_lock(keycode, record)) { return false; }
 
     switch (keycode) {
+
+        case CS_SYMBOLS_START ... CS_SYMBOLS_END:
+            if (record->event.pressed) {
+                dprint("CS SYMBOL\n");
+                cs_tap_code16(keycode);
+            }
+            return true;
+
         // =====================================================================
         // Macros
         // =====================================================================
@@ -3545,12 +3735,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case EO_END:
             if (record->event.pressed) {
-                cs_tap_code16_mods(LSFT(KC_END), MOD_MASK_CTRL);
+                cs_tap_code16_del_mods(LSFT(KC_END), MOD_MASK_CTRL);
             }
             break;
         case EO_HOME:
             if (record->event.pressed) {
-                cs_tap_code16_mods(LSFT(KC_HOME), MOD_MASK_CTRL);
+                cs_tap_code16_del_mods(LSFT(KC_HOME), MOD_MASK_CTRL);
             }
             break;
 
@@ -3585,141 +3775,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 } else {
                     cs_tap_code16(KC_AT);
                 }
-            }
-            break;
-
-        // =====================================================================
-        // Custom symbol handling
-        // =====================================================================
-
-        case CS_COLN:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_COLN);
-            }
-            break;
-        case CS_UNDS:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_UNDS);
-            }
-            break;
-        case CS_PIPE:
-            if (record->event.pressed) {
-                cs_tap_code16(LSFT(KC_NUBS));
-            }
-            break;
-        case CS_LT:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_LT);
-            }
-            break;
-        case CS_GT:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_GT);
-            }
-            break;
-        case CS_PERC:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_PERC);
-            }
-            break;
-        case CS_ASTR:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_ASTR);
-            }
-            break;
-        case CS_DLR:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_DLR);
-            }
-            break;
-        case CS_AMPR:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_AMPR);
-            }
-            break;
-        case CS_CIRC:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_CIRC);
-            }
-            break;
-        case CS_EXLM:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_EXLM);
-            }
-            break;
-        case CS_TILD:
-            if (record->event.pressed) {
-                cs_tap_code16(LSFT(KC_NUHS));
-            }
-            break;
-        case CS_PLUS:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_PLUS);
-            }
-            break;
-        case CS_HASH:
-            if (record->event.pressed) {
-                cs_tap_code(KC_NUHS);
-            }
-            break;
-        case CS_SLSH:
-            if (record->event.pressed) {
-                cs_tap_code(KC_SLSH);
-            }
-            break;
-        case CS_EQL:
-            if (record->event.pressed) {
-                cs_tap_code(KC_EQL);
-            }
-            break;
-        case CS_AT:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_DQUO);
-            }
-            break;
-        case CS_QUOT:
-            if (record->event.pressed) {
-                cs_tap_code(KC_QUOT);
-            }
-            break;
-        case CS_DQUO:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_AT);
-            }
-            break;
-        case CS_POUN:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_HASH);
-            }
-            break;
-        case CS_BSLS:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_NUBS);
-            }
-            break;
-        case CS_MINS:
-            if (record->event.pressed) {
-                cs_tap_code(KC_MINS);
-            }
-            break;
-        case CS_DOT:
-            if (record->event.pressed) {
-                cs_tap_code(KC_DOT);
-            }
-            break;
-        case CS_COMM:
-            if (record->event.pressed) {
-                cs_tap_code(KC_COMM);
-            }
-            break;
-        case CS_QUES:
-            if (record->event.pressed) {
-                cs_tap_code16(KC_QUES);
-            }
-            break;
-        case CS_SCLN:
-            if (record->event.pressed) {
-                cs_tap_code(KC_SCLN);
             }
             break;
 
