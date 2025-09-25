@@ -2489,9 +2489,11 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
 
     if (ctrl_on()) {
         switch (keycode) {
+            case UNDO:
             case KC_Z:
                 update_last_key(UNDO);
                 return true;
+            case REDO:
             case KC_Y:
                 update_last_key(REDO);
                 return true;

@@ -58,10 +58,10 @@ Right hand overrides:
 (Other right hand keys are repeated.)
 
 Other:
-|     |     |     |     |     |
-| --- | --- | --- | --- | --- |
-| `Non-alpha` | `⎵`         | `,`     | `.`             | `'`   |
-| `OSM Shift` | `OSM Shift` | `⎵AND⎵` | `⎵`+`OSM Shift` | `VE⎵` |
+|     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- |
+| `Non-alpha` | `Undo` | `Redo` | `⎵`         | `,`     | `.`             | `'`   |
+| `OSM Shift` | `Redo` | `Undo` | `OSM Shift` | `⎵AND⎵` | `⎵`+`OSM Shift` | `VE⎵` |
 
 ### Repeat Key
 
@@ -80,10 +80,10 @@ Left hand overrides:
 (Other left hand keys are repeated.)
 
 Other:
-|     |     |     |     |     |
-| --- | --- | --- | --- | --- |
-| `Non-alpha` | `⎵`   | `,`     | `.`   | `'`   |
-| `THE`       | `THE` | `⎵BUT⎵` | `COM` | `RE⎵` |
+|     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- |
+| `Non-alpha` | `Undo` | `Redo` | `⎵`   | `,`     | `.`   | `'`   |
+| `THE`       | `Undo` | `Redo` | `THE` | `⎵BUT⎵` | `COM` | `RE⎵` |
 
 > [!NOTE]
 > These outputs can be adjusted in the `process_magic` function.
