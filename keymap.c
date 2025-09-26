@@ -2561,6 +2561,10 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         update_last_key(KC_QUOT);
         return true;
     }
+    if (keycode == KC_GRV) {
+        update_last_key(KC_GRV);
+        return true;
+    }
 
     if (is_bracket_macro(keycode) || is_bracket_wrap_macro(keycode)) {
         update_last_keys(keycode, 2);
@@ -2595,7 +2599,6 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
     }
     if (keycode == KC_BSPC) {
         return process_rollback();
-        return true;
     }
 
     if (is_magic(keycode)) {
@@ -2647,8 +2650,9 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
                 return false;
             }
-
-            switch (recent_key_state.last_key) {
+            
+            const uint16_t last_key = cs_map(get_last_key());
+            switch (last_key) {
                 // Left hand keys
                 case KC_Z: tap_code(KC_N); update_last_key(KC_N); break;
                 case KC_L: tap_code(KC_R); update_last_key(KC_R); break;
@@ -2684,13 +2688,17 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_DOT: start_sentence(); break;
                 case KC_QUOT: send_string("ve "); update_last_keys(KC_SPC, 3); break;
 
-                case CS_SYMBOLS_START ... CS_SYMBOLS_END:
-                    cs_tap_code16(get_last_key()); update_last_key(get_last_key()); break;
-
                 case UNDO:
                 case REDO: tap_code16(LCTL(KC_Y)); update_last_key(REDO); break;
 
-                default: tap_code16(get_last_key()); update_last_key(get_last_key()); break;
+                default:
+                    if (is_alpha(last_key)) {
+                        tap_code(last_key);
+                    } else {
+                        cs_tap_code16(last_key);
+                    }
+                    update_last_key(get_last_key());
+                    break;
             }
             set_mods(mods);
 
@@ -2735,7 +2743,8 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 return false;
             }
 
-            switch (get_last_key()) {
+            const uint16_t last_key = cs_map(get_last_key());
+            switch (last_key) {
                 // Right hand keys
                 case KC_J: send_string(/*j*/"ust"); update_last_keys(KC_T, 3); break;
                 case KC_F: tap_code(KC_Y); update_last_key(KC_Y); break;
@@ -2762,13 +2771,17 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_DOT: send_string("com"); update_last_keys(KC_NO, 3); break;
                 case KC_QUOT: send_string("re "); update_last_keys(KC_SPC, 3); break;
 
-                case CS_SYMBOLS_START ... CS_SYMBOLS_END:
-                    cs_tap_code16(get_last_key()); update_last_key(get_last_key()); break;
-
                 case UNDO:
                 case REDO: tap_code16(LCTL(KC_Z)); update_last_key(UNDO); break;
 
-                default: tap_code16(get_last_key()); update_last_key(get_last_key()); break;
+                default:
+                    if (is_alpha(last_key)) {
+                        tap_code(last_key);
+                    } else {
+                        cs_tap_code16(last_key);
+                    }
+                    update_last_key(get_last_key());
+                    break;
             }
             set_mods(mods);
 
