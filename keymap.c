@@ -3673,6 +3673,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 update_sync();
                 if (!oled_state.static_display) {
                     oled_clear();
+                } else {
+                    clock_state.setting = set_none;
                 }
             }
             break;
