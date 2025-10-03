@@ -75,6 +75,8 @@
 
 #define NKRO_DEFAULT_ON true
 
+// #define ACTION_DEBUG
+
 // Auto Shift
 // #define NO_AUTO_SHIFT_ALPHA
 // #define NO_AUTO_SHIFT_NUMERIC
