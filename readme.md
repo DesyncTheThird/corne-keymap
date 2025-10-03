@@ -447,12 +447,9 @@ The right hand is replaced with macros useful for editing:
 - The `Join` macro joins current line to following line with space between; omits the space if shifted.
 - The three bracket macros enclose the current word with the listed brackets. These macros also interoperate with the rollback feature.
 
-If an arrow key is held on the `Edit` layer while this layer is activated, the arrow key will be retriggered with a non-persistent `Ctrl` modifier, allowing quick horizontal navigation/vertical scrolling without having to manually re-press the arrow key after holding a modifier. If the modifier has been lost, retriggering on layer-off is disabled, avoiding pauses in motion.
+If an arrow key is held on the `Edit` layer while this layer is activated, the arrow key will be retriggered with a persistent `Ctrl` modifier, allowing quick horizontal navigation/vertical scrolling without having to manually re-press the arrow key after holding a modifier. If the modifier has been lost, retriggering on layer-off is disabled, avoiding pauses in motion.
 
-Released arrow keys do not retain the overlay modifier on subsequent presses, except for `Up`/`Down`, which retain the modifier between the two keys if pressed within 1000ms of release. Pressing any other key will disable the modifier. Double-tapping the same directional key (within 150ms) will also forcibly disable the modifier.
-
-For example, if `Up` is released while the overlay modifier is active, then the vertical keys `Up` and `Down` will retain the overlay modifier if pressed within 1000ms -- unless `Up` is pressed within 150ms, which disables the modifier instead.
-
+The modifier will be disabled if no arrow key is pressed for 1000ms; if an arrow key is double-tapped within 150ms, or if any other key is pressed. The `Ctrl` key will also become sticky for arrow keys on this layer, reactivating the persistent modifier.
 
 > [!NOTE]
 > You can modify this feature in the `process_arrow_retrigger` function.

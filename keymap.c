@@ -1969,8 +1969,7 @@ static inline arrow_bit_t arrow_bit(uint16_t keycode) {
 
 static uint16_t arrows[4] = {KC_UP, KC_DOWN, KC_LEFT, KC_RGHT};
 
-static void arrow_mod_on(void) {
-    arrow_state.mod_active = true;
+static void arrow_ctrl_on(void) {
     arrow_state.last_key = ARROW_NONE;
 
     for (int i = 0; i < 4; i++ ) {
@@ -1981,8 +1980,7 @@ static void arrow_mod_on(void) {
     }
 }
 
-static void arrow_mod_off(void) {
-    arrow_state.mod_active = false;
+static void arrow_ctrl_off(void) {
     arrow_state.last_key = ARROW_NONE;
 
     for (int i = 0; i < 4; i++ ) {
@@ -2001,28 +1999,17 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
             set_arrow(arrow);
 
             if (arrow_state.mod_active) {
-                uint32_t now = timer_read();
+                uint32_t delay = timer_read() - arrow_state.last_press;
 
-                // Retain mod state on alternating vertical keys
-                if (arrow_state.held_keys & VERTICAL_MASK &&
-                    arrow_state.last_key != arrow) {
+                if (arrow_state.last_key != arrow || delay > 150) {
                     register_code16(LCTL(keycode));
                     arrow_state.last_key = arrow;
                     return false;
-                }
-
-                if ((arrow & VERTICAL_MASK) &&
-                    arrow_state.last_key == arrow) {
-                    // Retain mod state on double taps...
-                    if (now - arrow_state.last_press > 150) {
-                        register_code16(LCTL(keycode));
-                        arrow_state.last_key = arrow;
-                        return false;
-                    } else { // ...unless within 100ms
-                        arrow_state.mod_active = false;
-                    }
+                } else {
+                    arrow_state.mod_active = false;
                 }
             }
+
             arrow_state.mod_active = false;
             arrow_state.last_key = arrow;
         } else {
@@ -2031,13 +2018,29 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
         }
     }
 
+
     if (keycode == CS_AL4) {
         if (!record->tap.count && record->event.pressed) {
-            arrow_mod_on();
+            arrow_ctrl_on();
+            arrow_state.mod_active = true;
         } else if (!record->tap.count && !record->event.pressed && arrow_state.mod_active) {
-            arrow_mod_off();
+            arrow_ctrl_off();
+            arrow_state.mod_active = false;
         }
+        return true;
     }
+    
+    if (IS_LAYER_ON(_EDIT_OVERLAY)) {
+        if (keycode == CS_LCTL) {
+            if (record->event.pressed) {
+                arrow_ctrl_on();
+                arrow_state.mod_active = true;
+            }
+        }
+        return true;
+    }
+
+    arrow_state.mod_active = false;
     return true;
 }
 
