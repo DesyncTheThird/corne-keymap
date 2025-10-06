@@ -333,7 +333,7 @@ The `LCTL` key also sets a weak one shot `Ctrl` modifier for the `Backspace` key
 
 
 
-### Data
+## Data
 ![Data](images/data.png?raw=true)
 Number grid with `1`, `2`, and `3` on right hand home row, along with common numerical separators on left hand home row, sharing similar layout to `Symbol` and `Program` layers.
 
@@ -351,15 +351,17 @@ Activating both `Data` and `Program` layers will also activate the `Edit` layer 
 
 
 
-### Edit
+## Edit
 ![Edit](images/edit.png?raw=true)
 Navigation/editing keys on left hand and paired delimiters and common symbol combinations on right hand. I prefer the navigation cluster on the left hand to allow usage with the mouse.
 
 Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `?()`; right hand also duplicated on `Symbol` and `Program` layers.
 
-The `Lock` key activates the [Layer Lock](https://docs.qmk.fm/features/layer_lock) feature, for extended navigation.
+The bottom row of the [`Control Overlay`](#control-overlay) can also be activated with home row mods on this layer.
 
-The bottom row of the [Control Overlay](#control-overlay) can also be activated with home row mods on this layer.
+### Macros
+
+The `Lock` key activates the [Layer Lock](https://docs.qmk.fm/features/layer_lock) feature, for extended navigation.
 
 The left hand bracket macro surrounds the current word with brackets, and cycles the bracket type on subsequent presses:
 - `⟦⟳⟧`: `(-)` -> `{-}` -> `[-]` -> `(-)` -> ...
@@ -372,22 +374,32 @@ Pressing the `Select Right` key within 200ms of the `Select` key will copy (`Ctr
 
 After cutting with `Select`, copying with `Select Right`, or deleting with `Select Left`, the `Enter` key on this layer will act as paste, resetting after the first use or if the `Edit` layer is disabled.
 
-
 The right thumb keys also have additional layering actions:
-- Activating both `Edit` and `Program` layers will activate the [Edit Overlay](#edit-overlay), which contains macros useful for editing, and also hold the `LCTL` or `LSFT` modifier for various keys on the left hand.
+- Activating both `Edit` and `Program` layers will activate the [`Edit Overlay`](#edit-overlay), which contains macros useful for editing, and also hold the `LCTL` or `LSFT` modifier for various keys on the left hand.
 - Activating both `Edit` and `Symbol` layers will replace the right hand with a copy of the `Data` layer (with `_` replaced by `0`, since the thumb keys are not accessible in this configuration).
 
 These are both implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
+### Arrows
+
+If an arrow key is held on the `Edit` layer while the `Edit Overlay` is activated, the arrow key will be retriggered with a persistent `Ctrl` modifier, allowing quick horizontal navigation/vertical scrolling without having to manually re-press the arrow key after holding a modifier. If the modifier has been lost, retriggering on layer-off is disabled, avoiding pauses in motion.
+
+The modifier will be disabled if no arrow key is pressed for 1000ms; if an arrow key is double-tapped within 150ms, or if any other key is pressed.
+
+The `Ctrl` key will also become sticky for arrow keys while the overlay is active, reactivating the persistent modifier. Home row mods will also automatically retrigger arrow keys on the `Edit` layer.
+
+> [!NOTE]
+> You can modify these features in the `process_arrow_retrigger` function.
 
 
-### Symbol
+
+## Symbol
 ![Symbol](images/symbol.png?raw=true)
 Symbol layout optimised for (La)TeX editing with many common strings as inward rolls on left hand, e.g.; `<-`, `<=`, `->`, `>=`, `|->`, `<-`, `|>`, `:=`, `:-`, `&=`, etc. (Intended to be used with [snippet extensions](https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17).) Brackets on right hand as above.
 
 
 
-### Program
+## Program
 ![Program](images/program.png?raw=true)
 `Program` layer optimised for programming in mostly C and Python. Inward rolls include:
 - Comparison operators: `!=`, `>=`, `<=` on home row;
@@ -400,7 +412,7 @@ Brackets on right hand as above.
 
 
 
-### Utility
+## Utility
 ![Utility](images/utility.png?raw=true)
 `Utility` layer containing media control, RGB controls, OLED controls, function keys, and debug functions. Layer is accessible using either outer thumb key.
 
@@ -416,7 +428,7 @@ Tap the `Reboot` key to reboot keyboard; hold for one second to enter bootloader
 
 
 
-### Mouse
+## Mouse
 ![Mouse](images/mouse.png?raw=true)
 Mouse emulation accessible on pinky key combo to allow mouse movement without moving from home row. A mirrored left hand combo is also available, intended to be used with the layer lock feature.
 
@@ -426,7 +438,7 @@ Cursor/scroll speed may be overridden with right thumb keys for higher speed or 
 
 # Overlay Layers
 
-### Control Overlay
+## Control Overlay
 ![Control](images/control.png?raw=true)
 Control key overrides with QWERTY-esque layout for easier left-hand only use. (I usually don't remember which *letter* does what command, only which key *position*, particularly for graphical and editing software.)
 
@@ -436,7 +448,7 @@ Holding `LCTL` on any layer (including non-base layers) covers the left hand bot
 
 
 
-### Edit Overlay
+## Edit Overlay
 ![Edit Overlay](images/edit_overlay.png?raw=true)
 Activating the `Program` and `Edit` layers simultaneously will activate the `Edit Overlay` layer on top (of the `Edit` layer). This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
@@ -447,17 +459,10 @@ The right hand is replaced with macros useful for editing:
 - The `Join` macro joins current line to following line with space between; omits the space if shifted.
 - The three bracket macros enclose the current word with the listed brackets. These macros also interoperate with the rollback feature.
 
-If an arrow key is held on the `Edit` layer while this layer is activated, the arrow key will be retriggered with a persistent `Ctrl` modifier, allowing quick horizontal navigation/vertical scrolling without having to manually re-press the arrow key after holding a modifier. If the modifier has been lost, retriggering on layer-off is disabled, avoiding pauses in motion.
-
-The modifier will be disabled if no arrow key is pressed for 1000ms; if an arrow key is double-tapped within 150ms, or if any other key is pressed. The `Ctrl` key will also become sticky for arrow keys on this layer, reactivating the persistent modifier.
-
-> [!NOTE]
-> You can modify this feature in the `process_arrow_retrigger` function.
-
 
 
 # Alt Base Layer
-### QWERTY
+## QWERTY
 ![QWERTY](images/qwerty.png?raw=true)
 
 Accessible with `Base` key on `Utility` layer, or `Basic` to also disable home row mods and `Space` layer-tap (for games).

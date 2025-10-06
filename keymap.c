@@ -1942,14 +1942,14 @@ typedef enum {
 typedef struct {
     arrow_bit_t last_key;
     uint8_t held_keys;
-    bool mod_active;
+    bool ctrl_active;
     uint32_t last_press;
 } arrow_state_t;
 
 static arrow_state_t arrow_state = {
     .last_key = ARROW_NONE,
     .held_keys = 0,
-    .mod_active = false,
+    .ctrl_active = false,
     .last_press = 0
 };
 
@@ -1969,24 +1969,33 @@ static inline arrow_bit_t arrow_bit(uint16_t keycode) {
 
 static uint16_t arrows[4] = {KC_UP, KC_DOWN, KC_LEFT, KC_RGHT};
 
-static void arrow_ctrl_on(void) {
-    arrow_state.last_key = ARROW_NONE;
-
-    for (int i = 0; i < 4; i++ ) {
-        if (arrow_state.held_keys & 1 << i) {
-            unregister_code(arrows[i]);
-            register_code16(LCTL(arrows[i]));
-        }
+uint16_t mod8_to_qk16(uint8_t mod_mask) {
+    uint8_t left = mod_mask & 0x0f;
+    uint8_t right = (mod_mask >> 4) & 0x0f;
+    uint8_t mods = left | right;
+    uint16_t qk_mod = ((uint16_t)mods) << 8;
+    if (right) {
+        qk_mod |= QK_RMODS_MIN;
     }
+    return qk_mod;
 }
 
-static void arrow_ctrl_off(void) {
+static void arrow_update_mods(uint8_t add_mods, uint8_t del_mods) {
     arrow_state.last_key = ARROW_NONE;
+
+    uint8_t mods = get_mods();
+
+    if (arrow_state.ctrl_active) {
+        mods |= MOD_BIT_LCTRL;
+    }
+
+    mods |= add_mods;
+    mods &= ~del_mods;
 
     for (int i = 0; i < 4; i++ ) {
         if (arrow_state.held_keys & 1 << i) {
-            unregister_code16(LCTL(arrows[i]));
-            register_code(arrows[i]);
+            unregister_code16(0x1f00 | arrows[i]);
+            register_code16(mod8_to_qk16(mods) | arrows[i]);
         }
     }
 }
@@ -1998,7 +2007,7 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
         if (record->event.pressed) {
             set_arrow(arrow);
 
-            if (arrow_state.mod_active) {
+            if (arrow_state.ctrl_active) {
                 uint32_t delay = timer_read() - arrow_state.last_press;
 
                 if (arrow_state.last_key != arrow || delay > 150) {
@@ -2006,26 +2015,37 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
                     arrow_state.last_key = arrow;
                     return false;
                 } else {
-                    arrow_state.mod_active = false;
+                    arrow_state.ctrl_active = false;
                 }
             }
 
-            arrow_state.mod_active = false;
+            arrow_state.ctrl_active = false;
             arrow_state.last_key = arrow;
         } else {
             clear_arrow(arrow);
             arrow_state.last_press = timer_read();
         }
+        return true;
     }
 
+    if (is_hrm(keycode)) {
+        if (!record->tap.count){
+            arrow_update_mods(0x00, 0x00);
+            return true;
+        }
+    }
 
     if (keycode == CS_AL4) {
-        if (!record->tap.count && record->event.pressed) {
-            arrow_ctrl_on();
-            arrow_state.mod_active = true;
-        } else if (!record->tap.count && !record->event.pressed && arrow_state.mod_active) {
-            arrow_ctrl_off();
-            arrow_state.mod_active = false;
+        if (record->tap.count) {
+            return true;
+        }
+
+        if (record->event.pressed) {
+            arrow_state.ctrl_active = true;
+            arrow_update_mods(MOD_BIT_LCTRL, 0x00);
+        } else if (arrow_state.ctrl_active) {
+            arrow_state.ctrl_active = false;
+            arrow_update_mods(0x00, MOD_BIT_LCTRL);
         }
         return true;
     }
@@ -2033,14 +2053,13 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
     if (IS_LAYER_ON(_EDIT_OVERLAY)) {
         if (keycode == CS_LCTL) {
             if (record->event.pressed) {
-                arrow_ctrl_on();
-                arrow_state.mod_active = true;
+                arrow_update_mods(MOD_BIT_LCTRL, 0x00);
+                arrow_state.ctrl_active = true;
             }
         }
-        return true;
     }
 
-    arrow_state.mod_active = false;
+    arrow_state.ctrl_active = false;
     return true;
 }
 
@@ -2055,6 +2074,18 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
     switch (keycode) {
+        case KC_PGDN:
+        case PRV_TAB:
+            if (record->event.pressed) {
+                if (ctrl_on() && IS_LAYER_ON(_EDIT)) {
+                    register_code16(LCTL(KC_Y));
+                    return false;
+                }
+            } else {
+                unregister_code16(LCTL(KC_Y));
+            }
+            return true;
+
         case SELLEFT:
             if (record->event.pressed) {
                 if (ctrl_on()) {
@@ -3388,7 +3419,6 @@ bool process_eager_mods(uint16_t keycode, keyrecord_t* record) {
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_case_lock(keycode, record)) { return false; }
     if (!process_cycling_macros(keycode, record)) { return false; }
-    if (!process_arrow_retrigger(keycode, record)) { return false; }
     if (!process_capsword(keycode, record)) { return false; }
     if (!process_punctuation_space(keycode, record)) { return false; }
     // Reactive features go before key tracking
@@ -3398,6 +3428,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_eager_mods(keycode, record)) { return false; }
     if (!process_magic(keycode, record)) { return false; }
     if (!process_homerow_mod_tap(keycode, record)) { return false; }
+    if (!process_arrow_retrigger(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
     if (!process_edit_macros(keycode, record)) { return false; }
     if (!process_vol_controls(keycode, record)) { return false; }
@@ -4776,7 +4807,7 @@ void housekeeping_task_user(void) {
 
     if (timeouts[TIMEOUT_ARROW].active) {
         if (!arrow_state.held_keys) {
-            arrow_state.mod_active = false;
+            arrow_state.ctrl_active = false;
         }
     }
 
