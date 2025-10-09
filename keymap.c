@@ -2906,32 +2906,22 @@ typedef struct {
 } keymatch_rule_t;
 
 static const keymatch_rule_t match_rules[] = {
-    { EITHER, { JUST, LG_N    }, { JUST, LC_T    }, /*n*/"'t ",  { true, KC_SPC, 3  } },
     { EITHER, { JUST, KC_N    }, { JUST, KC_T    }, /*n*/"'t ",  { true, KC_SPC, 3  } },
-    { EITHER, { JUST, LS_S    }, { ANY_SPACE     }, /*s*/"'",    { false            } },
-    { EITHER, { JUST, KC_S    }, { ANY_SPACE     }, /*s*/"'",    { false            } },
-    { EITHER, { JUST, LG_N    }, { JUST, KC_B    }, /*n*/".b.",  { true, KC_DOT, 3  } },
     { EITHER, { JUST, KC_N    }, { JUST, KC_B    }, /*n*/".b.",  { true, KC_DOT, 3  } },
-    { LEFT,   { JUST, RA_I    }, { JUST, RC_E    }, /*i*/".e.",  { true, KC_DOT, 3  } },
     { LEFT,   { JUST, KC_I    }, { JUST, KC_E    }, /*i*/".e.",  { true, KC_DOT, 3  } },
-    { LEFT,   { JUST, RG_A    }, { JUST, KC_M    }, /*a*/".m.",  { true, KC_DOT, 3  } },
     { LEFT,   { JUST, KC_A    }, { JUST, KC_M    }, /*a*/".m.",  { true, KC_DOT, 3  } },
     { EITHER, { JUST, KC_P    }, { JUST, KC_M    }, /*p*/".m.",  { true, KC_DOT, 3  } },
-    { RIGHT,  { JUST, CS_LT1  }, { IMMEDIATE     }, /*⎵*/"-",    { true, KC_MINS, 1 } },
-    { RIGHT,  { JUST, KC_SPC  }, { IMMEDIATE     }, /*⎵*/"-",    { true, KC_MINS, 1 } },
-    { RIGHT,  { JUST, RC_E    }, { JUST, KC_G    }, /*e*/".g.",  { true, KC_DOT, 3  } },
+    { RIGHT,  { ANY_SPACE     }, { IMMEDIATE     }, /*⎵*/"-",    { true, KC_MINS, 1 } },
     { RIGHT,  { JUST, KC_E    }, { JUST, KC_G    }, /*e*/".g.",  { true, KC_DOT, 3  } },
     { EITHER, { ANY_KEY       }, { JUST, KC_ENT  }, /*-*/";",    { false            } },
     { EITHER, { ANY_KEY       }, { JUST, CS_LT3  }, /*-*/";",    { false            } },
-    { EITHER, { ANY_LETTER    }, { JUST, CS_LT1  }, /*-*/",",    { false            } },
-    { EITHER, { ANY_LETTER    }, { JUST, KC_SPC  }, /*-*/",",    { false            } },
+    { LEFT,   { JUST, KC_S    }, { ANY_SPACE     }, /*s*/"'",    { false            } },
+    { EITHER, { ANY_LETTER    }, { ANY_SPACE     }, /*-*/",",    { false            } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_D    }, /*-*/"'d ",  { true, KC_SPC, 3  } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_L    }, /*-*/"'ll ", { true, KC_SPC, 4  } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_V    }, /*-*/"'ve ", { true, KC_SPC, 4  } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_M    }, /*-*/"'m ",  { true, KC_SPC, 3  } },
-    { EITHER, { ANY_LETTER    }, { JUST, LS_S    }, /*-*/"'s ",  { true, KC_SPC, 3  } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_S    }, /*-*/"'s ",  { true, KC_SPC, 3  } },
-    { EITHER, { ANY_LETTER    }, { JUST, LA_R    }, /*-*/"'re ", { true, KC_SPC, 4  } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_R    }, /*-*/"'re ", { true, KC_SPC, 4  } },
 
     // Double taps and rolls
@@ -2941,16 +2931,21 @@ static const keymatch_rule_t match_rules[] = {
     { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
 };
 
-static bool pattern_match_key(keymatch_t key, uint16_t keycode) {
-    switch (key.kind) {
-        case JUST:       return keycode == key.keycode;
+static bool pattern_match_key(keymatch_t keymatch, uint16_t keycode) {
+    if (is_hrm(keycode)) {
+        keycode = QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
+    }
+    switch (keymatch.kind) {
+        case JUST:       return keycode == keymatch.keycode;
         case IU_VOWEL:   return keycode == KC_I || keycode == KC_U;
         case EO_VOWEL:   return keycode == KC_E || keycode == KC_O;
         case ANY_VOWEL:  return keycode == KC_A || keycode == KC_E ||
                                 keycode == KC_I || keycode == KC_O ||
                                 keycode == KC_U;
-        case ANY_SPACE:  return keycode == KC_SPC || keycode == KC_TAB || keycode == CS_LT1;
-        case ANY_LETTER: return is_alpha(keycode) || is_magic(keycode) || is_hrm(keycode);
+        case ANY_SPACE:  return keycode == KC_SPC || keycode == KC_TAB ||
+                                keycode == CS_LT1 || keycode == TABLSFT ||
+                                keycode == TABRSFT;
+        case ANY_LETTER: return is_alpha(keycode) || is_magic(keycode);
         case ANY_KEY:    return !is_magic_punct(keycode) && keycode != KC_NO;
         default:         return false;
     }

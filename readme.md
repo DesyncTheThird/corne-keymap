@@ -134,7 +134,6 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Key    | Previous   | Next       | Output          |
 | ------ | ---------- | ---------- | --------------- |
 | Either | `N`        | `T`        | `[n]'t⎵`        |
-| Either | `S`        | `⎵`        | `[s]'⎵`         |
 | Either | `N`        | `B`        | `[n].b.`        |
 | Left   | `I`        | `E`        | `[i].e.`        |
 | Left   | `A`        | `M`        | `[a].m.`        |
@@ -142,6 +141,7 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Right  | `⎵`        | Immediate  | `[⎵]-`          |
 | Right  | `E`        | `G`        | `[e].g.`        |
 | Either | Any Key    | `Enter`    | `[-];`+`Enter`  |
+| Left   | `S`        | `⎵`        | `[s]'⎵`         |
 | Either | Any Letter | `⎵`        | `[-],⎵`         |
 | Either | Any Letter | `D`        | `[-]'d⎵`        |
 | Either | Any Letter | `L`        | `[-]'ll⎵`       |
