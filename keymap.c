@@ -1493,13 +1493,13 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
 
         case L_NEWSENT:
         case R_NEWSENT:
+        case L_UNDERSCORE:
+        case R_UNDERSCORE:
             return 50;
 
         case L_COMMA:
         case R_COMMA:
-        case L_UNDERSCORE:
-        case R_UNDERSCORE:
-            return 40;
+            return 25;
 
         case L_EXPONENT:
         case R_EXPONENT:
