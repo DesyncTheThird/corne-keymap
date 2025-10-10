@@ -1209,6 +1209,10 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
                 other_record->event.key.col == 2)) {
                 return false;
             }
+            if (chordal_hold_handedness(other_record->event.key) == 'L' &&
+                (other_record->event.key.col == 1)) {
+                return false;
+            }
             return true;
 
         case CS_AL1:
@@ -3435,7 +3439,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case CS_SYMBOLS_START ... CS_SYMBOLS_END:
             if (record->event.pressed) {
-                dprint("CS SYMBOL\n");
+                // dprint("CS SYMBOL\n");
                 cs_tap_code16(keycode);
             }
             return true;
