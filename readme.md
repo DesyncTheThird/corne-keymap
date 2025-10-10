@@ -47,13 +47,13 @@ Left hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Prev  | `Z` | `L` | `D` | `C` | `B`       | `N`  | `R` | `T`    | `S` | `G` | `Q` | `X` | `M`   | `W` | `V` |
-| Magic | `N` | `R` | `T` | `S` | `ECAUSE⎵` | `'T` | `L` | `MENT` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
+| Magic | `N` | `R` | `G` | `S` | `ECAUSE⎵` | `'T` | `L` | `MENT` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
 
 Right hand overrides:
 |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  | `A`   | `K`    |
-| Magic | `ECT` | `E` | `I` | `P` | `ERE` | `O` | `ON` | `ND⎵` | `NOW⎵` |
+| Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  | `A`   | `K`   |
+| Magic | `ECT` | `E` | `I` | `P` | `ERE` | `O` | `ON` | `ND⎵` | `NOW` |
 
 (Other right hand keys are repeated.)
 

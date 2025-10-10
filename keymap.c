@@ -2690,7 +2690,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 // Left hand keys
                 case KC_Z: tap_code(KC_N); update_last_key(KC_N); break;
                 case KC_L: tap_code(KC_R); update_last_key(KC_R); break;
-                case KC_D: tap_code(KC_T); update_last_key(KC_T); break;
+                case KC_D: tap_code(KC_G); update_last_key(KC_G); break;
                 case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
                 case KC_B: send_string(/*b*/"ecause "); update_last_keys(KC_SPC, 7); break;
 
@@ -2715,7 +2715,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
                 case KC_I: send_string(/*i*/"on"); update_last_keys(KC_N, 2); break;
                 case KC_A: send_string(/*a*/"nd "); update_last_keys(KC_SPC, 3); break;
-                case KC_K: send_string(/*k*/"now "); update_last_keys(KC_SPC, 4); break;
+                case KC_K: send_string(/*k*/"now"); update_last_keys(KC_SPC, 4); break;
 
                 case KC_NO:
                 case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
