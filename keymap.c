@@ -3542,11 +3542,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case SPC_UP:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_HOME);
-                tap_code(KC_ENT);
-                tap_code(KC_UP);
+                if (!shifted() && !ctrl_on()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_HOME);
+                    tap_code(KC_ENT);
+                    tap_code(KC_UP);
+                    tap_code(KC_END);
+                } else {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LCTL(KC_BSPC));
+                }
                 set_mods(mods);
+
             }
             break;
         case JOIN:
@@ -3554,21 +3561,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 const uint8_t mods = get_mods();
                 del_mods(MOD_MASK_CSAG);
                 tap_code(KC_END);
-                add_mods(MOD_MASK_CTRL);
-                tap_code(KC_DEL);
-                del_mods(MOD_MASK_CTRL);
-                set_mods(mods);
-                if (!shifted()) {
+                tap_code16(LCTL(KC_DEL));
+                if (!shifted() && !ctrl_on()) {
                     tap_code(KC_SPC);
                 }
+                set_mods(mods);
             }
             break;
         case SPC_DN:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_END);
-                tap_code(KC_ENT);
+                if (!shifted() && !ctrl_on()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_END);
+                    tap_code(KC_ENT);
+                } else {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LCTL(KC_DEL));
+                }
                 set_mods(mods);
             }
             break;

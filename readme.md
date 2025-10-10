@@ -455,8 +455,8 @@ Activating the `Program` and `Edit` layers simultaneously will activate the `Edi
 The right hand is replaced with macros useful for editing:
 - The `++` macro outputs `1` on first press and increments on subsequent presses, rolling over to `0` after `9`, and resetting to `1` when the `Edit` layer is released.
 - The directional `Delete` macros delete in the indicated directions from the current cursor position to the beginning/end of the current line.
-- The `Line` macros add new lines above/below the current line.
-- The `Join` macro joins current line to following line with space between; omits the space if shifted.
+- The `Line` macros add new lines above/below the current line; deletes left/right instead if `Shift` or `Ctrl` is active.
+- The `Join` macro joins current line to following line with space between; omits the space if `Shift` or `Ctrl` is active.
 - The three bracket macros enclose the current word with the listed brackets. These macros also interoperate with the rollback feature.
 
 
