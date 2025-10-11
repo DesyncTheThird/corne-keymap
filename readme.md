@@ -366,6 +366,9 @@ The `Lock` key activates the [Layer Lock](https://docs.qmk.fm/features/layer_loc
 The left hand bracket macro surrounds the current word with brackets, and cycles the bracket type on subsequent presses:
 - `⟦⟳⟧`: `(-)` -> `{-}` -> `[-]` -> `(-)` -> ...
 
+In place of the bracket macro as on the `Data` layer, there is an enumeration macro:
+- The `++` macro outputs `1` on first press and increments on subsequent presses, rolling over to `0` after `9`, and resetting to `1` when the `Edit` layer is released.
+
 The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
 
 The `Select` macro selects the current word; pressing it again within 200ms will cut (`Ctrl`+`X`) the selection. Pressing `Select` within 500ms of either of the other two directional `Select` macros will also immediately cut the selection.
@@ -453,7 +456,6 @@ Holding `LCTL` on any layer (including non-base layers) covers the left hand bot
 Activating the `Program` and `Edit` layers simultaneously will activate the `Edit Overlay` layer on top (of the `Edit` layer). This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
 The right hand is replaced with macros useful for editing:
-- The `++` macro outputs `1` on first press and increments on subsequent presses, rolling over to `0` after `9`, and resetting to `1` when the `Edit` layer is released.
 - The directional `Delete` macros delete in the indicated directions from the current cursor position to the beginning/end of the current line.
 - The `Line` macros add new lines above/below the current line; deletes left/right instead if `Shift` or `Ctrl` is active.
 - The `Join` macro joins current line to following line with space between; omits the space if `Shift` or `Ctrl` is active.
