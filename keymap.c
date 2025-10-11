@@ -400,11 +400,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_SYMBOL] = LAYOUT( //6
       //,-----------------------------------------------------.                    ,---------------------------------------------------.
-           KC_GRV,  CS_DLR, CS_EXLM, CS_DQUO, CS_AMPR, CS_HASH,                       CS_EQL, CS_RCBR, CS_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
+           KC_GRV,  CS_DLR, CS_EXLM, CS_DQUO, CS_AMPR, CS_HASH,                      CY_MISC, CS_RCBR, CS_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          OSMLSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                        CS_LT, RS_RPRN, RC_LPRN, RA_TILD, RG_UNDS, TABRSFT,
+          OSMLSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                      CY_ENUM, RS_RPRN, RC_LPRN, RA_TILD, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, CS_CIRC, CS_COLN,  CS_DOT, CS_COMM, CS_TILD,                        CS_GT, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
+          CS_LCTL, CS_CIRC, CS_COLN,  CS_DOT, CS_COMM, CS_TILD,                      CY_COMP, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               CS_SLSH,  CS_AL2, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -412,11 +412,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_PROGRAM] = LAYOUT( //7
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_GRV, CS_PERC, CS_MINS, CS_PLUS,  CS_DLR, CS_CONJ,                       CS_EQL, CS_RCBR, CS_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
+           KC_GRV, CS_PERC, CS_MINS, CS_PLUS,  CS_DLR, CS_CONJ,                      CY_MISC, CS_RCBR, CS_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          OSMLSFT, CS_EXLM,   CS_LT,   CS_GT,  CS_EQL, CS_DISJ,                        CS_LT, RS_RPRN, RC_LPRN, RA_TILD, RG_UNDS, TABRSFT,
+          OSMLSFT, CS_EXLM,   CS_LT,   CS_GT,  CS_EQL, CS_DISJ,                      CY_ENUM, RS_RPRN, RC_LPRN, RA_TILD, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, CS_CIRC, CS_SLSH, CS_ASTR, CS_HASH, CS_TILD,                        CS_GT, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
+          CS_LCTL, CS_CIRC, CS_SLSH, CS_ASTR, CS_HASH, CS_TILD,                      CY_COMP, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               CS_SLSH,  CS_AL3, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -436,11 +436,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT] = LAYOUT( //9
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                       CS_EQL, CS_RCBR, CS_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
+          _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                      CY_MISC, CS_RCBR, CS_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CY_WRAP, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                        CS_LT, RS_RPRN, RC_LPRN, RA_TILD, RG_UNDS, TABRSFT,
+          _______, CY_WRAP, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      CY_ENUM, RS_RPRN, RC_LPRN, RA_TILD, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, KC_PGDN, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                        CS_GT, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
+          _______, KC_PGDN, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                      CY_COMP, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______,  CS_AL4,  KC_SPC
                                           //`--------------------------'  `--------------------------'
@@ -448,7 +448,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT_OVERLAY] = LAYOUT( //10
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                      CY_ENUM,  SPC_UP,    JOIN,  SPC_DN, WORDCBR, _______,
+          _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                       KC_ESC,  SPC_UP,    JOIN,  SPC_DN, WORDCBR, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, CY_WRAP, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      KC_BSPC, RS_DELL, RC_DELW, RA_DELR, WORDPRN, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -2219,10 +2219,11 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
                     case 0: {
                         const uint8_t mods = get_mods();
                         del_mods(MOD_MASK_CSAG);
-                        tap_code16(KC_DQUO); // CS_AT
+                        tap_code16(KC_PERC);
                         set_mods(mods);
 
-                        update_last_key(KC_DQUO);
+                        rollback_last_key();
+                        update_last_key(KC_PERC);
                         cycle_state.misc = 1;
                         break;
                     }
@@ -2230,9 +2231,10 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
                         const uint8_t mods = get_mods();
                         del_mods(MOD_MASK_CSAG);
                         tap_code(KC_BSPC);
-                        tap_code16(KC_HASH); // CS_POUN
+                        tap_code16(KC_DQUO); // CS_AT
                         set_mods(mods);
 
+                        rollback_last_key();
                         update_last_key(KC_HASH);
                         cycle_state.misc = 2;
                         break;
@@ -2241,10 +2243,23 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
                         const uint8_t mods = get_mods();
                         del_mods(MOD_MASK_CSAG);
                         tap_code(KC_BSPC);
-                        tap_code16(KC_DQUO); // CS_AT
+                        tap_code16(KC_HASH); // CS_POUN
                         set_mods(mods);
 
+                        rollback_last_key();
                         update_last_key(KC_DQUO);
+                        cycle_state.misc = 3;
+                        break;
+                    }
+                    case 3: {
+                        const uint8_t mods = get_mods();
+                        del_mods(MOD_MASK_CSAG);
+                        tap_code(KC_BSPC);
+                        tap_code16(KC_PERC);
+                        set_mods(mods);
+
+                        rollback_last_key();
+                        update_last_key(KC_PERC);
                         cycle_state.misc = 1;
                         break;
                     }
@@ -2422,6 +2437,8 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 char num[2] = {'0' + cycle_state.num, '\0'};
                 cs_send_string(num);
+                uint16_t num_key = cycle_state.num == 0 ? KC_0 : KC_1 + cycle_state.num - 1;
+                update_last_key(num_key);
                 cycle_state.num = (cycle_state.num + 1) % 10;
             }
             break;
