@@ -4889,7 +4889,7 @@ void housekeeping_task_user(void) {
     }
 
     if (cycle_state.num != 1) {
-        if (IS_LAYER_OFF(_EDIT)){
+        if (IS_LAYER_OFF(_EDIT) && IS_LAYER_OFF(_PROGRAM) && IS_LAYER_OFF(_SYMBOL)){
             cycle_state.num = 1;
         }
     }
