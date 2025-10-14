@@ -369,13 +369,18 @@ The left hand bracket macro surrounds the current word with brackets, and cycles
 In place of the bracket macro as on the `Data` layer, there is an enumeration macro:
 - The `++` macro outputs `1` on first press and increments on subsequent presses, rolling over to `0` after `9`, and resetting to `1` when the `Edit` layer is released.
 
-The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
+  Holding `Shift` will replace the current number with its successor; holding `Ctrl` will decrement instead; and holding both will replace the the current number with its predecessor.
 
-The `Select` macro selects the current word; pressing it again within 200ms will cut (`Ctrl`+`X`) the selection. Pressing `Select` within 500ms of either of the other two directional `Select` macros will also immediately cut the selection.
+  This macro is also available on the `Program` and `Symbol` layers; the internal state is retained between all three instances, and is reset only when the `Edit` layer is activated and released.
 
-Pressing the `Select Right` key within 200ms of the `Select` key will copy (`Ctrl`+`C`) the selection; pressing `Select Left` will delete the selection; and pressing `Enter` will paste over the selection.
+There are also various macros for quickly selecting and manipulating text:
+- The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
 
-After cutting with `Select`, copying with `Select Right`, or deleting with `Select Left`, the `Enter` key on this layer will act as paste, resetting after the first use or if the `Edit` layer is disabled.
+- The `Select` macro selects the current word; pressing it again within 200ms will cut (`Ctrl`+`X`) the selection. Pressing `Select` within 500ms of either of the other two directional `Select` macros will also immediately cut the selection.
+
+  Pressing the `Select Right` key within 200ms of the `Select` key will copy (`Ctrl`+`C`) the selection; pressing `Select Left` will delete the selection; and pressing `Enter` will paste over the selection.
+
+  After cutting with `Select`, copying with `Select Right`, or deleting with `Select Left`, the `Enter` key on this layer will act as paste, resetting after the first use or if the `Edit` layer is disabled.
 
 The right thumb keys also have additional layering actions:
 - Activating both `Edit` and `Program` layers will activate the [`Edit Overlay`](#edit-overlay), which contains macros useful for editing, and also hold the `LCTL` or `LSFT` modifier for various keys on the left hand.
@@ -409,7 +414,7 @@ Symbol layout optimised for (La)TeX editing with many common strings as inward r
 - Arithmetic assignment operators: `^=`, `+=`, `-=`, `*=`, `/=` above and below home row.
 Bitwise operator symbols are grouped on the inner index column.
 
-Holding shift while pressing `&` or `|` will send the respective symbol twice, i.e. as logical operators, and holding control will add spaces.
+Holding `Shift` while pressing `&` or `|` will send the respective symbol twice, i.e. as logical operators, and holding `Ctrl` will add spaces.
 
 Brackets on right hand as above.
 

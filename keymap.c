@@ -2435,11 +2435,24 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
 
         case CY_ENUM:
             if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                uint16_t num_key = cycle_state.num == 0 ? KC_0 : KC_1 + cycle_state.num - 1;
+                if (shifted()) {
+                    if (get_last_key() == num_key) {
+                        del_mods(MOD_MASK_CS);
+                        tap_code(KC_BSPC);
+                        set_mods(mods);
+                    }
+                }
+                if (ctrl_on()) {
+                    cycle_state.num = (cycle_state.num + 9) % 10;
+                } else {
+                    cycle_state.num = (cycle_state.num + 1) % 10;
+                }
                 char num[2] = {'0' + cycle_state.num, '\0'};
                 cs_send_string(num);
-                uint16_t num_key = cycle_state.num == 0 ? KC_0 : KC_1 + cycle_state.num - 1;
+                num_key = cycle_state.num == 0 ? KC_0 : KC_1 + cycle_state.num - 1;
                 update_last_key(num_key);
-                cycle_state.num = (cycle_state.num + 1) % 10;
             }
             break;
     }
@@ -4717,6 +4730,10 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         (1UL << _QWERTY) |
         (1UL << _BASE);
 
+    if ((previous_state & (1UL << _EDIT)) && !(state & (1UL << _EDIT))) {
+        cycle_state.num = 0;
+    }
+
     if (boot || fade_out_active || fade_in_active ||
         !((state ^ previous_state) & check_layers)) {
         previous_state = state;
@@ -4885,12 +4902,6 @@ void housekeeping_task_user(void) {
         if (IS_LAYER_OFF(_UTILITY)) {
             unregister_code(KC_LALT);
             misc_key_state.alt_tab_active = false;
-        }
-    }
-
-    if (cycle_state.num != 1) {
-        if (IS_LAYER_OFF(_EDIT) && IS_LAYER_OFF(_PROGRAM) && IS_LAYER_OFF(_SYMBOL)){
-            cycle_state.num = 1;
         }
     }
 
