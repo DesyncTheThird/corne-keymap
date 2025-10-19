@@ -29,8 +29,10 @@ enum custom_keycodes {
     REP = QK_USER,
     MAGIC,
     NEWSENT,
-    CS_CASE,
+    PCTLEFT,
+    PCTRGHT,
 
+    CS_CASE,
     ALTTAB,
     BASIC,
     BASE,
@@ -41,6 +43,8 @@ enum custom_keycodes {
     SELLEFT,
     SELECT,
     SELRGHT,
+    NAVTABS,
+    COMMENT,
 
     MUTE,
     MUTE_L,
@@ -110,16 +114,10 @@ enum custom_keycodes {
 
     CS_SYMBOLS_END,
 
-    // Bracket macros
-    CS_NORM,
-    CS_CBRS,
-    CS_PRNS,
-    CS_BRCS,
-
     // Edit overlay keys
-    WORDCBR,
-    WORDPRN,
-    WORDBRC,
+    WRAPCBR,
+    WRAPPRN,
+    WRAPBRC,
 
     SPC_DN,
     JOIN,
@@ -135,9 +133,6 @@ enum custom_keycodes {
     CY_COMP,
     CY_WRAP,
     CY_ENUM,
-
-    PCTLEFT,
-    PCTRGHT,
 };
 
 // Home row mods
@@ -436,11 +431,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT] = LAYOUT( //9
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, KC_PGUP, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                      CY_MISC, CS_RCBR, CS_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
+          _______, NAVTABS, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                      CY_MISC, CS_RCBR, CS_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CY_WRAP, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      CY_ENUM, RS_RPRN, RC_LPRN, RA_TILD, RG_UNDS, TABRSFT,
+          _______, COMMENT, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      CY_ENUM, RS_RPRN, RC_LPRN, RA_TILD, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, KC_PGDN, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                      CY_COMP, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
+          _______, CY_WRAP, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                      CY_COMP, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______,  CS_AL4,  KC_SPC
                                           //`--------------------------'  `--------------------------'
@@ -448,11 +443,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT_OVERLAY] = LAYOUT( //10
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NXT_TAB, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                       KC_ESC,  SPC_UP,    JOIN,  SPC_DN, WORDCBR, _______,
+          _______, KC_PGUP, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                       KC_ESC,  SPC_UP,    JOIN,  SPC_DN, WRAPCBR, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CY_WRAP, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      KC_BSPC, RS_DELL, RC_DELW, RA_DELR, WORDPRN, _______,
+          _______, COMMENT, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      KC_BSPC, RS_DELL, RC_DELW, RA_DELR, WRAPPRN, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, PRV_TAB, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                       KC_SPC,   PASTE,     CUT,    COPY, WORDBRC, _______,
+          _______, KC_PGDN, SELLEFT,  SELECT, SELRGHT,  EO_ENT,                       KC_SPC,   PASTE,     CUT,    COPY, WRAPBRC, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -593,6 +588,17 @@ static inline uint16_t get_last_key_2(void);
 static void rollback_last_key(void);
 static void update_last_key(uint16_t);
 static void update_last_keys(uint16_t, uint8_t);
+
+static void rollback_wrapping_macro(void) {
+    const uint8_t mods = get_mods();
+    del_mods(MOD_MASK_CSAG);
+    tap_code(KC_BSPC);
+    tap_code16(LCTL(KC_LEFT));
+    tap_code(KC_BSPC);
+    tap_code16(LCTL(KC_RGHT));
+    set_mods(mods);
+    rollback_last_key();
+}
 
 static void cs_send_char(char c) {
     const uint8_t mods = get_mods();
@@ -760,12 +766,8 @@ static inline bool is_spc(uint16_t keycode) {
     return (keycode == CS_LT1 || keycode == KC_SPC);
 }
 
-static inline bool is_bracket_macro(uint16_t keycode) {
-    return (keycode >= CS_NORM && keycode <= CS_BRCS);
-}
-
-static inline bool is_bracket_wrap_macro(uint16_t keycode) {
-    return ((keycode >= WORDCBR && keycode <= WORDBRC) || keycode == CY_WRAP);
+static inline bool is_wrapping_macro(uint16_t keycode) {
+    return ((keycode >= WRAPCBR && keycode <= WRAPBRC) || keycode == CY_WRAP);
 }
 
 static inline bool is_cycling_macro(uint16_t keycode) {
@@ -2108,7 +2110,6 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (ctrl_on()) {
                     register_code16(LCTL(KC_Z));
-                    return false;
                 } else if (is_last_key(SELECT)) {
                     tap_code(KC_DEL);
                     edit_clip = true;
@@ -2127,7 +2128,6 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 if (ctrl_on()) {
                     register_code16(LCTL(KC_X));
-                    return false;
                 } else {
                     const uint8_t mods = get_mods();
                     if (is_select_macro(get_last_key())) {
@@ -2162,6 +2162,79 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
 
+        case NAVTABS:
+            if (record->event.pressed) {
+                uint8_t mods = get_mods();
+                uint16_t key = shifted() ? KC_PGUP : KC_PGDN;
+                del_mods(MOD_MASK_SHIFT);
+                if (ctrl_on()) {
+                    add_mods(MOD_MASK_SHIFT);
+                }
+                tap_code16(LCTL(key));
+                set_mods(mods);
+                update_last_key(key);
+            }
+            return false;
+            
+        case COMMENT:
+            if (record->event.pressed) {
+                cs_tap_code16(LCTL(KC_SLSH));
+            }
+            update_last_key(KC_NO);
+            return false;
+
+        case WRAPCBR:
+            if (record->event.pressed) {
+                if (is_wrapping_macro(get_last_key())) {
+                    rollback_wrapping_macro();
+                }
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code(KC_RGHT);
+                tap_code16(LCTL(KC_LEFT));
+                tap_code16(KC_LCBR);
+                tap_code16(LCTL(KC_RGHT));
+                tap_code16(KC_RCBR);
+                set_mods(mods);
+                update_last_key(keycode);
+            }
+            return false;
+            
+        case WRAPPRN:
+            if (record->event.pressed) {
+                if (is_wrapping_macro(get_last_key())) {
+                    rollback_wrapping_macro();
+                }
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code(KC_RGHT);
+                tap_code16(LCTL(KC_LEFT));
+                tap_code16(KC_LPRN);
+                tap_code16(LCTL(KC_RGHT));
+                tap_code16(KC_RPRN);
+                set_mods(mods);
+                update_last_key(keycode);
+            }
+            return false;
+
+        case WRAPBRC:
+            if (record->event.pressed) {
+                if (is_wrapping_macro(get_last_key())) {
+                    rollback_wrapping_macro();
+                }
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                tap_code(KC_RGHT);
+                tap_code16(LCTL(KC_LEFT));
+                tap_code(KC_LBRC);
+                tap_code16(LCTL(KC_RGHT));
+                tap_code(KC_RBRC);
+                set_mods(mods);
+                update_last_key(keycode);
+            }
+            return false;
+
+
         case EO_ENT:
             if (record->event.pressed) {
                 if (ctrl_on() || edit_clip || is_last_key(SELECT)) {
@@ -2184,17 +2257,6 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
 //==============================================================================
 // Cycling Macros
 //==============================================================================
-
-static void rollback_bracket_wrap_macro(void) {
-    const uint8_t mods = get_mods();
-    del_mods(MOD_MASK_CSAG);
-    tap_code(KC_BSPC);
-    tap_code16(LCTL(KC_LEFT));
-    tap_code(KC_BSPC);
-    tap_code16(LCTL(KC_RGHT));
-    set_mods(mods);
-    rollback_last_key();
-}
 
 typedef struct {
     uint misc :2;
@@ -2405,7 +2467,7 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
                         break;
                     }
                     case 1: {
-                        rollback_bracket_wrap_macro();
+                        rollback_wrapping_macro();
                         const uint8_t mods = get_mods();
                         del_mods(MOD_MASK_CSAG);
                         tap_code(KC_RGHT);
@@ -2418,7 +2480,7 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
                         break;
                     }
                     case 2: {
-                        rollback_bracket_wrap_macro();
+                        rollback_wrapping_macro();
                         const uint8_t mods = get_mods();
                         del_mods(MOD_MASK_CSAG);
                         tap_code(KC_RGHT);
@@ -2431,7 +2493,7 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
                         break;
                     }
                     case 3: {
-                        rollback_bracket_wrap_macro();
+                        rollback_wrapping_macro();
                         const uint8_t mods = get_mods();
                         del_mods(MOD_MASK_CSAG);
                         tap_code(KC_RGHT);
@@ -2537,13 +2599,9 @@ static bool process_rollback(void) {
         return true;
     }
 
-    if (is_bracket_wrap_macro(get_last_key()) && recent_key_state.count == 2) {
-        rollback_bracket_wrap_macro();
+    if (is_wrapping_macro(get_last_key()) && recent_key_state.count == 2) {
+        rollback_wrapping_macro();
         return false;
-    }
-
-    if (is_bracket_macro(get_last_key()) && recent_key_state.count == 2) {
-        tap_code(KC_RGHT);
     }
 
     if (is_last_key(CY_BRC) && recent_key_state.count == 2) {
@@ -2648,10 +2706,6 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
 
-    if (is_bracket_macro(keycode) || is_bracket_wrap_macro(keycode)) {
-        update_last_keys(keycode, 2);
-        return true;
-    }
     if (keycode == CS_CONJ || keycode == CS_DISJ) {
         if (ctrl_on() && shifted()) {
             update_last_keys(KC_NO, 4);
@@ -2667,6 +2721,9 @@ static bool process_key_tracking(uint16_t keycode, keyrecord_t* record) {
 
     // Tracking handled in macro for reactive events
     if (is_select_macro(keycode) || keycode == EO_ENT) {
+        return true;
+    }
+    if (is_wrapping_macro(keycode)) {
         return true;
     }
     if (is_cycling_macro(keycode)) {
@@ -3500,90 +3557,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 send_string(". ");
                 set_mods(mods);
                 add_oneshot_mods(MOD_BIT(KC_LSFT));
-            }
-            break;
-
-        case CS_NORM:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CS);
-                tap_code16(LSFT(KC_NUBS));
-                tap_code16(LSFT(KC_NUBS));
-                tap_code(KC_LEFT);
-                set_mods(mods);
-            }
-            break;
-
-        case CS_CBRS:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CS);
-                tap_code16(KC_LCBR);
-                tap_code16(KC_RCBR);
-                tap_code(KC_LEFT);
-                set_mods(mods);
-            }
-            break;
-
-        case CS_PRNS:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CS);
-                tap_code16(KC_LPRN);
-                tap_code16(KC_RPRN);
-                tap_code(KC_LEFT);
-                set_mods(mods);
-            }
-            break;
-
-        case CS_BRCS:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CS);
-                tap_code(KC_LBRC);
-                tap_code(KC_RBRC);
-                tap_code(KC_LEFT);
-                set_mods(mods);
-            }
-            break;
-
-        // Edit overlay keys
-        case WORDCBR:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_RGHT);
-                tap_code16(LCTL(KC_LEFT));
-                tap_code16(KC_LCBR);
-                tap_code16(LCTL(KC_RGHT));
-                tap_code16(KC_RCBR);
-                set_mods(mods);
-            }
-            break;
-
-        case WORDPRN:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_RGHT);
-                tap_code16(LCTL(KC_LEFT));
-                tap_code16(KC_LPRN);
-                tap_code16(LCTL(KC_RGHT));
-                tap_code16(KC_RPRN);
-                set_mods(mods);
-            }
-            break;
-
-        case WORDBRC:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_RGHT);
-                tap_code16(LCTL(KC_LEFT));
-                tap_code(KC_LBRC);
-                tap_code16(LCTL(KC_RGHT));
-                tap_code(KC_RBRC);
-                set_mods(mods);
             }
             break;
 
