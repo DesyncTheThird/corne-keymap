@@ -1491,35 +1491,48 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
 }
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
+    uint16_t combo_term = 0;
     switch (index) {
         case CAPSWORD:
-            return 30;
+            combo_term = 30;
+            break;
 
         case L_NEWSENT:
         case R_NEWSENT:
         case L_UNDERSCORE:
         case R_UNDERSCORE:
-            return 50;
+            combo_term = 50;
+            break;
 
         case L_COMMA:
         case R_COMMA:
-            return 25;
+            combo_term = 25;
+            break;
 
         case L_EXPONENT:
         case R_EXPONENT:
         case L_MINUS:
         case R_MINUS:
-            return 15;
+            combo_term = 15;
+            break;
 
         case BACKSPACE:
         case TRANSPOSE:
         case MOUSE:
         case MOUSE2:
-            return 75;
+            combo_term = 75;
+            break;
 
         default:
-            return 20;
+            combo_term = 20;
+            break;
     }
+
+    if (IS_LAYER_ON(_EDIT) || IS_LAYER_ON(_PROGRAM) || IS_LAYER_ON(_SYMBOL)) {
+        combo_term /= 5;
+    }
+
+    return combo_term;
 }
 
 bool get_combo_must_tap(uint16_t index, combo_t *combo) {
@@ -1556,15 +1569,16 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo,
         case AMPERSAND:
         case COLON:
         case L_NEWSENT:
-            if (layer_state_is(_EDIT)) { 
+            if (IS_LAYER_ON(_EDIT)) { 
                 return false;
             }
 
         default:
-            if (!(layer_state_is(_BASIC)
-               || layer_state_is(_TOUHOU)
-               || layer_state_is(_MOUSE)
-               || layer_state_is(_STENO))) {
+            if (IS_LAYER_OFF(_BASIC)
+             && IS_LAYER_OFF(_TOUHOU)
+             && IS_LAYER_OFF(_MOUSE)
+             && IS_LAYER_OFF(_STENO)
+             && IS_LAYER_OFF(_UTILITY)) {
                 return true;
             }
             return false;
