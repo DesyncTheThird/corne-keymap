@@ -2589,13 +2589,17 @@ static void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
     recent_key_state.last_key_3 = recent_key_state.last_key_2;
     recent_key_state.last_key_2 = recent_key_state.last_key;
     recent_key_state.last_key   = new_keycode;
-
+    
     recent_key_state.count = new_count;
 }
 
 static bool process_rollback(void) {
     if (ctrl_on()) {
-        rollback_last_key();
+        recent_key_state.count = 1;
+
+        recent_key_state.last_key   = KC_NO;
+        recent_key_state.last_key_2 = KC_NO;
+        recent_key_state.last_key_3 = KC_NO;
         return true;
     }
 
