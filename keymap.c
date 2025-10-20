@@ -144,7 +144,7 @@ enum custom_keycodes {
 #define RS_J    RSFT_T(KC_J)
 #define RC_K    RCTL_T(KC_K)
 #define RA_L    LALT_T(KC_L)
-#define RS_SCLN RGUI_T(KC_SCLN)
+#define RG_SCLN RGUI_T(KC_SCLN)
 
 // Alt layout home row mods
 #define LG_N LGUI_T(KC_N)
@@ -337,7 +337,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          TABLSFT,    LG_A,    LA_S,    LC_D,    LS_F,    KC_G,                         KC_H,    RS_J,    RC_K,    RA_L, RS_SCLN, TABRSFT,
+          TABLSFT,    LG_A,    LA_S,    LC_D,    LS_F,    KC_G,                         KC_H,    RS_J,    RC_K,    RA_L, RG_SCLN, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           CS_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_EXL, DOT_QUE, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -666,7 +666,7 @@ static inline bool is_base_hrm(uint16_t keycode) {
         case RS_J:
         case RC_K:
         case RA_L:
-        case RS_SCLN:
+        case RG_SCLN:
 
         case LG_N:
         case LA_R:
@@ -714,7 +714,7 @@ static inline bool is_hrm(uint16_t keycode) {
         case RS_J:
         case RC_K:
         case RA_L:
-        case RS_SCLN:
+        case RG_SCLN:
 
         case LG_N:
         case LA_R:
@@ -992,7 +992,7 @@ static bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
             homerow_mod(MOD_BIT(KC_LALT), record);
             break;
         // RGUI
-        case RS_SCLN:
+        case RG_SCLN:
         case RG_A:
         case RG_UNDS:
         case RG_0:
@@ -1029,6 +1029,10 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t* record,
         return 0;
     }
 
+    if (IS_LAYER_ON(_EDIT)) {
+        return 0;
+    }
+
     if (is_flow_tap_key(keycode) && is_flow_tap_key(prev_keycode)) {
         switch (keycode) {
             // Shift mod-taps
@@ -1036,7 +1040,7 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t* record,
             case RS_J:
             case LS_S:
             case RS_H:
-                return 0; // Disable Flow Tap
+                return 25;
 
             // Ctrl mod-taps
             case LC_D:
@@ -1050,19 +1054,20 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t* record,
             case RA_L:
             case LA_R:
             case RA_I:
-                return 150;
+                return 200;
 
             // GUI mod-taps
             case LG_A:
-            case RS_SCLN:
+            case RG_SCLN:
             case LG_N:
             case RG_A:
-                return 100;
+                return 200;
 
             default:
                 return FLOW_TAP_TERM;
         }
     }
+
     return 0;
 }
 
@@ -1116,40 +1121,29 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case TABRSFT:
             return 125;
 
-        // Shift mod-taps
-        case LS_F:
-        case RS_J:
-        case LS_S:
-        case RS_H:
-            return 150;
-
-        // Ctrl mod-taps
-        case LC_D:
-        case RC_K:
-        case LC_T:
-        case RC_E:
-            return 200;
-
-        // Alt mod-taps
-        case LA_S:
-        case RA_L:
-        case LA_R:
-        case RA_I:
-            return 200;
-
-        // GUI mod-taps
-        case LG_A:
-        case RS_SCLN:
-        case LG_N:
-        case RG_A:
-            return 250;
-
         case OSMLSFT:
             return 300;
 
         default:
-            return TAPPING_TERM;
+            break;
     }
+
+    uint8_t mod = mod_config(QK_MOD_TAP_GET_MODS(keycode));
+
+    if (mod & MOD_LSFT || mod & MOD_RSFT) {
+        return 150;
+    }
+    if (mod & MOD_LCTL || mod & MOD_RCTL) {
+        return 200;
+    }
+    if (mod & MOD_LALT || mod & MOD_RALT) {
+        return 225;
+    }
+    if (mod & MOD_LGUI || mod & MOD_RGUI) {
+        return 250;
+    }
+
+    return TAPPING_TERM;
 }
 
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
@@ -1177,6 +1171,19 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
+    if (!is_base_hrm(keycode)) {
+        return true;
+    }
+
+    uint8_t mod = mod_config(QK_MOD_TAP_GET_MODS(keycode));
+
+    if (mod & MOD_LALT || mod & MOD_RALT ) {
+        return false;
+    }
+    if (mod & MOD_LGUI || mod & MOD_RGUI ) {
+        return false;
+    }
+
     return true;
 }
 
