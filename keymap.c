@@ -2007,25 +2007,16 @@ uint16_t mod8_to_qk16(uint8_t mod_mask) {
     return qk_mod;
 }
 
-static void arrow_ctrl(bool active) {
-    arrow_state.last_key = ARROW_NONE;
-    uint16_t mod = active ? MOD_BIT_LCTRL << 8 : 0x0000;
-
-    for (int i = 0; i < 4; i++ ) {
-        if (arrow_state.held_keys & 1 << i) {
-            unregister_code16(LCTL(arrows[i]));
-            register_code16(mod | arrows[i]);
-        }
-    }
-}
-
-static void arrow_update(void) {
-    arrow_state.last_key = ARROW_NONE;
+static void arrow_update_mods(uint8_t add, uint8_t del) {
+    uint8_t mods = 0x00;
+    
+    mods &= ~del;
+    mods |= add;
 
     for (int i = 0; i < 4; i++ ) {
         if (arrow_state.held_keys & 1 << i) {
             unregister_code16(HYPR(arrows[i]));
-            register_code(arrows[i]);
+            register_code16(mod8_to_qk16(mods) | arrows[i]);
         }
     }
 }
@@ -2060,7 +2051,7 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
 
     if (is_hrm(keycode) && QK_MOD_TAP_GET_MODS(keycode) & MOD_MASK_CS) {
         if (!record->tap.count){
-            arrow_update();
+            arrow_update_mods(0x00, 0x00);
             return true;
         }
     }
@@ -2072,10 +2063,10 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
 
         if (record->event.pressed) {
             arrow_state.ctrl_active = true;
-            arrow_ctrl(true);
+            arrow_update_mods(MOD_BIT_LCTRL, 0x00);
         } else if (arrow_state.ctrl_active) {
             arrow_state.ctrl_active = false;
-            arrow_ctrl(false);
+            arrow_update_mods(0x00, MOD_BIT_LCTRL);
         }
         return true;
     }
@@ -2083,7 +2074,7 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
     if (IS_LAYER_ON(_EDIT_OVERLAY)) {
         if (keycode == CS_LCTL) {
             if (record->event.pressed) {
-                arrow_ctrl(true);
+                arrow_update_mods(MOD_BIT_LCTRL, 0x00);
                 arrow_state.ctrl_active = true;
             }
             return true;
