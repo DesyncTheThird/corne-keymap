@@ -114,7 +114,9 @@ Any keys pressed while the control modifier is active are not tracked. This does
 >
 > `a b c [BSPC] [Rep]` produces `a b b` (`Rep` returns previous tracked key `b`).
 
-Note that this feature only tracks two keys into the past.
+However, `Ctrl`+`Backspace` will reset key tracking history.
+
+Note that this feature only tracks three keys into the past.
 
 After a short duration (default 1000ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state.
 
@@ -362,6 +364,11 @@ The bottom row of the [`Control Overlay`](#control-overlay) can also be activate
 ### Macros
 
 The `Lock` key activates the [Layer Lock](https://docs.qmk.fm/features/layer_lock) feature, for extended navigation.
+
+The `Nav Tabs` macro moves focus between tabs, to the right by default:
+- Holding `Shift` will cycle tabs to the left; holding `Ctrl` will additionally move the current tab.
+
+The `>_` macro comments the current line (`Ctrl`+`/`).
 
 The left hand bracket macro surrounds the current word with brackets, and cycles the bracket type on subsequent presses:
 - `⟦⟳⟧`: `(-)` -> `{-}` -> `[-]` -> `(-)` -> ...
