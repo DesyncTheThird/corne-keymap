@@ -221,8 +221,6 @@ enum custom_keycodes {
 #define DUPL    LCTL(KC_J)
 
 // Other
-#define NXT_TAB LCTL(KC_PGDN)
-#define PRV_TAB LCTL(KC_PGUP)
 #define OSMLSFT OSM(MOD_LSFT)
 
 static inline uint16_t cs_map(uint16_t keycode) {
@@ -491,9 +489,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_MOUSE] = LAYOUT( //14
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NXT_TAB, MS_BTN4,   MS_UP, MS_BTN5, QK_LLCK,                      _______, _______, _______, _______, _______, _______,
+          _______, NAVTABS, MS_BTN4,   MS_UP, MS_BTN5, QK_LLCK,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, PRV_TAB, MS_LEFT, MS_DOWN, MS_RGHT,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
+          _______, COMMENT, MS_LEFT, MS_DOWN, MS_RGHT,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LCTL, MS_WHLL, MS_WHLU, MS_WHLD, MS_WHLR,  KC_ENT,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -2090,14 +2088,13 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
     if (IS_LAYER_OFF(_EDIT)) {
         edit_clip = false;
     }
-    if (get_highest_layer(layer_state) != _EDIT
-     && get_highest_layer(layer_state) != _EDIT_OVERLAY 
-     && get_highest_layer(layer_state) != _DATA_OVERLAY) {
-        return true;
-    }
+
     switch (keycode) {
         case KC_PGDN:
-        case PRV_TAB:
+            if (get_highest_layer(layer_state) != _EDIT_OVERLAY) {
+                return true;
+            }
+            
             if (record->event.pressed) {
                 if (ctrl_on() && IS_LAYER_ON(_EDIT)) {
                     register_code16(LCTL(KC_Y));
@@ -2163,28 +2160,7 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
                 unregister_code16(LSFT(LCTL(KC_RGHT)));
             }
             return false;
-
-        case NAVTABS:
-            if (record->event.pressed) {
-                uint8_t mods = get_mods();
-                uint16_t key = shifted() ? KC_PGUP : KC_PGDN;
-                del_mods(MOD_MASK_SHIFT);
-                if (ctrl_on()) {
-                    add_mods(MOD_MASK_SHIFT);
-                }
-                tap_code16(LCTL(key));
-                set_mods(mods);
-                update_last_key(key);
-            }
-            return false;
             
-        case COMMENT:
-            if (record->event.pressed) {
-                cs_tap_code16(LCTL(KC_SLSH));
-            }
-            update_last_key(KC_NO);
-            return false;
-
         case WRAPCBR:
             if (record->event.pressed) {
                 if (is_wrapping_macro(get_last_key())) {
@@ -2235,7 +2211,6 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
                 update_last_key(keycode);
             }
             return false;
-
 
         case EO_ENT:
             if (record->event.pressed) {
@@ -2455,6 +2430,11 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
 
         case CY_WRAP:
             if (record->event.pressed) {
+                if (ctrl_on() && IS_LAYER_ON(_EDIT)) {
+                    register_code16(LCTL(KC_Y));
+                    return false;
+                }
+
                 switch (cycle_state.wrap) {
                     case 0: {
                         const uint8_t mods = get_mods();
@@ -3554,6 +3534,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         // =====================================================================
         // Macros
         // =====================================================================
+
+        case NAVTABS:
+            if (record->event.pressed) {
+                uint8_t mods = get_mods();
+                uint16_t key = shifted() ? KC_PGUP : KC_PGDN;
+                del_mods(MOD_MASK_SHIFT);
+                if (ctrl_on()) {
+                    add_mods(MOD_MASK_SHIFT);
+                }
+                tap_code16(LCTL(key));
+                set_mods(mods);
+                update_last_key(key);
+            }
+            break;
+
+        case COMMENT:
+            if (record->event.pressed) {
+                cs_tap_code16(LCTL(KC_SLSH));
+            }
+            update_last_key(KC_NO);
+            break;
 
         case NEWSENT:
             if (record->event.pressed) {
