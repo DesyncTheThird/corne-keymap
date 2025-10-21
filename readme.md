@@ -339,6 +339,8 @@ The `LCTL` key also sets a weak one shot `Ctrl` modifier for the `Backspace` key
 ![Data](images/data.png?raw=true)
 Number grid with `1`, `2`, and `3` on right hand home row, along with common numerical separators on left hand home row, sharing similar layout to `Symbol` and `Program` layers.
 
+### Macros
+
 The inner column on the right hand has *cycling macros* which cycle between different outputs on repeated presses:
 - `Misc`: `%` -> `@` -> `£` -> `` -> ...
 - `Bracket`: `()` -> `{}` -> `[]` -> `()` -> ...
@@ -373,7 +375,7 @@ The `>_` macro comments the current line (`Ctrl`+`/`).
 The left hand bracket macro surrounds the current word with brackets, and cycles the bracket type on subsequent presses:
 - `⟦⟳⟧`: `(-)` -> `{-}` -> `[-]` -> `(-)` -> ...
 
-In place of the bracket macro as on the `Data` layer, there is an enumeration macro:
+In place of the bracket macro as on the `Data` layer, there is an *enumeration macro*:
 - The `++` macro outputs `1` on first press and increments on subsequent presses, rolling over to `0` after `9`, and resetting to `1` when the `Edit` layer is released.
 
   Holding `Shift` will replace the current number with its successor; holding `Ctrl` will decrement instead; and holding both will replace the the current number with its predecessor.
@@ -401,7 +403,7 @@ If an arrow key is held on the `Edit` layer while the `Edit Overlay` is activate
 
 The modifier will be disabled if no arrow key is pressed for 1000ms; if an arrow key is double-tapped within 150ms, or if any other key is pressed.
 
-The `Ctrl` key will also become sticky for arrow keys while the overlay is active, reactivating the persistent modifier. Home row mods will also automatically retrigger arrow keys on the `Edit` layer.
+The `Ctrl` key will also become sticky for arrow keys while the overlay is active, reactivating the persistent modifier. `Shift` and `Ctrl` home row mods will also automatically retrigger arrow keys.
 
 > [!NOTE]
 > You can modify these features in the `process_arrow_retrigger` function.
