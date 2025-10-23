@@ -68,8 +68,8 @@ Other:
 Right hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev   | `J`   | `F` | `O` | `U` | `Y` | `H` | `E` | `I` | `A`   | `K` | `P` |
-| Repeat | `UST` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `ND⎵` | `Y` | `H` |
+| Prev   | `J`   | `F` | `O` | `U` | `Y` | `H` | `E` | `I` | `A`  | `K` | `P` |
+| Repeat | `UST` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `PH` | `Y` | `H` |
 
 Left hand overrides:
 |     |     |     |     |
