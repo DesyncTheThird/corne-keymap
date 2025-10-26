@@ -1357,6 +1357,17 @@ enum combo_events {
     SPC_F4,
     SPC_F5,
 
+    SPC_1,
+    SPC_2,
+    SPC_3,
+    SPC_4,
+    SPC_5,
+    SPC_6,
+    SPC_7,
+    SPC_8,
+    SPC_9,
+    SPC_0,
+
     COMBO_LENGTH
 };
 uint16_t COMBO_LEN = COMBO_LENGTH;
@@ -1400,6 +1411,17 @@ const uint16_t PROGMEM spc_f3[]       = {  KC_SPC,    KC_E,                   CO
 const uint16_t PROGMEM spc_f4[]       = {  KC_SPC,    KC_R,                   COMBO_END};
 const uint16_t PROGMEM spc_f5[]       = {  KC_SPC,    KC_T,                   COMBO_END};
 
+const uint16_t PROGMEM spc_1[]        = {  KC_SPC,    KC_A,                   COMBO_END};
+const uint16_t PROGMEM spc_2[]        = {  KC_SPC,    KC_S,                   COMBO_END};
+const uint16_t PROGMEM spc_3[]        = {  KC_SPC,    KC_D,                   COMBO_END};
+const uint16_t PROGMEM spc_4[]        = {  KC_SPC,    KC_F,                   COMBO_END};
+const uint16_t PROGMEM spc_5[]        = {  KC_SPC,    KC_G,                   COMBO_END};
+const uint16_t PROGMEM spc_6[]        = {  KC_SPC,    KC_Z,                   COMBO_END};
+const uint16_t PROGMEM spc_7[]        = {  KC_SPC,    KC_X,                   COMBO_END};
+const uint16_t PROGMEM spc_8[]        = {  KC_SPC,    KC_C,                   COMBO_END};
+const uint16_t PROGMEM spc_9[]        = {  KC_SPC,    KC_V,                   COMBO_END};
+const uint16_t PROGMEM spc_0[]        = {  KC_SPC,    KC_B,                   COMBO_END};
+
 combo_t key_combos[] = {
     [TOUHOU]        = COMBO_ACTION(touhou),
     [STENO]         = COMBO_ACTION(steno),
@@ -1441,6 +1463,17 @@ combo_t key_combos[] = {
     [SPC_F3]        = COMBO(spc_f3,       KC_F3),
     [SPC_F4]        = COMBO(spc_f4,       KC_F4),
     [SPC_F5]        = COMBO(spc_f5,       KC_F5),
+
+    [SPC_1]         = COMBO(spc_1,       KC_1),
+    [SPC_2]         = COMBO(spc_2,       KC_2),
+    [SPC_3]         = COMBO(spc_3,       KC_3),
+    [SPC_4]         = COMBO(spc_4,       KC_4),
+    [SPC_5]         = COMBO(spc_5,       KC_5),
+    [SPC_6]         = COMBO(spc_6,       KC_6),
+    [SPC_7]         = COMBO(spc_7,       KC_7),
+    [SPC_8]         = COMBO(spc_8,       KC_8),
+    [SPC_9]         = COMBO(spc_9,       KC_9),
+    [SPC_0]         = COMBO(spc_0,       KC_0),
 };
 
 void process_combo_event(uint16_t combo_index, bool pressed) {
@@ -2997,23 +3030,23 @@ typedef struct {
 } keymatch_rule_t;
 
 static const keymatch_rule_t match_rules[] = {
-    { EITHER, { JUST, KC_N    }, { JUST, KC_T    }, /*n*/"'t ",  { true, KC_SPC, 3  } },
-    { EITHER, { JUST, KC_N    }, { JUST, KC_B    }, /*n*/".b.",  { true, KC_DOT, 3  } },
-    { LEFT,   { JUST, KC_I    }, { JUST, KC_E    }, /*i*/".e.",  { true, KC_DOT, 3  } },
-    { LEFT,   { JUST, KC_A    }, { JUST, KC_M    }, /*a*/".m.",  { true, KC_DOT, 3  } },
-    { EITHER, { JUST, KC_P    }, { JUST, KC_M    }, /*p*/".m.",  { true, KC_DOT, 3  } },
+    { EITHER, { JUST, KC_N    }, { JUST, KC_T    }, /*n*/"'t ",  { true, KC_SPC,  3 } },
+    { EITHER, { JUST, KC_N    }, { JUST, KC_B    }, /*n*/".b.",  { true, KC_DOT,  3 } },
+    { LEFT,   { JUST, KC_I    }, { JUST, KC_E    }, /*i*/".e.",  { true, KC_DOT,  3 } },
+    { LEFT,   { JUST, KC_A    }, { JUST, KC_M    }, /*a*/".m.",  { true, KC_DOT,  3 } },
+    { EITHER, { JUST, KC_P    }, { JUST, KC_M    }, /*p*/".m.",  { true, KC_DOT,  3 } },
     { RIGHT,  { ANY_SPACE     }, { IMMEDIATE     }, /*⎵*/"-",    { true, KC_MINS, 1 } },
-    { RIGHT,  { JUST, KC_E    }, { JUST, KC_G    }, /*e*/".g.",  { true, KC_DOT, 3  } },
+    { RIGHT,  { JUST, KC_E    }, { JUST, KC_G    }, /*e*/".g.",  { true, KC_DOT,  3 } },
     { EITHER, { ANY_KEY       }, { JUST, KC_ENT  }, /*-*/";",    { false            } },
     { EITHER, { ANY_KEY       }, { JUST, CS_LT3  }, /*-*/";",    { false            } },
     { LEFT,   { JUST, KC_S    }, { ANY_SPACE     }, /*s*/"'",    { false            } },
     { EITHER, { ANY_LETTER    }, { ANY_SPACE     }, /*-*/",",    { false            } },
-    { EITHER, { ANY_LETTER    }, { JUST, KC_D    }, /*-*/"'d ",  { true, KC_SPC, 3  } },
-    { EITHER, { ANY_LETTER    }, { JUST, KC_L    }, /*-*/"'ll ", { true, KC_SPC, 4  } },
-    { EITHER, { ANY_LETTER    }, { JUST, KC_V    }, /*-*/"'ve ", { true, KC_SPC, 4  } },
-    { EITHER, { ANY_LETTER    }, { JUST, KC_M    }, /*-*/"'m ",  { true, KC_SPC, 3  } },
-    { EITHER, { ANY_LETTER    }, { JUST, KC_S    }, /*-*/"'s ",  { true, KC_SPC, 3  } },
-    { EITHER, { ANY_LETTER    }, { JUST, KC_R    }, /*-*/"'re ", { true, KC_SPC, 4  } },
+    { EITHER, { ANY_LETTER    }, { JUST, KC_D    }, /*-*/"'d ",  { true, KC_SPC,  3 } },
+    { EITHER, { ANY_LETTER    }, { JUST, KC_L    }, /*-*/"'ll ", { true, KC_SPC,  4 } },
+    { EITHER, { ANY_LETTER    }, { JUST, KC_V    }, /*-*/"'ve ", { true, KC_SPC,  4 } },
+    { EITHER, { ANY_LETTER    }, { JUST, KC_M    }, /*-*/"'m ",  { true, KC_SPC,  3 } },
+    { EITHER, { ANY_LETTER    }, { JUST, KC_S    }, /*-*/"'s ",  { true, KC_SPC,  3 } },
+    { EITHER, { ANY_LETTER    }, { JUST, KC_R    }, /*-*/"'re ", { true, KC_SPC,  4 } },
 
     // Double taps and rolls
     { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE     }, "''",   { true, KC_QUOT, 2 } }, // -> [-]'

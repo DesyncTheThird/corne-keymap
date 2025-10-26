@@ -225,15 +225,17 @@ To indicate that the feature is active, the per-key LEDs will glow green while t
 
 ---
 
-Pressing `Space` plus a key on the left hand top row will output the function keys `F1` to `F5` for left-hand-only usage. (Not shown on image due to reduce clutter.)
-
 Common punctuation is accessible from combos on or near home row. Mouse emulation layer is accessible on pinky key combos to allow mouse control without moving from home row. Uncommon locking layers (numpad/steno) are also accessible from large combos.
 
 - `New` combo emits `Dot`, `Space`, then sets a one shot shift;
 - `⇄` thumb combo transposes the previous two characters.
 - `«` thumb combo emits `Ctrl`+`Bspc`;
 
-The Caps Word feature shifts letter keys (including `Magic` and `Repeat` outputs) and is automatically disabled at the end of the word. The shift modifier will also be retained between separators while the [Case Lock](#case-lock) feature is active.
+The `Caps Word` feature combo shifts letter keys (including `Magic` and `Repeat` outputs) and is automatically disabled at the end of the word. The shift modifier will also be retained between separators while the [Case Lock](#case-lock) feature is active.
+
+There are also more left-hand combos with the `Space` key, not shown on the image to reduce clutter. Pressing `Space` with:
+- a top row key will output the function keys `F1` to `F5`;
+- home or bottom row will output numbers `1` to `5` on home row, and `6` to `0` on the lower row.
 
 
 
