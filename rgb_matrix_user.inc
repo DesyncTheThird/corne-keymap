@@ -188,7 +188,7 @@ static bool fade_in_effect(effect_params_t *params) {
 
 static hsv_t reactive_smooth_math(hsv_t hsv, uint16_t offset) {
     hsv.h += scale16by8(g_rgb_timer, qadd8(rgb_matrix_config.speed, 8) >> 4);
-    hsv.h += scale8(quadwave8(offset), 64);
+    hsv.h += scale8(offset > 255 ? 0 : 255 - cubicwave8(0.5*offset), 64);
     return hsv;
 }
 
