@@ -335,6 +335,8 @@ A copy of `Tab` is placed on the right hand to reduce left hand contortions. The
 
 The `LCTL` key also sets a weak one shot `Ctrl` modifier for the `Backspace` key only to allow for faster usage while typing. The one shot modifier lingers for 500ms and is removed on any other keypress (without being applied).
 
+The `Basic` key on the `Utility` layer disables home row mods and combos on this base layer.
+
 
 
 ## Data
@@ -437,11 +439,11 @@ Brackets on right hand as above.
 
 The `Mute` thumb keys only activate on the hand opposite to the one holding the layer key to avoid accidental activations. The `Volume Up/Down` keys are macros that rapidly and repeatedly send the volume control keycodes for smooth volume control; holding shift sends the keycodes only once for finer control.
 
-`Base` swaps default layer to QWERTY layout; `Basic` swaps default layer to QWERTY layout with home row mods and `Space` layer-tap disabled (right hand `Data` layer is still accessible by simultaneously activating `Edit` and `Symbol` layers).
+The `Basic` key disables home row mods, combos, and `Space` layer-tap (the right hand of the `Data` layer is still accessible by simultaneously activating `Edit` and `Symbol` layers). The `Base` additionally changes the base layout to QWERTY.
 
-`Clock` keys set the OLED clock. `OLED Static` disables animations and changes OLEDs to static images. `OLED Menu` toggles between layer stack view and layout display on right OLED.
+The `Clock` keys set the OLED clock. `OLED Static` disables animations and changes OLEDs to static images. `OLED Menu` toggles between layer stack view and layout display on right OLED.
 
-`Alt Tab` key holds `LAlt` and taps `Tab` on first press; taps `Tab` on subsequent presses; `LAlt` is released when layer key is released.
+The `Alt Tab` key holds `LAlt` and taps `Tab` on first press; taps `Tab` on subsequent presses; `LAlt` is released when layer key is released.
 
 Tap the `Reboot` key to reboot keyboard; hold for one second to enter bootloader.
 
@@ -483,7 +485,7 @@ The right hand is replaced with macros useful for editing:
 ## QWERTY
 ![QWERTY](images/qwerty.png?raw=true)
 
-Accessible with `Base` key on `Utility` layer, or `Basic` to also disable home row mods and `Space` layer-tap (for games).
+Accessible with `Base` key on `Utility` layer. This layer does not have home row mods, combos, or `Space` layer-tap enabled (for games).
 
 > [!WARNING]
 > Modifying the _BASIC layer will also require changing mod-tap and combo code.
