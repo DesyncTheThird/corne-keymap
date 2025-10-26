@@ -3639,9 +3639,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                     tap_code16(KC_AMPR);
                 } else {
                     del_mods(MOD_MASK_CSAG);
-                    tap_code16(KC_AMPR);
+                    cs_register_code16(KC_AMPR);
                 }
                 set_mods(mods);
+            } else {
+                cs_unregister_code16(KC_AMPR);
             }
             break;
 
@@ -3666,9 +3668,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                     tap_code16(LSFT(KC_NUBS));
                 } else {
                     del_mods(MOD_MASK_CSAG);
-                    tap_code16(LSFT(KC_NUBS));
+                    cs_register_code16(LSFT(KC_NUBS));
                 }
                 set_mods(mods);
+            } else {
+                cs_unregister_code16(LSFT(KC_NUBS));
             }
             break;
 
