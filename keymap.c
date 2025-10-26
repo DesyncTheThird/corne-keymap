@@ -4748,11 +4748,11 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     if (IS_LAYER_ON_STATE(state, _MOUSE)) {
         rgb_matrix_sethsv_noeeprom(209,255,192);
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
-    } else if (IS_LAYER_ON_STATE(state, _QWERTY) ||
+    } else if (IS_LAYER_ON_STATE(state, _BASIC) ||
                IS_LAYER_ON_STATE(state, _TOUHOU)) {
         rgb_matrix_sethsv_noeeprom(127,255,255);
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
-    } else if (IS_LAYER_ON_STATE(state, _BASIC)) {
+    } else if (IS_LAYER_ON_STATE(state, _QWERTY)) {
         rgb_matrix_sethsv_noeeprom(255,255,255);
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
     } else {
