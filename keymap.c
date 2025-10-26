@@ -6,8 +6,8 @@
 // #include "ps2.h"
 
 enum corne_layers {
-    _BASIC,
     _QWERTY,
+    _BASIC,
     _BASE,
     _CONTROL,
     _STENO,
@@ -136,17 +136,6 @@ enum custom_keycodes {
 };
 
 // Home row mods
-#define LG_A LGUI_T(KC_A)
-#define LA_S LALT_T(KC_S)
-#define LC_D LCTL_T(KC_D)
-#define LS_F LSFT_T(KC_F)
-
-#define RS_J    RSFT_T(KC_J)
-#define RC_K    RCTL_T(KC_K)
-#define RA_L    LALT_T(KC_L)
-#define RG_SCLN RGUI_T(KC_SCLN)
-
-// Alt layout home row mods
 #define LG_N LGUI_T(KC_N)
 #define LA_R LALT_T(KC_R)
 #define LC_T LCTL_T(KC_T)
@@ -319,7 +308,7 @@ static inline uint16_t cs_map(uint16_t keycode) {
 }
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [_BASIC] = LAYOUT( //0
+    [_QWERTY] = LAYOUT( //0
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -328,18 +317,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
           KC_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_EXL, DOT_QUE, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  KC_SPC,     CS_RT1,  CS_RT2,  CS_RT3
-                                          //`--------------------------'  `--------------------------'
     ),
 
-    [_QWERTY] = LAYOUT( //1
+    [_BASIC] = LAYOUT( //1
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, CS_HASH,
+           KC_ESC,    KC_Z,    KC_L,    KC_D,    KC_C,    KC_B,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          TABLSFT,    LG_A,    LA_S,    LC_D,    LS_F,    KC_G,                         KC_H,    RS_J,    RC_K,    RA_L, RG_SCLN, TABRSFT,
+          KC_LSFT,    KC_N,    KC_R,    KC_T,    KC_S,    KC_G,                         KC_Y,    KC_H,    KC_E,    KC_I,    KC_A, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_QUOT, COM_EXL, DOT_QUE, CS_CASE,
+          KC_LCTL,    KC_Q,    KC_X,    KC_M,    KC_W,    KC_V,                         KC_K,    KC_P, PCTLEFT, PCTRGHT, DOT_QUE, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                               CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
+                                               CS_LT3,  CS_LT2,  KC_SPC,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -657,15 +645,6 @@ static inline bool is_cs_symbol(uint16_t keycode) {
 
 static inline bool is_base_hrm(uint16_t keycode) { 
     switch(keycode) {
-        case LG_A:
-        case LA_S:
-        case LC_D:
-        case LS_F:
-        case RS_J:
-        case RC_K:
-        case RA_L:
-        case RG_SCLN:
-
         case LG_N:
         case LA_R:
         case LC_T:
@@ -705,15 +684,6 @@ static inline bool is_symbol_hrm(uint16_t keycode) {
 
 static inline bool is_hrm(uint16_t keycode) {
     switch (keycode) {
-        case LG_A:
-        case LA_S:
-        case LC_D:
-        case LS_F:
-        case RS_J:
-        case RC_K:
-        case RA_L:
-        case RG_SCLN:
-
         case LG_N:
         case LA_R:
         case LC_T:
@@ -805,6 +775,24 @@ static inline void cs_tap_code(uint16_t keycode) {
         keycode = cs_map(keycode);
     }
     tap_code16(keycode);
+    set_mods(mods);
+}
+static inline void cs_register_code16(uint16_t keycode) {
+    const uint8_t mods = get_mods();
+    del_mods(MOD_MASK_SHIFT);
+    if (is_cs_symbol(keycode)) {
+        keycode = cs_map(keycode);
+    }
+    register_code16(keycode);
+    set_mods(mods);
+}
+static inline void cs_unregister_code16(uint16_t keycode) {
+    const uint8_t mods = get_mods();
+    del_mods(MOD_MASK_SHIFT);
+    if (is_cs_symbol(keycode)) {
+        keycode = cs_map(keycode);
+    }
+    unregister_code16(keycode);
     set_mods(mods);
 }
 
@@ -942,31 +930,26 @@ static bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         // LGUI
         case LG_N:
-        case LG_A:
         case LG_EXLM:
             homerow_mod(MOD_BIT(KC_LGUI), record);
             break;
         // LALT
-        case LA_S:
         case LA_R:
         case LA_COLN:
             homerow_mod(MOD_BIT(KC_LALT), record);
             break;
         // LCTL
-        case LC_D:
         case LC_T:
         case LC_DOT:
             homerow_mod(MOD_BIT(KC_LCTL), record);
             break;
         // LSFT
-        case LS_F:
         case LS_S:
         case LS_COMM:
             homerow_mod(MOD_BIT(KC_LSFT), record);
             break;
 
         // RSFT
-        case RS_J:
         case RS_H:
         case RS_RPRN:
         case RS_1:
@@ -974,7 +957,6 @@ static bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
             homerow_mod(MOD_BIT(KC_RSFT), record);
             break;
         // RCTL
-        case RC_K:
         case RC_E:
         case RC_LPRN:
         case RC_2:
@@ -982,7 +964,6 @@ static bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
             homerow_mod(MOD_BIT(KC_RCTL), record);
             break;
         // RALT
-        case RA_L:
         case RA_I:
         case RA_TILD:
         case RA_3:
@@ -990,7 +971,6 @@ static bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
             homerow_mod(MOD_BIT(KC_LALT), record);
             break;
         // RGUI
-        case RG_SCLN:
         case RG_A:
         case RG_UNDS:
         case RG_0:
@@ -1027,36 +1007,28 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t* record,
         return 0;
     }
 
-    if (IS_LAYER_ON(_EDIT)) {
+    if (keycode == CS_LT2 || IS_LAYER_ON(_EDIT)) {
         return 0;
     }
 
     if (is_flow_tap_key(keycode) && is_flow_tap_key(prev_keycode)) {
         switch (keycode) {
             // Shift mod-taps
-            case LS_F:
-            case RS_J:
             case LS_S:
             case RS_H:
                 return 25;
 
             // Ctrl mod-taps
-            case LC_D:
-            case RC_K:
             case LC_T:
             case RC_E:
                 return 75;
 
             // Alt mod-taps
-            case LA_S:
-            case RA_L:
             case LA_R:
             case RA_I:
                 return 200;
 
             // GUI mod-taps
-            case LG_A:
-            case RG_SCLN:
             case LG_N:
             case RG_A:
                 return 200;
@@ -1614,7 +1586,8 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo,
             }
 
         default:
-            if (IS_LAYER_OFF(_BASIC)
+            if (IS_LAYER_OFF(_QWERTY)
+             && IS_LAYER_OFF(_BASIC)
              && IS_LAYER_OFF(_TOUHOU)
              && IS_LAYER_OFF(_MOUSE)
              && IS_LAYER_OFF(_STENO)
@@ -2802,7 +2775,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
             del_mods(MOD_MASK_CTRL);
             recent_key_state.dynamic = true;
 
-            if (IS_LAYER_ON(_QWERTY) || IS_LAYER_ON(_BASIC)) {
+            if (IS_LAYER_ON(_BASIC) || IS_LAYER_ON(_QWERTY)) {
                 tap_code(get_last_key());
                 update_last_key(get_last_key());
                 set_mods(mods);
@@ -2895,7 +2868,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
             del_mods(MOD_MASK_CTRL);
             recent_key_state.dynamic = true;
 
-            if (IS_LAYER_ON(_QWERTY) || IS_LAYER_ON(_BASIC)) {
+            if (IS_LAYER_ON(_BASIC) || IS_LAYER_ON(_QWERTY)) {
                 tap_code(get_last_key());
                 update_last_key(get_last_key());
                 set_mods(mods);
@@ -2914,7 +2887,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_H: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_E: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_I: tap_code(KC_U); update_last_key(KC_U); break;
-                case KC_A: send_string(/*a*/"ph"); update_last_keys(KC_SPC, 3); break;
+                case KC_A: send_string(/*a*/"ph "); update_last_keys(KC_SPC, 3); break;
 
                 case KC_K: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_P: tap_code(KC_H); update_last_key(KC_H); break;
@@ -3559,8 +3532,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case CS_SYMBOLS_START ... CS_SYMBOLS_END:
             if (record->event.pressed) {
-                // dprint("CS SYMBOL\n");
-                cs_tap_code16(keycode);
+                cs_register_code16(keycode);
+            } else {
+                cs_unregister_code16(keycode);
             }
             return true;
 
@@ -3786,30 +3760,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        case BASE:
+        case BASIC:
             if (record->event.pressed) {
-                if (IS_LAYER_ON(_QWERTY)) {
-                    layer_off(_QWERTY);
+                if (IS_LAYER_ON(_BASIC)) {
+                    layer_off(_BASIC);
                     layer_on(_BASE);
                 } else if (IS_LAYER_ON(_BASE)) {
                     layer_off(_BASE);
-                    layer_on(_QWERTY);
+                    layer_on(_BASIC);
                 } else {
-                    layer_off(_BASIC);
-                    layer_on(_QWERTY);
+                    layer_off(_QWERTY);
+                    layer_on(_BASIC);
                 }
             }
             break;
-        case BASIC:
+        case BASE:
             if (record->event.pressed) {
-                if (IS_LAYER_ON(_QWERTY)) {
-                    layer_off(_QWERTY);
-                    layer_on(_BASIC);
+                if (IS_LAYER_ON(_BASIC)) {
+                    layer_off(_BASIC);
+                    layer_on(_QWERTY);
                 } else if (IS_LAYER_ON(_BASE)) {
                     layer_off(_BASE);
-                    layer_on(_BASIC);
+                    layer_on(_QWERTY);
                 } else {
-                    layer_off(_BASIC);
+                    layer_off(_QWERTY);
                     layer_on(_BASE);
                 }
             }
@@ -4214,12 +4188,12 @@ static void render_mode(void) {
         oled_write_P(PSTR(" Numpad\n"), false);
     } else if (IS_LAYER_ON(_STENO)) {
         oled_write_P(PSTR(" Steno.\n"), false);
-    } else if (IS_LAYER_ON(_QWERTY)) {
-        oled_write_P(PSTR(" QWERTY\n"), false);
+    } else if (IS_LAYER_ON(_BASIC)) {
+        oled_write_P(PSTR(" Basic\n"), false);
     } else if (IS_LAYER_ON(_BASE)) {
         oled_write_P(PSTR(" Base\n"), false);
     } else {
-        oled_write_P(PSTR(" Basic\n"), false);
+        oled_write_P(PSTR(" QWERTY\n"), false);
     }
 }
 
@@ -4397,15 +4371,15 @@ static void render_modifier_state(uint8_t line) {
 #include "menu.inc"
 
 #define overlay_mask ~((1 << _CONTROL_OVERLAY) | (1 << _NUMPAD) | (1 << _MOUSE))
-#define base_layer_mask ~((1 << _BASE) | (1 << _QWERTY) | (1 << _BASIC))
+#define base_layer_mask ~((1 << _BASE) | (1 << _BASIC) | (1 << _QWERTY))
 
 static void render_layout(void) {
-    if (IS_LAYER_ON(_BASE)) {
+    if (IS_LAYER_ON(_BASE) || IS_LAYER_ON(_BASIC)) {
         oled_set_cursor(0,3);
         oled_write_raw_P(menu_layout_base_left, layout_left_size);
         oled_set_cursor(0,6);
         oled_write_raw_P(menu_layout_base_right, layout_right_size);
-    } else if (IS_LAYER_ON(_BASIC) || IS_LAYER_ON(_QWERTY)) {
+    } else {
         oled_set_cursor(0,3);
         oled_write_raw_P(menu_layout_qwerty_left, layout_left_size);
         oled_set_cursor(0,6);
@@ -4737,7 +4711,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                 rgb_matrix_set_color_split(arrows[i], arrow_rgb.r, arrow_rgb.g, arrow_rgb.b);
             }
             break;
-        case _BASIC:
+        case _QWERTY:
         default:
             break;
     }
@@ -4752,9 +4726,9 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     
     const layer_state_t check_layers = 
         (1UL << _MOUSE) |
-        (1UL << _BASIC) |
-        (1UL << _TOUHOU) |
         (1UL << _QWERTY) |
+        (1UL << _TOUHOU) |
+        (1UL << _BASIC) |
         (1UL << _BASE);
 
     if ((previous_state & (1UL << _EDIT)) && !(state & (1UL << _EDIT))) {
@@ -4770,11 +4744,11 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     if (IS_LAYER_ON_STATE(state, _MOUSE)) {
         rgb_matrix_sethsv_noeeprom(209,255,192);
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
-    } else if (IS_LAYER_ON_STATE(state, _BASIC) ||
+    } else if (IS_LAYER_ON_STATE(state, _QWERTY) ||
                IS_LAYER_ON_STATE(state, _TOUHOU)) {
         rgb_matrix_sethsv_noeeprom(127,255,255);
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
-    } else if (IS_LAYER_ON_STATE(state, _QWERTY)) {
+    } else if (IS_LAYER_ON_STATE(state, _BASIC)) {
         rgb_matrix_sethsv_noeeprom(255,255,255);
         rgb_matrix_mode_noeeprom(RGB_MATRIX_RIVERFLOW);
     } else {
