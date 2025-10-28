@@ -2775,7 +2775,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
             del_mods(MOD_MASK_CTRL);
             recent_key_state.dynamic = true;
 
-            if (IS_LAYER_ON(_QWERTY)) {
+            if (get_highest_layer(layer_state) == _QWERTY) {
                 tap_code(get_last_key());
                 update_last_key(get_last_key());
                 set_mods(mods);
@@ -2868,7 +2868,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
             del_mods(MOD_MASK_CTRL);
             recent_key_state.dynamic = true;
 
-            if (IS_LAYER_ON(_QWERTY)) {
+            if (get_highest_layer(layer_state) == _QWERTY) {
                 tap_code(get_last_key());
                 update_last_key(get_last_key());
                 set_mods(mods);
