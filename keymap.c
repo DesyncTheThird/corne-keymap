@@ -3220,8 +3220,7 @@ static bool process_lingering_mods(uint16_t keycode, keyrecord_t* record) {
         if (record->tap.count) {
             if (ctrl_linger) {
                 const uint8_t mods = get_mods();
-                register_mods(MOD_BIT(KC_LCTL));
-                tap_code(KC_BSPC);
+                tap_code16(LCTL(KC_BSPC));
                 set_mods(mods);
                 ctrl_linger = false;
                 return false;
@@ -3594,11 +3593,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case JOIN:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                tap_code(KC_END);
-                tap_code16(LCTL(KC_DEL));
                 if (!shifted() && !ctrl_on()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_END);
+                    tap_code16(LCTL(KC_DEL));
                     tap_code(KC_SPC);
+                } else {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_END);
+                    tap_code16(LCTL(KC_DEL));
                 }
                 set_mods(mods);
             }
