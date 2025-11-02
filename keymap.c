@@ -2887,7 +2887,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_H: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_E: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_I: tap_code(KC_U); update_last_key(KC_U); break;
-                case KC_A: send_string(/*a*/"ph "); update_last_keys(KC_SPC, 3); break;
+                case KC_A: send_string(/*a*/"ph"); update_last_keys(KC_H, 2); break;
 
                 case KC_K: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_P: tap_code(KC_H); update_last_key(KC_H); break;
