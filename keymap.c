@@ -1184,12 +1184,19 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
 
         case CS_LT2:
             if (chordal_hold_handedness(other_record->event.key) == 'R' &&
-               (other_record->event.key.col == 1 ||
-                other_record->event.key.col == 2)) {
+                (other_record->event.key.col == 0 ||
+                 other_record->event.key.col == 1 ||
+                 other_record->event.key.col == 2)) {
+                return false;
+            
+            }
+            if (chordal_hold_handedness(other_record->event.key) == 'L' &&
+                (other_record->event.key.col == 1 ||
+                 other_record->event.key.col == 5)) {
                 return false;
             }
             if (chordal_hold_handedness(other_record->event.key) == 'L' &&
-                (other_record->event.key.col == 1)) {
+                (other_record->event.key.row == 2)) {
                 return false;
             }
             return true;
