@@ -1026,12 +1026,12 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t* record,
             // Alt mod-taps
             case LA_R:
             case RA_I:
-                return 200;
+                return 100;
 
             // GUI mod-taps
             case LG_N:
             case RG_A:
-                return 200;
+                return 50;
 
             default:
                 return FLOW_TAP_TERM;
@@ -1078,12 +1078,14 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case CS_LT3:
         case CS_LT2:
+        case CS_RT2:
+            return 200;
+
+        case CS_LT3:
         case CS_LT1:
 
         case CS_RT1:
-        case CS_RT2:
         case CS_RT3:
             return 150;
 
@@ -1191,8 +1193,11 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
             
             }
             if (chordal_hold_handedness(other_record->event.key) == 'L' &&
-                (other_record->event.key.col == 1 ||
-                 other_record->event.key.col == 5)) {
+                (other_record->event.key.col == 5)) {
+                return true;
+            }
+            if (chordal_hold_handedness(other_record->event.key) == 'L' &&
+                (other_record->event.key.col == 1)) {
                 return false;
             }
             if (chordal_hold_handedness(other_record->event.key) == 'L' &&
