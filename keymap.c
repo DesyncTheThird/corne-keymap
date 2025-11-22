@@ -1789,6 +1789,12 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
 
+    if (keycode == KC_ESC) {
+        case_lock_off();
+        case_lock_capture_off();
+        return true;
+    }
+
     if (case_lock_state.capturing) {
         return process_case_capture(keycode);
     }
