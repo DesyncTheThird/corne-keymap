@@ -1,5 +1,7 @@
 #pragma once
 
+#define TRACKBALL_ENABLE
+
 #define SPLIT_USB_DETECT
 
 #define SPLIT_LAYER_STATE_ENABLE

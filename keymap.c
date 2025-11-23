@@ -139,9 +139,17 @@ enum custom_keycodes {
     TB_LOFF,
     TB_TOGG,
     SCROLL,
+
+#ifndef TRACKBALL_ENABLE
+    TB_M,
+    TB_D,
+#endif
 };
 
-#define KB_M LT(0, KC_M)
+#ifdef TRACKBALL_ENABLE
+#define TB_M LT(0, KC_M)
+#define TB_D LT(0, KC_D)
+#endif
 
 // Home row mods
 #define LG_N LGUI_T(KC_N)
@@ -341,11 +349,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_BASE] = LAYOUT( //2
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_ESC,    KC_Z,    KC_L,    KC_D,    KC_C,    KC_B,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
+           KC_ESC,    KC_Z,    KC_L,    TB_D,    KC_C,    KC_B,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           TABLSFT,    LG_N,    LA_R,    LC_T,    LS_S,    KC_G,                         KC_Y,    RS_H,    RC_E,    RA_I,    RG_A, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Q,    KC_X,    KB_M,    KC_W,    KC_V,                         KC_K,    KC_P, PCTLEFT, PCTRGHT, DOT_QUE, CS_CASE,
+          CS_LCTL,    KC_Q,    KC_X,    TB_M,    KC_W,    KC_V,                         KC_K,    KC_P, PCTLEFT, PCTRGHT, DOT_QUE, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -411,9 +419,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_TRACKBALL] = LAYOUT( //14
+    [_TRACKBALL] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NAVTABS, MS_BTN4, TB_LOFF, MS_BTN5, QK_LLCK,                      _______, _______, _______, _______, _______, _______,
+          _______, NAVTABS, MS_BTN4,  SCROLL, MS_BTN5, QK_LLCK,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, _______, MS_BTN3, MS_BTN2, MS_BTN1,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -423,7 +431,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_CONTROL_OVERLAY] = LAYOUT( //8
+    [_CONTROL_OVERLAY] = LAYOUT( //9
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, _______, _______, _______, _______,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -435,7 +443,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_EDIT] = LAYOUT( //9
+    [_EDIT] = LAYOUT( //10
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, NAVTABS, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                      CY_MISC, CS_RCBR, CS_LCBR, CS_CIRC, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -447,7 +455,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_EDIT_OVERLAY] = LAYOUT( //10
+    [_EDIT_OVERLAY] = LAYOUT( //11
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, KC_PGUP, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                       KC_ESC,  SPC_UP,    JOIN,  SPC_DN, WRAPCBR, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -459,7 +467,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_DATA_OVERLAY] = LAYOUT( //11
+    [_DATA_OVERLAY] = LAYOUT( //12
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, _______, _______, _______, KC_CAPS,                      CY_MISC,    KC_7,    KC_8,    KC_9,  CS_EQL,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -471,7 +479,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_NUMPAD] = LAYOUT( //12
+    [_NUMPAD] = LAYOUT( //13
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, _______, _______, _______, _______,                       KC_NUM,   KC_P7,   KC_P8,   KC_P9, KC_CIRC,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -483,7 +491,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_TOUHOU] = LAYOUT( //13
+    [_TOUHOU] = LAYOUT( //14
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, _______, _______,   KC_UP, _______, _______,                      _______, _______, _______, _______, _______,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -495,7 +503,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_MOUSE] = LAYOUT( //14
+    [_MOUSE] = LAYOUT( //15
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, NAVTABS, MS_BTN4,   MS_UP, MS_BTN5, QK_LLCK,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -507,7 +515,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           //`--------------------------'  `--------------------------'
     ),
 
-    [_UTILITY] = LAYOUT( //15
+    [_UTILITY] = LAYOUT( //16
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            ALTTAB, CLOCKUP, KC_PAUS, CS_VOLU,  KC_INS, OLEDSAV,                      CS_RGBN,   KC_F7,   KC_F8,   KC_F9,  KC_F10, CS_BOOT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -674,8 +682,11 @@ static inline bool is_base_hrm(uint16_t keycode) {
         case RA_I:
         case RG_A:
 
-        case KB_M:
+#ifdef TRACKBALL_ENABLE
+        case TB_D:
+        case TB_M:
             return true;
+#endif
         default:
             return false;
     }
@@ -715,7 +726,10 @@ static inline bool is_hrm(uint16_t keycode) {
         case RA_I:
         case RG_A:
 
-        case KB_M:
+#ifdef TRACKBALL_ENABLE
+        case TB_D:
+        case TB_M:
+#endif
 
         case RS_RPRN:
         case RC_LPRN:
@@ -723,8 +737,6 @@ static inline bool is_hrm(uint16_t keycode) {
         case RG_UNDS:
 
         case RS_1:
-        case RC_2:
-        case RA_3:
         case RG_0:
 
         case LG_EXLM:
@@ -876,6 +888,38 @@ static void reset_trackball_state(void) {
     }
 }
 
+static void tap_hold_scroll_key(uint16_t keycode, keyrecord_t* record, led_t led_usb_state, uint16_t output_keycode) {
+    if (!trackball_enable) {
+        if (record->event.pressed) {
+            register_code(output_keycode);
+        } else {
+            unregister_code(output_keycode);
+        }
+        return;
+    }
+
+    if (record->tap.count) {
+        if (record->event.pressed) {
+            register_code(output_keycode);
+        } else {
+            unregister_code(output_keycode);
+        }
+    } else {
+        const uint8_t mods = get_mods();
+        del_mods(MOD_MASK_CSAG);
+        if (record->event.pressed) {
+            if (!led_usb_state.scroll_lock) {
+                tap_code(KC_SCRL);
+            }
+        } else {
+            if (led_usb_state.scroll_lock) {
+                tap_code(KC_SCRL);
+            }
+        }
+        set_mods(mods);
+    }
+}
+
 static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
     led_t led_usb_state = host_keyboard_led_state();
     switch (keycode) {
@@ -912,37 +956,22 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
             set_mods(mods);
             return false;
 
-        case KB_M:
-            if (!trackball_enable) {
-                if (record->event.pressed) {
-                    register_code(KC_M);
-                } else {
-                    unregister_code(KC_M);
-                }
-                return false;
-            }
+        case TB_D:
 
-            if (record->tap.count) {
-                if (record->event.pressed) {
-                    register_code(KC_M);
-                } else {
-                    unregister_code(KC_M);
-                }
+        case TB_M:
+
+#ifdef TRACKBALL_ENABLE
+            tap_hold_scroll_key(keycode, record, led_usb_state, keycode == TB_D ? KC_D : KC_M);
+            return false;
+#endif
+#ifndef TRACKBALL_ENABLE
+            if (record->event.pressed) {
+                register_code(keycode == TB_D ? KC_D : KC_M);
             } else {
-                const uint8_t mods = get_mods();
-                del_mods(MOD_MASK_CSAG);
-                if (record->event.pressed) {
-                    if (!led_usb_state.scroll_lock) {
-                        tap_code(KC_SCRL);
-                    }
-                } else {
-                    if (led_usb_state.scroll_lock) {
-                        tap_code(KC_SCRL);
-                    }
-                }
-                set_mods(mods);
+                unregister_code(keycode == TB_D ? KC_D : KC_M);
             }
             return false;
+#endif
 
         case MS_BTN1:
         case MS_BTN2:
@@ -967,6 +996,7 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
+#ifdef TRACKBALL_ENABLE
 static void process_trackball(void) {
     led_t led_usb_state = host_keyboard_led_state();
 
@@ -980,7 +1010,7 @@ static void process_trackball(void) {
         layer_off(_TRACKBALL);
     }
 }
-
+#endif
 
 
 //==============================================================================
@@ -4366,23 +4396,29 @@ static inline void render_linebreak(void) {
 }
 
 static void render_mode(void) {
+#ifdef TRACKBALL_ENABLE
     if (IS_LAYER_ON(_TRACKBALL)) {
-        oled_write_P(PSTR(" AutoMK\n"), false);
-    } else if (IS_LAYER_ON(_MOUSE)) {
-        oled_write_P(PSTR(" Mouse\n"), false);
-    } else if (IS_LAYER_ON(_TOUHOU)) {
-        oled_write_P(PSTR(" Touhou\n"), false);
-    } else if (IS_LAYER_ON(_NUMPAD)) {
-        oled_write_P(PSTR(" Numpad\n"), false);
-    } else if (IS_LAYER_ON(_STENO)) {
-        oled_write_P(PSTR(" Steno.\n"), false);
-    } else if (IS_LAYER_ON(_BASIC)) {
-        oled_write_P(PSTR(" Basic\n"), false);
-    } else if (IS_LAYER_ON(_BASE)) {
-        oled_write_P(PSTR(" Base\n"), false);
+        oled_write_P(PSTR(" Trackball"), false);
     } else {
-        oled_write_P(PSTR(" QWERTY\n"), false);
+#endif
+        if (IS_LAYER_ON(_MOUSE)) {
+            oled_write_P(PSTR(" Mouse\n"), false);
+        } else if (IS_LAYER_ON(_TOUHOU)) {
+            oled_write_P(PSTR(" Touhou\n"), false);
+        } else if (IS_LAYER_ON(_NUMPAD)) {
+            oled_write_P(PSTR(" Numpad\n"), false);
+        } else if (IS_LAYER_ON(_STENO)) {
+            oled_write_P(PSTR(" Steno.\n"), false);
+        } else if (IS_LAYER_ON(_BASIC)) {
+            oled_write_P(PSTR(" Basic\n"), false);
+        } else if (IS_LAYER_ON(_BASE)) {
+            oled_write_P(PSTR(" Base\n"), false);
+        } else {
+            oled_write_P(PSTR(" QWERTY\n"), false);
+        }
+#ifdef TRACKBALL_ENABLE
     }
+#endif
 }
 
 static void render_layer(void) {
@@ -4988,7 +5024,7 @@ static timeout_t timeouts[TIMEOUT_COUNT] = {
     [TIMEOUT_MAGIC]        = { .duration = 1000 },
     [TIMEOUT_CASE_CAPTURE] = { .duration = 1000 },
     [TIMEOUT_CASE_LOCK]    = { .duration = 2000 },
-    [TIMEOUT_OLED]         = { .duration = 300000 },
+    [TIMEOUT_OLED]         = { .duration = 10000 },
     [TIMEOUT_CAPSWORD]     = { .duration = 5000 },
 };
 
@@ -5009,7 +5045,9 @@ static void update_timeouts(void) {
 
 
 void housekeeping_task_user(void) {
+#ifdef TRACKBALL_ENABLE
     process_trackball();
+#endif
     update_timeouts();
 
     switch (timeouts[TIMEOUT_IDLE].edge) {
