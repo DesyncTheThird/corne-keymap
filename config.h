@@ -119,7 +119,7 @@
 #define NO_ALT_REPEAT_KEY
 
 // #define LAYER_STATE_8BIT
-#define LAYER_STATE_16BIT
+#define LAYER_STATE_32BIT
 
 // #define PS2_CLOCK_PIN B5
 // #define PS2_DATA_PIN  B4

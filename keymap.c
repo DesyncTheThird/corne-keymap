@@ -14,6 +14,7 @@ enum corne_layers {
     _DATA,
     _PROGRAM,
     _SYMBOL,
+    _TRACKBALL,
     _CONTROL_OVERLAY,
     _EDIT,
     _EDIT_OVERLAY,
@@ -133,7 +134,14 @@ enum custom_keycodes {
     CY_COMP,
     CY_WRAP,
     CY_ENUM,
+
+    // Trackball
+    TB_LOFF,
+    TB_TOGG,
+    SCROLL,
 };
+
+#define KB_M LT(0, KC_M)
 
 // Home row mods
 #define LG_N LGUI_T(KC_N)
@@ -337,7 +345,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           TABLSFT,    LG_N,    LA_R,    LC_T,    LS_S,    KC_G,                         KC_Y,    RS_H,    RC_E,    RA_I,    RG_A, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Q,    KC_X,    KC_M,    KC_W,    KC_V,                         KC_K,    KC_P, PCTLEFT, PCTRGHT, DOT_QUE, CS_CASE,
+          CS_LCTL,    KC_Q,    KC_X,    KB_M,    KC_W,    KC_V,                         KC_K,    KC_P, PCTLEFT, PCTRGHT, DOT_QUE, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -400,6 +408,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
           CS_LCTL, CS_CIRC, CS_SLSH, CS_ASTR, CS_HASH, CS_TILD,                      CY_COMP, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               CS_SLSH,  CS_AL3, _______,    _______, _______, _______
+                                          //`--------------------------'  `--------------------------'
+    ),
+
+    [_TRACKBALL] = LAYOUT( //14
+      //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+          _______, NAVTABS, MS_BTN4, TB_LOFF, MS_BTN5, QK_LLCK,                      _______, _______, _______, _______, _______, _______,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          _______, _______, MS_BTN3, MS_BTN2, MS_BTN1,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
+      //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+          CS_LCTL, _______, _______,  SCROLL, _______,  KC_ENT,                      _______, _______, _______, _______, _______, _______,
+      //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                              _______, _______,  SCROLL,    MS_ACL2, MS_ACL0, MS_ACL1
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -493,7 +513,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, CLOCKDN, KC_MPRV, CS_VOLD, KC_MNXT,   BASIC,                         BASE,   KC_F1,   KC_F2,   KC_F3,  KC_F11, DB_TOGG,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CLOCKNX, OLEDTOG,    MUTE, KC_PSCR,    MENU,                      CS_RGBT,   KC_F4,   KC_F5,   KC_F6,  KC_F12, KC_SCRL,
+          TB_TOGG, CLOCKNX, OLEDTOG,    MUTE, KC_PSCR,    MENU,                      CS_RGBT,   KC_F4,   KC_F5,   KC_F6,  KC_F12, KC_SCRL,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               KC_MSTP,  MUTE_L, KC_MPLY,    KC_MPLY,  MUTE_R, KC_MSTP
                                           //`--------------------------'  `--------------------------'
@@ -653,6 +673,8 @@ static inline bool is_base_hrm(uint16_t keycode) {
         case RC_E:
         case RA_I:
         case RG_A:
+
+        case KB_M:
             return true;
         default:
             return false;
@@ -692,6 +714,8 @@ static inline bool is_hrm(uint16_t keycode) {
         case RC_E:
         case RA_I:
         case RG_A:
+
+        case KB_M:
 
         case RS_RPRN:
         case RC_LPRN:
@@ -831,6 +855,129 @@ static void set_rgb_mode(void) {
 static void rgb_matrix_set_color_split(uint8_t index, uint8_t r, uint8_t g, uint8_t b) {
     if ((!is_keyboard_master() && index < 27) || (is_keyboard_master() && index >= 27)) {
         rgb_matrix_set_color(index, r, g, b);
+    }
+}
+
+
+
+//==============================================================================
+// Trackball
+//==============================================================================
+
+static bool trackball_enable = true;
+
+static void reset_trackball_state(void) {
+    led_t led_usb_state = host_keyboard_led_state();
+    if (led_usb_state.caps_lock) {
+        tap_code(KC_CAPS);
+    }
+    if (led_usb_state.scroll_lock) {
+        tap_code(KC_SCRL);
+    }
+}
+
+static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
+    led_t led_usb_state = host_keyboard_led_state();
+    switch (keycode) {
+        case TB_TOGG:
+            if (record->event.pressed) {
+                trackball_enable = !trackball_enable;
+
+                reset_trackball_state();
+            }
+            return false;
+
+        case TB_LOFF:
+            if (record->event.pressed) {
+                layer_off(_TRACKBALL);
+                reset_trackball_state();
+            }
+            return false;
+
+        case SCROLL:
+            if (!trackball_enable) {
+                return false;
+            }
+            const uint8_t mods = get_mods();
+            del_mods(MOD_MASK_CSAG);
+            if (record->event.pressed) {
+                if (!led_usb_state.scroll_lock) {
+                    tap_code(KC_SCRL);
+                }
+            } else {
+                if (led_usb_state.scroll_lock) {
+                    tap_code(KC_SCRL);
+                }
+            }
+            set_mods(mods);
+            return false;
+
+        case KB_M:
+            if (!trackball_enable) {
+                if (record->event.pressed) {
+                    register_code(KC_M);
+                } else {
+                    unregister_code(KC_M);
+                }
+                return false;
+            }
+
+            if (record->tap.count) {
+                if (record->event.pressed) {
+                    register_code(KC_M);
+                } else {
+                    unregister_code(KC_M);
+                }
+            } else {
+                const uint8_t mods = get_mods();
+                del_mods(MOD_MASK_CSAG);
+                if (record->event.pressed) {
+                    if (!led_usb_state.scroll_lock) {
+                        tap_code(KC_SCRL);
+                    }
+                } else {
+                    if (led_usb_state.scroll_lock) {
+                        tap_code(KC_SCRL);
+                    }
+                }
+                set_mods(mods);
+            }
+            return false;
+
+        case MS_BTN1:
+        case MS_BTN2:
+        case MS_BTN3:
+            return true;
+
+        default:
+            if (!trackball_enable) {
+                return true;
+            }
+            if (led_usb_state.caps_lock) {
+                tap_code(KC_CAPS);
+            }
+            layer_off(_TRACKBALL);
+            return true;
+    }
+
+    if (chordal_hold_handedness(record->event.key) == 'R') {
+        layer_off(_TRACKBALL);
+        return true;
+    }
+    return true;
+}
+
+static void process_trackball(void) {
+    led_t led_usb_state = host_keyboard_led_state();
+
+    if (!trackball_enable || IS_LAYER_ON(_NUMPAD)) {
+        return;
+    }
+
+    if (led_usb_state.caps_lock) {
+        layer_on(_TRACKBALL);
+    } else {
+        layer_off(_TRACKBALL);
     }
 }
 
@@ -1226,22 +1373,35 @@ static void tap_hold_tri_layer(keyrecord_t* record, uint8_t hold_layer,
     }
 }
 
+
 static bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         case CS_LT3:
             if (record->event.pressed) {
                 misc_key_state.LT3_active = true;
+                if (record->tap.count) {
+                    tap_code(KC_ENT);
+                } else {
+                    layer_on(_UTILITY);
+                }
             } else {
                 misc_key_state.LT3_active = false;
+                layer_off(_UTILITY);
             }
-            return true;
+            return false;
         case CS_RT3:
             if (record->event.pressed) {
                 misc_key_state.RT3_active = true;
+                if (record->tap.count) {
+                    tap_code(KC_SLSH);
+                } else {
+                    layer_on(_UTILITY);
+                }
             } else {
                 misc_key_state.RT3_active = false;
+                layer_off(_UTILITY);
             }
-            return true;
+            return false;
 
         case CS_LT1:
             tap_hold_tri_layer(record, _DATA, _PROGRAM, _EDIT);
@@ -3544,6 +3704,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_vol_controls(keycode, record)) { return false; }
     if (!process_clock_controls(keycode, record)) { return false; }
     if (!process_mouse_lock(keycode, record)) { return false; }
+    if (!process_trackball_keys(keycode, record)) { return false; }
 
     switch (keycode) {
 
@@ -4205,7 +4366,9 @@ static inline void render_linebreak(void) {
 }
 
 static void render_mode(void) {
-    if (IS_LAYER_ON(_MOUSE)) {
+    if (IS_LAYER_ON(_TRACKBALL)) {
+        oled_write_P(PSTR(" AutoMK\n"), false);
+    } else if (IS_LAYER_ON(_MOUSE)) {
         oled_write_P(PSTR(" Mouse\n"), false);
     } else if (IS_LAYER_ON(_TOUHOU)) {
         oled_write_P(PSTR(" Touhou\n"), false);
@@ -4825,7 +4988,7 @@ static timeout_t timeouts[TIMEOUT_COUNT] = {
     [TIMEOUT_MAGIC]        = { .duration = 1000 },
     [TIMEOUT_CASE_CAPTURE] = { .duration = 1000 },
     [TIMEOUT_CASE_LOCK]    = { .duration = 2000 },
-    [TIMEOUT_OLED]         = { .duration = 3000 },
+    [TIMEOUT_OLED]         = { .duration = 300000 },
     [TIMEOUT_CAPSWORD]     = { .duration = 5000 },
 };
 
@@ -4846,6 +5009,7 @@ static void update_timeouts(void) {
 
 
 void housekeeping_task_user(void) {
+    process_trackball();
     update_timeouts();
 
     switch (timeouts[TIMEOUT_IDLE].edge) {
