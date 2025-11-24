@@ -155,7 +155,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
     static uint16_t last_resync = 0;
     if (timer_elapsed(last_resync) > 100) {
-        if (caps_state_expected != host_keyboard_led_state().caps_lock) {
+        if (raw_moving && !host_keyboard_led_state().caps_lock) {
             tap_code(KC_CAPS);
         }
         last_resync = timer_read();
