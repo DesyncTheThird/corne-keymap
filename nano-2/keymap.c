@@ -121,6 +121,50 @@ void housekeeping_task_user(void) {
     }
 }
 
+#define ACCEL_REGION1_MAX    2.0f
+#define ACCEL_REGION2_MAX    7.0f
+#define ACCEL_REGION3_MAX   15.0f
+
+#define GAIN_REGION1         1.0f
+#define GAIN_REGION2         1.5f
+#define GAIN_REGION3         3.0f
+#define GAIN_CAP             4.0f
+
+static inline void apply_windows_accel(report_mouse_t *m) {
+    int16_t x = m->x;
+    int16_t y = m->y;
+
+    if (x == 0 && y == 0) return;
+
+    float dx = (float)x;
+    float dy = (float)y;
+    float s  = fabsf(dx) + fabsf(dy);
+
+    float gain = GAIN_REGION1;
+
+    if (s <= ACCEL_REGION1_MAX) {
+        gain = GAIN_REGION1;
+
+    } else if (s <= ACCEL_REGION2_MAX) {
+        float t = (s - ACCEL_REGION1_MAX) /
+                  (ACCEL_REGION2_MAX - ACCEL_REGION1_MAX);
+        gain = GAIN_REGION1 +
+               t * (GAIN_REGION2 - GAIN_REGION1);
+
+    } else if (s <= ACCEL_REGION3_MAX) {
+        float t = (s - ACCEL_REGION2_MAX) /
+                  (ACCEL_REGION3_MAX - ACCEL_REGION2_MAX);
+        gain = GAIN_REGION2 +
+               t * (GAIN_REGION3 - GAIN_REGION2);
+
+    } else {
+        gain = GAIN_CAP;
+    }
+
+    m->x = (int16_t)(dx * gain);
+    m->y = (int16_t)(dy * gain);
+}
+
 #define MOTION_RISE_DELAY 20
 #define MOTION_FALL_DELAY 500
 
@@ -160,6 +204,8 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         }
         last_resync = timer_read();
     }
+    
+    apply_windows_accel(&mouse_report);
 
     return mouse_report;
 }
