@@ -976,6 +976,8 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
         case MS_BTN1:
         case MS_BTN2:
         case MS_BTN3:
+        case MS_BTN4:
+        case MS_BTN5:
             return true;
 
         default:
