@@ -4,6 +4,8 @@
 #define TAPPING_TERM 200
 #define TAPPING_TERM_PER_KEY
 
+#define MOUSE_EXTENDED_REPORT
+
 // #define PLOOPY_DPI_OPTIONS { 4800 }
 // #define PLOOPY_DPI_DEFAULT 0
 

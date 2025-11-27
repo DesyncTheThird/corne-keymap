@@ -12,7 +12,8 @@ typedef enum {
     TD_DOUBLE_SINGLE_TAP,
     TD_TRIPLE_TAP,
     TD_TRIPLE_HOLD,
-    TD_RESET
+    TD_RESET,
+    TD_BOOT
 } td_state_t;
 
 typedef struct {
@@ -23,6 +24,14 @@ typedef struct {
 enum {
     NANOKEY,
 };
+
+static bool auto_layering = true;
+static bool volume_mode = false;
+
+static void reset_state(void) {
+    auto_layering = true;
+    volume_mode = false;
+}
 
 td_state_t cur_dance(tap_dance_state_t *state);
 
@@ -51,8 +60,12 @@ td_state_t cur_dance(tap_dance_state_t *state) {
         return TD_TRIPLE_HOLD;
     }
 
-    if (state->count == 5) {
+    if (state->count == 4) {
         return TD_RESET;
+    }
+
+    if (state->count >= 6) {
+        return TD_BOOT;
     }
     
     return TD_UNKNOWN;
@@ -73,7 +86,8 @@ void nanokey_finished(tap_dance_state_t *state, void *user_data) {
         case TD_DOUBLE_SINGLE_TAP: tap_code(MS_BTN1); register_code(MS_BTN1); break;
         case TD_TRIPLE_TAP: register_code(MS_BTN2); break;
         case TD_TRIPLE_HOLD: register_code(MS_BTN2); break;
-        case TD_RESET: reset_keyboard(); break;
+        case TD_RESET: reset_state(); break;
+        case TD_BOOT: reset_keyboard(); break;
         default: break;
     }
 }
@@ -88,6 +102,7 @@ void nanokey_reset(tap_dance_state_t *state, void *user_data) {
         case TD_TRIPLE_TAP: unregister_code(MS_BTN2); break;
         case TD_TRIPLE_HOLD: unregister_code(MS_BTN2); break;
         case TD_RESET: break;
+        case TD_BOOT: break;
         default: break;
     }
     tap_state.state = TD_NONE;
@@ -114,9 +129,6 @@ T - toggle on/off
 
 */
 
-static bool auto_layering = true;
-static bool volume_mode = false;
-
 void raw_hid_receive(uint8_t *data, uint8_t length) {
     uint8_t response[length];
     memset(response, 0, length);
@@ -139,40 +151,64 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     }
 }
 
+#define VOL_STEP            40
+#define VOL_REPEAT_DELAY    80
+
 void volume_control(report_mouse_t mouse_report) {
-    return;
-    // WIP
+    static int32_t accumulator = 0;
+    static uint16_t last_event = 0;
+
+    int16_t dy = mouse_report.y;
+
+    accumulator += dy;
+
+    if (timer_elapsed(last_event) < VOL_REPEAT_DELAY)
+        return;
+
+    while (accumulator >= VOL_STEP) {
+        tap_code(KC_VOLD);
+        accumulator -= VOL_STEP;
+        last_event = timer_read();
+    }
+
+    while (accumulator <= -VOL_STEP) {
+        tap_code(KC_VOLU);
+        accumulator += VOL_STEP;
+        last_event = timer_read();
+    }
 }
 
 #define RAW_LENGTH 32
 
-#define MOTION_RISE_DELAY 20
-#define MOTION_FALL_DELAY 500
+#define MOTION_TIMEOUT 20
 
 void auto_layer(report_mouse_t mouse_report) {
-    static bool was_moving = false;
-    static uint32_t last_change = 0;
+    static bool moving = false;
+    static uint32_t last_motion_time = 0;
 
-    bool is_moving = (mouse_report.x != 0 || mouse_report.y != 0);
-    uint16_t delay = is_moving ? MOTION_RISE_DELAY : MOTION_FALL_DELAY;
+    bool instant_motion = (mouse_report.x || mouse_report.y);
+    uint32_t now = timer_read();
 
-    if (is_moving != was_moving) {
-        if (timer_elapsed(last_change) >= delay) {
+    if (instant_motion) {
+        last_motion_time = now;
+        if (!moving) {
             uint8_t msg[RAW_LENGTH] = {0};
-            memset(msg, 0, RAW_LENGTH);
-            msg[0] = is_moving ? 'A' : 'B';
+            msg[0] = 'A';
             raw_hid_send(msg, RAW_LENGTH);
-
-            was_moving = is_moving;
-            last_change = timer_read();
+            moving = true;
         }
-    } else {
-        last_change = timer_read();
+        return;
+    }
+
+    if (moving && timer_elapsed(last_motion_time) >= MOTION_TIMEOUT) {
+        uint8_t msg[RAW_LENGTH] = {0};
+        msg[0] = 'B';
+        raw_hid_send(msg, RAW_LENGTH);
+        moving = false;
     }
 }
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-
     if (volume_mode) {
         volume_control(mouse_report);
 
