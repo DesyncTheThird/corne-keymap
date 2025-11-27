@@ -1,6 +1,7 @@
 #include QMK_KEYBOARD_H
 #include "print.h"
 #include "version.h"
+#include "raw_hid.h"
 
 // #include "ps2_mouse.h"
 // #include "ps2.h"
@@ -137,19 +138,14 @@ enum custom_keycodes {
 
     // Trackball
     TB_LOFF,
+    TB_TVOL,
     TB_TOGG,
     SCROLL,
 
-#ifndef TRACKBALL_ENABLE
-    TB_M,
-    TB_D,
-#endif
 };
 
-#ifdef TRACKBALL_ENABLE
 #define TB_M LT(0, KC_M)
 #define TB_D LT(0, KC_D)
-#endif
 
 // Home row mods
 #define LG_N LGUI_T(KC_N)
@@ -423,9 +419,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, NAVTABS, MS_BTN4,  SCROLL, MS_BTN5, QK_LLCK,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, _______, MS_BTN3, MS_BTN2, MS_BTN1,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
+          _______, TB_TVOL, MS_BTN3, MS_BTN2, MS_BTN1,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, _______, _______,  SCROLL, _______,  KC_ENT,                      _______, _______, _______, _______, _______, _______,
+          CS_LCTL, TB_LOFF, _______,  SCROLL, _______,  KC_ENT,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______,  SCROLL,    MS_ACL2, MS_ACL0, MS_ACL1
                                           //`--------------------------'  `--------------------------'
@@ -682,11 +678,10 @@ static inline bool is_base_hrm(uint16_t keycode) {
         case RA_I:
         case RG_A:
 
-#ifdef TRACKBALL_ENABLE
         case TB_D:
         case TB_M:
             return true;
-#endif
+
         default:
             return false;
     }
@@ -726,10 +721,8 @@ static inline bool is_hrm(uint16_t keycode) {
         case RA_I:
         case RG_A:
 
-#ifdef TRACKBALL_ENABLE
         case TB_D:
         case TB_M:
-#endif
 
         case RS_RPRN:
         case RC_LPRN:
@@ -876,20 +869,46 @@ static void rgb_matrix_set_color_split(uint8_t index, uint8_t r, uint8_t g, uint
 // Trackball
 //==============================================================================
 
-static bool trackball_enable = true;
+/** 
 
-static void reset_trackball_state(void) {
-    led_t led_usb_state = host_keyboard_led_state();
-    if (led_usb_state.caps_lock) {
-        tap_code(KC_CAPS);
-    }
-    if (led_usb_state.scroll_lock) {
-        tap_code(KC_SCRL);
+Send:
+S - toggle scroll
+V - toggle volume
+T - toggle on/off
+
+Receive:
+A - layer on
+B - layer off
+
+*/
+
+static bool auto_layer_on = true;
+
+#define RAW_LENGTH 32
+
+void raw_hid_receive(uint8_t *data, uint8_t length) {
+    uint8_t response[length];
+    memset(response, 0, length);
+    dprintf("Keyboard  - Received HID data: %c\n", data[0]);
+    
+    switch (data[0]) {
+        case 'A':
+            layer_on(_TRACKBALL);
+            break;
+        case 'B':
+            layer_off(_TRACKBALL);
+            break;
+        case 'T':
+            dprintf("T\n");
+            break;
+        default:
+            dprintf("Unknown HID command: %c\n", data[0]);
+            break;
     }
 }
 
-static void tap_hold_scroll_key(uint16_t keycode, keyrecord_t* record, led_t led_usb_state, uint16_t output_keycode) {
-    if (!trackball_enable) {
+static void tap_hold_scroll_key(uint16_t keycode, keyrecord_t* record, uint16_t output_keycode) {
+    if (!auto_layer_on || record->tap.count) {
         if (record->event.pressed) {
             register_code(output_keycode);
         } else {
@@ -898,80 +917,49 @@ static void tap_hold_scroll_key(uint16_t keycode, keyrecord_t* record, led_t led
         return;
     }
 
-    if (record->tap.count) {
-        if (record->event.pressed) {
-            register_code(output_keycode);
-        } else {
-            unregister_code(output_keycode);
-        }
-    } else {
-        const uint8_t mods = get_mods();
-        del_mods(MOD_MASK_CSAG);
-        if (record->event.pressed) {
-            if (!led_usb_state.scroll_lock) {
-                tap_code(KC_SCRL);
-            }
-        } else {
-            if (led_usb_state.scroll_lock) {
-                tap_code(KC_SCRL);
-            }
-        }
-        set_mods(mods);
-    }
+    uint8_t msg[RAW_LENGTH];
+    memset(msg, 0, RAW_LENGTH);
+    msg[0] = 'S';
+    raw_hid_send(msg, RAW_LENGTH);
 }
 
 static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
-    led_t led_usb_state = host_keyboard_led_state();
+    uint8_t msg[RAW_LENGTH];
+    memset(msg, 0, RAW_LENGTH);
+
     switch (keycode) {
         case TB_TOGG:
             if (record->event.pressed) {
-                trackball_enable = !trackball_enable;
+                msg[0] = 'T';
+                raw_hid_send(msg, RAW_LENGTH);
+            }
+            return false;
 
-                reset_trackball_state();
+        case TB_TVOL:
+            if (record->event.pressed) {
+                msg[0] = 'V';
+                raw_hid_send(msg, RAW_LENGTH);
             }
             return false;
 
         case TB_LOFF:
             if (record->event.pressed) {
                 layer_off(_TRACKBALL);
-                reset_trackball_state();
             }
             return false;
 
         case SCROLL:
-            if (!trackball_enable) {
-                return false;
-            }
-            const uint8_t mods = get_mods();
-            del_mods(MOD_MASK_CSAG);
-            if (record->event.pressed) {
-                if (!led_usb_state.scroll_lock) {
-                    tap_code(KC_SCRL);
-                }
-            } else {
-                if (led_usb_state.scroll_lock) {
-                    tap_code(KC_SCRL);
-                }
-            }
-            set_mods(mods);
+            msg[0] = record->event.pressed ? 'S' : 's';
+            raw_hid_send(msg, RAW_LENGTH);
             return false;
 
         case TB_D:
+            tap_hold_scroll_key(keycode, record, KC_D);
+            return false;
 
         case TB_M:
-
-#ifdef TRACKBALL_ENABLE
-            tap_hold_scroll_key(keycode, record, led_usb_state, keycode == TB_D ? KC_D : KC_M);
+            tap_hold_scroll_key(keycode, record, KC_M);
             return false;
-#endif
-#ifndef TRACKBALL_ENABLE
-            if (record->event.pressed) {
-                register_code(keycode == TB_D ? KC_D : KC_M);
-            } else {
-                unregister_code(keycode == TB_D ? KC_D : KC_M);
-            }
-            return false;
-#endif
 
         case MS_BTN1:
         case MS_BTN2:
@@ -981,38 +969,11 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
             return true;
 
         default:
-            if (!trackball_enable) {
-                return true;
-            }
-            if (led_usb_state.caps_lock) {
-                tap_code(KC_CAPS);
-            }
             layer_off(_TRACKBALL);
             return true;
     }
-
-    if (chordal_hold_handedness(record->event.key) == 'R') {
-        layer_off(_TRACKBALL);
-        return true;
-    }
-    return true;
 }
 
-#ifdef TRACKBALL_ENABLE
-static void process_trackball(void) {
-    led_t led_usb_state = host_keyboard_led_state();
-
-    if (!trackball_enable || IS_LAYER_ON(_NUMPAD)) {
-        return;
-    }
-
-    if (led_usb_state.caps_lock) {
-        layer_on(_TRACKBALL);
-    } else {
-        layer_off(_TRACKBALL);
-    }
-}
-#endif
 
 
 //==============================================================================
@@ -4398,29 +4359,23 @@ static inline void render_linebreak(void) {
 }
 
 static void render_mode(void) {
-#ifdef TRACKBALL_ENABLE
     if (IS_LAYER_ON(_TRACKBALL)) {
         oled_write_P(PSTR(" Trackball"), false);
+    } else if (IS_LAYER_ON(_MOUSE)) {
+        oled_write_P(PSTR(" Mouse\n"), false);
+    } else if (IS_LAYER_ON(_TOUHOU)) {
+        oled_write_P(PSTR(" Touhou\n"), false);
+    } else if (IS_LAYER_ON(_NUMPAD)) {
+        oled_write_P(PSTR(" Numpad\n"), false);
+    } else if (IS_LAYER_ON(_STENO)) {
+        oled_write_P(PSTR(" Steno.\n"), false);
+    } else if (IS_LAYER_ON(_BASIC)) {
+        oled_write_P(PSTR(" Basic\n"), false);
+    } else if (IS_LAYER_ON(_BASE)) {
+        oled_write_P(PSTR(" Base\n"), false);
     } else {
-#endif
-        if (IS_LAYER_ON(_MOUSE)) {
-            oled_write_P(PSTR(" Mouse\n"), false);
-        } else if (IS_LAYER_ON(_TOUHOU)) {
-            oled_write_P(PSTR(" Touhou\n"), false);
-        } else if (IS_LAYER_ON(_NUMPAD)) {
-            oled_write_P(PSTR(" Numpad\n"), false);
-        } else if (IS_LAYER_ON(_STENO)) {
-            oled_write_P(PSTR(" Steno.\n"), false);
-        } else if (IS_LAYER_ON(_BASIC)) {
-            oled_write_P(PSTR(" Basic\n"), false);
-        } else if (IS_LAYER_ON(_BASE)) {
-            oled_write_P(PSTR(" Base\n"), false);
-        } else {
-            oled_write_P(PSTR(" QWERTY\n"), false);
-        }
-#ifdef TRACKBALL_ENABLE
+        oled_write_P(PSTR(" QWERTY\n"), false);
     }
-#endif
 }
 
 static void render_layer(void) {
@@ -5047,9 +5002,6 @@ static void update_timeouts(void) {
 
 
 void housekeeping_task_user(void) {
-#ifdef TRACKBALL_ENABLE
-    process_trackball();
-#endif
     update_timeouts();
 
     switch (timeouts[TIMEOUT_IDLE].edge) {

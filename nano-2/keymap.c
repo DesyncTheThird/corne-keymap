@@ -1,5 +1,6 @@
 #include QMK_KEYBOARD_H
 #include <math.h>
+#include <raw_hid.h>
 
 typedef enum {
     TD_NONE,
@@ -100,66 +101,94 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT( TD(NANOKEY) )
 };
 
-static bool scroll_lock_now = false;
-static bool scroll_lock_last = false;
+/**
 
-static bool caps_state_expected = false;
+Send:
+A - layer on
+B - layer off
 
-void housekeeping_task_user(void) {
-    led_t led_usb_state = host_keyboard_led_state();
+Receive:
+S - toggle scroll
+V - toggle volume
+T - toggle on/off
+
+*/
+
+static bool auto_layering = true;
+static bool volume_mode = false;
+
+void raw_hid_receive(uint8_t *data, uint8_t length) {
+    uint8_t response[length];
+    memset(response, 0, length);
+
+    dprintf("Trackball - Received HID data: %c\n", data[0]);
     
-    scroll_lock_now = led_usb_state.scroll_lock;
-
-    if (scroll_lock_now != scroll_lock_last) {
-        toggle_drag_scroll();
-    }
-
-    scroll_lock_last = scroll_lock_now;
-
-    if (led_usb_state.caps_lock != caps_state_expected) {
-        tap_code(KC_CAPS);
+    switch (data[0]) {
+        case 'S':
+            toggle_drag_scroll();
+            break;
+        case 'V':
+            volume_mode = !volume_mode;
+            break;
+        case 'T':
+            auto_layering = !auto_layering;
+            break;
+        default:
+            dprintf("Unknown HID command: %c\n", data[0]);
+            break;
     }
 }
+
+void volume_control(report_mouse_t mouse_report) {
+    return;
+    // WIP
+}
+
+#define RAW_LENGTH 32
 
 #define MOTION_RISE_DELAY 20
 #define MOTION_FALL_DELAY 500
 
+void auto_layer(report_mouse_t mouse_report) {
+    static bool was_moving = false;
+    static uint32_t last_change = 0;
+
+    bool is_moving = (mouse_report.x != 0 || mouse_report.y != 0);
+    uint16_t delay = is_moving ? MOTION_RISE_DELAY : MOTION_FALL_DELAY;
+
+    if (is_moving != was_moving) {
+        if (timer_elapsed(last_change) >= delay) {
+            uint8_t msg[RAW_LENGTH] = {0};
+            memset(msg, 0, RAW_LENGTH);
+            msg[0] = is_moving ? 'A' : 'B';
+            raw_hid_send(msg, RAW_LENGTH);
+
+            was_moving = is_moving;
+            last_change = timer_read();
+        }
+    } else {
+        last_change = timer_read();
+    }
+}
+
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    static bool moving = false;
-    static uint16_t last_nonzero = 0;
 
-    bool raw_moving = (mouse_report.x || mouse_report.y);
+    if (volume_mode) {
+        volume_control(mouse_report);
 
-    if (raw_moving) {
-        last_nonzero = timer_read();
+        mouse_report.x = 0;
+        mouse_report.y = 0;
+        mouse_report.h = 0;
+        mouse_report.v = 0;
+
+        return mouse_report;
     }
 
-    bool rise = (timer_elapsed(last_nonzero) < MOTION_RISE_DELAY);
-    bool fall = (timer_elapsed(last_nonzero) >= MOTION_FALL_DELAY);
-
-    if (!moving && rise) {
-        if (!caps_state_expected) {
-            tap_code(KC_CAPS);
-            caps_state_expected = true;
-        }
-        moving = true;
+    if (!auto_layering) {
+        return mouse_report;
     }
 
-    if (moving && fall) {
-        if (caps_state_expected) {
-            tap_code(KC_CAPS);
-            caps_state_expected = false;
-        }
-        moving = false;
-    }
-
-    static uint16_t last_resync = 0;
-    if (timer_elapsed(last_resync) > 100) {
-        if (raw_moving && !host_keyboard_led_state().caps_lock) {
-            tap_code(KC_CAPS);
-        }
-        last_resync = timer_read();
-    }
+    auto_layer(mouse_report);
 
     return mouse_report;
 }
