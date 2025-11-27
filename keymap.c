@@ -924,7 +924,7 @@ static deferred_token trackball_token = INVALID_DEFERRED_TOKEN;
 void raw_hid_receive(uint8_t *data, uint8_t length) {
     uint8_t response[length];
     memset(response, 0, length);
-    dprintf("Keyboard  - Received HID data: %c\n", data[0]);
+    // dprintf("Keyboard  - Received HID data: %c\n", data[0]);
     
     switch (data[0]) {
         case 'A':
@@ -996,7 +996,7 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
             return false;
 
         case SCROLL:
-            msg[0] = record->event.pressed ? 'S' : 's';
+            msg[0] = 'S';
             raw_hid_send(msg, RAW_LENGTH);
             return false;
 
@@ -3724,12 +3724,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_magic(keycode, record)) { return false; }
     if (!process_homerow_mod_tap(keycode, record)) { return false; }
     if (!process_arrow_retrigger(keycode, record)) { return false; }
+    if (!process_trackball_keys(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
     if (!process_edit_macros(keycode, record)) { return false; }
     if (!process_vol_controls(keycode, record)) { return false; }
     if (!process_clock_controls(keycode, record)) { return false; }
     if (!process_mouse_lock(keycode, record)) { return false; }
-    if (!process_trackball_keys(keycode, record)) { return false; }
 
     switch (keycode) {
 
