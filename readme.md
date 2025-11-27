@@ -283,7 +283,7 @@ to run in the terminal. While running in a terminal, the script will print all t
 # ⚠️ Experimental Features
 Various additional experimental features that have not yet been incorporated into the main keymap may be found on various branches. Current features in development:
 
-### [Portable Auto-Mouse Layer](https://github.com/DesyncTheThird/auto-mouse-layer)
+### [Portable Auto-Mouse Layer](https://github.com/DesyncTheThird/corne-keymap/tree/portable-auto-mouse-layer)
 
 This feature enables the auto-mouse layer functionality in a more portable way that does not require any host-side software.
 

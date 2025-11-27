@@ -419,7 +419,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
           _______, NAVTABS, MS_BTN4,  SCROLL, MS_BTN5, QK_LLCK,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, TB_TVOL, MS_BTN3, MS_BTN2, MS_BTN1,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
+          _______, _______, MS_BTN3, MS_BTN2, MS_BTN1,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           CS_LCTL, TB_LOFF, _______,  SCROLL, _______,  KC_ENT,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -932,8 +932,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             layer_on(_TRACKBALL);
             break;
         case 'B':
-            trackball_token = defer_exec(mouse_layer_off_callback, NULL, LAYER_LINGER_TIME);
-            layer_off(_TRACKBALL);
+            trackball_token = defer_exec(LAYER_LINGER_TIME, mouse_layer_off_callback, NULL);
             break;
         case 'T':
             clock_state.hrs = data[1];
@@ -978,11 +977,17 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
             return false;
 
         case TB_TVOL:
-            if (record->event.pressed) {
+            msg[0] = 'V';
+            raw_hid_send(msg, RAW_LENGTH);
+            return false;
+
+        case CS_LT3:
+        case CS_RT3:
+            if (!record->tap.count) {
                 msg[0] = 'V';
                 raw_hid_send(msg, RAW_LENGTH);
             }
-            return false;
+            return true;
 
         case TB_LOFF:
             if (record->event.pressed) {
@@ -1008,6 +1013,7 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
         case MS_BTN3:
         case MS_BTN4:
         case MS_BTN5:
+            extend_deferred_exec(trackball_token, LAYER_LINGER_TIME);
             return true;
 
         default:
