@@ -116,19 +116,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT( TD(NANOKEY) )
 };
 
-/**
-
-Send:
-A - layer on
-B - layer off
-
-Receive:
-S - toggle scroll
-V - toggle volume
-T - toggle on/off
-
-*/
-
 void raw_hid_receive(uint8_t *data, uint8_t length) {
     uint8_t response[length];
     memset(response, 0, length);
@@ -140,7 +127,10 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             toggle_drag_scroll();
             break;
         case 'V':
-            volume_mode = !volume_mode;
+            volume_mode = true;
+            break;
+        case 'v':
+            volume_mode = false;
             break;
         case 'T':
             auto_layering = !auto_layering;

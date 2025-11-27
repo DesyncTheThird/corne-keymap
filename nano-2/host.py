@@ -28,7 +28,7 @@ TRACKBALL = {
 #===============================================================================
 
 RECONNECT_INTERVAL = 0.5
-TIME_SEND_INTERVAL = 1
+TIME_SEND_INTERVAL = 0.5
 
 running = threading.Event()
 last_time_sent = 0

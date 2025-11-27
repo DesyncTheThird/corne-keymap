@@ -895,19 +895,6 @@ static bool host_clock_active = false;
 // Raw HID
 //==============================================================================
 
-/** 
-
-Send:
-S - toggle scroll
-V - toggle volume
-T - toggle on/off
-
-Receive:
-A - layer on
-B - layer off
-
-*/
-
 static bool auto_layer_on = true;
 
 #define LAYER_LINGER_TIME 500
@@ -948,7 +935,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     }
 }
 
-static void tap_hold_scroll_key(uint16_t keycode, keyrecord_t* record, uint16_t output_keycode) {
+static void tap_hold_hid_key(uint16_t keycode, keyrecord_t* record, char code, uint16_t output_keycode) {
     if (!auto_layer_on || record->tap.count) {
         if (record->event.pressed) {
             register_code(output_keycode);
@@ -960,7 +947,7 @@ static void tap_hold_scroll_key(uint16_t keycode, keyrecord_t* record, uint16_t 
 
     uint8_t msg[RAW_LENGTH];
     memset(msg, 0, RAW_LENGTH);
-    msg[0] = 'S';
+    msg[0] = code;
     raw_hid_send(msg, RAW_LENGTH);
 }
 
@@ -977,14 +964,22 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
             return false;
 
         case TB_TVOL:
-            msg[0] = 'V';
+            if (record->event.pressed) {
+                msg[0] = 'V';
+            } else {
+                msg[0] = 'v';
+            }
             raw_hid_send(msg, RAW_LENGTH);
             return false;
 
         case CS_LT3:
         case CS_RT3:
             if (!record->tap.count) {
-                msg[0] = 'V';
+                if (record->event.pressed) {
+                    msg[0] = 'V';
+                } else {
+                    msg[0] = 'v';
+                }
                 raw_hid_send(msg, RAW_LENGTH);
             }
             return true;
@@ -1001,11 +996,10 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
             return false;
 
         case TB_D:
-            tap_hold_scroll_key(keycode, record, KC_D);
+            tap_hold_hid_key(keycode, record, 'S', KC_D);
             return false;
-
         case TB_M:
-            tap_hold_scroll_key(keycode, record, KC_M);
+            tap_hold_hid_key(keycode, record, 'S', KC_M);
             return false;
 
         case MS_BTN1:

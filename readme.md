@@ -253,7 +253,7 @@ See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 ### Right:
 - Default layer and layer stack display;
 - `Menu` key on [`Utility` layer](#utility) swaps layer stack to layout display;
-- Clock: time is synced from host computer while raw HID is connected -- otherwise time can be set manually using keys on `Utility` layer;
+- Clock: time is synced from host computer while raw HID is connected -- otherwise time can be set manually using keys on the `Utility` layer when a host signal is not detected;
 - Custom locking key, modifier, and mute state indicators.
 - `OLED Static` key on `Utility` layer swaps both OLEDs to static images.
 
@@ -264,7 +264,7 @@ See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 
 ## Auto-Mouse Layer
 
-This feature enables a mouse keys layer when trackball or other pointing-device activity is detected. It can also transmit a drag scroll and volume control state to the trackball with the `Scroll` macro. This is implemented with the raw HID feature, and needs a python host script to communicate with the trackball.
+This feature enables a mouse keys layer when trackball or other pointing-device activity is detected. It can also transmit a drag scroll and volume control state to the trackball with the `Scroll` and `TB_TVOL` macros. This is implemented with the raw HID feature, and needs a python host script to communicate with the trackball.
 
 The matching keymap for the Ploopy Nano 2 trackball may be found in the [nano-2](/nano-2/) directory in this repository, and modifying the keymap for your own pointing device should be simple. You may need to checkout the `develop` branch and pull the latest ploopy pull request to compile this keymap yourself.
 
@@ -277,6 +277,10 @@ to open in the system tray, or
 python host.py
 ```
 to run in the terminal. While running in a terminal, the script will print all the data transactions between the keyboard and trackball to the terminal, which may be useful for debugging.
+
+The outermost thumb keys (the `Utility` layer keys) activate volume control while held.
+
+If you don't have a separate pointing device, this feature doesn't do anything with the keyboard alone, apart from two tap-hold keys on the base layer which can be disabled with the `TB_TOGG` key, so you can just ignore it.
 
 
 
