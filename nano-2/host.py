@@ -34,6 +34,11 @@ def log(prefix, data):
     ascii_str = "".join(chr(b) if 32 <= b <= 126 else '.' for b in data)
     print(f"[{ts}] {prefix}: {ascii_str} | {hexdata}")
 
+def logtime(prefix, data):
+    ts = datetime.now().strftime("%H:%M:%S.%f")[:-3]
+    decimal = " ".join(f"{b:03d}" for b in data)
+    print(f"[{ts}] {prefix}: {decimal}")
+
 def find_device(cfg):
     for entry in hid.enumerate():
         if (
@@ -100,8 +105,19 @@ def process_B_to_A(data):
     return data
 
 #===============================================================================
-# Message passing loop
+# Message passing
 #===============================================================================
+
+def time_format(dt):
+    report = [0] * 4
+    report[0] =  0x54
+    report[1] = dt.hour
+    report[2] = dt.minute
+    report[3] = dt.second
+    return bytes(report)
+
+TIME_SEND_INTERVAL = 1  # seconds
+last_time_sent = 0
 
 def pass_messages():
     devA = None
@@ -112,6 +128,19 @@ def pass_messages():
     while True:
         devA = ensure_connected(devA, KEYBOARD)
         devB = ensure_connected(devB, TRACKBALL)
+
+        now = time.time()
+        global last_time_sent
+        if abs(now - last_time_sent) >= TIME_SEND_INTERVAL:
+            last_time_sent = now
+            dt = datetime.now()
+            time_report = make_report(time_format(dt), KEYBOARD["report_length"])
+            if devA is None:
+                devA = ensure_connected(devA, KEYBOARD)
+            if devA:
+                safe_write(devA, time_report)
+                logtime("Host → KB ", time_report[1:])
+
 
         dataA = safe_read(devA, KEYBOARD["report_length"])
         if dataA is None:
@@ -138,6 +167,7 @@ def pass_messages():
         time.sleep(0.001)
 
 if __name__ == "__main__":
+    last_time_sent = time.time()
     try:
         pass_messages()
     except KeyboardInterrupt:

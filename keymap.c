@@ -863,10 +863,36 @@ static void rgb_matrix_set_color_split(uint8_t index, uint8_t r, uint8_t g, uint
     }
 }
 
+typedef enum {
+    set_none,
+    set_hour,
+    set_min,
+    set_sec,
+} time_setting_t;
+
+typedef struct {
+    time_setting_t setting;
+    uint8_t hrs;
+    uint8_t min;
+    uint8_t sec;
+} clock_state_t;
+
+static clock_state_t clock_state = {
+    .setting = set_none,
+    .hrs     = 0,
+    .min     = 0,
+    .sec     = 0
+};
+
+#define HOST_CLOCK_TIMEOUT 2000
+
+static uint32_t last_host_clock_update = 0;
+static bool host_clock_active = false;
+
 
 
 //==============================================================================
-// Trackball
+// Raw HID
 //==============================================================================
 
 /** 
@@ -884,6 +910,15 @@ B - layer off
 
 static bool auto_layer_on = true;
 
+#define LAYER_LINGER_TIME 500
+
+static uint32_t mouse_layer_off_callback(uint32_t trigger_time, void *cb_arg) {
+    layer_off(_TRACKBALL);
+    return 0;
+}
+
+static deferred_token trackball_token = INVALID_DEFERRED_TOKEN;
+
 #define RAW_LENGTH 32
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
@@ -893,13 +928,20 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     
     switch (data[0]) {
         case 'A':
+            cancel_deferred_exec(trackball_token);
             layer_on(_TRACKBALL);
             break;
         case 'B':
+            trackball_token = defer_exec(mouse_layer_off_callback, NULL, LAYER_LINGER_TIME);
             layer_off(_TRACKBALL);
             break;
         case 'T':
-            dprintf("T\n");
+            clock_state.hrs = data[1];
+            clock_state.min = data[2];
+            clock_state.sec = data[3];
+
+            last_host_clock_update = timer_read();
+            host_clock_active = true;
             break;
         default:
             dprintf("Unknown HID command: %c\n", data[0]);
@@ -3471,40 +3513,24 @@ static bool process_vol_controls(uint16_t keycode, keyrecord_t* record) {
 // Clock
 //------------------------------------------------------------------------------
 
-typedef enum {
-    set_none,
-    set_hour,
-    set_min,
-    set_sec,
-} time_setting_t;
-
-typedef struct {
-    time_setting_t setting;
-    uint8_t hrs;
-    uint8_t min;
-    uint8_t sec;
-} clock_state_t;
-
-static clock_state_t clock_state = {
-    .setting = set_none,
-    .hrs     = 0,
-    .min     = 0,
-    .sec     = 0
-};
-
 static uint32_t clock_callback(uint32_t trigger_time, void* cb_arg) {
-    clock_state.sec++;
-    if (clock_state.sec >= 60) {
-        clock_state.sec = 0;
-        clock_state.min++;
+    if (!host_clock_active || timer_elapsed(last_host_clock_update) >= HOST_CLOCK_TIMEOUT) {
+        clock_state.sec++;
+        if (clock_state.sec >= 60) {
+            clock_state.sec = 0;
+            clock_state.min++;
+        }
+        if (clock_state.min >= 60) {
+            clock_state.min = 0;
+            clock_state.hrs++;
+        }
+        if (clock_state.hrs >= 24) {
+            clock_state.hrs = 0;
+        }
+
+        host_clock_active = false;
     }
-    if (clock_state.min >= 60) {
-        clock_state.min = 0;
-        clock_state.hrs++;
-    }
-    if (clock_state.hrs >= 24) {
-        clock_state.hrs = 0;
-    }
+
     return 1000;
 }
 
