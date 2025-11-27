@@ -1,6 +1,7 @@
-import hid
 import time
+import threading
 from datetime import datetime
+import hid
 
 #===============================================================================
 # Device Config
@@ -22,11 +23,15 @@ TRACKBALL = {
     "report_length": 32,
 }
 
-RECONNECT_INTERVAL = 0.5
-
 #===============================================================================
 # Utils
 #===============================================================================
+
+RECONNECT_INTERVAL = 0.5
+TIME_SEND_INTERVAL = 1
+
+running = threading.Event()
+last_time_sent = 0
 
 def log(prefix, data):
     ts = datetime.now().strftime("%H:%M:%S.%f")[:-3]
@@ -36,16 +41,16 @@ def log(prefix, data):
 
 def logtime(prefix, data):
     ts = datetime.now().strftime("%H:%M:%S.%f")[:-3]
-    decimal = " ".join(f"{b:03d}" for b in data)
-    print(f"[{ts}] {prefix}: {decimal}")
+    dec = " ".join(f"{b:03d}" for b in data)
+    print(f"[{ts}] {prefix}: {dec}")
 
 def find_device(cfg):
     for entry in hid.enumerate():
         if (
-            entry["vendor_id"] == cfg["vendor_id"] and
-            entry["product_id"] == cfg["product_id"] and
-            entry.get("usage_page") == cfg["usage_page"] and
-            entry.get("usage") == cfg["usage"]
+            entry["vendor_id"] == cfg["vendor_id"]
+            and entry["product_id"] == cfg["product_id"]
+            and entry.get("usage_page") == cfg["usage_page"]
+            and entry.get("usage") == cfg["usage"]
         ):
             return entry
     return None
@@ -62,7 +67,7 @@ def open_device(cfg):
         return None
 
 def ensure_connected(device, cfg):
-    while device is None:
+    while device is None and running.is_set():
         print(f"Waiting for device (VID={hex(cfg['vendor_id'])}, PID={hex(cfg['product_id'])})...")
         time.sleep(RECONNECT_INTERVAL)
         device = open_device(cfg)
@@ -116,31 +121,29 @@ def time_format(dt):
     report[3] = dt.second
     return bytes(report)
 
-TIME_SEND_INTERVAL = 1  # seconds
-last_time_sent = 0
-
 def pass_messages():
+    global last_time_sent
+
     devA = None
     devB = None
 
-    print("Pass-through started. Reconnection enabled.\n")
+    print("Pass-through loop started.\n")
 
-    while True:
+    while running.is_set():
         devA = ensure_connected(devA, KEYBOARD)
         devB = ensure_connected(devB, TRACKBALL)
 
+        if not running.is_set():
+            break
+
         now = time.time()
-        global last_time_sent
         if abs(now - last_time_sent) >= TIME_SEND_INTERVAL:
             last_time_sent = now
             dt = datetime.now()
             time_report = make_report(time_format(dt), KEYBOARD["report_length"])
-            if devA is None:
-                devA = ensure_connected(devA, KEYBOARD)
             if devA:
                 safe_write(devA, time_report)
-                logtime("Host → KB ", time_report[1:])
-
+                logtime("Host → KB", time_report[1:])
 
         dataA = safe_read(devA, KEYBOARD["report_length"])
         if dataA is None:
@@ -151,7 +154,7 @@ def pass_messages():
             if not safe_write(devB, report):
                 devB = handle_disconnect(devB, "Trackball")
                 continue
-            log("KB → TB ", report[1:])
+            log("KB → TB", report[1:])
 
         dataB = safe_read(devB, TRACKBALL["report_length"])
         if dataB is None:
@@ -162,13 +165,77 @@ def pass_messages():
             if not safe_write(devA, report):
                 devA = handle_disconnect(devA, "Keyboard")
                 continue
-            log("TB → KB ", report[1:])
+            log("TB → KB", report[1:])
 
         time.sleep(0.001)
 
+#===============================================================================
+# Tray mode
+#===============================================================================
+
+def run_tray_mode():
+    import pystray
+    from pystray import MenuItem as item
+    from PIL import Image, ImageDraw
+
+    def make_icon(colour):
+        img = Image.new("RGB", (64, 64), "black")
+        d = ImageDraw.Draw(img)
+        d.rectangle([16, 16, 48, 48], fill=colour)
+        return img
+
+    ICON_RUNNING = make_icon("white")
+    ICON_STOPPED = make_icon("red")
+
+    def update_icon(icon, running_flag):
+        icon.icon = ICON_RUNNING if running_flag else ICON_STOPPED
+        icon.visible = True
+
+    def start(icon=None, _=None):
+        if not running.is_set():
+            running.set()
+            threading.Thread(target=pass_messages, daemon=True).start()
+            if icon:
+                update_icon(icon, True)
+
+    def stop(icon=None, _=None):
+        if running.is_set():
+            running.clear()
+            if icon:
+                update_icon(icon, False)
+
+    def exit_app(icon, _):
+        running.clear()
+        update_icon(icon, False)
+        icon.stop()
+
+
+    menu = (
+        item("Start", start),
+        item("Stop", stop),
+        item("Exit", exit_app),
+    )
+
+    start()
+    icon = pystray.Icon("DevicePassThrough", ICON_RUNNING, "Device Pass-through", menu)
+    icon.run()
+
+#===============================================================================
+# Entry point
+#===============================================================================
+
 if __name__ == "__main__":
-    last_time_sent = time.time()
-    try:
-        pass_messages()
-    except KeyboardInterrupt:
-        print("\nStopping.")
+    import sys
+
+    has_console = sys.stdout and sys.stdout.isatty()
+
+    if has_console:
+        print("Running in terminal mode.")
+        running.set()
+        try:
+            pass_messages()
+        except KeyboardInterrupt:
+            print("\nStopping.")
+            running.clear()
+    else:
+        run_tray_mode()

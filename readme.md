@@ -253,7 +253,7 @@ See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 ### Right:
 - Default layer and layer stack display;
 - `Menu` key on [`Utility` layer](#utility) swaps layer stack to layout display;
-- Clock — time is set manually using keys on `Utility` layer and doesn't require software on host (persists through sleep events);
+- Clock: time is synced from host computer while raw HID is connected -- otherwise time can be set manually using keys on `Utility` layer;
 - Custom locking key, modifier, and mute state indicators.
 - `OLED Static` key on `Utility` layer swaps both OLEDs to static images.
 
@@ -264,32 +264,38 @@ See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 
 ## Auto-Mouse Layer
 
-This feature enables mouse keys automatically when trackball or other pointing-device activity is detected, and can also transmit a drag scroll state to the trackball with the `Scroll` macro. This does not need any host-side software.
+This feature enables a mouse keys layer when trackball or other pointing-device activity is detected. It can also transmit a drag scroll and volume control state to the trackball with the `Scroll` macro. This is implemented with the raw HID feature, and needs a python host script to communicate with the trackball.
 
-By tracking the `Scroll Lock` and `Caps Lock` states, we can communicate information between the keyboard and a trackball without host-side software: when the trackball is moving, it will enable `Caps Lock`, which the keyboard will detect to enable a mouse key layer; and conversely, we can have a drag scrolling key keyboard by setting `Scroll Lock` on the keyboard and detecting it on the trackball.
+The matching keymap for the Ploopy Nano 2 trackball may be found in the [nano-2](/nano-2/) directory in this repository, and modifying the keymap for your own pointing device should be simple. You may need to checkout the `develop` branch and pull the latest ploopy pull request to compile this keymap yourself.
 
-The matching keymap for the Ploopy Nano 2 trackball may be found in the [nano-2](/nano-2/) directory in this repository, and modifying the keymap for your own pointing device should be simple. You may need to checkout the `develop` branch and pull the latest ploopy pull request to compile this keymap.
-
-You can turn off this feature by commenting out
-```c
-#define TRACKBALL_ENABLE
+The python script can be run with
+```sh
+pythonw host.py
 ```
-in `config.h`.
-
-See also [here](https://github.com/DesyncTheThird/auto-mouse-layer) for a more portable version you can more easily add to your own keymap. (The implementation there uses `Num Lock` in place of `Caps Lock`; see the caveats section there.)
-
-
-
-### Why Caps Lock?
-
-The `Scroll Lock` and `Num Lock` keys don't set the locking states while control is held since these combinations are interpreted as `Pause` and `Break`. This is bypassable when sending signals from the keyboard to the trackball, since we can just soft-remove mods before sending the signal, but if the trackball were to send signals back to the keyboard while control is held, the keyboard would not be able to detect the locking state changes. For instance, if we hold control before moving the trackball, the locking key emitted by the trackball would have any effect, and we cannot remove the control modifier from the trackball's side since the control modifier is being emitted by a different device. Because of this, we can't use the `Num Lock` or `Scroll Lock` to send signals to the keyboard.
-
-If you actually want to use `Caps Lock` for typing, you can toggle this feature on/off by pressing the `TB_TOG` key on the `Utility` layer. However, the way the firmware is currently set up, the caps lock state is forcibly set by the trackball while this feature is enabled, so you will also need to unplug the trackball. (I am currently working on this.)
+to open in the system tray, or
+```sh
+python host.py
+```
+to run in the terminal. While running in a terminal, the script will print all the data transactions between the keyboard and trackball to the terminal, which may be useful for debugging.
 
 
 
 # ⚠️ Experimental Features
 Various additional experimental features that have not yet been incorporated into the main keymap may be found on various branches. Current features in development:
+
+### [Portable Auto-Mouse Layer](https://github.com/DesyncTheThird/auto-mouse-layer)
+
+This feature enables the auto-mouse layer functionality in a more portable way that does not require any host-side software.
+
+By tracking the `Scroll Lock` and `Caps Lock` states, we can communicate information between the keyboard and a trackball without host-side software: when the trackball is moving, it will enable `Caps Lock`, which the keyboard will detect to enable a mouse key layer; and conversely, we can have a drag scrolling key keyboard by setting `Scroll Lock` on the keyboard and detecting it on the trackball.
+
+The `Scroll Lock` and `Num Lock` keys don't set the locking states while control is held since these combinations are interpreted as `Pause` and `Break`. This is bypassable when sending signals from the keyboard to the trackball, since we can just soft-remove mods before sending the signal, but if the trackball were to send signals back to the keyboard while control is held, the keyboard would not be able to detect the locking state changes. For instance, if we hold control before moving the trackball, the locking key emitted by the trackball would have any effect, and we cannot remove the control modifier from the trackball's side since the control modifier is being emitted by a different device. Because of this, we can't use the `Num Lock` or `Scroll Lock` to send signals to the keyboard. This is why we use `Caps Lock` to signal mouse movement from the trackball to the keyboard, since `Ctrl`+`Caps Lock` does not have any special meaning.
+
+If you actually want to use `Caps Lock` for typing, you can toggle this feature on/off by pressing the `TB_TOGG` key on the `Utility` layer. However, the way the firmware is currently set up, the caps lock state is forcibly set by the trackball while this feature is enabled, so you will also need to unplug the trackball (or update the keymap to be able to disable control).
+
+See also [here](https://github.com/DesyncTheThird/auto-mouse-layer) for a standalone version you can more easily add to your own keymap. (The implementation there uses `Num Lock` in place of `Caps Lock`; see the caveats section there, as well as the paragraphs above.)
+
+
 
 ### [Steno-lite](https://github.com/DesyncTheThird/corne-keymap/tree/steno-lite)
 This feature adds a selection of combos that output common words or word fragments.
