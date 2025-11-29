@@ -423,7 +423,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           CS_LCTL, TB_LOFF, _______,  SCROLL, _______,  KC_ENT,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______,  SCROLL,    MS_ACL2, MS_ACL0, MS_ACL1
+                                              _______, _______, MS_BTN1,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -1002,6 +1002,15 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
             tap_hold_hid_key(keycode, record, 'S', KC_M);
             return false;
 
+        case ALTTAB:
+            if (record->event.pressed) {
+                if (!misc_key_state.alt_tab_active) {
+                    msg[0] = 'v';
+                    raw_hid_send(msg, RAW_LENGTH);
+                }
+            }
+            return true;
+            
         case MS_BTN1:
         case MS_BTN2:
         case MS_BTN3:
