@@ -25,12 +25,15 @@ enum {
     NANOKEY,
 };
 
+extern bool is_drag_scroll;
+
 static bool auto_layering = true;
 static bool volume_mode = false;
 
 static void reset_state(void) {
     auto_layering = true;
     volume_mode = false;
+    is_drag_scroll = false;
 }
 
 td_state_t cur_dance(tap_dance_state_t *state);
@@ -80,7 +83,7 @@ void nanokey_finished(tap_dance_state_t *state, void *user_data) {
     tap_state.state = cur_dance(state);
     switch (tap_state.state) {
         case TD_SINGLE_TAP: register_code(MS_BTN1); break;
-        case TD_SINGLE_HOLD: toggle_drag_scroll(); break;
+        case TD_SINGLE_HOLD: is_drag_scroll = true; break;
         case TD_DOUBLE_TAP: tap_code(MS_BTN1); register_code(MS_BTN1); break;
         case TD_DOUBLE_HOLD: tap_code(MS_BTN1); register_code(MS_BTN1); break;
         case TD_DOUBLE_SINGLE_TAP: tap_code(MS_BTN1); register_code(MS_BTN1); break;
@@ -95,7 +98,7 @@ void nanokey_finished(tap_dance_state_t *state, void *user_data) {
 void nanokey_reset(tap_dance_state_t *state, void *user_data) {
     switch (tap_state.state) {
         case TD_SINGLE_TAP: unregister_code(MS_BTN1); break;
-        case TD_SINGLE_HOLD: toggle_drag_scroll(); break;
+        case TD_SINGLE_HOLD: is_drag_scroll = true; break;
         case TD_DOUBLE_TAP: unregister_code(MS_BTN1); break;
         case TD_DOUBLE_HOLD: unregister_code(MS_BTN1); break;
         case TD_DOUBLE_SINGLE_TAP: unregister_code(MS_BTN1); break;
@@ -124,7 +127,10 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     
     switch (data[0]) {
         case 'S':
-            toggle_drag_scroll();
+            is_drag_scroll = true;
+            break;
+        case 's':
+            is_drag_scroll = false;
             break;
         case 'V':
             volume_mode = true;

@@ -935,7 +935,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     }
 }
 
-static void tap_hold_hid_key(uint16_t keycode, keyrecord_t* record, char code, uint16_t output_keycode) {
+static void tap_hold_hid_key(uint16_t keycode, keyrecord_t* record, char rise_code, char fall_code,uint16_t output_keycode) {
     if (!auto_layer_on || record->tap.count) {
         if (record->event.pressed) {
             register_code(output_keycode);
@@ -945,10 +945,17 @@ static void tap_hold_hid_key(uint16_t keycode, keyrecord_t* record, char code, u
         return;
     }
 
-    uint8_t msg[RAW_LENGTH];
-    memset(msg, 0, RAW_LENGTH);
-    msg[0] = code;
-    raw_hid_send(msg, RAW_LENGTH);
+    if (record->event.pressed) {
+        uint8_t msg[RAW_LENGTH];
+        memset(msg, 0, RAW_LENGTH);
+        msg[0] = rise_code;
+        raw_hid_send(msg, RAW_LENGTH);
+    } else {
+        uint8_t msg[RAW_LENGTH];
+        memset(msg, 0, RAW_LENGTH);
+        msg[0] = fall_code;
+        raw_hid_send(msg, RAW_LENGTH);
+    }
 }
 
 static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
@@ -991,15 +998,19 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
             return false;
 
         case SCROLL:
-            msg[0] = 'S';
+            if (record->event.pressed) {
+                msg[0] = 'S';
+            } else {
+                msg[0] = 's';
+            }
             raw_hid_send(msg, RAW_LENGTH);
             return false;
 
         case TB_D:
-            tap_hold_hid_key(keycode, record, 'S', KC_D);
+            tap_hold_hid_key(keycode, record, 'S', 's', KC_D);
             return false;
         case TB_M:
-            tap_hold_hid_key(keycode, record, 'S', KC_M);
+            tap_hold_hid_key(keycode, record, 'S', 's', KC_M);
             return false;
 
         case ALTTAB:
