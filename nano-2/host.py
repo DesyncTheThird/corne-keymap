@@ -28,7 +28,7 @@ TRACKBALL = {
 #===============================================================================
 
 RECONNECT_INTERVAL = 0.5
-TIME_SEND_INTERVAL = 0.5
+TIME_SEND_INTERVAL = 0.2
 
 running = threading.Event()
 last_time_sent = 0
@@ -41,8 +41,8 @@ def log(prefix, data):
 
 def logtime(prefix, data):
     ts = datetime.now().strftime("%H:%M:%S.%f")[:-3]
-    dec = " ".join(f"{b:03d}" for b in data)
-    print(f"[{ts}] {prefix}: {dec}")
+    dec = ":".join(f"{b:02d}" for b in data[1:4])
+    print(f"[{ts}] {prefix}: Time {dec}")
 
 def find_device(cfg):
     for entry in hid.enumerate():

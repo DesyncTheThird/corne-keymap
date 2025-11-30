@@ -421,7 +421,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, _______, MS_BTN3, MS_BTN2, MS_BTN1,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, TB_LOFF, _______,  SCROLL, _______,  KC_ENT,                      _______, _______, _______, _______, _______, _______,
+          CS_LCTL, _______, _______,  SCROLL, _______,  KC_ENT,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, MS_BTN1,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -884,10 +884,12 @@ static clock_state_t clock_state = {
     .sec     = 0
 };
 
-#define HOST_CLOCK_TIMEOUT 2000
+#define HOST_CLOCK_TIMEOUT 500
 
 static uint32_t last_host_clock_update = 0;
 static bool host_clock_active = false;
+static deferred_token clock_token = INVALID_DEFERRED_TOKEN;
+static uint32_t clock_callback(uint32_t, void*);
 
 
 
@@ -900,6 +902,10 @@ static bool auto_layer_on = true;
 #define LAYER_LINGER_TIME 500
 
 static uint32_t mouse_layer_off_callback(uint32_t trigger_time, void *cb_arg) {
+    if (is_layer_locked(_TRACKBALL)) {
+        return 500;
+    }
+
     layer_off(_TRACKBALL);
     return 0;
 }
@@ -922,10 +928,12 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             trackball_token = defer_exec(LAYER_LINGER_TIME, mouse_layer_off_callback, NULL);
             break;
         case 'T':
+            cancel_deferred_exec(clock_token);
             clock_state.hrs = data[1];
             clock_state.min = data[2];
             clock_state.sec = data[3];
-
+            
+            clock_token = defer_exec(1000, clock_callback, NULL);
             last_host_clock_update = timer_read();
             host_clock_active = true;
             break;
@@ -1031,7 +1039,9 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
             return true;
 
         default:
-            layer_off(_TRACKBALL);
+            if (record->event.key.row >= 4) {
+                layer_off(_TRACKBALL);
+            }
             return true;
     }
 }
@@ -1394,12 +1404,10 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
                 return false;
             
             }
-            if (chordal_hold_handedness(other_record->event.key) == 'L' &&
-                (other_record->event.key.col == 5)) {
+            if (other_record->event.key.row == 0 || other_record->event.key.col == 5) {
                 return true;
             }
-            if (chordal_hold_handedness(other_record->event.key) == 'L' &&
-                (other_record->event.key.col == 1)) {
+            if (other_record->event.key.col == 1) {
                 return false;
             }
             if (chordal_hold_handedness(other_record->event.key) == 'L' &&
@@ -4806,7 +4814,7 @@ void keyboard_post_init_user(void) {
     rgb_matrix_sethsv_noeeprom(255,255,255);
     rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_boot_animation_effect);
 
-    defer_exec(clock_callback(0,NULL), clock_callback, NULL);
+    clock_token = defer_exec(1000, clock_callback, NULL);
 
     transaction_register_rpc(USER_SYNC_A, user_config_sync_handler);
 }
