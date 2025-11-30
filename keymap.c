@@ -4693,6 +4693,12 @@ static void render_overlays(void) {
         return;
     }
 
+    if (IS_LAYER_ON(_TRACKBALL)) {
+        oled_set_cursor(0,3);
+        oled_write_raw_P(menu_layout_trackball_left, layout_left_size);
+        return;
+    }
+
     if (IS_LAYER_ON(_NUMPAD)) {
         oled_set_cursor(0,6);
         oled_write_raw_P(menu_layout_numpad, layout_right_size);
