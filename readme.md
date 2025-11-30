@@ -263,7 +263,7 @@ See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 
 
 ## Auto-Mouse Layer
-
+![Auto-Mouse Layer](images/auto-mouse.png?raw=true)
 This feature enables a mouse keys layer when trackball or other pointing-device activity is detected. It can also transmit a drag scroll and volume control state to the trackball with the `Scroll` and `TB_TVOL` macros. This is implemented with the raw HID feature, and needs a python host script to communicate with the trackball.
 
 The matching keymap for the Ploopy Nano 2 trackball may be found in the [nano-2](/nano-2/) directory in this repository, and modifying the keymap for your own pointing device should be simple. You may need to checkout the `develop` branch and pull the latest ploopy pull request to compile this keymap yourself.
