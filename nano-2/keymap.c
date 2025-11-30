@@ -63,11 +63,11 @@ td_state_t cur_dance(tap_dance_state_t *state) {
         return TD_TRIPLE_HOLD;
     }
 
-    if (state->count == 4) {
+    if (state->count >= 4 && state->count < 8) {
         return TD_RESET;
     }
 
-    if (state->count >= 6) {
+    if (state->count >= 8) {
         return TD_BOOT;
     }
     
@@ -98,7 +98,7 @@ void nanokey_finished(tap_dance_state_t *state, void *user_data) {
 void nanokey_reset(tap_dance_state_t *state, void *user_data) {
     switch (tap_state.state) {
         case TD_SINGLE_TAP: unregister_code(MS_BTN1); break;
-        case TD_SINGLE_HOLD: is_drag_scroll = true; break;
+        case TD_SINGLE_HOLD: is_drag_scroll = false; break;
         case TD_DOUBLE_TAP: unregister_code(MS_BTN1); break;
         case TD_DOUBLE_HOLD: unregister_code(MS_BTN1); break;
         case TD_DOUBLE_SINGLE_TAP: unregister_code(MS_BTN1); break;
@@ -205,6 +205,7 @@ void auto_layer(report_mouse_t mouse_report) {
 }
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+
     if (volume_mode) {
         volume_control(mouse_report);
 
