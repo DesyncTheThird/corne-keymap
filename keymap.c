@@ -3054,6 +3054,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_I: send_string(/*i*/"on"); update_last_keys(KC_N, 2); break;
                 case KC_A: send_string(/*a*/"nd "); update_last_keys(KC_SPC, 3); break;
                 case KC_K: send_string(/*k*/"now"); update_last_keys(KC_SPC, 4); break;
+                case KC_P: tap_code(KC_Y); update_last_key(KC_Y); break;
 
                 case KC_NO:
                 case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
@@ -3368,6 +3369,10 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
                 cs_tap_code16(LSFT(KC_QUOT));
                 return true;
             }
+            if (ctrl_on()) {
+                tap_code16(KC_DQUO);
+                return true;
+            }
             magic_state.active = LEFT;
             cancel_deferred_exec(magic_state.token);
             magic_state.token = defer_exec(500, PCTLEFT_fallback, NULL);
@@ -3376,6 +3381,10 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
         case PCTRGHT:
             if (shifted()) {
                 cs_tap_code16(LSFT(KC_NUHS));
+                return true;
+            }
+            if (ctrl_on()) {
+                tap_code16(KC_COMM);
                 return true;
             }
             magic_state.active = RIGHT;

@@ -51,10 +51,10 @@ Left hand keys:
 | Magic | `N` | `R` | `G` | `S` | `ECAUSE⎵` | `'T` | `L` | `MENT` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
 
 Right hand overrides:
-|     |     |     |     |     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  | `A`   | `K`   |
-| Magic | `ECT` | `E` | `I` | `P` | `ERE` | `O` | `ON` | `ND⎵` | `NOW` |
+|     |     |     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  | `A`   | `K`   | `P` |
+| Magic | `ECT` | `E` | `I` | `P` | `ERE` | `O` | `ON` | `ND⎵` | `NOW` | `Y` |
 
 (Other right hand keys are repeated.)
 
@@ -293,7 +293,9 @@ This feature enables the auto-mouse layer functionality in a more portable way t
 
 By tracking the `Scroll Lock` and `Caps Lock` states, we can communicate information between the keyboard and a trackball without host-side software: when the trackball is moving, it will enable `Caps Lock`, which the keyboard will detect to enable a mouse key layer; and conversely, we can have a drag scrolling key keyboard by setting `Scroll Lock` on the keyboard and detecting it on the trackball.
 
-The `Scroll Lock` and `Num Lock` keys don't set the locking states while control is held since these combinations are interpreted as `Pause` and `Break`. This is bypassable when sending signals from the keyboard to the trackball, since we can just soft-remove mods before sending the signal, but if the trackball were to send signals back to the keyboard while control is held, the keyboard would not be able to detect the locking state changes. For instance, if we hold control before moving the trackball, the locking key emitted by the trackball would have any effect, and we cannot remove the control modifier from the trackball's side since the control modifier is being emitted by a different device. Because of this, we can't use the `Num Lock` or `Scroll Lock` to send signals to the keyboard. This is why we use `Caps Lock` to signal mouse movement from the trackball to the keyboard, since `Ctrl`+`Caps Lock` does not have any special meaning.
+The `Scroll Lock` and `Num Lock` keys don't set the locking states while control is held since these combinations are interpreted as `Pause` and `Break`. This is bypassable when sending signals from the keyboard to the trackball, since we can just soft-remove mods before sending the signal, but if the trackball were to send signals back to the keyboard while control is held, the keyboard would not be able to detect the locking state changes, since the trackball would just be emitting `Pause`/`Break`. The workaround doesn't apply in this direction, since we cannot remove the control modifier from the trackball's side because the control modifier is being emitted by a different device.
+
+This is problematic since, for instance, if we hold control before moving the trackball, the auto-mouse layer would never activate. Because of this, we can't use the `Num Lock` or `Scroll Lock` to send signals from the trackball to the keyboard. This is why, in this implementation, we use `Caps Lock` to signal mouse movement from the trackball to the keyboard, since `Ctrl`+`Caps Lock` does not have any special meaning.
 
 If you actually want to use `Caps Lock` for typing, you can toggle this feature on/off by pressing the `TB_TOGG` key on the `Utility` layer. However, the way the firmware is currently set up, the caps lock state is forcibly set by the trackball while this feature is enabled, so you will also need to unplug the trackball (or update the keymap to be able to disable control).
 
@@ -419,9 +421,9 @@ The left hand bracket macro surrounds the current word with brackets, and cycles
 In place of the bracket macro as on the `Data` layer, there is an *enumeration macro*:
 - The `++` macro outputs `1` on first press and increments on subsequent presses, rolling over to `0` after `9`, and resetting to `1` when the `Edit` layer is released.
 
-  Holding `Shift` will replace the current number with its successor; holding `Ctrl` will decrement instead; and holding both will replace the the current number with its predecessor.
+  Holding `Shift` will *replace* the current number with its successor; holding `Ctrl` will decrement instead; and holding both will replace the the current number with its predecessor.
 
-  This macro is also available on the `Program` and `Symbol` layers; the internal state is retained between all three instances, and is reset only when the `Edit` layer is activated and released.
+  This macro is also available on the `Program` and `Symbol` layers; the internal state is retained between all three instances and is reset only when the `Edit` layer is activated and released.
 
 There are also various macros for quickly selecting and manipulating text:
 - The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
@@ -442,7 +444,7 @@ These are both implemented via the tri-layer feature, so the layer keys may be r
 
 If an arrow key is held on the `Edit` layer while the `Edit Overlay` is activated, the arrow key will be retriggered with a persistent `Ctrl` modifier, allowing quick horizontal navigation/vertical scrolling without having to manually re-press the arrow key after holding a modifier. If the modifier has been lost, retriggering on layer-off is disabled, avoiding pauses in motion.
 
-The modifier will be disabled if no arrow key is pressed for 1000ms; if an arrow key is double-tapped within 150ms, or if any other key is pressed.
+The modifier will be disabled if no arrow key is pressed for 1000ms; if an arrow key is double-tapped within 150ms; or if any other key is pressed.
 
 The `Ctrl` key will also become sticky for arrow keys while the overlay is active, reactivating the persistent modifier. `Shift` and `Ctrl` home row mods will also automatically retrigger arrow keys.
 
