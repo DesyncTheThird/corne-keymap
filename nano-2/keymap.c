@@ -85,7 +85,7 @@ void nanokey_finished(tap_dance_state_t *state, void *user_data) {
         case TD_SINGLE_TAP: register_code(MS_BTN1); break;
         case TD_SINGLE_HOLD: is_drag_scroll = true; break;
         case TD_DOUBLE_TAP: tap_code(MS_BTN1); register_code(MS_BTN1); break;
-        case TD_DOUBLE_HOLD: tap_code(MS_BTN1); register_code(MS_BTN1); break;
+        case TD_DOUBLE_HOLD: register_code(MS_BTN1); break;
         case TD_DOUBLE_SINGLE_TAP: tap_code(MS_BTN1); register_code(MS_BTN1); break;
         case TD_TRIPLE_TAP: register_code(MS_BTN2); break;
         case TD_TRIPLE_HOLD: register_code(MS_BTN2); break;
