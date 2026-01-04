@@ -756,27 +756,27 @@ static inline bool is_magic_punct(uint16_t keycode) {
 }
 
 static inline bool is_layer_tap(uint16_t keycode) {
-    return (keycode == CS_AL1 || keycode == CS_AL2 || keycode == CS_AL3 || keycode == CS_AL4);
+    return keycode == CS_AL1 || keycode == CS_AL2 || keycode == CS_AL3 || keycode == CS_AL4;
 }
 
 static inline bool is_spc(uint16_t keycode) {
-    return (keycode == CS_LT1 || keycode == KC_SPC);
+    return keycode == CS_LT1 || keycode == KC_SPC;
 }
 
 static inline bool is_wrapping_macro(uint16_t keycode) {
-    return ((keycode >= WRAPCBR && keycode <= WRAPBRC) || keycode == CY_WRAP);
+    return (keycode >= WRAPCBR && keycode <= WRAPBRC) || keycode == CY_WRAP;
 }
 
 static inline bool is_cycling_macro(uint16_t keycode) {
-    return (keycode >= CY_MISC && keycode <= CY_ENUM);
+    return keycode >= CY_MISC && keycode <= CY_ENUM;
 }
 
 static inline bool is_select_macro(uint16_t keycode) {
-    return (keycode == SELLEFT || keycode == SELECT || keycode == SELRGHT);
+    return keycode == SELLEFT || keycode == SELECT || keycode == SELRGHT;
 }
 
 static inline bool is_arrow(uint16_t keycode) {
-    return (keycode == KC_UP || keycode == KC_DOWN || keycode == KC_LEFT || keycode == KC_RGHT);
+    return keycode == KC_UP || keycode == KC_DOWN || keycode == KC_LEFT || keycode == KC_RGHT;
 }
 
 static inline void cs_tap_code16_del_mods(uint16_t keycode, uint8_t mod_mask) {
@@ -823,6 +823,12 @@ static inline void cs_unregister_code16(uint16_t keycode) {
     }
     unregister_code16(keycode);
     set_mods(mods);
+}
+
+void repeat_bspc(uint16_t num) {
+    for (uint16_t i = 0; i < num; i++) {
+        cs_tap_code16_del_mods(KC_BSPC, MOD_MASK_CSAG);
+    }
 }
 
 static inline bool ctrl_on(void) {
@@ -1575,6 +1581,17 @@ enum combo_events {
     SPC_9,
     SPC_0,
 
+    BSPC_1,
+    BSPC_2,
+    BSPC_3,
+    BSPC_4,
+    BSPC_5,
+    BSPC_6,
+    BSPC_7,
+    BSPC_8,
+    BSPC_9,
+    BSPC_0,
+
     COMBO_LENGTH
 };
 uint16_t COMBO_LEN = COMBO_LENGTH;
@@ -1629,6 +1646,17 @@ const uint16_t PROGMEM spc_8[]        = {  KC_SPC,    KC_C,                   CO
 const uint16_t PROGMEM spc_9[]        = {  KC_SPC,    KC_V,                   COMBO_END};
 const uint16_t PROGMEM spc_0[]        = {  KC_SPC,    KC_B,                   COMBO_END};
 
+const uint16_t PROGMEM bspc_1[]       = {  CS_RT1,    KC_J,                   COMBO_END};
+const uint16_t PROGMEM bspc_2[]       = {  CS_RT1,    KC_K,                   COMBO_END};
+const uint16_t PROGMEM bspc_3[]       = {  CS_RT1,    KC_L,                   COMBO_END};
+const uint16_t PROGMEM bspc_4[]       = {  CS_RT1,    KC_M,                   COMBO_END};
+const uint16_t PROGMEM bspc_5[]       = {  CS_RT1,    KC_QUOT,                COMBO_END};
+const uint16_t PROGMEM bspc_6[]       = {  CS_RT1,    COM_EXL,                COMBO_END};
+const uint16_t PROGMEM bspc_7[]       = {  CS_RT1,    KC_U,                   COMBO_END};
+const uint16_t PROGMEM bspc_8[]       = {  CS_RT1,    KC_I,                   COMBO_END};
+const uint16_t PROGMEM bspc_9[]       = {  CS_RT1,    KC_O,                   COMBO_END};
+const uint16_t PROGMEM bspc_0[]       = {  CS_RT1,    KC_SCLN,                COMBO_END};
+
 combo_t key_combos[] = {
     [TOUHOU]        = COMBO_ACTION(touhou),
     [STENO]         = COMBO_ACTION(steno),
@@ -1681,6 +1709,17 @@ combo_t key_combos[] = {
     [SPC_8]         = COMBO(spc_8,       KC_8),
     [SPC_9]         = COMBO(spc_9,       KC_9),
     [SPC_0]         = COMBO(spc_0,       KC_0),
+
+    [BSPC_1]        = COMBO_ACTION(bspc_1),
+    [BSPC_2]        = COMBO_ACTION(bspc_2),
+    [BSPC_3]        = COMBO_ACTION(bspc_3),
+    [BSPC_4]        = COMBO_ACTION(bspc_4),
+    [BSPC_5]        = COMBO_ACTION(bspc_5),
+    [BSPC_6]        = COMBO_ACTION(bspc_6),
+    [BSPC_7]        = COMBO_ACTION(bspc_7),
+    [BSPC_8]        = COMBO_ACTION(bspc_8),
+    [BSPC_9]        = COMBO_ACTION(bspc_9),
+    [BSPC_0]        = COMBO_ACTION(bspc_0),
 };
 
 void process_combo_event(uint16_t combo_index, bool pressed) {
@@ -1732,6 +1771,16 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 cs_tap_code16(key2);
                 update_last_key(key1);
                 update_last_key(key2);
+            }
+            break;
+        case BSPC_1 ... BSPC_9:
+            if (pressed) {
+                repeat_bspc(combo_index - BSPC_1 + 1);
+            }
+            break;
+        case BSPC_0:
+            if (pressed) {
+                cs_tap_code16_del_mods(LCTL(KC_BSPC), MOD_MASK_CSAG);
             }
             break;
     }

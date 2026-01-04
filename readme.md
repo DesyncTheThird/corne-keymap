@@ -238,7 +238,9 @@ There are also more left-hand combos with the `Space` key, not shown on the imag
 - a top row key will output the function keys `F1` to `F5`;
 - home or bottom row will output numbers `1` to `5` on home row, and `6` to `0` on the lower row.
 
-
+On the other hand, there are more combos with the `Backspace` key:
+- pressing any of the number keys (in the same layout as in the `Data Overlay` layer) with `Backspace` will tap backspace that many times;
+- except `0`, which will instead send `Ctrl`+`Backspace`.
 
 ## 128x64 OLEDs
 
