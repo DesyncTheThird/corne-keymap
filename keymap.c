@@ -904,6 +904,8 @@ static uint32_t clock_callback(uint32_t, void*);
 //==============================================================================
 
 static bool auto_layer_on = true;
+static uint32_t last_trackball_activity = 0;
+static bool trackball_short_timeout = false;
 
 #define LAYER_LINGER_TIME 500
 
@@ -928,10 +930,12 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     switch (data[0]) {
         case 'A':
             cancel_deferred_exec(trackball_token);
+            last_trackball_activity = timer_read();
             layer_on(_TRACKBALL);
             break;
         case 'B':
             trackball_token = defer_exec(LAYER_LINGER_TIME, mouse_layer_off_callback, NULL);
+            last_trackball_activity = timer_read();
             break;
         case 'T':
             cancel_deferred_exec(clock_token);
@@ -1045,7 +1049,13 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
             return true;
 
         default:
-            if (record->event.key.row >= 4) {
+            trackball_short_timeout = timer_elapsed32(last_trackball_activity) > 100;
+            const bool right_hand = record->event.key.row >= 4;
+            const bool top_row    = record->event.key.row == 0;
+            const bool bottom_row = record->event.key.row == 2;
+            if (right_hand ||
+               ((top_row || bottom_row || ctrl_on()) && trackball_short_timeout)
+            ) {
                 layer_off(_TRACKBALL);
             }
             return true;
