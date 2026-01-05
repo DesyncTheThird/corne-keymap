@@ -53,6 +53,8 @@ enum custom_keycodes {
     MUTE_R,
     CS_VOLD,
     CS_VOLU,
+    CS_MPRV,
+    CS_MNXT,
 
     CS_RGBN,
     CS_RGBT,
@@ -515,7 +517,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            ALTTAB, CLOCKUP, KC_PAUS, CS_VOLU,  KC_INS, OLEDSAV,                      CS_RGBN,   KC_F7,   KC_F8,   KC_F9,  KC_F10, CS_BOOT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, CLOCKDN, KC_MPRV, CS_VOLD, KC_MNXT,   BASIC,                         BASE,   KC_F1,   KC_F2,   KC_F3,  KC_F11, DB_TOGG,
+          _______, CLOCKDN, CS_MPRV, CS_VOLD, CS_MNXT,   BASIC,                         BASE,   KC_F1,   KC_F2,   KC_F3,  KC_F11, DB_TOGG,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           TB_TOGG, CLOCKNX, OLEDTOG,    MUTE, KC_PSCR,    MENU,                      CS_RGBT,   KC_F4,   KC_F5,   KC_F6,  KC_F12, KC_SCRL,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -1047,6 +1049,43 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
         case MS_BTN5:
             extend_deferred_exec(trackball_token, LAYER_LINGER_TIME);
             return true;
+
+        // Utility layer overrides
+
+        case CS_MNXT:
+            if (IS_LAYER_ON(_TRACKBALL)) {
+                if (record->event.pressed) {
+                    register_code(MS_BTN1);
+                } else {
+                    unregister_code(MS_BTN1);
+                }
+                return false;
+            }
+            return true;
+
+        case CS_VOLD:
+            if (IS_LAYER_ON(_TRACKBALL)) {
+                if (record->event.pressed) {
+                    register_code(MS_BTN2);
+                } else {
+                    unregister_code(MS_BTN2);
+                }
+                return false;
+            }
+            return true;
+
+        case CS_MPRV:
+            if (IS_LAYER_ON(_TRACKBALL)) {
+                if (record->event.pressed) {
+                    register_code(MS_BTN3);
+                } else {
+                    unregister_code(MS_BTN3);
+                }
+                return false;
+            }
+            return true;
+
+        // Deactivate trackball layer on most other keypresses
 
         default:
             trackball_short_timeout = timer_elapsed32(last_trackball_activity) > 100;
