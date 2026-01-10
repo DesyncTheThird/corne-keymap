@@ -1836,7 +1836,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
 }
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
-    uint16_t combo_term = 0;
+    static uint16_t combo_term = 0;
     switch (index) {
         case CAPSWORD:
             combo_term = 30;
@@ -1844,7 +1844,7 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
 
         case L_UNDERSCORE:
         case R_UNDERSCORE:
-            combo_term = 50;
+            combo_term = 30;
             break;
             
         case L_NEWSENT:
@@ -1873,10 +1873,6 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
             break;
     }
 
-    if (IS_LAYER_ON(_EDIT) || IS_LAYER_ON(_PROGRAM) || IS_LAYER_ON(_SYMBOL)) {
-        combo_term /= 5;
-    }
-
     return combo_term;
 }
 
@@ -1902,32 +1898,20 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo,
         case NUMPAD:
             return true;
 
-        // Disable only left hand combos on Edit layer
-        case L_EXPONENT:
-        case L_COMMA:
-        case L_DOT:
-        case L_UNDERSCORE:
-        case L_ASTERISK:
-        case L_EQUALS:
-        case L_PLUS:
-        case L_MINUS:
-        case AMPERSAND:
-        case COLON:
-        case L_NEWSENT:
-            if (IS_LAYER_ON(_EDIT)) { 
+        default:
+            if (IS_LAYER_ON(_QWERTY)
+             || IS_LAYER_ON(_BASIC)
+             || IS_LAYER_ON(_TOUHOU)
+             || IS_LAYER_ON(_MOUSE)
+             || IS_LAYER_ON(_STENO)
+             || IS_LAYER_ON(_UTILITY)
+             || IS_LAYER_ON(_PROGRAM)
+             || IS_LAYER_ON(_EDIT)
+             || IS_LAYER_ON(_SYMBOL)
+            ) {
                 return false;
             }
-
-        default:
-            if (IS_LAYER_OFF(_QWERTY)
-             && IS_LAYER_OFF(_BASIC)
-             && IS_LAYER_OFF(_TOUHOU)
-             && IS_LAYER_OFF(_MOUSE)
-             && IS_LAYER_OFF(_STENO)
-             && IS_LAYER_OFF(_UTILITY)) {
-                return true;
-            }
-            return false;
+            return true;
     }
 }
 
