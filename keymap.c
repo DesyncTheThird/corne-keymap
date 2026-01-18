@@ -1897,6 +1897,16 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo,
         case STENO:
         case NUMPAD:
             return true;
+        
+        case R_DOT:
+        case R_PLUS:
+        case R_MINUS:
+        case R_EXPONENT:
+        case R_COMMA:
+        case SEMICOLON:
+            if (IS_LAYER_ON(_EDIT)) {
+                return true;
+            }
 
         default:
             if (IS_LAYER_ON(_QWERTY)
