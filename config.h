@@ -63,6 +63,8 @@
 #define COMBO_TERM_PER_COMBO
 // #define COMBO_MUST_PRESS_IN_ORDER_PER_COMBO
 
+#define COMBO_PROCESS_KEY_REPRESS
+
 // Timer for mod and layer taps
 #undef TAPPING_TERM
 #define TAPPING_TERM 150

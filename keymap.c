@@ -765,6 +765,10 @@ static inline bool is_spc(uint16_t keycode) {
     return keycode == CS_LT1 || keycode == KC_SPC;
 }
 
+static inline bool is_bspc(uint16_t keycode) {
+    return keycode == CS_RT1 || keycode == KC_BSPC;
+}
+
 static inline bool is_wrapping_macro(uint16_t keycode) {
     return (keycode >= WRAPCBR && keycode <= WRAPBRC) || keycode == CY_WRAP;
 }
@@ -1833,6 +1837,24 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
             }
             break;
     }
+}
+
+bool process_combo_key_repress(uint16_t combo_index, combo_t *combo, uint8_t key_index, uint16_t keycode) {
+    switch (combo_index) {
+        case BSPC_1 ... BSPC_9:
+            if (is_bspc(keycode)) {
+                repeat_bspc(combo_index - BSPC_1 + 1);
+                return true;
+            }
+            break;
+        case BSPC_0:
+            if (is_bspc(keycode)) {
+                cs_tap_code16_del_mods(LCTL(KC_BSPC), MOD_MASK_CSAG);
+                return true;
+            }
+            break;
+    }
+    return false;
 }
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
