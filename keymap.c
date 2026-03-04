@@ -2941,6 +2941,27 @@ static magic_flag_t magic_state = {
     .token = INVALID_DEFERRED_TOKEN
 };
 
+static void reset_magic_log(void) {
+    magic_log.active = NONE;
+    magic_log.last_key = KC_NO;
+    magic_log.current = KC_NO;
+    magic_log.valid = false;
+}
+
+static void update_magic_log(void) {
+    magic_log.active = magic_state.active;
+    magic_log.last_key = magic_state.last_key;
+    magic_log.current = magic_state.current;
+    magic_log.valid = true;
+}
+
+static void rollback_magic_buffer(void) {
+    magic_state.active = magic_log.active;
+    magic_state.last_key = magic_log.last_key;
+    magic_state.current = magic_log.current;
+    reset_magic_log();
+}
+
 typedef struct {
     uint8_t count;
     uint16_t last_key;
@@ -3000,6 +3021,7 @@ static bool process_rollback(void) {
         recent_key_state.last_key   = KC_NO;
         recent_key_state.last_key_2 = KC_NO;
         recent_key_state.last_key_3 = KC_NO;
+
         magic_log.valid = false;
         return true;
     }
@@ -3019,9 +3041,7 @@ static bool process_rollback(void) {
     rollback_last_key();
 
     if (magic_log.valid) {
-        magic_state.active = magic_log.active;
-        magic_state.last_key = magic_log.last_key;
-        magic_state.current = magic_log.current;
+        rollback_magic_buffer();
         magic_log.valid = false;
         cancel_deferred_exec(magic_state.token);
     }
@@ -3437,10 +3457,10 @@ static const keymatch_rule_t match_rules[] = {
     { EITHER, { ANY_LETTER    }, { JUST, KC_R    }, /*-*/"'re ", { true, KC_SPC,  4 } },
 
     // Double taps and rolls
-    { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE     }, "''",   { true, KC_QUOT, 2 } }, // -> [-]'
-    { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE     }, "''",   { true, KC_QUOT, 2 } }, // -> [-]'
-    { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
-    { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, "--",   { true, KC_MINS, 2 } }, // -> [-]--
+    { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE     }, "''",        { true, KC_QUOT, 2 } }, // -> [-]''
+    { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE     }, "--",        { true, KC_MINS, 2 } }, // -> [-]--
+    { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE     }, "--",        { true, KC_MINS, 2 } }, // -> [-]--
+    { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, ", ",        { true, KC_SPC,  1 } }, // -> [-],
 };
 
 static bool pattern_match_key(keymatch_t keymatch, uint16_t keycode) {
@@ -3504,11 +3524,6 @@ uint32_t PCTRGHT_fallback(uint32_t trigger_time, void *cb_arg) {
 
 static inline bool apply_magic_punctuation_rule(size_t i) {
     keymatch_rule_t const *rule = &match_rules[i];
-
-    magic_log.active = magic_state.active;
-    magic_log.last_key = magic_state.last_key;
-    magic_log.current = magic_state.current;
-    magic_log.valid = true;
 
     cs_send_string_punct(rule->output);
     reset_magic_punctuation_history();
@@ -3574,7 +3589,12 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
         const bool sequential = pattern_match_key(rule->prev, magic_state.last_key) &&
             pattern_match_key(rule->next, keycode);
 
-        if (immediate || sequential) {
+        if (immediate) {
+            reset_magic_log();
+            return apply_magic_punctuation_rule(i);
+        }
+        if (sequential) {
+            update_magic_log();
             return apply_magic_punctuation_rule(i);
         }
     }
@@ -5287,7 +5307,7 @@ void housekeeping_task_user(void) {
         recent_key_state.last_key_2 = KC_NO;
         recent_key_state.last_key_3 = KC_NO;
 
-        magic_log.valid = false;
+        reset_magic_log();
     }
 
     if (timeouts[TIMEOUT_CASE_CAPTURE].active) {
