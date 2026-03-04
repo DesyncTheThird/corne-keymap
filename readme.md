@@ -234,6 +234,8 @@ Common punctuation is accessible from combos on or near home row. Mouse emulatio
 
 The `Caps Word` feature combo shifts letter keys (including `Magic` and `Repeat` outputs) and is automatically disabled at the end of the word. The shift modifier will also be retained between separators while the [Case Lock](#case-lock) feature is active.
 
+Pressing `LCTL`+`Case Lock` will disable the [Control overlay](#control-overlay).
+
 There are also more left-hand combos with the `Space` key, not shown on the image to reduce clutter. Pressing `Space` with:
 - a top row key will output the function keys `F1` to `F5`;
 - home or bottom row will output numbers `1` to `5` on home row, and `6` to `0` on the lower row.
@@ -241,6 +243,8 @@ There are also more left-hand combos with the `Space` key, not shown on the imag
 On the other hand, there are more combos with the `Backspace` key:
 - pressing any of the number keys (in the same layout as in the `Data Overlay` layer) with `Backspace` will tap backspace that many times;
 - except `0`, which will instead send `Ctrl`+`Backspace`.
+
+
 
 ## 128x64 OLEDs
 
@@ -508,6 +512,7 @@ Overrides activate only from left hand control key on a base layer; home row mod
 
 Holding `LCTL` on any layer (including non-base layers) covers the left hand bottom row with: `Redo`, `Undo`, `Cut`, `Copy`, and `Paste` shortcuts (i.e. overlays only the bottom row of this layer).
 
+Pressing `LCTL`+`Case Lock` will toggle this feature.
 
 
 ## Edit Overlay

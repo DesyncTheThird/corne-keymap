@@ -35,6 +35,7 @@ enum custom_keycodes {
     PCTRGHT,
 
     CS_CASE,
+    TG_CTRL,
     ALTTAB,
     BASIC,
     BASE,
@@ -363,7 +364,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______,    DUPL,     ALL,    SAVE,    FIND,  WINDOW,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______,    REDO,    UNDO,     CUT,    COPY,   PASTE,                      _______, _______, _______, _______, _______, _______,
+          _______,    REDO,    UNDO,     CUT,    COPY,   PASTE,                      _______, _______, _______, _______, _______, TG_CTRL,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -435,7 +436,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, _______, _______, _______, _______, _______,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______,    REDO,    UNDO,     CUT,    COPY,   PASTE,                      _______, _______, _______, _______, _______, _______,
+          _______,    REDO,    UNDO,     CUT,    COPY,   PASTE,                      _______, _______, _______, _______, _______, TG_CTRL,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -566,13 +567,15 @@ typedef struct {
     bool RT3_active :1;
     bool alt_tab_active :1;
     bool capsword_active :1;
+    bool control_override :1;
 } misc_key_flags_t;
 
 static misc_key_flags_t misc_key_state = {
     .LT3_active = false,
     .RT3_active = false,
     .alt_tab_active = false,
-    .capsword_active = false
+    .capsword_active = false,
+    .control_override = true
 };
 
 typedef struct {
@@ -1563,13 +1566,19 @@ static bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
             return false;
         case CS_LCTL:
             if (record->event.pressed) {
-                layer_on(_CONTROL);
-                layer_on(_CONTROL_OVERLAY);
+                if (misc_key_state.control_override) {
+                    layer_on(_CONTROL);
+                    layer_on(_CONTROL_OVERLAY);
+                }
+                register_mods(MOD_BIT(KC_LCTL));
             } else {
-                layer_off(_CONTROL);
-                layer_off(_CONTROL_OVERLAY);
+                if (misc_key_state.control_override) {
+                    layer_off(_CONTROL);
+                    layer_off(_CONTROL_OVERLAY);
+                }
+                unregister_mods(MOD_BIT(KC_LCTL));
             }
-            return true;
+            return false;
         default:
             return true;
     }
@@ -1588,6 +1597,8 @@ enum combo_events {
 
     MOUSE,
     MOUSE2,
+
+    CONTROL,
 
     BACKSPACE,
     TRANSPOSE,
@@ -1654,6 +1665,7 @@ const uint16_t PROGMEM steno[]        = {    KC_P, CS_HASH, KC_SCLN, TABRSFT, CO
 const uint16_t PROGMEM numpad[]       = {    KC_O,    KC_P, CS_HASH,          COMBO_END};
 const uint16_t PROGMEM mouse[]        = { KC_SCLN, DOT_QUE,                   COMBO_END};
 const uint16_t PROGMEM mouse2[]       = {    KC_A,    KC_Z,                   COMBO_END};
+const uint16_t PROGMEM control[]      = { KC_LCTL, CS_CASE,                   COMBO_END};
 const uint16_t PROGMEM backspace[]    = {  CS_RT1,  CS_RT2,                   COMBO_END};
 const uint16_t PROGMEM capsword[]     = { KC_LSFT, TABRSFT,                   COMBO_END};
 const uint16_t PROGMEM transpose[]    = {  KC_SPC,  CS_LT2,                   COMBO_END};
@@ -1717,6 +1729,8 @@ combo_t key_combos[] = {
 
     [MOUSE]         = COMBO_ACTION(mouse),
     [MOUSE2]        = COMBO_ACTION(mouse2),
+
+    [CONTROL]       = COMBO(control,      TG_CTRL),
 
     [BACKSPACE]     = COMBO_ACTION(backspace),
     [TRANSPOSE]     = COMBO_ACTION(transpose),
@@ -1860,6 +1874,10 @@ bool process_combo_key_repress(uint16_t combo_index, combo_t *combo, uint8_t key
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     static uint16_t combo_term = 0;
     switch (index) {
+        case TG_CTRL:
+            combo_term = 100;
+            break;
+
         case CAPSWORD:
             combo_term = 30;
             break;
@@ -1893,6 +1911,10 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         default:
             combo_term = 20;
             break;
+    }
+
+    if (IS_LAYER_ON(_EDIT)) {
+        combo_term /= 2;
     }
 
     return combo_term;
@@ -4189,6 +4211,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case EO_HOME:
             if (record->event.pressed) {
                 cs_tap_code16_del_mods(LSFT(KC_HOME), MOD_MASK_CTRL);
+            }
+            break;
+
+        case TG_CTRL:
+            if (record->event.pressed) {
+                misc_key_state.control_override = !misc_key_state.control_override;
+                layer_off(_CONTROL);
+                layer_off(_CONTROL_OVERLAY);
             }
             break;
 
