@@ -2906,6 +2906,41 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
 // Repeat and Magic keys
 //==============================================================================
 
+typedef enum {
+    NONE,
+    LEFT,
+    RIGHT,
+    EITHER,
+} magic_key_t;
+
+typedef struct {
+    magic_key_t active;
+    uint16_t last_key;
+    uint16_t current;
+    deferred_token token;
+} magic_flag_t;
+
+typedef struct {
+    magic_key_t active;
+    uint16_t last_key;
+    uint16_t current;
+    bool valid :1;
+} magic_log_t;
+
+static magic_log_t magic_log = {
+    .active = NONE,
+    .last_key = KC_NO,
+    .current = KC_NO,
+    .valid = false
+};
+
+static magic_flag_t magic_state = {
+    .active = NONE,
+    .last_key = KC_NO,
+    .current = KC_NO,
+    .token = INVALID_DEFERRED_TOKEN
+};
+
 typedef struct {
     uint8_t count;
     uint16_t last_key;
@@ -2965,6 +3000,7 @@ static bool process_rollback(void) {
         recent_key_state.last_key   = KC_NO;
         recent_key_state.last_key_2 = KC_NO;
         recent_key_state.last_key_3 = KC_NO;
+        magic_log.valid = false;
         return true;
     }
 
@@ -2981,6 +3017,14 @@ static bool process_rollback(void) {
         tap_code(KC_BSPC);
     }
     rollback_last_key();
+
+    if (magic_log.valid) {
+        magic_state.active = magic_log.active;
+        magic_state.last_key = magic_log.last_key;
+        magic_state.current = magic_log.current;
+        magic_log.valid = false;
+        cancel_deferred_exec(magic_state.token);
+    }
 
     return true;
 }
@@ -3354,13 +3398,6 @@ typedef enum {
     IMMEDIATE,  // Immediately emit output -- should only be used in `next` field
 } keymatch_kind_t;
 
-typedef enum {
-    NONE,
-    LEFT,
-    RIGHT,
-    EITHER,
-} magic_key_t;
-
 typedef struct {
     keymatch_kind_t kind;
     uint16_t keycode;
@@ -3386,7 +3423,7 @@ static const keymatch_rule_t match_rules[] = {
     { LEFT,   { JUST, KC_I    }, { JUST, KC_E    }, /*i*/".e.",  { true, KC_DOT,  3 } },
     { LEFT,   { JUST, KC_A    }, { JUST, KC_M    }, /*a*/".m.",  { true, KC_DOT,  3 } },
     { EITHER, { JUST, KC_P    }, { JUST, KC_M    }, /*p*/".m.",  { true, KC_DOT,  3 } },
-    { RIGHT,  { ANY_SPACE     }, { IMMEDIATE     }, /*⎵*/"-",    { true, KC_MINS, 1 } },
+    { EITHER, { ANY_KEY       }, { JUST, KC_SPC  }, /*⎵*/"-",    { true, KC_MINS, 1 } },
     { RIGHT,  { JUST, KC_E    }, { JUST, KC_G    }, /*e*/".g.",  { true, KC_DOT,  3 } },
     { EITHER, { ANY_KEY       }, { JUST, KC_ENT  }, /*-*/";",    { false            } },
     { EITHER, { ANY_KEY       }, { JUST, CS_LT3  }, /*-*/";",    { false            } },
@@ -3403,7 +3440,7 @@ static const keymatch_rule_t match_rules[] = {
     { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE     }, "''",   { true, KC_QUOT, 2 } }, // -> [-]'
     { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE     }, "''",   { true, KC_QUOT, 2 } }, // -> [-]'
     { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
-    { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, ",",    { true, KC_COMM, 1 } }, // -> [-],
+    { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, "--",   { true, KC_MINS, 2 } }, // -> [-]--
 };
 
 static bool pattern_match_key(keymatch_t keymatch, uint16_t keycode) {
@@ -3425,20 +3462,6 @@ static bool pattern_match_key(keymatch_t keymatch, uint16_t keycode) {
         default:         return false;
     }
 }
-
-typedef struct {
-    magic_key_t active;
-    uint16_t last_key;
-    uint16_t current;
-    deferred_token token;
-} magic_flag_t;
-
-static magic_flag_t magic_state = {
-    .active = NONE,
-    .last_key = KC_NO,
-    .current = KC_NO,
-    .token = INVALID_DEFERRED_TOKEN
-};
 
 static inline void update_magic_punctuation_history(uint16_t keycode) {
     if (!is_magic_punct(keycode)) {
@@ -3481,6 +3504,12 @@ uint32_t PCTRGHT_fallback(uint32_t trigger_time, void *cb_arg) {
 
 static inline bool apply_magic_punctuation_rule(size_t i) {
     keymatch_rule_t const *rule = &match_rules[i];
+
+    magic_log.active = magic_state.active;
+    magic_log.last_key = magic_state.last_key;
+    magic_log.current = magic_state.current;
+    magic_log.valid = true;
+
     cs_send_string_punct(rule->output);
     reset_magic_punctuation_history();
     cancel_deferred_exec(magic_state.token);
@@ -3491,7 +3520,7 @@ static inline bool apply_magic_punctuation_rule(size_t i) {
     return !rule->track.consume_next;
 }
 
-static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
+static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) { 
     if (!record->event.pressed) {
         return true;
     }
@@ -3883,9 +3912,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_cycling_macros(keycode, record)) { return false; }
     if (!process_capsword(keycode, record)) { return false; }
     if (!process_punctuation_space(keycode, record)) { return false; }
+    if (!process_magic_punctuation(keycode, record)) { return false; }
     // Reactive features go before key tracking
     if (!process_key_tracking(keycode, record)) { return false; }
-    if (!process_magic_punctuation(keycode, record)) { return false; }
     if (!process_lingering_mods(keycode, record)) { return false; }
     if (!process_eager_mods(keycode, record)) { return false; }
     if (!process_magic(keycode, record)) { return false; }
@@ -5257,6 +5286,8 @@ void housekeeping_task_user(void) {
         recent_key_state.last_key = KC_NO;
         recent_key_state.last_key_2 = KC_NO;
         recent_key_state.last_key_3 = KC_NO;
+
+        magic_log.valid = false;
     }
 
     if (timeouts[TIMEOUT_CASE_CAPTURE].active) {

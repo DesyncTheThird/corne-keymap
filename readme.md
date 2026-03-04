@@ -153,7 +153,8 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Either | Any Letter | `S`        | `[-]'s⎵`        |
 | Either | Any Letter | `R`        | `[-]'re⎵`       |
 | Left   | Either     | Immediate  | `''`            |
-| Right  | Either     | Immediate  | `,`             |
+| Right  | Left       | Immediate  | `,`             |
+| Right  | Right      | Immediate  | `--`            |
 
 Immediate rules eagerly trigger on magic-key-down if matched; other rules trigger on next-key-down.
 
