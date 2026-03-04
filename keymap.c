@@ -3483,7 +3483,7 @@ static bool pattern_match_key(keymatch_t keymatch, uint16_t keycode) {
     }
 }
 
-static inline void update_magic_punctuation_history(uint16_t keycode) {
+static inline void update_magic_punctuation_buffer(uint16_t keycode) {
     if (!is_magic_punct(keycode)) {
         magic_state.active = NONE;
     }
@@ -3491,7 +3491,7 @@ static inline void update_magic_punctuation_history(uint16_t keycode) {
     magic_state.current = keycode;
 }
 
-static inline void reset_magic_punctuation_history(void) {
+static inline void reset_magic_punctuation_buffer(void) {
     magic_state.active = NONE;
     magic_state.last_key = KC_NO;
     magic_state.current = KC_NO;
@@ -3511,14 +3511,14 @@ static inline void resolve_magic_punctuation_fallback(void) {
 uint32_t PCTLEFT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_QUOT);
     update_last_key(KC_QUOT);
-    reset_magic_punctuation_history();
+    reset_magic_punctuation_buffer();
     return 0;
 }
 
 uint32_t PCTRGHT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_COMM);
     update_last_key(KC_COMM);
-    reset_magic_punctuation_history();
+    reset_magic_punctuation_buffer();
     return 0;
 }
 
@@ -3526,7 +3526,7 @@ static inline bool apply_magic_punctuation_rule(size_t i) {
     keymatch_rule_t const *rule = &match_rules[i];
 
     cs_send_string_punct(rule->output);
-    reset_magic_punctuation_history();
+    reset_magic_punctuation_buffer();
     cancel_deferred_exec(magic_state.token);
     if (rule->track.consume_next) {
         update_last_keys(rule->track.keycode, rule->track.length);
@@ -3541,6 +3541,10 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
     }
     if ((IS_QK_MOD_TAP(keycode) || IS_QK_LAYER_TAP(keycode)) && !record->tap.count) {
         return true;
+    }
+
+    if (is_bspc(keycode)) {
+        reset_magic_punctuation_buffer();
     }
 
     switch (keycode) {
@@ -3600,25 +3604,25 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
     }
 
     if (!magic_state.token) {
-        update_magic_punctuation_history(keycode);
+        update_magic_punctuation_buffer(keycode);
         return true;
     }
 
     if (!is_magic_punct(keycode)) {
         cancel_deferred_exec(magic_state.token);
         resolve_magic_punctuation_fallback();
-        reset_magic_punctuation_history();
-        update_magic_punctuation_history(keycode);
+        reset_magic_punctuation_buffer();
+        update_magic_punctuation_buffer(keycode);
         return true;
     }
     if (keycode == magic_state.current) {
         cancel_deferred_exec(magic_state.token);
         resolve_magic_punctuation_fallback();
-        reset_magic_punctuation_history();
+        reset_magic_punctuation_buffer();
         return true;
     }
 
-    update_magic_punctuation_history(keycode);
+    update_magic_punctuation_buffer(keycode);
     return true;
 }
 
