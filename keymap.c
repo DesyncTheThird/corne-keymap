@@ -941,6 +941,9 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             cancel_deferred_exec(trackball_token);
             last_trackball_activity = timer_read();
             layer_on(_TRACKBALL);
+            if (is_layer_locked(_MOUSE)) {
+                layer_lock_off(_MOUSE);
+            }
             break;
         case 'B':
             trackball_token = defer_exec(LAYER_LINGER_TIME, mouse_layer_off_callback, NULL);
