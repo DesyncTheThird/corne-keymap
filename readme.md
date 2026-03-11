@@ -169,7 +169,7 @@ The rules have been set up such that pressing whichever punctuation key is more 
 > [!WARNING]
 > Immediate rules should always return true in the `track_t` attribute despite not having a following key to consume, or else other tracking systems will not function.
 
-If your language uses dicritics, more rules can be added to these keys to support these outputs.
+If your language uses dicritics, more rules could be added to these keys to support these outputs.
 
 The following key must be pressed within 500ms for the dynamic output to activate; otherwise, the keys will default to emitting `'` (left) or `,` (right) after the timer expires. If a following key is pressed, but no rules are matched, the timer will immediately resolve, and `'` or `,` will be placed immediately before the next key's output.
 
@@ -284,7 +284,7 @@ If you don't have a separate pointing device, this feature doesn't do anything w
 
 <details>
 <summary>Windows</summary>
-</br>
+<br/>
 
 1. Install the `hid` package
    ```sh
@@ -316,7 +316,7 @@ If you don't have a separate pointing device, this feature doesn't do anything w
 
 <details>
 <summary>Linux (Debian)</summary>
-</br>
+<br/>
 
 The following has been tested on Debian. Other distributions should be similar.
 
@@ -366,7 +366,9 @@ The following has been tested on Debian. Other distributions should be similar.
 # ⚠️ Experimental Features
 Various additional experimental features that have not yet been incorporated into the main keymap may be found on various branches. Current features in development:
 
-### [Portable Auto-Mouse Layer](https://github.com/DesyncTheThird/corne-keymap/tree/portable-auto-mouse-layer)
+<details>
+<summary><a href="https://github.com/DesyncTheThird/corne-keymap/tree/portable-auto-mouse-layer">Portable Auto-Mouse Layer</a></summary>
+<br/>
 
 This feature enables the auto-mouse layer functionality in a more portable way that does not require any host-side software.
 
@@ -380,9 +382,14 @@ If you actually want to use `Caps Lock` for typing, you can toggle this feature 
 
 See also [here](https://github.com/DesyncTheThird/auto-mouse-layer) for a standalone version you can more easily add to your own keymap. (The implementation there uses `Num Lock` in place of `Caps Lock`; see the caveats section there, as well as the paragraphs above.)
 
+</details>
 
 
-### [Steno-lite](https://github.com/DesyncTheThird/corne-keymap/tree/steno-lite)
+
+<details>
+<summary><a href="https://github.com/DesyncTheThird/corne-keymap/tree/steno-lite">Steno-lite</a></summary>
+<br/>
+
 This feature adds a selection of combos that output common words or word fragments.
 
 These combos can be triggered by pressing `Magic` or `Repeat`, along with the specified combo keys listed below. Most of these combos agree with magic/repeat outputs.
@@ -409,28 +416,45 @@ Repeat:
 | Combo  | `WI`    | `J`    | `F`    | `Y`       | `H`    | `E`     |`I`     | `A`  |
 | Output | `which` | `just` | `from` | `you're⎵` | `have` | `every` | `ing⎵` |`and` |
 
+</details>
 
 
-### [Arrow Layout Toggle](https://github.com/DesyncTheThird/corne-keymap/tree/edit-mode-toggle)
+
+<details>
+<summary><a href="https://github.com/DesyncTheThird/corne-keymap/tree/edit-mode-toggle">Arrow Layout Toggle</a></summary>
+<br/>
+
 This feature allows you to swap the arrow keys on the `Edit` layer between an inverted-T and line (vim-like) layout.
 
 <img src="./images/line arrow layout.png" width="49%"> <img src="./images/inverted-T arrow layout.png" width="49%">
 
 Pressing the pinky key (line left) while in inverted-T swaps to line mode, and pressing the upper middle key (inverted-T up) while in line mode swaps to inverted-T.
 
+</details>
 
 
-### [Quadrant-based mouse keys](https://github.com/DesyncTheThird/corne-keymap/tree/quad-mousekeys)
+
+<details>
+<summary><a href="https://github.com/DesyncTheThird/corne-keymap/tree/quad-mousekeys">Quadrant-based mouse keys</a></summary>
+<br/>
+
 Based on qmk/qmk_firmware#24760, this feature uses the digitiser support to move the mouse pointer to absolute positions rather than relative ones as per the built-in mouse keys feature as follows: the screen is divided up into a quadrants; pressing one of the directional keys snaps the pointer to the centre of that quadrant, and then the grid is rescaled to the quadrant; then, movement can be repeated within the quadrant.
 
 The original thread uses 8 directional keys and shrinks the grid uniformly in every direction, but I found the diagonal keys difficult to use. This version instead only allows four directional keys, and tracks the vertical and horizontal scales separately; pressing up will snap the pointer upwards and reduce the vertical scale, but leave the horizontal scale unchanged, and vice versa; moving along the same axis twice will reduce the scale in both directions. I find this version more intuitive to use as it more closely matches the standard inverted-T key layout, where you press (or alternate between) multiple direction keys to move diagonally.
 
 Due to the digitiser feature mapping outputs to the whole virtual desktop, it does not interact well with multiple monitors, as the minimum step size becomes much too large; furthermore, the digitiser feature can also attempt to place the cursor offscreen if the virtual desktop is not a rectangle, which is especially prominent if the monitors have different orientations or unusual positionings. However, on single monitors, this feature has the potential to be much faster than using standard mouse keys.
 
+</details>
 
 
-### [Number Case](https://github.com/DesyncTheThird/corne-keymap/tree/numcase)
+
+<details>
+<summary><a href="https://github.com/DesyncTheThird/corne-keymap/tree/numcase">Number Case</a></summary>
+<br/>
+
 This feature adds a toggle on the `Data` layer(s) that replaces the number keys with Roman numerals when active. Useful for some LaTeX editing. Could easily be extended to multiple cases by adding more cases to the switch statement in `process_number_case`, e.g. binary/octal/hexadecimal, Base64, ordinals (`1st`, `2nd`, `3rd`), parenthesised (`(1)`, `(2)`, `(3)`), prefixed/suffixed (`1.`, `2.`, `3.` / `1)`, `2)`, `3)`), words (`one`, `two`, `three`), etc.
+
+</details>
 
 
 
