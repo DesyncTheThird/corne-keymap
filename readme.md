@@ -276,19 +276,90 @@ This feature enables a mouse keys layer when trackball or other pointing-device 
 
 The matching keymap for the Ploopy Nano 2 trackball may be found in the [nano-2](/nano-2/) directory in this repository, and modifying the keymap for your own pointing device should be simple. You may need to checkout the `develop` branch and pull the latest ploopy pull request to compile this keymap yourself.
 
-The python script can be run with
-```sh
-pythonw host.py
-```
-to open in the system tray, or
-```sh
-python host.py
-```
-to run in the terminal. While running in a terminal, the script will print all the data transactions between the keyboard and trackball to the terminal, which may be useful for debugging.
-
 The outermost thumb keys (the `Utility` layer keys) activate volume control while held.
 
 If you don't have a separate pointing device, this feature doesn't do anything with the keyboard alone, apart from two tap-hold keys on the base layer which can be disabled with the `TB_TOGG` key, so you can just ignore it.
+
+### Host-side setup
+
+<details>
+<summary>Windows</summary>
+</br>
+
+1. Install the `hid` package
+   ```sh
+   pip install hid
+   ```
+> [!WARNING]
+> This script uses the `hid` package, not the `hidapi` package.
+
+2. The `hid` package requires the HIDAPI library (`.dll`), which is not bundled with the pip package on Windows.
+   Download the latest release archive from the [hidapi releases page](https://github.com/libusb/hidapi/releases) and extract `hidapi.dll` from the appropriate architecture folder (`x64` for 64-bit Windows).
+   Place the DLL in your Python installation directory (e.g. `%LOCALAPPDATA%\Programs\Python\Python[version]`), or in the same folder as `host.py`.
+
+3. Run the script with:
+   ```sh
+   pythonw host.py
+   ```
+   to open in the system tray, or
+   ```sh
+   python host.py
+   ```
+   to run in the terminal.
+
+   While running in a terminal, the script will print all the data transactions between the keyboard and trackball to the terminal, which may be useful for debugging.
+
+   When running in the system tray, a red square in the icon means that the script is paused and is not forwarding any data transactions between the keyboard and trackball.
+</details>
+
+
+
+<details>
+<summary>Linux (Debian)</summary>
+</br>
+
+The following has been tested on Debian. Other distributions should be similar.
+
+1. Install dependencies. Ensure `python3-venv` is installed, then create a virtual environment and install the `hid` package.
+
+   ```sh
+   sudo apt install python3-venv
+   python3 -m venv ~/venvs/hostbridge
+   source ~/venvs/hostbridge/bin/activate
+   pip install hid
+   ```
+   
+> [!WARNING]
+> This script uses the `hid` package, not the `hidapi` package.
+
+2. Configure udev rules. By default, HID devices are only accessible as root. To allow access as a normal user, create a udev rules file:
+   ```sh
+   sudo vi /etc/udev/rules.d/99-custom-hid.rules
+   ```
+   (replace `vi` with your preferred editor.)
+
+   Add the following lines, substituting your keyboard and trackball vendor/product IDs if different:
+   ```sh
+   SUBSYSTEM=="hidraw", ATTRS{idVendor}=="4653", ATTRS{idProduct}=="0001", MODE="0660", GROUP="plugdev"
+   SUBSYSTEM=="hidraw", ATTRS{idVendor}=="5043", ATTRS{idProduct}=="4ce5", MODE="0660", GROUP="plugdev"
+   ```
+   Add your user to the `plugdev` group, then reload the rules:
+   ```sh
+   sudo usermod -aG plugdev $USER
+   sudo udevadm control --reload-rules
+   sudo udevadm trigger
+   ```
+   Log out and back in for the group change to take effect, then replug both devices.
+
+3. Enter the virtual environment and run the script:
+   ```sh
+   source ~/venvs/hostbridge/bin/activate
+   python3 host.py
+   ```
+
+4. You can use any terminal multiplexer (`tmux`, `screen`, `byobu`, etc.) to run the script headless.
+
+</details>
 
 
 
@@ -536,7 +607,7 @@ The right hand is replaced with macros useful for editing:
 Accessible with `Base` key on `Utility` layer. This layer does not have home row mods, combos, or `Space` layer-tap enabled (for games).
 
 > [!WARNING]
-> Modifying the _BASIC layer will also require changing mod-tap and combo code.
+> Modifying the `_BASIC` layer will also require changing mod-tap and combo code.
 
 
 
