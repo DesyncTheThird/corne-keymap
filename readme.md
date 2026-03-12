@@ -117,11 +117,16 @@ Any keys pressed while the control modifier is active are not tracked. This does
 
 However, `Ctrl`+`Backspace` will reset key tracking history.
 
-Note that this feature only tracks three keys into the past.
+Punctuation following a dynamic output that ends with a space will remove the space within the timeout duration.
+
+> `a [Magic] ,` produces `and,` rather than `and⎵,`.
+
+This feature only tracks three keys into the past.
+
+> [!NOTE]
+> This is not a technical limitation; the history queue can easily be expanded to track more keys if desired, but three keys has been more than sufficient in practice.
 
 After a short duration (default 1000ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state.
-
-Punctuation following a dynamic output that ends with a space will remove the space within the timeout duration.
 
 > [!NOTE]
 > In QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality. This behaviour can also be changed in `process_magic`, though the default output tables as above will not make much sense for QWERTY layouts.
@@ -143,6 +148,7 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Either | `P`        | `M`        | `[p].m.`        |
 | Right  | `⎵`        | Immediate  | `[⎵]-`          |
 | Right  | `E`        | `G`        | `[e].g.`        |
+| Right  | `E`        | `T`        | `[e]tc. `       |
 | Either | Any Key    | `Enter`    | `[-];`+`Enter`  |
 | Left   | `S`        | `⎵`        | `[s]'⎵`         |
 | Either | Any Letter | `⎵`        | `[-],⎵`         |

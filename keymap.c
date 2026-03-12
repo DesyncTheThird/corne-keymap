@@ -2954,6 +2954,7 @@ typedef struct {
     uint16_t last_key_2;
     uint16_t last_key_3;
     bool dynamic :1;
+    bool magic_punct :1;
 } recent_key_state_t;
 
 static recent_key_state_t recent_key_state = {
@@ -2961,7 +2962,8 @@ static recent_key_state_t recent_key_state = {
     .last_key    = KC_NO,
     .last_key_2  = KC_NO,
     .last_key_3  = KC_NO,
-    .dynamic     = false
+    .dynamic     = false,
+    .magic_punct = false
 };
 
 static inline bool is_last_key(uint16_t keycode) {
@@ -3365,7 +3367,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
 }
 
 static bool process_punctuation_space(uint16_t keycode, keyrecord_t* record) {
-    if (is_last_key(KC_SPC) && recent_key_state.dynamic) {
+    if (is_last_key(KC_SPC) && (recent_key_state.dynamic || recent_key_state.magic_punct)) {
         switch (keycode) {
             case KC_DOT:
             case CS_DOT:
@@ -3425,12 +3427,13 @@ typedef struct {
 
 static const keymatch_rule_t match_rules[] = {
     { EITHER, { JUST, KC_N    }, { JUST, KC_T    }, /*n*/"'t ",  { true, KC_SPC,  3 } },
-    { EITHER, { JUST, KC_N    }, { JUST, KC_B    }, /*n*/".b.",  { true, KC_DOT,  3 } },
-    { LEFT,   { JUST, KC_I    }, { JUST, KC_E    }, /*i*/".e.",  { true, KC_DOT,  3 } },
+    { EITHER, { JUST, KC_N    }, { JUST, KC_B    }, /*n*/".b. ", { true, KC_SPC,  4 } },
+    { LEFT,   { JUST, KC_I    }, { JUST, KC_E    }, /*i*/".e. ", { true, KC_SPC,  4 } },
     { LEFT,   { JUST, KC_A    }, { JUST, KC_M    }, /*a*/".m.",  { true, KC_DOT,  3 } },
     { EITHER, { JUST, KC_P    }, { JUST, KC_M    }, /*p*/".m.",  { true, KC_DOT,  3 } },
     { EITHER, { ANY_KEY       }, { JUST, KC_SPC  }, /*⎵*/"-",    { true, KC_MINS, 1 } },
-    { RIGHT,  { JUST, KC_E    }, { JUST, KC_G    }, /*e*/".g.",  { true, KC_DOT,  3 } },
+    { EITHER, { ANY_KEY       }, { JUST, CS_LT1  }, /*⎵*/"-",    { true, KC_MINS, 1 } },
+    { RIGHT,  { JUST, KC_E    }, { JUST, KC_G    }, /*e*/".g. ", { true, KC_SPC,  4 } },
     { EITHER, { ANY_KEY       }, { JUST, KC_ENT  }, /*-*/";",    { false            } },
     { EITHER, { ANY_KEY       }, { JUST, CS_LT3  }, /*-*/";",    { false            } },
     { LEFT,   { JUST, KC_S    }, { ANY_SPACE     }, /*s*/"'",    { false            } },
@@ -3441,12 +3444,13 @@ static const keymatch_rule_t match_rules[] = {
     { EITHER, { ANY_LETTER    }, { JUST, KC_M    }, /*-*/"'m ",  { true, KC_SPC,  3 } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_S    }, /*-*/"'s ",  { true, KC_SPC,  3 } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_R    }, /*-*/"'re ", { true, KC_SPC,  4 } },
+    { RIGHT,  { JUST, KC_E    }, { JUST, KC_T    }, /*e*/"tc. ", { true, KC_SPC,  4 } },
 
     // Double taps and rolls
     { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE     }, "''",        { true, KC_QUOT, 2 } }, // -> [-]''
     { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE     }, "--",        { true, KC_MINS, 2 } }, // -> [-]--
     { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE     }, "--",        { true, KC_MINS, 2 } }, // -> [-]--
-    { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, ", ",        { true, KC_SPC,  1 } }, // -> [-],
+    { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, ", ",        { true, KC_SPC,  2 } }, // -> [-],
 };
 
 static bool pattern_match_key(keymatch_t keymatch, uint16_t keycode) {
@@ -3492,6 +3496,7 @@ static inline void resolve_magic_punctuation_fallback(void) {
         cs_tap_code(KC_COMM);
         update_last_key(KC_COMM);
     }
+    recent_key_state.magic_punct = true;
 }
 
 uint32_t PCTLEFT_fallback(uint32_t trigger_time, void *cb_arg) {
@@ -3510,6 +3515,8 @@ uint32_t PCTRGHT_fallback(uint32_t trigger_time, void *cb_arg) {
 
 static inline bool apply_magic_punctuation_rule(size_t i) {
     keymatch_rule_t const *rule = &match_rules[i];
+
+    recent_key_state.magic_punct = true;
 
     cs_send_string_punct(rule->output);
     reset_magic_punctuation_buffer();
@@ -3588,6 +3595,8 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
             return apply_magic_punctuation_rule(i);
         }
     }
+
+    recent_key_state.magic_punct = false;
 
     if (!magic_state.token) {
         update_magic_punctuation_buffer(keycode);
@@ -3921,8 +3930,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_case_lock(keycode, record)) { return false; }
     if (!process_cycling_macros(keycode, record)) { return false; }
     if (!process_capsword(keycode, record)) { return false; }
-    if (!process_punctuation_space(keycode, record)) { return false; }
     if (!process_magic_punctuation(keycode, record)) { return false; }
+    if (!process_punctuation_space(keycode, record)) { return false; }
     // Reactive features go before key tracking
     if (!process_key_tracking(keycode, record)) { return false; }
     if (!process_lingering_mods(keycode, record)) { return false; }
