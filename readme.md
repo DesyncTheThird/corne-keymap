@@ -286,12 +286,10 @@ If you don't have a separate pointing device, this feature doesn't do anything w
 <summary>Windows</summary>
 <br/>
 
-1. Install the `hid` package
+1. Install the `hid` package:
    ```sh
    pip install hid
    ```
-> [!WARNING]
-> This script uses the `hid` package, not the `hidapi` package.
 
 2. The `hid` package requires the HIDAPI library (`.dll`), which is not bundled with the pip package on Windows.
    Download the latest release archive from the [hidapi releases page](https://github.com/libusb/hidapi/releases) and extract `hidapi.dll` from the appropriate architecture folder (`x64` for 64-bit Windows).
@@ -320,7 +318,7 @@ If you don't have a separate pointing device, this feature doesn't do anything w
 
 The following has been tested on Debian. Other distributions should be similar.
 
-1. Install dependencies. Ensure `python3-venv` is installed, then create a virtual environment and install the `hid` package.
+1. Install dependencies. Ensure `python3-venv` is installed, then create a virtual environment and install the `hid` package:
 
    ```sh
    sudo apt install python3-venv
@@ -328,9 +326,6 @@ The following has been tested on Debian. Other distributions should be similar.
    source ~/venvs/hostbridge/bin/activate
    pip install hid
    ```
-   
-> [!WARNING]
-> This script uses the `hid` package, not the `hidapi` package.
 
 2. Configure udev rules. By default, HID devices are only accessible as root. To allow access as a normal user, create a udev rules file:
    ```sh
@@ -360,6 +355,9 @@ The following has been tested on Debian. Other distributions should be similar.
 4. You can use any terminal multiplexer (`tmux`, `screen`, `byobu`, etc.) to run the script headless.
 
 </details>
+
+> [!WARNING]
+> Make sure to install the `hid` python package, not the `hidapi` package.
 
 
 

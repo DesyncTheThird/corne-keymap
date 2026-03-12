@@ -140,8 +140,6 @@ enum custom_keycodes {
     CY_ENUM,
 
     // Trackball
-    TB_LOFF,
-    TB_TVOL,
     TB_TOGG,
     SCROLL,
 
@@ -420,7 +418,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_TRACKBALL] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NAVTABS, MS_BTN4,  SCROLL, MS_BTN5, QK_LLCK,                      _______, _______, _______, _______, _______, _______,
+          _______, NAVTABS, MS_BTN4,  SCROLL, MS_BTN5, _______,                     _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, _______, MS_BTN3, MS_BTN2, MS_BTN1,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -1000,15 +998,6 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
 
-        case TB_TVOL:
-            if (record->event.pressed) {
-                msg[0] = 'V';
-            } else {
-                msg[0] = 'v';
-            }
-            raw_hid_send(msg, RAW_LENGTH);
-            return false;
-
         case CS_LT3:
         case CS_RT3:
             if (!record->tap.count) {
@@ -1020,12 +1009,6 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
                 raw_hid_send(msg, RAW_LENGTH);
             }
             return true;
-
-        case TB_LOFF:
-            if (record->event.pressed) {
-                layer_off(_TRACKBALL);
-            }
-            return false;
 
         case SCROLL:
             if (record->event.pressed) {
@@ -5054,6 +5037,15 @@ bool shutdown_user(bool jump_to_bootloader) {
             rgb_matrix_set_color_split(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
         }
     }
+
+    // Reset any active trackball modes
+    uint8_t msg[RAW_LENGTH];
+    memset(msg, 0, RAW_LENGTH);
+    msg[0] = 'v'; // volume
+    raw_hid_send(msg, RAW_LENGTH);
+    msg[0] = 's'; // scroll
+    raw_hid_send(msg, RAW_LENGTH);
+
     rgb_matrix_update_pwm_buffers();
     return false;
 }
