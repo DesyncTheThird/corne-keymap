@@ -142,12 +142,12 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Key    | Previous   | Next       | Output          |
 | ------ | ---------- | ---------- | --------------- |
 | Either | `N`        | `T`        | `[n]'t⎵`        |
-| Either | `N`        | `B`        | `[n].b.`        |
-| Left   | `I`        | `E`        | `[i].e.`        |
+| Either | `N`        | `B`        | `[n].b.⎵`       |
+| Left   | `I`        | `E`        | `[i].e.⎵`       |
 | Left   | `A`        | `M`        | `[a].m.`        |
 | Either | `P`        | `M`        | `[p].m.`        |
-| Right  | `⎵`        | Immediate  | `[⎵]-`          |
-| Right  | `E`        | `G`        | `[e].g.`        |
+| Either | `⎵`        | `⎵`        | `[⎵]-⎵`         |
+| Right  | `E`        | `G`        | `[e].g.⎵`       |
 | Right  | `E`        | `T`        | `[e]tc. `       |
 | Either | Any Key    | `Enter`    | `[-];`+`Enter`  |
 | Left   | `S`        | `⎵`        | `[s]'⎵`         |
@@ -161,7 +161,7 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Right  | Left       | Immediate  | `--`            |
 | Left   | Right      | Immediate  | `--`            |
 | Left   | Left       | Immediate  | `''`            |
-| Right  | Right      | Immediate  | `,`             |
+| Right  | Right      | Immediate  | `,⎵`            |
 
 Immediate rules eagerly trigger on magic-key-down if matched; other rules trigger on next-key-down.
 

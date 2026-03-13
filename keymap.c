@@ -3381,6 +3381,9 @@ static bool process_punctuation_space(uint16_t keycode, keyrecord_t* record) {
             case KC_QUES:
             case CS_QUES:
 
+            case KC_COLN:
+            case CS_COLN:
+
             case KC_SCLN:
             case CS_SCLN:
                 tap_code(KC_BSPC);
@@ -3431,8 +3434,7 @@ static const keymatch_rule_t match_rules[] = {
     { LEFT,   { JUST, KC_I    }, { JUST, KC_E    }, /*i*/".e. ", { true, KC_SPC,  4 } },
     { LEFT,   { JUST, KC_A    }, { JUST, KC_M    }, /*a*/".m.",  { true, KC_DOT,  3 } },
     { EITHER, { JUST, KC_P    }, { JUST, KC_M    }, /*p*/".m.",  { true, KC_DOT,  3 } },
-    { EITHER, { ANY_KEY       }, { JUST, KC_SPC  }, /*⎵*/"-",    { true, KC_MINS, 1 } },
-    { EITHER, { ANY_KEY       }, { JUST, CS_LT1  }, /*⎵*/"-",    { true, KC_MINS, 1 } },
+    { EITHER, { ANY_SPACE     }, { ANY_SPACE     }, /*⎵*/"- ",   { true, KC_SPC,  2 } },
     { RIGHT,  { JUST, KC_E    }, { JUST, KC_G    }, /*e*/".g. ", { true, KC_SPC,  4 } },
     { EITHER, { ANY_KEY       }, { JUST, KC_ENT  }, /*-*/";",    { false            } },
     { EITHER, { ANY_KEY       }, { JUST, CS_LT3  }, /*-*/";",    { false            } },
@@ -3496,7 +3498,6 @@ static inline void resolve_magic_punctuation_fallback(void) {
         cs_tap_code(KC_COMM);
         update_last_key(KC_COMM);
     }
-    recent_key_state.magic_punct = true;
 }
 
 uint32_t PCTLEFT_fallback(uint32_t trigger_time, void *cb_arg) {
@@ -3930,8 +3931,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_case_lock(keycode, record)) { return false; }
     if (!process_cycling_macros(keycode, record)) { return false; }
     if (!process_capsword(keycode, record)) { return false; }
-    if (!process_magic_punctuation(keycode, record)) { return false; }
     if (!process_punctuation_space(keycode, record)) { return false; }
+    if (!process_magic_punctuation(keycode, record)) { return false; }
     // Reactive features go before key tracking
     if (!process_key_tracking(keycode, record)) { return false; }
     if (!process_lingering_mods(keycode, record)) { return false; }
