@@ -914,11 +914,11 @@ static bool auto_layer_on = true;
 static uint32_t last_trackball_activity = 0;
 static bool trackball_short_timeout = false;
 
-#define LAYER_LINGER_TIME 500
+#define LAYER_LINGER_TIME 200
 
 static uint32_t mouse_layer_off_callback(uint32_t trigger_time, void *cb_arg) {
     if (is_layer_locked(_TRACKBALL)) {
-        return 500;
+        return LAYER_LINGER_TIME;
     }
 
     layer_off(_TRACKBALL);
