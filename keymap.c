@@ -1570,6 +1570,17 @@ static bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
     }
 }
 
+bool get_speculative_hold(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) {
+        case TABLSFT:
+        case TABRSFT:
+            return true;
+
+        default:
+            return false;
+    }
+}
+
 
 
 //==============================================================================
@@ -1752,16 +1763,16 @@ combo_t key_combos[] = {
     [SPC_F4]        = COMBO(spc_f4,       KC_F4),
     [SPC_F5]        = COMBO(spc_f5,       KC_F5),
 
-    [SPC_1]         = COMBO(spc_1,       KC_1),
-    [SPC_2]         = COMBO(spc_2,       KC_2),
-    [SPC_3]         = COMBO(spc_3,       KC_3),
-    [SPC_4]         = COMBO(spc_4,       KC_4),
-    [SPC_5]         = COMBO(spc_5,       KC_5),
-    [SPC_6]         = COMBO(spc_6,       KC_6),
-    [SPC_7]         = COMBO(spc_7,       KC_7),
-    [SPC_8]         = COMBO(spc_8,       KC_8),
-    [SPC_9]         = COMBO(spc_9,       KC_9),
-    [SPC_0]         = COMBO(spc_0,       KC_0),
+    [SPC_1]         = COMBO(spc_1,        KC_1),
+    [SPC_2]         = COMBO(spc_2,        KC_2),
+    [SPC_3]         = COMBO(spc_3,        KC_3),
+    [SPC_4]         = COMBO(spc_4,        KC_4),
+    [SPC_5]         = COMBO(spc_5,        KC_5),
+    [SPC_6]         = COMBO(spc_6,        KC_6),
+    [SPC_7]         = COMBO(spc_7,        KC_7),
+    [SPC_8]         = COMBO(spc_8,        KC_8),
+    [SPC_9]         = COMBO(spc_9,        KC_9),
+    [SPC_0]         = COMBO(spc_0,        KC_0),
 
     [BSPC_1]        = COMBO_ACTION(bspc_1),
     [BSPC_2]        = COMBO_ACTION(bspc_2),
@@ -1772,7 +1783,7 @@ combo_t key_combos[] = {
     [BSPC_7]        = COMBO_ACTION(bspc_7),
     [BSPC_8]        = COMBO_ACTION(bspc_8),
     [BSPC_9]        = COMBO_ACTION(bspc_9),
-    [BSPC_0]        = COMBO_ACTION(bspc_0),
+    [BSPC_0]        = COMBO(bspc_0,       LCTL(KC_BSPC)),
 };
 
 void process_combo_event(uint16_t combo_index, bool pressed) {
@@ -1831,10 +1842,10 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 repeat_bspc(combo_index - BSPC_1 + 1);
             }
             break;
-        case BSPC_0:
-            if (pressed) {
-                cs_tap_code16_del_mods(LCTL(KC_BSPC), MOD_MASK_CSAG);
-            }
+        // case BSPC_0:
+        //     if (pressed) {
+        //         cs_tap_code16_del_mods(LCTL(KC_BSPC), MOD_MASK_CSAG);
+        //     }
             break;
     }
 }
@@ -3835,95 +3846,6 @@ static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
 
 
 //==============================================================================
-// Eager mods
-//==============================================================================
-
-typedef struct {
-    uint16_t keycode;
-    uint8_t mods;
-    bool active :1;
-    int8_t row, col;
-} eager_key_t;
-
-static eager_key_t eager_keys[] = {
-    { TABLSFT, MOD_BIT(KC_LSFT), false, -1, -1 },
-    { TABRSFT, MOD_BIT(KC_RSFT), false, -1, -1 }
-};
-
-static eager_key_t* eager_keycode(uint16_t keycode) {
-    for (size_t i = 0; i < ARRAY_SIZE(eager_keys); i++) {
-        if (eager_keys[i].keycode == keycode) {
-            return &eager_keys[i];
-        }
-    }
-    return NULL;
-}
-
-static eager_key_t* eager_keypos(uint8_t row, uint8_t col) {
-    for (size_t i = 0; i < ARRAY_SIZE(eager_keys); i++) {
-        if (eager_keys[i].row == row && eager_keys[i].col == col) {
-            return &eager_keys[i];
-        }
-    }
-    return NULL;
-}
-
-bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
-    if (!record->event.pressed) {
-        return true;
-    }
-
-    eager_key_t *ek = eager_keycode(keycode);
-
-    if (ek && !(get_mods() & ek->mods)) {
-        register_mods(ek->mods);
-        ek->active = true;
-        ek->row = record->event.key.row;
-        ek->col = record->event.key.col;
-    }
-    return true;
-}
-
-bool process_eager_mods(uint16_t keycode, keyrecord_t* record) {
-    eager_key_t *ek = eager_keycode(keycode);
-
-    if (ek) {
-        if (!record->tap.count && !record->event.pressed) {
-            unregister_mods(ek->mods);
-        }
-        if (record->tap.count & record->event.pressed) {
-            if (ek->active) {
-                unregister_mods(ek->mods);
-            }
-            switch (ek->keycode) {
-                case TABLSFT:
-                    if (IS_LAYER_OFF(_CONTROL_OVERLAY)) {
-                        tap_code(KC_TAB);
-                    }
-                    break;
-                case TABRSFT:
-                    tap_code(KC_TAB);
-                    break;
-            }
-        }
-        ek->active = false;
-        return false;
-    }
-
-    if (!record->event.pressed) {
-        ek = eager_keypos(record->event.key.row, record->event.key.col);
-        if (ek && ek->active) {
-            unregister_mods(ek->mods);
-            ek->active = false;
-        }
-    }
-
-    return true;
-}
-
-
-
-//==============================================================================
 // Events
 //==============================================================================
 
@@ -3936,7 +3858,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     // Reactive features go before key tracking
     if (!process_key_tracking(keycode, record)) { return false; }
     if (!process_lingering_mods(keycode, record)) { return false; }
-    if (!process_eager_mods(keycode, record)) { return false; }
     if (!process_magic(keycode, record)) { return false; }
     if (!process_homerow_mod_tap(keycode, record)) { return false; }
     if (!process_arrow_retrigger(keycode, record)) { return false; }
