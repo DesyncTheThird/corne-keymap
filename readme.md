@@ -151,7 +151,6 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Right  | `E`        | `T`        | `[e]tc. `       |
 | Either | Any Key    | `Enter`    | `[-];`+`Enter`  |
 | Left   | `S`        | `⎵`        | `[s]'⎵`         |
-| Either | Any Letter | `⎵`        | `[-],⎵`         |
 | Either | Any Letter | `D`        | `[-]'d⎵`        |
 | Either | Any Letter | `L`        | `[-]'ll⎵`       |
 | Either | Any Letter | `V`        | `[-]'ve⎵`       |

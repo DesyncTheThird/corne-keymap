@@ -3450,7 +3450,6 @@ static const keymatch_rule_t match_rules[] = {
     { EITHER, { ANY_KEY       }, { JUST, KC_ENT  }, /*-*/";",    { false            } },
     { EITHER, { ANY_KEY       }, { JUST, CS_LT3  }, /*-*/";",    { false            } },
     { LEFT,   { JUST, KC_S    }, { ANY_SPACE     }, /*s*/"'",    { false            } },
-    { EITHER, { ANY_LETTER    }, { ANY_SPACE     }, /*-*/",",    { false            } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_D    }, /*-*/"'d ",  { true, KC_SPC,  3 } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_L    }, /*-*/"'ll ", { true, KC_SPC,  4 } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_V    }, /*-*/"'ve ", { true, KC_SPC,  4 } },
