@@ -3284,7 +3284,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_QUOT: send_string("ve "); update_last_keys(KC_SPC, 3); break;
 
                 case UNDO:
-                case REDO: tap_code16(LCTL(KC_Y)); update_last_key(REDO); break;
+                case REDO: tap_code16(LCTL(KC_Z)); update_last_key(UNDO); break;
 
                 default:
                     if (is_alpha(last_key)) {
@@ -3367,7 +3367,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_QUOT: send_string("re "); update_last_keys(KC_SPC, 3); break;
 
                 case UNDO:
-                case REDO: tap_code16(LCTL(KC_Z)); update_last_key(UNDO); break;
+                case REDO: tap_code16(LCTL(KC_Y)); update_last_key(REDO); break;
 
                 default:
                     if (is_alpha(last_key)) {
