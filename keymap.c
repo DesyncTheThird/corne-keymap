@@ -914,13 +914,30 @@ static bool auto_layer_on = true;
 static uint32_t last_trackball_activity = 0;
 static bool trackball_short_timeout = false;
 
-#define LAYER_LINGER_TIME 200
+#define LINGER_MIN        100
+#define LINGER_MAX        500
+#define LINGER_RAMP_MS     50
+#define LINGER_RAMP_STEP   10
+
+static uint32_t trackball_move_start = 0;
+static bool     trackball_moving     = false;
+static uint32_t current_linger_time  = LINGER_MIN;
+
+static uint32_t compute_linger_time(void) {
+    uint32_t duration = timer_elapsed32(trackball_move_start);
+    uint32_t linger = LINGER_MIN + (duration / LINGER_RAMP_MS) * LINGER_RAMP_STEP;
+    if (linger > LINGER_MAX) {
+        linger = LINGER_MAX;
+    }
+    return linger;
+}
 
 static uint32_t mouse_layer_off_callback(uint32_t trigger_time, void *cb_arg) {
     if (is_layer_locked(_TRACKBALL)) {
-        return LAYER_LINGER_TIME;
+        return current_linger_time;
     }
 
+    trackball_moving = false;
     layer_off(_TRACKBALL);
     return 0;
 }
@@ -937,6 +954,10 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     switch (data[0]) {
         case 'A':
             cancel_deferred_exec(trackball_token);
+            if (!trackball_moving) {
+                trackball_move_start = timer_read();
+                trackball_moving = true;
+            }
             last_trackball_activity = timer_read();
             layer_on(_TRACKBALL);
             if (is_layer_locked(_MOUSE)) {
@@ -944,7 +965,8 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             }
             break;
         case 'B':
-            trackball_token = defer_exec(LAYER_LINGER_TIME, mouse_layer_off_callback, NULL);
+            current_linger_time = compute_linger_time();
+            trackball_token = defer_exec(current_linger_time, mouse_layer_off_callback, NULL);
             last_trackball_activity = timer_read();
             break;
         case 'T':
@@ -1040,7 +1062,7 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
         case MS_BTN3:
         case MS_BTN4:
         case MS_BTN5:
-            extend_deferred_exec(trackball_token, LAYER_LINGER_TIME);
+            extend_deferred_exec(trackball_token, current_linger_time);
             return true;
 
         // Utility layer overrides

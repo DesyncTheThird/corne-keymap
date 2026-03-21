@@ -228,14 +228,13 @@ if __name__ == "__main__":
     import sys
 
     has_console = sys.stdout and sys.stdout.isatty()
+    silent = "--silent" in sys.argv
 
-    if has_console:
-        print("Running in terminal mode.")
+    if has_console or silent:
         running.set()
         try:
             pass_messages()
         except KeyboardInterrupt:
-            print("\nStopping.")
             running.clear()
     else:
         run_tray_mode()
