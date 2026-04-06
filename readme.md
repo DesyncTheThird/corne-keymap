@@ -279,7 +279,7 @@ See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 ![Auto-Mouse Layer](images/auto-mouse.png?raw=true)
 This feature enables a mouse keys layer when trackball or other pointing-device activity is detected.
 
-The auto-mouse layer lingers for a short duration after the last detected movement, minimum 100ms, and increasing by 10ms per 50ms of movement, up to a maximum of 500ms. Pressing any mouse-key will similarly extend the linger duration.
+The auto-mouse layer lingers for a short duration after the last detected movement, minimum 100ms, and increasing by 10ms per 100ms of movement, up to a maximum of 300ms. Pressing any mouse-key will similarly extend the linger duration.
 
 A drag scroll and volume control state can also be communicated from the keyboard to the trackball with the `Scroll` and `TB_TVOL` macros. The outermost thumb keys (the `Utility` layer keys) activate volume control while held.
 
