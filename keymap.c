@@ -911,20 +911,25 @@ static uint32_t clock_callback(uint32_t, void*);
 //==============================================================================
 
 static bool auto_layer_on = true;
-static uint32_t last_trackball_activity = 0;
-static bool trackball_short_timeout = false;
 
-#define LINGER_MIN        100
-#define LINGER_MAX        500
+#define LINGER_MIN         100
+#define LINGER_MAX         500
 #define LINGER_RAMP_MS     50
 #define LINGER_RAMP_STEP   10
+#define TRACKBALL_DEBOUNCE 50
 
-static uint32_t trackball_move_start = 0;
-static bool     trackball_moving     = false;
-static uint32_t current_linger_time  = LINGER_MIN;
+typedef enum {
+    TRACKBALL_IDLE,
+    TRACKBALL_ACTIVE,
+    TRACKBALL_DEBOUNCING,
+} trackball_state_t;
+
+static trackball_state_t trackball_state = TRACKBALL_IDLE;
+static uint32_t trackball_session_start = 0;
+static deferred_token trackball_token = INVALID_DEFERRED_TOKEN;
 
 static uint32_t compute_linger_time(void) {
-    uint32_t duration = timer_elapsed32(trackball_move_start);
+    uint32_t duration = timer_elapsed32(trackball_session_start);
     uint32_t linger = LINGER_MIN + (duration / LINGER_RAMP_MS) * LINGER_RAMP_STEP;
     if (linger > LINGER_MAX) {
         linger = LINGER_MAX;
@@ -932,18 +937,26 @@ static uint32_t compute_linger_time(void) {
     return linger;
 }
 
-static uint32_t mouse_layer_off_callback(uint32_t trigger_time, void *cb_arg) {
-    trackball_moving = false;
-
+static uint32_t trackball_linger_callback(uint32_t trigger_time, void *cb_arg) {
     if (is_layer_locked(_TRACKBALL)) {
-        return current_linger_time;
+        return compute_linger_time();
     }
 
+    trackball_state = TRACKBALL_IDLE;
+    trackball_session_start = 0;
     layer_off(_TRACKBALL);
     return 0;
 }
 
-static deferred_token trackball_token = INVALID_DEFERRED_TOKEN;
+static uint32_t trackball_debounce_callback(uint32_t trigger_time, void *cb_arg) {
+    if (trackball_state != TRACKBALL_DEBOUNCING) {
+        return 0;
+    }
+
+    uint32_t linger = compute_linger_time();
+    trackball_token = defer_exec(linger, trackball_linger_callback, NULL);
+    return 0;
+}
 
 #define RAW_LENGTH 32
 
@@ -951,41 +964,41 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     uint8_t response[length];
     memset(response, 0, length);
     // dprintf("Keyboard  - Received HID data: %c\n", data[0]);
-    
+
     switch (data[0]) {
         case 'A':
             cancel_deferred_exec(trackball_token);
-            if (!trackball_moving) {
-                // Reset accumulated duration if idle for 2+ seconds
-                if (trackball_move_start != 0 && timer_elapsed32(last_trackball_activity) > 500) {
-                    trackball_move_start = timer_read32();
-                } else if (trackball_move_start == 0) {
-                    trackball_move_start = timer_read32();
-                }
-                trackball_moving = true;
+
+            if (trackball_state == TRACKBALL_IDLE) {
+                trackball_session_start = timer_read32();
             }
-            last_trackball_activity = timer_read32();
+
+            trackball_state = TRACKBALL_ACTIVE;
             layer_on(_TRACKBALL);
+
             if (is_layer_locked(_MOUSE)) {
                 layer_lock_off(_MOUSE);
             }
             break;
+
         case 'B':
-            trackball_moving = false;
-            current_linger_time = compute_linger_time();
-            trackball_token = defer_exec(current_linger_time, mouse_layer_off_callback, NULL);
-            last_trackball_activity = timer_read32();
+            if (trackball_state == TRACKBALL_ACTIVE) {
+                trackball_state = TRACKBALL_DEBOUNCING;
+                trackball_token = defer_exec(TRACKBALL_DEBOUNCE, trackball_debounce_callback, NULL);
+            }
             break;
+
         case 'T':
             cancel_deferred_exec(clock_token);
             clock_state.hrs = data[1];
             clock_state.min = data[2];
             clock_state.sec = data[3];
-            
+
             clock_token = defer_exec(1000, clock_callback, NULL);
             last_host_clock_update = timer_read32();
             host_clock_active = true;
             break;
+
         default:
             dprintf("Unknown HID command: %c\n", data[0]);
             break;
@@ -1069,7 +1082,10 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
         case MS_BTN3:
         case MS_BTN4:
         case MS_BTN5:
-            extend_deferred_exec(trackball_token, current_linger_time);
+            if (trackball_state != TRACKBALL_IDLE) {
+                uint32_t linger = compute_linger_time();
+                extend_deferred_exec(trackball_token, linger);
+            }
             return true;
 
         // Utility layer overrides
@@ -1110,14 +1126,15 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
         // Deactivate trackball layer on most other keypresses
 
         default:
-            trackball_short_timeout = timer_elapsed32(last_trackball_activity) > 100;
-            const bool right_hand = record->event.key.row >= 4;
-            const bool top_row    = record->event.key.row == 0;
-            const bool bottom_row = record->event.key.row == 2;
-            if (right_hand ||
-               ((top_row || bottom_row || ctrl_on()) && trackball_short_timeout)
-            ) {
-                layer_off(_TRACKBALL);
+            if (trackball_state != TRACKBALL_IDLE) {
+                const bool right_hand = record->event.key.row >= 4;
+                const bool top_row    = record->event.key.row == 0;
+                const bool bottom_row = record->event.key.row == 2;
+                const bool session_recent = timer_elapsed32(trackball_session_start) < 100;
+
+                if (right_hand || ((top_row || bottom_row || ctrl_on()) && session_recent)) {
+                    layer_off(_TRACKBALL);
+                }
             }
             return true;
     }
