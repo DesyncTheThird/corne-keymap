@@ -939,7 +939,6 @@ static uint32_t mouse_layer_off_callback(uint32_t trigger_time, void *cb_arg) {
         return current_linger_time;
     }
 
-    trackball_move_start = 0;
     layer_off(_TRACKBALL);
     return 0;
 }
@@ -957,7 +956,12 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
         case 'A':
             cancel_deferred_exec(trackball_token);
             if (!trackball_moving) {
-                trackball_move_start = timer_read32();
+                // Reset accumulated duration if idle for 2+ seconds
+                if (trackball_move_start != 0 && timer_elapsed32(last_trackball_activity) > 500) {
+                    trackball_move_start = timer_read32();
+                } else if (trackball_move_start == 0) {
+                    trackball_move_start = timer_read32();
+                }
                 trackball_moving = true;
             }
             last_trackball_activity = timer_read32();
