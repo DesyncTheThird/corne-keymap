@@ -145,7 +145,6 @@ enum custom_keycodes {
 
 };
 
-#define TB_M LT(0, KC_M)
 #define TB_D LT(0, KC_D)
 
 // Home row mods
@@ -350,7 +349,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           TABLSFT,    LG_N,    LA_R,    LC_T,    LS_S,    KC_G,                         KC_Y,    RS_H,    RC_E,    RA_I,    RG_A, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Q,    KC_X,    TB_M,    KC_W,    KC_V,                         KC_K,    KC_P, PCTLEFT, PCTRGHT, DOT_QUE, CS_CASE,
+          CS_LCTL,    KC_Q,    KC_X,    KC_M,    KC_W,    KC_V,                         KC_K,    KC_P, PCTLEFT, PCTRGHT, DOT_QUE, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -418,13 +417,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_TRACKBALL] = LAYOUT( //8
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______, NAVTABS, MS_BTN4,  SCROLL, MS_BTN5, _______,                     _______, _______, _______, _______, _______, _______,
+          _______, NAVTABS, MS_BTN4,  SCROLL, MS_BTN5, _______,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, _______, MS_BTN3, MS_BTN2, MS_BTN1,  KC_DEL,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, _______, _______,  SCROLL, _______,  KC_ENT,                      _______, _______, _______, _______, _______, _______,
+          CS_LCTL, _______, _______, _______, _______,  KC_ENT,                      _______, _______, _______, _______, _______, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              _______, _______, _______,    MS_BTN1, MS_BTN2, MS_BTN3
+                                              _______, _______, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
     ),
 
@@ -682,7 +681,6 @@ static inline bool is_base_hrm(uint16_t keycode) {
         case RG_A:
 
         case TB_D:
-        case TB_M:
             return true;
 
         default:
@@ -725,7 +723,6 @@ static inline bool is_hrm(uint16_t keycode) {
         case RG_A:
 
         case TB_D:
-        case TB_M:
 
         case RS_RPRN:
         case RC_LPRN:
@@ -914,8 +911,8 @@ static bool auto_layer_on = true;
 static uint32_t trackball_last_activity = 0;
 
 #define LINGER_MIN         100
-#define LINGER_MAX         500
-#define LINGER_RAMP_MS     50
+#define LINGER_MAX         300
+#define LINGER_RAMP_MS     100
 #define LINGER_RAMP_STEP   10
 #define TRACKBALL_DEBOUNCE 50
 #define SHORT_TIMEOUT      100
@@ -1068,9 +1065,6 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
 
         case TB_D:
             tap_hold_hid_key(keycode, record, 'S', 's', KC_D);
-            return false;
-        case TB_M:
-            tap_hold_hid_key(keycode, record, 'S', 's', KC_M);
             return false;
 
         case ALTTAB:
