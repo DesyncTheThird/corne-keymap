@@ -933,11 +933,13 @@ static uint32_t compute_linger_time(void) {
 }
 
 static uint32_t mouse_layer_off_callback(uint32_t trigger_time, void *cb_arg) {
+    trackball_moving = false;
+
     if (is_layer_locked(_TRACKBALL)) {
         return current_linger_time;
     }
 
-    trackball_moving = false;
+    trackball_move_start = 0;
     layer_off(_TRACKBALL);
     return 0;
 }
@@ -955,19 +957,20 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
         case 'A':
             cancel_deferred_exec(trackball_token);
             if (!trackball_moving) {
-                trackball_move_start = timer_read();
+                trackball_move_start = timer_read32();
                 trackball_moving = true;
             }
-            last_trackball_activity = timer_read();
+            last_trackball_activity = timer_read32();
             layer_on(_TRACKBALL);
             if (is_layer_locked(_MOUSE)) {
                 layer_lock_off(_MOUSE);
             }
             break;
         case 'B':
+            trackball_moving = false;
             current_linger_time = compute_linger_time();
             trackball_token = defer_exec(current_linger_time, mouse_layer_off_callback, NULL);
-            last_trackball_activity = timer_read();
+            last_trackball_activity = timer_read32();
             break;
         case 'T':
             cancel_deferred_exec(clock_token);
@@ -976,7 +979,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             clock_state.sec = data[3];
             
             clock_token = defer_exec(1000, clock_callback, NULL);
-            last_host_clock_update = timer_read();
+            last_host_clock_update = timer_read32();
             host_clock_active = true;
             break;
         default:
