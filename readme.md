@@ -279,11 +279,18 @@ See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 ![Auto-Mouse Layer](images/auto-mouse.png?raw=true)
 This feature enables a mouse keys layer when trackball or other pointing-device activity is detected.
 
-The auto-mouse layer lingers for a short duration after the last detected movement, minimum 100ms, and increasing by 10ms per 100ms of movement, up to a maximum of 300ms. Pressing any mouse-key will similarly extend the linger duration.
+The auto-mouse layer lingers for a short duration after the last detected movement, minimum 75ms, increasing cubically over 500ms of movement to a maximum of 250ms.
+
+> [!NOTE]
+> These values can be adjusted by changing the defined constants above the `compute_linger_time` function.
+
+Pressing any mouse-key will extend the linger duration by the minimum duration, and pressing any non-mouse key will immediately dismiss the auto-mouse layer.
 
 A drag scroll and volume control state can also be communicated from the keyboard to the trackball with the `Scroll` and `TB_TVOL` macros. The outermost thumb keys (the `Utility` layer keys) activate volume control while held.
 
-This feature is implemented with raw HID communication, and needs a python script on the host computer to relay messages to and from the trackball. The matching keymap for the Ploopy Nano 2 trackball may be found in the [nano-2](/nano-2/) directory in this repository, and modifying the keymap for your own pointing device should be simple. You may need to checkout the `develop` branch and pull the latest ploopy pull request to compile this keymap yourself.
+This feature is implemented with raw HID communication, and needs a python script on the host computer to relay messages to and from the trackball (see [below](#host-side-setup) for setup details). The matching keymap for the Ploopy Nano 2 trackball may be found in the [nano-2](/nano-2/) directory in this repository, and modifying the keymap for your own pointing device should be simple. You may need to checkout the `develop` branch and pull the latest ploopy pull request to compile this keymap yourself.
+
+There is also a [portable version](#portable-auto-mouse-layer) of this feature that uses lock keys to communicate between the keyboard and trackball, which does not require any host-side software, but is less reliable and has some limitations in exchange.
 
 If you don't have a separate compatible pointing device, this feature doesn't do anything with the keyboard alone, apart from adding two tap-hold keys on the base layer which can be disabled with the `TB_TOGG` key.
 
