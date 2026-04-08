@@ -910,9 +910,9 @@ static uint32_t clock_callback(uint32_t, void*);
 static bool auto_layer_on = true;
 static uint32_t trackball_last_activity = 0;
 
-#define LINGER_MIN_DURATION 75     // minimum linger time
+#define LINGER_MIN_DURATION 50     // minimum linger time
 #define LINGER_MAX_DURATION 250    // maximum linger time
-#define LINGER_MAX_TIME     500    // time at which linger reaches maximum
+#define LINGER_MAX_TIME     1000    // time at which linger reaches maximum
 #define LINGER_EXP          3      // Growth exponent
 #define LINGER_SCALE        1024   // Fixed-point scaling
 #define TRACKBALL_DEBOUNCE  50
@@ -1841,7 +1841,7 @@ combo_t key_combos[] = {
     [BSPC_7]        = COMBO_ACTION(bspc_7),
     [BSPC_8]        = COMBO_ACTION(bspc_8),
     [BSPC_9]        = COMBO_ACTION(bspc_9),
-    [BSPC_0]        = COMBO(bspc_0,       LCTL(KC_BSPC)),
+    [BSPC_0]        = COMBO_ACTION(bspc_0),
 };
 
 void process_combo_event(uint16_t combo_index, bool pressed) {
@@ -1900,10 +1900,10 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
                 repeat_bspc(combo_index - BSPC_1 + 1);
             }
             break;
-        // case BSPC_0:
-        //     if (pressed) {
-        //         cs_tap_code16_del_mods(LCTL(KC_BSPC), MOD_MASK_CSAG);
-        //     }
+        case BSPC_0:
+            if (pressed) {
+                cs_tap_code16_del_mods(LCTL(KC_BSPC), MOD_MASK_CSAG);
+            }
             break;
     }
 }
@@ -1977,7 +1977,6 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
 
 bool get_combo_must_tap(uint16_t index, combo_t *combo) {
     switch (index) {
-        case BACKSPACE:
         case MOUSE:
         case MOUSE2:
             return false;
