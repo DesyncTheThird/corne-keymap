@@ -2193,6 +2193,12 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
 
+    // Debug: log all keypresses when case lock is active
+    if (case_lock_state.active) {
+        dprintf("[CASE_LOCK] keycode=0x%04X, tap.count=%d, ctrl_on=%d, get_mods=0x%02X\n",
+                keycode, record->tap.count, ctrl_on(), get_mods());
+    }
+
     if (keycode == CS_CASE) {
         if (!case_lock_state.capturing) {
             case_lock_capture_on();
@@ -2246,7 +2252,10 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
     }
 
     if (keycode == KC_BSPC || (keycode == CS_RT1 && record->tap.count)) {
+        dprintf("[CASE_LOCK_BSPC] keycode=0x%04X, tap.count=%d, ctrl_on=%d, distance=%d, active=%d\n",
+                keycode, record->tap.count, ctrl_on(), case_lock_state.distance, case_lock_state.active);
         if (ctrl_on() && case_lock_state.distance > 0) {
+            dprintf("[CASE_LOCK_BSPC] -> ROLLBACK triggered\n");
             const uint8_t mods = get_mods();
             del_mods(MOD_MASK_CSAG);
             for (int i = 0; i < case_lock_state.distance; i++) {
@@ -2259,6 +2268,7 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
         } else {
+            dprintf("[CASE_LOCK_BSPC] -> normal bspc (ctrl_on=%d, distance=%d)\n", ctrl_on(), case_lock_state.distance);
             if (case_lock_state.distance > 0) {
                 case_lock_state.distance--;
                 dprintf("separator distance = %d\n", case_lock_state.distance);
@@ -2300,6 +2310,10 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
 
     if (keycode == KC_LSFT || keycode == KC_RSFT ||
         keycode == CS_LCTL || keycode == KC_LCTL) {
+        return true;
+    }
+    // Allow HRM holds to pass through without deactivating case lock
+    if (is_hrm(keycode) && !record->tap.count) {
         return true;
     }
     if (keycode == CAPSWRD) {
