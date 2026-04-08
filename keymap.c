@@ -2302,6 +2302,10 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
         keycode == CS_LCTL || keycode == KC_LCTL) {
         return true;
     }
+    if (is_hrm(keycode) && !record->tap.count) {
+        return true;
+    }
+
     if (keycode == CAPSWRD) {
         return true;
     }
