@@ -912,11 +912,11 @@ static uint32_t trackball_last_activity = 0;
 
 #define LINGER_MIN_DURATION 50     // minimum linger time
 #define LINGER_MAX_DURATION 250    // maximum linger time
-#define LINGER_MAX_TIME     1000    // time at which linger reaches maximum
+#define LINGER_MAX_TIME     1000   // time at which linger reaches maximum
 #define LINGER_EXP          3      // Growth exponent
 #define LINGER_SCALE        1024   // Fixed-point scaling
 #define TRACKBALL_DEBOUNCE  50
-#define SHORT_TIMEOUT       100
+#define LINGER_EXTEND       100
 
 typedef enum {
     TRACKBALL_IDLE,
@@ -1094,6 +1094,9 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
         case MS_BTN5:
             if (trackball_state != TRACKBALL_IDLE) {
                 uint32_t linger = compute_linger_time();
+                if (linger < LINGER_EXTEND) {
+                    linger = LINGER_EXTEND;
+                }
                 extend_deferred_exec(trackball_token, linger);
             }
             return true;
@@ -1140,7 +1143,7 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
                 const bool right_hand = record->event.key.row >= 4;
                 const bool top_row    = record->event.key.row == 0;
                 const bool bottom_row = record->event.key.row == 2;
-                const bool activity_recent = timer_elapsed32(trackball_last_activity) < SHORT_TIMEOUT;
+                const bool activity_recent = timer_elapsed32(trackball_last_activity) < LINGER_EXTEND;
 
                 if (right_hand ||
                    ((top_row || bottom_row || ctrl_on()) && !activity_recent)
