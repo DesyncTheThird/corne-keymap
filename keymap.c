@@ -910,12 +910,13 @@ static uint32_t clock_callback(uint32_t, void*);
 static bool auto_layer_on = true;
 static uint32_t trackball_last_activity = 0;
 
-#define LINGER_MIN         100
-#define LINGER_MAX         300
-#define LINGER_RAMP_MS     100
-#define LINGER_RAMP_STEP   10
-#define TRACKBALL_DEBOUNCE 50
-#define SHORT_TIMEOUT      100
+#define LINGER_MIN_DURATION 75     // minimum linger time
+#define LINGER_MAX_DURATION 250    // maximum linger time
+#define LINGER_MAX_TIME     500    // time at which linger reaches maximum
+#define LINGER_EXP          3      // Growth exponent
+#define LINGER_SCALE        1024   // Fixed-point scaling
+#define TRACKBALL_DEBOUNCE  50
+#define SHORT_TIMEOUT       100
 
 typedef enum {
     TRACKBALL_IDLE,
@@ -927,11 +928,21 @@ static trackball_state_t trackball_state = TRACKBALL_IDLE;
 static uint32_t trackball_session_start = 0;
 static deferred_token trackball_token = INVALID_DEFERRED_TOKEN;
 
+// linger ≈ min_duration + (max_duration - min_duration) * MIN(1, (time / max_time) ^ exp)
 static uint32_t compute_linger_time(void) {
-    uint32_t duration = timer_elapsed32(trackball_session_start);
-    uint32_t linger = LINGER_MIN + (duration / LINGER_RAMP_MS) * LINGER_RAMP_STEP;
-    if (linger > LINGER_MAX) {
-        linger = LINGER_MAX;
+    uint32_t t = timer_elapsed32(trackball_session_start);
+    uint32_t r = (t * LINGER_SCALE) / LINGER_MAX_TIME;
+
+    uint32_t rp = r;
+    for (uint8_t i = 1; i < LINGER_EXP; i++) {
+        rp = (rp * r) / LINGER_SCALE;
+    }
+
+    uint32_t linger = LINGER_MIN_DURATION +
+                      ((uint32_t)(LINGER_MAX_DURATION - LINGER_MIN_DURATION) * rp) / LINGER_SCALE;
+
+    if (linger > LINGER_MAX_DURATION) {
+        linger = LINGER_MAX_DURATION;
     }
     return linger;
 }
