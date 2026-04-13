@@ -3611,6 +3611,10 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
 
+    if (!is_bspc(keycode) && magic_log.valid) {
+        reset_magic_log();
+    }
+
     if (is_bspc(keycode)) {
         reset_magic_punctuation_buffer();
     }
