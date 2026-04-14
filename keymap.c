@@ -3473,6 +3473,8 @@ static bool process_punctuation_space(uint16_t keycode, keyrecord_t* record) {
 // Magic punctuation
 //==============================================================================
 
+#define MAGIC_PUNCT_RESOLVE_DELAY 150
+
 typedef enum {
     JUST,       // Match keycode
     IU_VOWEL,   // Match I, U
@@ -3631,7 +3633,7 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
             }
             magic_state.active = LEFT;
             cancel_deferred_exec(magic_state.token);
-            magic_state.token = defer_exec(500, PCTLEFT_fallback, NULL);
+            magic_state.token = defer_exec(MAGIC_PUNCT_RESOLVE_DELAY, PCTLEFT_fallback, NULL);
             break;
 
         case PCTRGHT:
@@ -3645,7 +3647,7 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
             }
             magic_state.active = RIGHT;
             cancel_deferred_exec(magic_state.token);
-            magic_state.token = defer_exec(500, PCTRGHT_fallback, NULL);
+            magic_state.token = defer_exec(MAGIC_PUNCT_RESOLVE_DELAY, PCTRGHT_fallback, NULL);
             break;
 
         default:
@@ -3717,6 +3719,8 @@ static uint32_t ctrl_linger_callback(uint32_t trigger_time, void *cb_arg) {
     return 0;
 }
 
+#define LINGERING_MOD_TIMEOUT 500
+
 static bool process_lingering_mods(uint16_t keycode, keyrecord_t* record) {
     if (!record->event.pressed) {
         return true;
@@ -3724,7 +3728,7 @@ static bool process_lingering_mods(uint16_t keycode, keyrecord_t* record) {
 
     if (keycode == CS_LCTL) {
         ctrl_linger = true;
-        defer_exec(500, ctrl_linger_callback, NULL);
+        defer_exec(LINGERING_MOD_TIMEOUT, ctrl_linger_callback, NULL);
         clear_oneshot_mods();
         return true;
     }
