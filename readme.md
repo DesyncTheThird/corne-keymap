@@ -53,8 +53,8 @@ Left hand keys:
 Right hand overrides:
 |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  | `A`   | `K`   | `P` |
-| Magic | `ECT` | `E` | `I` | `P` | `ERE` | `O` | `ON` | `ND⎵` | `NOW` | `Y` |
+| Prev  | `J`   | `O` | `U` | `Y` | `H` | `E` | `I`  | `A`   | `K`   | `P` |
+| Magic | `ECT` | `E` | `I` | `P` | `Y` | `O` | `ON` | `ND⎵` | `NOW` | `H` |
 
 (Other right hand keys are repeated.)
 
@@ -69,8 +69,8 @@ Other:
 Right hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev   | `J`   | `F` | `O` | `U` | `Y` | `H` | `E` | `I` | `A`  | `K` | `P` |
-| Repeat | `UST` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `PH` | `Y` | `H` |
+| Prev   | `J`   | `F` | `O` | `U` | `Y` | `H`   | `E` | `I` | `A`  | `K` | `P` |
+| Repeat | `UST` | `Y` | `O` | `I` | `P` | `ERE` | `E` | `U` | `PH` | `Y` | `Y` |
 
 Left hand overrides:
 |     |     |     |     |
