@@ -162,7 +162,7 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 
 Immediate rules eagerly trigger on magic-key-down if matched; other rules trigger on next-key-down.
 
-The rules have been set up such that pressing whichever punctuation key is more comfortable while typing (i.e. sequences that aren't SFBs) will generally produce contextually sensible punctuation.
+The rules have been set up such that pressing whichever punctuation key is more comfortable while typing (i.e. sequences that aren't SFBs) will generally produce contextually sensible punctuation. The rules table can easily be extended for other use-cases, such as diacritics and dead keys.
 
 > [!NOTE]
 > New rules can be added to the `keymatch_rule_t match_rules[]` table. The rules are matched greedily top down, so more general rules should go lower in the table and specific rules higher up.
@@ -172,14 +172,17 @@ The rules have been set up such that pressing whichever punctuation key is more 
 > [!WARNING]
 > Immediate rules should always return true in the `track_t` attribute despite not having a following key to consume, or else other tracking systems will not function.
 
-If your language uses dicritics, more rules could be added to these keys to support these outputs.
+The following key must be pressed within 250ms for the dynamic output to activate; otherwise, the keys will default to emitting `'` (left) or `,` (right) after the timer expires.
 
-The following key must be pressed within 500ms for the dynamic output to activate; otherwise, the keys will default to emitting `'` (left) or `,` (right) after the timer expires. If a following key is pressed, but no rules are matched, the timer will immediately resolve, and `'` or `,` will be placed immediately before the next key's output.
+> [!NOTE]
+> The fallback timeout duration can be adjusted via the `MAGIC_PUNCT_RESOLVE_DELAY` define.
+
+If a following key is pressed, but no rules are matched, the timer will immediately resolve, and `'` or `,` will be placed immediately before the next key's output.
 
 > [!NOTE]
 > In these fallthrough cases, the `Magic` and `Repeat` keys will track these punctuation keys as `'` and `,`, e.g. pressing `Right`+`Repeat` will emit `,⎵but⎵`.
 
-When shifted, the left magic key always outputs `@`, and the right magic key always outputs `~`.
+When shifted, the left magic key always outputs `@`, and the right magic key always outputs `~`. While `Alt` is held, no pattern matching is done, and the keys instantly output `'` and `,`, or `@` and `~` if also shifted (for responsive keybindings).
 
 
 
@@ -317,9 +320,6 @@ If you don't have a separate compatible pointing device, this feature doesn't do
    ```
    to run in the terminal.
 
-   While running in a terminal, the script will print all the data transactions between the keyboard and trackball to the terminal, which may be useful for debugging.
-
-   When running in the system tray, a red square in the icon means that the script is paused and is not forwarding any data transactions between the keyboard and trackball.
 </details>
 
 
@@ -370,6 +370,10 @@ The following has been tested on Debian. Other distributions should be similar.
 
 > [!WARNING]
 > Make sure to install the `hid` python package, not the `hidapi` package.
+
+While running in a terminal, the script will print all the data transactions between the keyboard and trackball to the terminal, which may be useful for debugging.
+
+When running in the system tray, a red square in the icon means that the script is paused and is not forwarding any data transactions between the keyboard and trackball.
 
 
 
