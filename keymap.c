@@ -911,12 +911,14 @@ static uint32_t clock_callback(uint32_t, void*);
 //==============================================================================
 
 static bool auto_layer_on = true;
+static uint32_t trackball_last_activity = 0;
 
 #define LINGER_MIN         100
 #define LINGER_MAX         500
 #define LINGER_RAMP_MS     50
 #define LINGER_RAMP_STEP   10
 #define TRACKBALL_DEBOUNCE 50
+#define SHORT_TIMEOUT      100
 
 typedef enum {
     TRACKBALL_IDLE,
@@ -974,6 +976,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             }
 
             trackball_state = TRACKBALL_ACTIVE;
+            trackball_last_activity = timer_read32();
             layer_on(_TRACKBALL);
 
             if (is_layer_locked(_MOUSE)) {
@@ -982,6 +985,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             break;
 
         case 'B':
+            trackball_last_activity = timer_read32();
             if (trackball_state == TRACKBALL_ACTIVE) {
                 trackball_state = TRACKBALL_DEBOUNCING;
                 trackball_token = defer_exec(TRACKBALL_DEBOUNCE, trackball_debounce_callback, NULL);
@@ -993,7 +997,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             clock_state.hrs = data[1];
             clock_state.min = data[2];
             clock_state.sec = data[3];
-
+            
             clock_token = defer_exec(1000, clock_callback, NULL);
             last_host_clock_update = timer_read32();
             host_clock_active = true;
@@ -1035,6 +1039,7 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         case TB_TOGG:
             if (record->event.pressed) {
+                auto_layer_on = !auto_layer_on;
                 msg[0] = 'T';
                 raw_hid_send(msg, RAW_LENGTH);
             }
@@ -1130,9 +1135,11 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
                 const bool right_hand = record->event.key.row >= 4;
                 const bool top_row    = record->event.key.row == 0;
                 const bool bottom_row = record->event.key.row == 2;
-                const bool session_recent = timer_elapsed32(trackball_session_start) < 100;
+                const bool activity_recent = timer_elapsed32(trackball_last_activity) < SHORT_TIMEOUT;
 
-                if (right_hand || ((top_row || bottom_row || ctrl_on()) && session_recent)) {
+                if (right_hand ||
+                   ((top_row || bottom_row || ctrl_on()) && !activity_recent)
+                ) {
                     layer_off(_TRACKBALL);
                 }
             }
