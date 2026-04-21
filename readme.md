@@ -53,8 +53,8 @@ Left hand keys:
 Right hand overrides:
 |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `O` | `U` | `Y` | `H` | `E` | `I`  | `A`   | `K`   | `P` |
-| Magic | `ECT` | `E` | `I` | `P` | `Y` | `O` | `ON` | `ND⎵` | `NOW` | `H` |
+| Prev  | `J`   | `O` | `U` | `Y` | `H`   | `E` | `I`  | `A`   | `K`   | `P` |
+| Magic | `ECT` | `E` | `I` | `P` | `ERE` | `O` | `ON` | `ND⎵` | `NOW` | `Y` |
 
 (Other right hand keys are repeated.)
 
@@ -69,8 +69,8 @@ Other:
 Right hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev   | `J`   | `F` | `O` | `U` | `Y` | `H`   | `E` | `I` | `A`  | `K` | `P` |
-| Repeat | `UST` | `Y` | `O` | `I` | `P` | `ERE` | `E` | `U` | `PH` | `Y` | `Y` |
+| Prev   | `J`   | `F` | `O` | `U` | `Y` | `H` | `E` | `I` | `A`  | `K` | `P` |
+| Repeat | `UST` | `Y` | `O` | `I` | `P` | `Y` | `E` | `U` | `PH` | `Y` | `H` |
 
 Left hand overrides:
 |     |     |     |     |
@@ -89,7 +89,8 @@ Other:
 > [!NOTE]
 > These outputs can be adjusted in the `process_magic` function.
 
-
+> [!NOTE]
+> In QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality. This behaviour can also be changed in `process_magic`, though the default output tables as above will not make much sense for QWERTY layouts and will need to be manually optimised.
 
 ---
 
@@ -127,9 +128,6 @@ This feature only tracks three keys into the past.
 > This is not a technical limitation; the history queue can easily be expanded to track more keys if desired, but three keys has been more than sufficient in practice.
 
 After a short duration (default 1000ms) of no keyboard input, both dynamic keys will reset to the `Non-alpha` state.
-
-> [!NOTE]
-> In QWERTY and Basic modes, both dynamic keys are overridden to only have repeat functionality. This behaviour can also be changed in `process_magic`, though the default output tables as above will not make much sense for QWERTY layouts.
 
 ---
 
@@ -288,7 +286,7 @@ Pressing any mouse-key will extend the linger duration by the minimum duration, 
 
 A drag scroll and volume control state can also be communicated from the keyboard to the trackball with the `Scroll` and `TB_TVOL` macros. The outermost thumb keys (the `Utility` layer keys) activate volume control while held.
 
-This feature is implemented with raw HID communication, and needs a python script on the host computer to relay messages to and from the trackball (see [below](#host-side-setup) for setup details). The matching keymap for the Ploopy Nano 2 trackball may be found in the [nano-2](/nano-2/) directory in this repository, and modifying the keymap for your own pointing device should be simple. You may need to checkout the `develop` branch and pull the latest ploopy pull request to compile this keymap yourself.
+This feature is implemented with raw HID communication, and needs a python script on the host computer to relay messages to and from the trackball (see [below](#host-side-setup) for setup details). The matching keymap for the Ploopy Nano 2 trackball may be found in the [nano-2](/nano-2/) directory in this repository, and modifying the keymap for your own pointing device should be simple.
 
 There is also a [portable version](#portable-auto-mouse-layer) of this feature that uses lock keys to communicate between the keyboard and trackball, which does not require any host-side software, but is less reliable and has some limitations in exchange.
 
@@ -681,10 +679,10 @@ Precompiled binaries for RP2040 controllers can be found [here](/compiled/). Oth
 
 1. Set up a [local installation of QMK](https://docs.qmk.fm/newbs).
 
-2. Clone this repository into `qmk_firmware\keyboards\crkbd\keymaps`.
+2. Clone this repository into `qmk_firmware/keyboards/crkbd/keymaps`.
 
    ```sh
-   git clone https://github.com/DesyncTheThird/corne-keymap qmk_firmware\keyboards\crkbd\keymaps\desync
+   git clone https://github.com/DesyncTheThird/corne-keymap qmk_firmware/keyboards/crkbd/keymaps/desync
    ```
 
 3. Build the keymap from the [QMK CLI](https://docs.qmk.fm/cli#qmk-cli) with:
@@ -726,3 +724,20 @@ See [here](https://docs.qmk.fm/squeezing_avr) for more ways to save space. (Most
 
 6. OS Setup:
    - Regional layout: English (United Kingdom)
+
+### Trackball
+
+7. Copy the trackball keymap into the nano-2 directory:
+   ```sh
+   cp -r keyboards/crkbd/keymaps/desync/nano-2/ keyboards/ploopyco/nano-2/keymaps/desync/
+   ```
+
+8. Build and flash the keymap:
+   ```sh
+   qmk flash -c -kb ploopyco/nano-2 -km desync
+   ```
+
+> [!WARNING]
+> If you are using a sparse-checkout of the qmk_firmware repository, make sure to include the `ploopyco/ploopyco.c`, `ploopyco/ploopyco.h`, and `ploopyco/post_rules.mk` files, and the `ploopyco/common` directory in your sparse set, or the trackball keymap will fail to compile.
+
+9. Set up the [host-side script](#host-side-setup) to relay messages between the keyboard and trackball.
