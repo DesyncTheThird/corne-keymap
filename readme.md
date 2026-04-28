@@ -477,14 +477,6 @@ This feature adds a toggle on the `Data` layer(s) that replaces the number keys 
 ![Base](images/base.png?raw=true)
 Base layer alphas is a modified graphite layout, with home row mods, [magic/repeat keys](#dynamic-keys) on home thumb keys, and [magic punctuation keys](#magic-punctuation) under the right hand vowel cluster.
 
-I find it difficult to press upper row keys with my pinkies and end up alt fingering them with my ring fingers, which introduces some SFBs (`BL`, `BR`) with the default graphite layout. I also find the upper inner index column keys much easier to press, so I have swapped the less common keys placed there with these pinky keys. The `C` and `W` keys have also been swapped to place `C` next to `B` to make the common `B_C` string not a skipgram. Also, I don't like `E` on the ring finger, so `HEIA` is used over `HAEI`.
-
-> [!NOTE]
-> The keymap internally uses a QWERTY layer (specifically, the `_BASIC` layer) for combo tracking, so this `Base` layer can be modified easily without needing any changes to combo code.
-
-> [!WARNING]
-> However, per-key mod-tap settings and Chordal Hold config will still need to be handled separately if home row mods are changed.
-
 Many punctuation marks common in prose are accessible through [combos](#combos) near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a LaTeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/(reverse) leader key.
 
 A copy of `Tab` is placed on the right hand to reduce left hand contortions. The two `Tab` keys also function as `LShift` and `RShift` when held. The shift modifiers are applied eagerly on keydown to improve interaction with pointing devices; these eager shift modifiers do not overwrite home row mods, so you can still shift-tab with one hand.
@@ -650,6 +642,13 @@ Accessible with `Base` key on `Utility` layer. This layer does not have home row
 
 
 # Some notes on implementation
+
+### Base Layout
+Some modifications to the graphite layout have been made to suit my personal preferences as follows.
+
+I find it difficult to press upper row keys with my pinkies and have to use my ring fingers for these keys, which introduces some SFBs (`BL`, `BR`) with the default graphite layout. So instead, I have the uncommon letter `Z` on the left side, and the punctuation `;` on the right side (which I prefer using a combo to input anyway). Following this swap, the `C` and `W` keys have also been swapped to place `C` next to `B` to make the common `B_C` string not a skipgram. Also, I don't like `E` on the ring finger, so `HEIA` is used over `HAEI`.
+
+These are all minor changes and do not significantly affect any layout stats in either direction, and can be easily changed as per your own preferences.
 
 ### CS_XXXX Keycodes
 I've had problems in the past with rolling built-in shifted keycodes. For instance, `&=` is a very common inward roll (in LaTeX), but the shift from the ampersand would often persist through to the equals symbol, outputting `&+` instead. (And similar problems with other rolls.)
