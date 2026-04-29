@@ -3301,7 +3301,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
 
                 case KC_N: cs_send_string_punct("'t "); update_last_keys(KC_SPC,3); break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
-                case KC_T: send_string(/*t*/"ment"); update_last_keys(KC_T, 4); break;
+                case KC_T: tap_code(KC_T); update_last_key(KC_T); break;
                 case KC_S: tap_code(KC_C); update_last_key(KC_C); break;
                 case KC_G: tap_code(KC_S); update_last_key(KC_S); break;
 
@@ -3321,7 +3321,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_I: send_string(/*i*/"on"); update_last_keys(KC_N, 2); break;
                 case KC_A: send_string(/*a*/"nd "); update_last_keys(KC_SPC, 3); break;
                 case KC_K: send_string(/*k*/"now"); update_last_keys(KC_SPC, 4); break;
-                case KC_P: tap_code(KC_H); update_last_key(KC_H); break;
+                case KC_P: tap_code(KC_Y); update_last_key(KC_Y); break;
 
                 case KC_NO:
                 case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
@@ -3395,13 +3395,14 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_Y: tap_code(KC_P); update_last_key(KC_P); break;
                 case KC_H: send_string(/*h*/"ere"); update_last_keys(KC_E, 3); break;
                 case KC_E: tap_code(KC_E); update_last_key(KC_E); break;
-                case KC_I: tap_code(KC_U); update_last_key(KC_U); break;
+                case KC_I: send_string(/*i*/"ng "); update_last_keys(KC_SPC, 3); break;
                 case KC_A: send_string(/*a*/"ph"); update_last_keys(KC_H, 2); break;
 
                 case KC_K: tap_code(KC_Y); update_last_key(KC_Y); break;
-                case KC_P: tap_code(KC_Y); update_last_key(KC_Y); break;
+                case KC_P: tap_code(KC_H); update_last_key(KC_H); break;
 
                 // Left hand overrides
+                case KC_T: send_string(/*t*/"ion"); update_last_keys(KC_N, 3); break;
                 case KC_X: send_string(/*x*/"es"); update_last_keys(KC_S, 2); break;
                 case KC_V: send_string(/*v*/"er"); update_last_keys(KC_R, 2); break;
                 case KC_W: send_string(/*w*/"ith"); update_last_keys(KC_H, 3); break;

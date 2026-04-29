@@ -47,14 +47,14 @@ Letters that are not commonly repeated (i.e. `I`, `U`, `A`) are overridden and i
 Left hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `Z` | `L` | `D` | `C` | `B`       | `N`  | `R` | `T`    | `S` | `G` | `Q` | `X` | `M`   | `W` | `V` |
-| Magic | `N` | `R` | `G` | `S` | `ECAUSE⎵` | `'T` | `L` | `MENT` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
+| Prev  | `Z` | `L` | `D` | `C` | `B`       | `N`  | `R` | `T` | `S` | `G` | `Q` | `X` | `M`   | `W` | `V` |
+| Magic | `N` | `R` | `G` | `S` | `ECAUSE⎵` | `'T` | `L` | `T` | `C` | `S` | `U` | `C` | `ENT` | `S` | `S` |
 
 Right hand overrides:
 |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev  | `J`   | `O` | `U` | `Y` | `H` | `E` | `I`  | `A`   | `K`   | `P` |
-| Magic | `ECT` | `E` | `I` | `P` | `Y` | `O` | `ON` | `ND⎵` | `NOW` | `H` |
+| Prev  | `J`   | `O` | `U` | `Y` | `H` | `E` | `I`   | `A`   | `K`   | `P` |
+| Magic | `ECT` | `E` | `I` | `P` | `Y` | `O` | `NG⎵` | `ND⎵` | `NOW` | `Y` |
 
 (Other right hand keys are repeated.)
 
@@ -69,14 +69,14 @@ Other:
 Right hand keys:
 |     |     |     |     |     |     |     |     |     |     |     |     |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev   | `J`   | `F` | `O` | `U` | `Y` | `H`   | `E` | `I` | `A`  | `K` | `P` |
-| Repeat | `UST` | `Y` | `O` | `I` | `P` | `ERE` | `E` | `U` | `PH` | `Y` | `Y` |
+| Prev   | `J`   | `F` | `O` | `U` | `Y` | `H`   | `E` | `I`  | `A`  | `K` | `P` |
+| Repeat | `UST` | `Y` | `O` | `I` | `P` | `ERE` | `E` | `ON` | `PH` | `Y` | `H` |
 
 Left hand overrides:
 |     |     |     |     |
 | --- | --- | --- | --- |
-| Prev   | `X`  | `V`  | `W`   |
-| Repeat | `ES` | `ER` | `ITH` |
+| Prev   | `T`   | `X`  | `V`  | `W`   |
+| Repeat | `ION` | `ES` | `ER` | `ITH` |
 
 (Other left hand keys are repeated.)
 
