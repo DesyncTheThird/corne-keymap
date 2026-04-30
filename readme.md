@@ -225,6 +225,7 @@ While Case Lock is active, `Ctrl`+`BSPC` will instead delete to the previous sep
 
 To indicate that the feature is active, the per-key LEDs will glow green while the feature is primed, and red while active.
 
+If any mods are held, `Case Lock` will instead function as an `Enter` key.
 
 
 ## Combos

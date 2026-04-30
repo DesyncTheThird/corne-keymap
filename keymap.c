@@ -2200,6 +2200,11 @@ static bool process_case_lock(uint16_t keycode, keyrecord_t* record) {
     }
 
     if (keycode == CS_CASE) {
+        if (get_mods()) {
+            tap_code(KC_ENT);
+            case_lock_capture_off();
+            return true;
+        }
         if (!case_lock_state.capturing) {
             case_lock_capture_on();
         } else {
