@@ -146,6 +146,7 @@ enum custom_keycodes {
 };
 
 #define TB_D LT(0, KC_D)
+#define TB_O LT(0, KC_O)
 
 // Home row mods
 #define LG_N LGUI_T(KC_N)
@@ -345,7 +346,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_BASE] = LAYOUT( //2
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_ESC,    KC_Z,    KC_L,    TB_D,    KC_C,    KC_B,                         KC_J,    KC_F,    KC_O,    KC_U, KC_SCLN, CS_HASH,
+           KC_ESC,    KC_Z,    KC_L,    TB_D,    KC_C,    KC_B,                         KC_J,    KC_F,    TB_O,    KC_U, KC_SCLN, CS_HASH,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           TABLSFT,    LG_N,    LA_R,    LC_T,    LS_S,    KC_G,                         KC_Y,    RS_H,    RC_E,    RA_I,    RG_A, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -681,6 +682,7 @@ static inline bool is_base_hrm(uint16_t keycode) {
         case RG_A:
 
         case TB_D:
+        case TB_O:
             return true;
 
         default:
@@ -723,6 +725,7 @@ static inline bool is_hrm(uint16_t keycode) {
         case RG_A:
 
         case TB_D:
+        case TB_O:
 
         case RS_RPRN:
         case RC_LPRN:
@@ -1079,7 +1082,8 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
             return false;
 
         case TB_D:
-            tap_hold_hid_key(keycode, record, 'S', 's', KC_D);
+        case TB_O:
+            tap_hold_hid_key(keycode, record, 'S', 's', keycode);
             return false;
 
         case ALTTAB:
@@ -2037,8 +2041,7 @@ bool process_mouse_lock(uint16_t keycode, keyrecord_t* record) {
     if ((IS_QK_MOD_TAP(keycode) || IS_QK_LAYER_TAP(keycode)) && !record->tap.count) {
         return true;
     }
-    if (record->event.pressed &&
-        is_layer_locked(_MOUSE) &&
+    if (is_layer_locked(_MOUSE) &&
         record->event.key.row >= 4 &&
         record->event.key.row <= 6) {
         layer_off(_MOUSE);
