@@ -1,3 +1,5 @@
+/* -*- eval: (apheleia-mode -1); -*- */
+
 #include QMK_KEYBOARD_H
 #include "print.h"
 #include "version.h"
