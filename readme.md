@@ -290,7 +290,7 @@ Pressing any mouse-key will extend the linger duration by the minimum duration, 
 
 A drag scroll and volume control state can also be communicated from the keyboard to the trackball with the `Scroll` and `TB_TVOL` macros. The outermost thumb keys (the `Utility` layer keys) activate volume control while held.
 
-This feature is implemented with raw HID communication, and needs a python script on the host computer to relay messages to and from the trackball (see [below](#host-side-setup) for setup details). The matching keymap for the Ploopy Nano 2 trackball may be found in the [nano-2](/nano-2/) directory in this repository, and modifying the keymap for your own pointing device should be simple.
+This feature is implemented with raw HID communication, and needs [a python script](/nano-2/host.py) on the host computer to relay messages to and from the trackball (see [below](#host-side-setup) for setup details). The matching keymap for the Ploopy Nano 2 trackball may be found in the [nano-2](/nano-2/) directory in this repository, and modifying the keymap for your own pointing device should be simple.
 
 There is also a [portable version](#portable-auto-mouse-layer) of this feature that uses lock keys to communicate between the keyboard and trackball, which does not require any host-side software, but is less reliable and has some limitations in exchange.
 
@@ -365,7 +365,7 @@ The following has been tested on Debian. Other distributions should be similar.
    python3 host.py
    ```
 
-4. You can use any terminal multiplexer (`tmux`, `screen`, `byobu`, etc.) to run the script headless, or set up a `systemd` service to start the script automatically.
+4. You can use any terminal multiplexer (`tmux`, `screen`, `byobu`, etc.) to run the script headless, or set up a [`systemd` service](/nano-2/hostbridge.service) to start the script automatically.
 
 </details>
 

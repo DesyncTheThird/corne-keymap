@@ -1,0 +1,12 @@
+[Unit]
+Description=Trackball Passthrough
+
+[Service]
+Type=simple
+ExecStart=[path/to/venvs]/hostbridge/bin/python [path/to/script]/host.py --silent
+WorkingDirectory=[path/to/keymaps]/desync/nano-2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
