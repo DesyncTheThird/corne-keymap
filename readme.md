@@ -365,16 +365,19 @@ The following has been tested on Debian. Other distributions should be similar.
    python3 host.py
    ```
 
-4. You can use any terminal multiplexer (`tmux`, `screen`, `byobu`, etc.) to run the script headless.
+4. You can use any terminal multiplexer (`tmux`, `screen`, `byobu`, etc.) to run the script headless, or set up a `systemd` service to start the script automatically.
 
 </details>
 
 > [!WARNING]
 > Make sure to install the `hid` python package, not the `hidapi` package.
 
-While running in a terminal, the script will print all the data transactions between the keyboard and trackball to the terminal, which may be useful for debugging.
-
 When running in the system tray, a red square in the icon means that the script is paused and is not forwarding any data transactions between the keyboard and trackball.
+
+> [!TIP]
+> While running in a terminal, the script will log connection events and errors.
+> Enabling the `--verbose` flag will log all data transactions, which may be useful for debugging.
+> The `--silent` flag will suppress the tray interface and run directly in the foreground without a controlling terminal.
 
 
 
