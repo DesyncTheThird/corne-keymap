@@ -3454,9 +3454,20 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-static bool process_punctuation_space(uint16_t keycode, keyrecord_t* record) {
+// static bool magic_space = false;
+
+// static bool process_magic_space(uint16_t keycode, keyrecord_t* record) {
+//     if (!magic_space) {
+//         return false;
+//     }
+// }
+
+static bool replace_space = false;
+
+static bool process_punctuation_space(uint16_t keycode, keyrecord_t *record) {
     if (is_last_key(KC_SPC) && (recent_key_state.dynamic || recent_key_state.magic_punct)) {
         switch (keycode) {
+            case CS_RT3:
             case KC_DOT:
             case CS_DOT:
             case KC_COMM:
@@ -3474,13 +3485,20 @@ static bool process_punctuation_space(uint16_t keycode, keyrecord_t* record) {
 
             case KC_SCLN:
             case CS_SCLN:
+                replace_space = true;
                 tap_code(KC_BSPC);
         }
     }
     return true;
 }
 
-
+static void process_replace_space(uint16_t keycode, keyrecord_t *record) {
+    if (replace_space) {
+        tap_code(KC_SPC);
+        replace_space = false;
+        update_last_key(KC_SPC);
+    }
+}
 
 //==============================================================================
 // Magic punctuation
@@ -3932,6 +3950,10 @@ static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
 //==============================================================================
 // Events
 //==============================================================================
+
+void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    process_replace_space(keycode, record);
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_case_lock(keycode, record)) { return false; }
@@ -4896,7 +4918,7 @@ static void render_right_thumb(const char* progmem_data) {
 }
 
 static void render_overlays(void) {
-    if (IS_LAYER_ON(_UTILITY) || IS_LAYER_ON(_TOUHOU)){
+    if (IS_LAYER_ON(_UTILITY) || IS_LAYER_ON(_TOUHOU)) {
         return;
     }
 
