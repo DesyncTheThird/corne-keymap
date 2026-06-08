@@ -142,12 +142,21 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Either | `N`        | `T`        | `[n]'t⎵`        |
 | Either | `N`        | `B`        | `[n].b.⎵`       |
 | Left   | `I`        | `E`        | `[i].e.⎵`       |
+| Left   | `I`        | `I`        | `[i].e.⎵`       |
 | Left   | `A`        | `M`        | `[a].m.`        |
 | Either | `P`        | `M`        | `[p].m.`        |
 | Either | `⎵`        | `⎵`        | `[⎵]-⎵`         |
 | Right  | `E`        | `G`        | `[e].g.⎵`       |
 | Right  | `E`        | `T`        | `[e]tc. `       |
 | Either | Any Key    | `Enter`    | `[-];`+`Enter`  |
+| Left   | `I`        | `S`        | `[i]t's⎵`       |
+| Right  | `Y`        | `D`        | `[y]ou'd⎵`      |
+| Right  | `Y`        | `V`        | `[y]ou've⎵`     |
+| Right  | `Y`        | `L`        | `[y]ou'll⎵`     |
+| Either | `W`        | ``        | `[w]ho's⎵`      |
+| Either | `W`        | `D`        | `[w]ho'd⎵`      |
+| Either | `W`        | `V`        | `[w]ho've⎵`     |
+| Either | `W`        | `L`        | `[w]ho'll⎵`     |
 | Left   | `S`        | `⎵`        | `[s]'⎵`         |
 | Either | Any Letter | `D`        | `[-]'d⎵`        |
 | Either | Any Letter | `L`        | `[-]'ll⎵`       |
