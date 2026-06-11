@@ -150,10 +150,10 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Right  | `E`        | `T`        | `[e]tc. `       |
 | Either | Any Key    | `Enter`    | `[-];`+`Enter`  |
 | Left   | `I`        | `S`        | `[i]t's⎵`       |
-| Right  | `Y`        | `D`        | `[y]ou'd⎵`      |
-| Right  | `Y`        | `V`        | `[y]ou've⎵`     |
-| Right  | `Y`        | `L`        | `[y]ou'll⎵`     |
-| Either | `W`        | ``        | `[w]ho's⎵`      |
+| Left   | `Y`        | `D`        | `[y]ou'd⎵`      |
+| Left   | `Y`        | `V`        | `[y]ou've⎵`     |
+| Left   | `Y`        | `L`        | `[y]ou'll⎵`     |
+| Either | `W`        | `S`        | `[w]ho's⎵`      |
 | Either | `W`        | `D`        | `[w]ho'd⎵`      |
 | Either | `W`        | `V`        | `[w]ho've⎵`     |
 | Either | `W`        | `L`        | `[w]ho'll⎵`     |
