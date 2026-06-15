@@ -756,7 +756,7 @@ static inline bool is_magic(uint16_t keycode) {
     return (keycode == CS_LT2 || keycode == CS_RT2);
 }
 
-static inline bool is_magic_punct(uint16_t keycode) {
+static inline bool is_context_key(uint16_t keycode) {
     return keycode == PCTLEFT || keycode == PCTRGHT;
 }
 
@@ -3043,7 +3043,7 @@ typedef struct {
     uint16_t last_key_2;
     uint16_t last_key_3;
     bool dynamic :1;
-    bool magic_punct :1;
+    bool context :1;
 } recent_key_state_t;
 
 static recent_key_state_t recent_key_state = {
@@ -3052,7 +3052,7 @@ static recent_key_state_t recent_key_state = {
     .last_key_2  = KC_NO,
     .last_key_3  = KC_NO,
     .dynamic     = false,
-    .magic_punct = false
+    .context     = false
 };
 
 static inline bool is_last_key(uint16_t keycode) {
@@ -3467,7 +3467,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
 static bool replace_space = false;
 
 static bool process_punctuation_space(uint16_t keycode, keyrecord_t *record) {
-    if (is_last_key(KC_SPC) && (recent_key_state.dynamic || recent_key_state.magic_punct)) {
+    if (is_last_key(KC_SPC) && (recent_key_state.dynamic || recent_key_state.context)) {
         switch (keycode) {
             case CS_RT3:
             case KC_DOT:
@@ -3503,10 +3503,10 @@ static void process_replace_space(uint16_t keycode, keyrecord_t *record) {
 }
 
 //==============================================================================
-// Magic punctuation
+// Context Keys
 //==============================================================================
 
-#define MAGIC_PUNCT_RESOLVE_DELAY 250
+#define CONTEXT_RESOLVE_DELAY 250
 
 typedef enum {
     JUST,       // Match keycode
@@ -3588,26 +3588,26 @@ static bool pattern_match_key(keymatch_t keymatch, uint16_t keycode) {
                                 keycode == CS_LT1 || keycode == TABLSFT ||
                                 keycode == TABRSFT;
         case ANY_LETTER: return is_alpha(keycode) || is_magic(keycode);
-        case ANY_KEY:    return !is_magic_punct(keycode) && keycode != KC_NO;
+        case ANY_KEY:    return !is_context_key(keycode) && keycode != KC_NO;
         default:         return false;
     }
 }
 
-static inline void update_magic_punctuation_buffer(uint16_t keycode) {
-    if (!is_magic_punct(keycode)) {
+static inline void update_context_buffer(uint16_t keycode) {
+    if (!is_context_key(keycode)) {
         magic_state.active = NONE;
     }
     magic_state.last_key = magic_state.current;
     magic_state.current = keycode;
 }
 
-static inline void reset_magic_punctuation_buffer(void) {
+static inline void reset_context_buffer(void) {
     magic_state.active = NONE;
     magic_state.last_key = KC_NO;
     magic_state.current = KC_NO;
 }
 
-static inline void resolve_magic_punctuation_fallback(void) {
+static inline void resolve_context_key_fallback(void) {
     cancel_deferred_exec(magic_state.token);
     if (magic_state.active == LEFT) {
         cs_tap_code(KC_QUOT);
@@ -3621,24 +3621,24 @@ static inline void resolve_magic_punctuation_fallback(void) {
 uint32_t PCTLEFT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_QUOT);
     update_last_key(KC_QUOT);
-    reset_magic_punctuation_buffer();
+    reset_context_buffer();
     return 0;
 }
 
 uint32_t PCTRGHT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_COMM);
     update_last_key(KC_COMM);
-    reset_magic_punctuation_buffer();
+    reset_context_buffer();
     return 0;
 }
 
-static inline bool apply_magic_punctuation_rule(size_t i) {
+static inline bool apply_context_rule(size_t i) {
     keymatch_rule_t const *rule = &match_rules[i];
 
-    recent_key_state.magic_punct = true;
+    recent_key_state.context = true;
 
     cs_send_string_punct(rule->output);
-    reset_magic_punctuation_buffer();
+    reset_context_buffer();
     cancel_deferred_exec(magic_state.token);
     if (rule->track.consume_next) {
         update_last_keys(rule->track.keycode, rule->track.length);
@@ -3647,7 +3647,7 @@ static inline bool apply_magic_punctuation_rule(size_t i) {
     return !rule->track.consume_next;
 }
 
-static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) { 
+static bool process_context_keys(uint16_t keycode, keyrecord_t* record) { 
     if (!record->event.pressed) {
         return true;
     }
@@ -3660,7 +3660,7 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
     }
 
     if (is_bspc(keycode)) {
-        reset_magic_punctuation_buffer();
+        reset_context_buffer();
     }
 
     switch (keycode) {
@@ -3675,7 +3675,7 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
             }
             magic_state.active = LEFT;
             cancel_deferred_exec(magic_state.token);
-            magic_state.token = defer_exec(MAGIC_PUNCT_RESOLVE_DELAY, PCTLEFT_fallback, NULL);
+            magic_state.token = defer_exec(CONTEXT_RESOLVE_DELAY, PCTLEFT_fallback, NULL);
             break;
 
         case PCTRGHT:
@@ -3689,7 +3689,7 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
             }
             magic_state.active = RIGHT;
             cancel_deferred_exec(magic_state.token);
-            magic_state.token = defer_exec(MAGIC_PUNCT_RESOLVE_DELAY, PCTRGHT_fallback, NULL);
+            magic_state.token = defer_exec(CONTEXT_RESOLVE_DELAY, PCTRGHT_fallback, NULL);
             break;
 
         default:
@@ -3704,43 +3704,43 @@ static bool process_magic_punctuation(uint16_t keycode, keyrecord_t* record) {
             continue;
         }
 
-        const bool immediate = rule->next.kind == IMMEDIATE && is_magic_punct(keycode) &&
+        const bool immediate = rule->next.kind == IMMEDIATE && is_context_key(keycode) &&
             pattern_match_key(rule->prev, magic_state.current);
         const bool sequential = pattern_match_key(rule->prev, magic_state.last_key) &&
             pattern_match_key(rule->next, keycode);
 
         if (immediate) {
             reset_magic_log();
-            return apply_magic_punctuation_rule(i);
+            return apply_context_rule(i);
         }
         if (sequential) {
             update_magic_log();
-            return apply_magic_punctuation_rule(i);
+            return apply_context_rule(i);
         }
     }
 
-    recent_key_state.magic_punct = false;
+    recent_key_state.context = false;
 
     if (!magic_state.token) {
-        update_magic_punctuation_buffer(keycode);
+        update_context_buffer(keycode);
         return true;
     }
 
-    if (!is_magic_punct(keycode)) {
+    if (!is_context_key(keycode)) {
         cancel_deferred_exec(magic_state.token);
-        resolve_magic_punctuation_fallback();
-        reset_magic_punctuation_buffer();
-        update_magic_punctuation_buffer(keycode);
+        resolve_context_key_fallback();
+        reset_context_buffer();
+        update_context_buffer(keycode);
         return true;
     }
     if (keycode == magic_state.current) {
         cancel_deferred_exec(magic_state.token);
-        resolve_magic_punctuation_fallback();
-        reset_magic_punctuation_buffer();
+        resolve_context_key_fallback();
+        reset_context_buffer();
         return true;
     }
 
-    update_magic_punctuation_buffer(keycode);
+    update_context_buffer(keycode);
     return true;
 }
 
@@ -3971,7 +3971,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_cycling_macros(keycode, record)) { return false; }
     if (!process_capsword(keycode, record)) { return false; }
     if (!process_punctuation_space(keycode, record)) { return false; }
-    if (!process_magic_punctuation(keycode, record)) { return false; }
+    if (!process_context_keys(keycode, record)) { return false; }
     // Reactive features go before key tracking
     if (!process_key_tracking(keycode, record)) { return false; }
     if (!process_lingering_mods(keycode, record)) { return false; }

@@ -10,7 +10,7 @@ See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 # Overview
 
 - [Base layer](#base) is a [magic](#dynamic-keys) modded [graphite](https://github.com/rdavison/graphite-layout)/[gallium](https://github.com/GalileoBlues/Gallium) layout. ([Alternative base layers](#alt-base-layer) available.)
-- Many common symbols and punctuation are accessible through [combos](#combos).
+- Many common symbols and punctuation are accessible through [combos](#combos), and smart autocompletion with [contextual keys](#contextual-keys).
 - Home row mods selectively available on most layers.
 - [Chordal Hold](https://docs.qmk.fm/tap_hold#chordal-hold) enabled with opposite hand triggers for home row mod and `Repeat`/`Magic` layer-tap safety.
 - [Rollback feature](#rollbacks) for magic outputs and macros.
@@ -133,9 +133,9 @@ After a short duration (default 1000ms) of no keyboard input, both dynamic keys 
 
 
 
-### Magic Punctuation
+### Contextual Keys
 
-The two punctuation keys beneath the vowel cluster emit different outputs depending on both the previous *and* following keys:
+The two keys beneath the vowel cluster, where punctuation keys would typically be located, are special *contextual keys* that emit different outputs depending on both the previous *and* following keys:
 
 | Key    | Previous   | Next       | Output          |
 | ------ | ---------- | ---------- | --------------- |
@@ -169,9 +169,9 @@ The two punctuation keys beneath the vowel cluster emit different outputs depend
 | Left   | Left       | Immediate  | `''`            |
 | Right  | Right      | Immediate  | `,⎵`            |
 
-Immediate rules eagerly trigger on magic-key-down if matched; other rules trigger on next-key-down.
+Immediate rules eagerly trigger on context-key-down if matched; other rules trigger on next-key-down.
 
-The rules have been set up such that pressing whichever punctuation key is more comfortable while typing (i.e. sequences that aren't SFBs) will generally produce contextually sensible punctuation. The rules table can easily be extended for other use-cases, such as diacritics and dead keys.
+The rules have been set up such that pressing whichever punctuation key is more comfortable while typing (i.e. sequences that aren't SFBs) will generally produce contextually sensible outputs. The rules table can easily be extended for other use-cases, such as diacritics and dead keys.
 
 > [!NOTE]
 > New rules can be added to the `keymatch_rule_t match_rules[]` table. The rules are matched greedily top down, so more general rules should go lower in the table and specific rules higher up.
@@ -181,17 +181,17 @@ The rules have been set up such that pressing whichever punctuation key is more 
 > [!WARNING]
 > Immediate rules should always return true in the `track_t` attribute despite not having a following key to consume, or else other tracking systems will not function.
 
-The following key must be pressed within 250ms for the dynamic output to activate; otherwise, the keys will default to emitting `'` (left) or `,` (right) after the timer expires.
+The following key must be pressed within 250ms for the dynamic output to activate; otherwise, the keys will default to emitting `'` (`Left Ctx`) or `,` (`Right Ctx`) after the timer expires.
 
 > [!NOTE]
-> The fallback timeout duration can be adjusted via the `MAGIC_PUNCT_RESOLVE_DELAY` define.
+> The fallback timeout duration can be adjusted via the `CONTEXT_RESOLVE_DELAY` define.
 
 If a following key is pressed, but no rules are matched, the timer will immediately resolve, and `'` or `,` will be placed immediately before the next key's output.
 
 > [!NOTE]
-> In these fallthrough cases, the `Magic` and `Repeat` keys will track these punctuation keys as `'` and `,`, e.g. pressing `Right`+`Repeat` will emit `,⎵but⎵`.
+> In these fallthrough cases, the `Magic` and `Repeat` keys will track these punctuation keys as `'` and `,`, e.g. pressing `Right Ctx`+`Repeat` will emit `,⎵but⎵`.
 
-When shifted, the left magic key always outputs `@`, and the right magic key always outputs `~`. While `Alt` is held, no pattern matching is done, and the keys instantly output `'` and `,`, or `@` and `~` if also shifted (for responsive keybindings).
+When shifted, the left context key always outputs `@`, and the right context key always outputs `~`. While `Alt` is held, no pattern matching is done, and the keys instantly output `'` and `,`, or `@` and `~` if also shifted (for responsive keybindings).
 
 
 
@@ -488,7 +488,7 @@ This feature adds a toggle on the `Data` layer(s) that replaces the number keys 
 # Layers
 ### Base
 ![Base](images/base.png?raw=true)
-Base layer alphas is a modified graphite layout, with home row mods, [magic/repeat keys](#dynamic-keys) on home thumb keys, and [magic punctuation keys](#magic-punctuation) under the right hand vowel cluster.
+Base layer alphas is a modified graphite layout, with home row mods, [magic/repeat keys](#dynamic-keys) on home thumb keys, and [contextual keys](#contextual-keys) under the right hand vowel cluster.
 
 Many punctuation marks common in prose are accessible through [combos](#combos) near or on the home row. (These combos are accessible on almost every layer.) `Hash` is also included on base layer as I use it as a LaTeX [snippet trigger]((https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17))/(reverse) leader key.
 
