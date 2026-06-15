@@ -3554,10 +3554,10 @@ static const keymatch_rule_t match_rules[] = {
     { LEFT,   { JUST, KC_Y    }, { JUST, KC_D   }, /*y*/"ou'd ",  { true, KC_SPC,  5 } },
     { LEFT,   { JUST, KC_Y    }, { JUST, KC_V   }, /*y*/"ou've ", { true, KC_SPC,  6 } },
     { LEFT,   { JUST, KC_Y    }, { JUST, KC_L   }, /*y*/"ou'll ", { true, KC_SPC,  6 } },
-    { EITHER, { JUST, KC_W    }, { JUST, KC_S   }, /*w*/"ho's ",  { true, KC_SPC,  5 } },
-    { EITHER, { JUST, KC_W    }, { JUST, KC_D   }, /*w*/"ho'd ",  { true, KC_SPC,  5 } },
-    { EITHER, { JUST, KC_W    }, { JUST, KC_V   }, /*w*/"ho've ", { true, KC_SPC,  6 } },
-    { EITHER, { JUST, KC_W    }, { JUST, KC_L   }, /*w*/"ho'll ", { true, KC_SPC,  6 } },
+    { LEFT,   { JUST, KC_W    }, { JUST, KC_S   }, /*w*/"ho's ",  { true, KC_SPC,  5 } },
+    { LEFT,   { JUST, KC_W    }, { JUST, KC_D   }, /*w*/"ho'd ",  { true, KC_SPC,  5 } },
+    { LEFT,   { JUST, KC_W    }, { JUST, KC_V   }, /*w*/"ho've ", { true, KC_SPC,  6 } },
+    { LEFT,   { JUST, KC_W    }, { JUST, KC_L   }, /*w*/"ho'll ", { true, KC_SPC,  6 } },
     { LEFT,   { JUST, KC_S    }, { ANY_SPACE    }, /*s*/"'",      { false            } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_D   }, /*-*/"'d ",    { true, KC_SPC,  3 } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_L   }, /*-*/"'ll ",   { true, KC_SPC,  4 } },
@@ -3567,10 +3567,10 @@ static const keymatch_rule_t match_rules[] = {
     { EITHER, { ANY_LETTER    }, { JUST, KC_R   }, /*-*/"'re ",   { true, KC_SPC,  4 } },
 
     // Double taps and rolls
-    { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE     }, "''",        { true, KC_QUOT, 2 } }, // -> [-]''
-    { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE     }, "--",        { true, KC_MINS, 2 } }, // -> [-]--
-    { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE     }, "--",        { true, KC_MINS, 2 } }, // -> [-]--
-    { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE     }, ", ",        { true, KC_SPC,  2 } }, // -> [-],
+    { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE    }, "''",          { true, KC_QUOT, 2 } },
+    { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE    }, "--",          { true, KC_MINS, 2 } },
+    { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE    }, "--",          { true, KC_MINS, 2 } },
+    { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE    }, ", ",          { true, KC_SPC,  2 } },
 };
 
 static bool pattern_match_key(keymatch_t keymatch, uint16_t keycode) {

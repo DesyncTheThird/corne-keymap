@@ -153,10 +153,10 @@ The two keys beneath the vowel cluster, where punctuation keys would typically b
 | Left   | `Y`        | `D`        | `[y]ou'd⎵`      |
 | Left   | `Y`        | `V`        | `[y]ou've⎵`     |
 | Left   | `Y`        | `L`        | `[y]ou'll⎵`     |
-| Either | `W`        | `S`        | `[w]ho's⎵`      |
-| Either | `W`        | `D`        | `[w]ho'd⎵`      |
-| Either | `W`        | `V`        | `[w]ho've⎵`     |
-| Either | `W`        | `L`        | `[w]ho'll⎵`     |
+| Left   | `W`        | `S`        | `[w]ho's⎵`      |
+| Left   | `W`        | `D`        | `[w]ho'd⎵`      |
+| Left   | `W`        | `V`        | `[w]ho've⎵`     |
+| Left   | `W`        | `L`        | `[w]ho'll⎵`     |
 | Left   | `S`        | `⎵`        | `[s]'⎵`         |
 | Either | Any Letter | `D`        | `[-]'d⎵`        |
 | Either | Any Letter | `L`        | `[-]'ll⎵`       |
