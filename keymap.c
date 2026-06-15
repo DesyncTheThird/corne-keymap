@@ -33,8 +33,8 @@ enum custom_keycodes {
     REP = QK_USER,
     MAGIC,
     NEWSENT,
-    PCTLEFT,
-    PCTRGHT,
+    CTXLEFT,
+    CTXRGHT,
 
     CS_CASE,
     TG_CTRL,
@@ -340,7 +340,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           KC_LSFT,    KC_N,    KC_R,    KC_T,    KC_S,    KC_G,                         KC_Y,    KC_H,    KC_E,    KC_I,    KC_A, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          KC_LCTL,    KC_Q,    KC_X,    KC_M,    KC_W,    KC_V,                         KC_K,    KC_P, PCTLEFT, PCTRGHT, DOT_QUE, CS_CASE,
+          KC_LCTL,    KC_Q,    KC_X,    KC_M,    KC_W,    KC_V,                         KC_K,    KC_P, CTXLEFT, CTXRGHT, DOT_QUE, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  KC_SPC,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -352,7 +352,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           TABLSFT,    LG_N,    LA_R,    LC_T,    LS_S,    KC_G,                         KC_Y,    RS_H,    RC_E,    RA_I,    RG_A, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL,    KC_Q,    KC_X,    KC_M,    KC_W,    KC_V,                         KC_K,    KC_P, PCTLEFT, PCTRGHT, DOT_QUE, CS_CASE,
+          CS_LCTL,    KC_Q,    KC_X,    KC_M,    KC_W,    KC_V,                         KC_K,    KC_P, CTXLEFT, CTXRGHT, DOT_QUE, CS_CASE,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                                CS_LT3,  CS_LT2,  CS_LT1,     CS_RT1,  CS_RT2,  CS_RT3
                                           //`--------------------------'  `--------------------------'
@@ -559,7 +559,7 @@ void user_config_sync_handler(uint8_t initiator2target_buffer_size, const void* 
 
 
 //==============================================================================
-// Variables
+// Variables & Helpers
 //==============================================================================
 
 typedef struct {
@@ -757,7 +757,7 @@ static inline bool is_magic(uint16_t keycode) {
 }
 
 static inline bool is_context_key(uint16_t keycode) {
-    return keycode == PCTLEFT || keycode == PCTRGHT;
+    return keycode == CTXLEFT || keycode == CTXRGHT;
 }
 
 static inline bool is_layer_tap(uint16_t keycode) {
@@ -1753,12 +1753,12 @@ const uint16_t PROGMEM colon[]        = {    KC_D,    KC_S,                   CO
 const uint16_t PROGMEM r_exponent[]   = {    KC_O,    KC_U,                   COMBO_END};
 const uint16_t PROGMEM r_comma[]      = {    KC_P,    KC_E,                   COMBO_END};
 const uint16_t PROGMEM r_dot[]        = {    KC_E,    KC_I,                   COMBO_END};
-const uint16_t PROGMEM r_underscore[] = {    KC_P, PCTLEFT,                   COMBO_END};
+const uint16_t PROGMEM r_underscore[] = {    KC_P, CTXLEFT,                   COMBO_END};
 const uint16_t PROGMEM r_asterisk[]   = {    KC_K,    KC_H,                   COMBO_END};
 const uint16_t PROGMEM r_equals[]     = {    KC_F,    KC_O,                   COMBO_END};
 const uint16_t PROGMEM r_plus[]       = {    KC_Y,    KC_H,                   COMBO_END};
 const uint16_t PROGMEM r_minus[]      = {    KC_H,    KC_E,                   COMBO_END};
-const uint16_t PROGMEM r_newsent[]    = {    KC_E, PCTRGHT,                   COMBO_END};
+const uint16_t PROGMEM r_newsent[]    = {    KC_E, CTXRGHT,                   COMBO_END};
 const uint16_t PROGMEM semicolon[]    = {    KC_H,    KC_O,                   COMBO_END};
 const uint16_t PROGMEM ampersand[]    = {    KC_O,    KC_I,                   COMBO_END};
 
@@ -1783,8 +1783,8 @@ const uint16_t PROGMEM bspc_1[]       = {  CS_RT1,    KC_H,                   CO
 const uint16_t PROGMEM bspc_2[]       = {  CS_RT1,    KC_E,                   COMBO_END};
 const uint16_t PROGMEM bspc_3[]       = {  CS_RT1,    KC_I,                   COMBO_END};
 const uint16_t PROGMEM bspc_4[]       = {  CS_RT1,    KC_P,                   COMBO_END};
-const uint16_t PROGMEM bspc_5[]       = {  CS_RT1,    PCTLEFT,                COMBO_END};
-const uint16_t PROGMEM bspc_6[]       = {  CS_RT1,    PCTRGHT,                COMBO_END};
+const uint16_t PROGMEM bspc_5[]       = {  CS_RT1,    CTXLEFT,                COMBO_END};
+const uint16_t PROGMEM bspc_6[]       = {  CS_RT1,    CTXRGHT,                COMBO_END};
 const uint16_t PROGMEM bspc_7[]       = {  CS_RT1,    KC_F,                   COMBO_END};
 const uint16_t PROGMEM bspc_8[]       = {  CS_RT1,    KC_O,                   COMBO_END};
 const uint16_t PROGMEM bspc_9[]       = {  CS_RT1,    KC_U,                   COMBO_END};
@@ -3567,10 +3567,10 @@ static const keymatch_rule_t match_rules[] = {
     { EITHER, { ANY_LETTER    }, { JUST, KC_R   }, /*-*/"'re ",   { true, KC_SPC,  4 } },
 
     // Double taps and rolls
-    { LEFT,   { JUST, PCTLEFT }, { IMMEDIATE    }, "''",          { true, KC_QUOT, 2 } },
-    { LEFT,   { JUST, PCTRGHT }, { IMMEDIATE    }, "--",          { true, KC_MINS, 2 } },
-    { RIGHT,  { JUST, PCTLEFT }, { IMMEDIATE    }, "--",          { true, KC_MINS, 2 } },
-    { RIGHT,  { JUST, PCTRGHT }, { IMMEDIATE    }, ", ",          { true, KC_SPC,  2 } },
+    { LEFT,   { JUST, CTXLEFT }, { IMMEDIATE    }, "''",          { true, KC_QUOT, 2 } },
+    { LEFT,   { JUST, CTXRGHT }, { IMMEDIATE    }, "--",          { true, KC_MINS, 2 } },
+    { RIGHT,  { JUST, CTXLEFT }, { IMMEDIATE    }, "--",          { true, KC_MINS, 2 } },
+    { RIGHT,  { JUST, CTXRGHT }, { IMMEDIATE    }, ", ",          { true, KC_SPC,  2 } },
 };
 
 static bool pattern_match_key(keymatch_t keymatch, uint16_t keycode) {
@@ -3618,14 +3618,14 @@ static inline void resolve_context_key_fallback(void) {
     }
 }
 
-uint32_t PCTLEFT_fallback(uint32_t trigger_time, void *cb_arg) {
+uint32_t CTXLEFT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_QUOT);
     update_last_key(KC_QUOT);
     reset_context_buffer();
     return 0;
 }
 
-uint32_t PCTRGHT_fallback(uint32_t trigger_time, void *cb_arg) {
+uint32_t CTXRGHT_fallback(uint32_t trigger_time, void *cb_arg) {
     cs_tap_code(KC_COMM);
     update_last_key(KC_COMM);
     reset_context_buffer();
@@ -3664,7 +3664,7 @@ static bool process_context_keys(uint16_t keycode, keyrecord_t* record) {
     }
 
     switch (keycode) {
-        case PCTLEFT:
+        case CTXLEFT:
             if (shifted()) {
                 cs_tap_code16(LSFT(KC_QUOT));
                 return true;
@@ -3675,10 +3675,10 @@ static bool process_context_keys(uint16_t keycode, keyrecord_t* record) {
             }
             magic_state.active = LEFT;
             cancel_deferred_exec(magic_state.token);
-            magic_state.token = defer_exec(CONTEXT_RESOLVE_DELAY, PCTLEFT_fallback, NULL);
+            magic_state.token = defer_exec(CONTEXT_RESOLVE_DELAY, CTXLEFT_fallback, NULL);
             break;
 
-        case PCTRGHT:
+        case CTXRGHT:
             if (shifted()) {
                 cs_tap_code16(LSFT(KC_NUHS));
                 return true;
@@ -3689,7 +3689,7 @@ static bool process_context_keys(uint16_t keycode, keyrecord_t* record) {
             }
             magic_state.active = RIGHT;
             cancel_deferred_exec(magic_state.token);
-            magic_state.token = defer_exec(CONTEXT_RESOLVE_DELAY, PCTRGHT_fallback, NULL);
+            magic_state.token = defer_exec(CONTEXT_RESOLVE_DELAY, CTXRGHT_fallback, NULL);
             break;
 
         default:
