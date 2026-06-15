@@ -1352,12 +1352,12 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t* record,
             // Ctrl mod-taps
             case LC_T:
             case RC_E:
-                return 75;
+                return 10;
 
             // Alt mod-taps
             case LA_R:
             case RA_I:
-                return 100;
+                return 25;
 
             // GUI mod-taps
             case LG_N:
