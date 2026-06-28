@@ -12,7 +12,6 @@ See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 - [Base layer](#base) is a [magic](#dynamic-keys) modded [graphite](https://github.com/rdavison/graphite-layout)/[gallium](https://github.com/GalileoBlues/Gallium) layout. ([Alternative base layers](#alt-base-layer) available.)
 - Many common symbols and punctuation are accessible through [combos](#combos), and smart autocompletion with [contextual keys](#contextual-keys).
 - Home row mods selectively available on most layers.
-- [Chordal Hold](https://docs.qmk.fm/tap_hold#chordal-hold) enabled with opposite hand triggers for home row mod and `Repeat`/`Magic` layer-tap safety.
 - [Rollback feature](#rollbacks) for magic outputs and macros.
 - [Case Lock](#case-lock) for easy `snake_case`, `kebab-case`, `camelCase`, etc.
 - [Mouse emulation](#mouse) accessible on pinky key combo; movement keys in same position as arrow keys on navigation layer, scrolling underneath in vim arrow layout.
@@ -26,6 +25,11 @@ See also [here](https://github.com/DesyncTheThird/OLED-art) for more OLED art.
 
 
 # Features
+
+> [!TIP]
+> If you ever get trapped in an unfamiliar state, consult the layer stack and layout reference on the OLED menu.
+> Otherwise, rapidly tapping `Esc` three times will reset all internal states to the defaults.
+
 ## Dynamic Keys
 
 ![Base](images/base.png?raw=true)
@@ -502,63 +506,53 @@ The `Basic` key on the `Utility` layer disables home row mods and combos on this
 
 ## Data
 ![Data](images/data.png?raw=true)
-Number grid with `1`, `2`, and `3` on right hand home row, along with common numerical separators on left hand home row, sharing similar layout to `Symbol` and `Program` layers.
+Number grid with `1`, `2`, and `3` on right hand home row, along with common numerical separators (`:`, `.`, `,`) on left hand home row. Arithmetic operators are placed around the home row (`+` and `-` above, `*` and `/` below, `^` on pinky key), with a [cycling bracket macro](#macros) under the index finger. Other numerical-adjacent symbols (currency, percent, tilde for relative git references) are placed in the corners. The `Left Shift` key on this layer additionally sets a one shot shift modifier.
 
-### Macros
-
+Activating both `Data` and `Terminal` layers will also activate the `Edit` layer on top to allow for quick navigation during numerical input. This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
+  
 The inner column on the right hand has *cycling macros* which cycle between different outputs on repeated presses:
-- `Misc`: `%` -> `@` -> `£` -> `` -> ...
-- `Bracket`: `()` -> `{}` -> `[]` -> `()` -> ...
 
-  This macro places the cursor between the two brackets with each press.
-
+- `xyz`: `x` -> `y` -> `z` -> `x` -> ...
+- `ijk`: `i` -> `j` -> `k` -> `i` -> ...
 - `Comp`: `>` -> `<` -> `=` -> `>` -> ...
 
-These macros interoperate with the rollback feature.
+The former two are for easily writing common variables with indices in LaTeX (`x_1`, `x^1`, `a_ib_j` etc.), Emacs Unicode input (`x\_1`, `x\^1`, etc.), and Cubical Agda interval variables.
 
-Activating both `Data` and `Program` layers will also activate the `Edit` layer on top to allow for quick navigation during numerical input. This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
+The left hand bracket macro is also a cycling macro with the folowing outputs:
+
+- `Bracket`: `()` -> `{}` -> `[]` -> `()` -> ...
+  
+  This macro additionally places the point between the two brackets with each press.
+
+These macros all interoperate with the rollback feature.
 
 
 
 ## Edit
 ![Edit](images/edit.png?raw=true)
-Navigation/editing keys on left hand and paired delimiters and common symbol combinations on right hand. I prefer the navigation cluster on the left hand to allow usage with the mouse.
+Navigation/editing keys are placed on the left, with paired delimiters and common symbol combinations on the right. The right hand is also duplicated on the `Symbol` and `Terminal` layers. I prefer the navigation cluster on the left hand to allow usage with the mouse in the right hand.
 
-Many common strings are inward rolls on right hand, e.g.; `[]`, `()`, `{}`, `^{}`, `_{}`, `?()`; right hand also duplicated on `Symbol` and `Program` layers.
+Most common strings are inward rolls on right hand, e.g. `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `?()`, with some regex patterns also available as outward rolls.
 
-The bottom row of the [`Control Overlay`](#control-overlay) can also be activated with home row mods on this layer.
+The `Mark` key toggles a persistent shift modifier on navigation keys (arrows, `Home`, `End`, `PgUp`, and `PgDn`), similar to the `set-mark-command` function in Emacs. Pressing any other shift modifier or leaving the `Edit` layer will deactivate the mark.
 
-### Macros
+The `Ctrl Lock` key has the same functionality as the `Mark` key but with the `Ctrl` modifier in place of `Shift`, and only affecting horizontal navigation keys.
 
-The `Lock` key activates the [Layer Lock](https://docs.qmk.fm/features/layer_lock) feature, for extended navigation.
+The `Lock` key activates the [Layer Lock](https://docs.qmk.fm/features/layer_lock) feature, allowing extended navigation without holding the thumb key.
 
-The `Nav Tabs` macro moves focus between tabs, to the right by default:
-- Holding `Shift` will cycle tabs to the left; holding `Ctrl` will additionally move the current tab.
+The `Select` macro selects the current word; pressing it again within 200ms will cut (`Ctrl`+`X`) the selection.
+- If `Ctrl` is held, this key outputs `Ctrl`+`X`.
 
 The `>_` macro comments the current line (`Ctrl`+`/`).
 
-The left hand bracket macro surrounds the current word with brackets, and cycles the bracket type on subsequent presses:
-- `⟦⟳⟧`: `(-)` -> `{-}` -> `[-]` -> `(-)` -> ...
+The `++` macro outputs `1` on first press and increments on subsequent presses, rolling over to `0` after `9`, and resetting to `1` when the `Edit` layer is released.
+- Holding `Shift` will cause the output to decrement instead. 
 
-In place of the bracket macro as on the `Data` layer, there is an *enumeration macro*:
-- The `++` macro outputs `1` on first press and increments on subsequent presses, rolling over to `0` after `9`, and resetting to `1` when the `Edit` layer is released.
-
-  Holding `Shift` will *replace* the current number with its successor; holding `Ctrl` will decrement instead; and holding both will replace the the current number with its predecessor.
-
-  This macro is also available on the `Program` and `Symbol` layers; the internal state is retained between all three instances and is reset only when the `Edit` layer is activated and released.
-
-There are also various macros for quickly selecting and manipulating text:
-- The two directional `Select` macros select in the indicated directions from the current cursor position. Pressing/holding the keys will extend the selection one word at a time; activating the opposite macro will retract the selection instead.
-
-- The `Select` macro selects the current word; pressing it again within 200ms will cut (`Ctrl`+`X`) the selection. Pressing `Select` within 500ms of either of the other two directional `Select` macros will also immediately cut the selection.
-
-  Pressing the `Select Right` key within 200ms of the `Select` key will copy (`Ctrl`+`C`) the selection; pressing `Select Left` will delete the selection; and pressing `Enter` will paste over the selection.
-
-  After cutting with `Select`, copying with `Select Right`, or deleting with `Select Left`, the `Enter` key on this layer will act as paste, resetting after the first use or if the `Edit` layer is disabled.
+- This macro is also available on the `Terminal` and `Symbol` layers; the internal state is retained between all three instances and is reset only when the `Edit` layer is activated and released.
 
 The right thumb keys also have additional layering actions:
-- Activating both `Edit` and `Program` layers will activate the [`Edit Overlay`](#edit-overlay), which contains macros useful for editing, and also hold the `LCTL` or `LSFT` modifier for various keys on the left hand.
-- Activating both `Edit` and `Symbol` layers will replace the right hand with a copy of the `Data` layer (with `_` replaced by `0`, since the thumb keys are not accessible in this configuration).
+- Activating both `Edit` and `Terminal` layers will activate the [`Edit Overlay`](#edit-overlay), which contains macros useful for editing, and also hold the `LCTL` or `LSFT` modifier for various keys on the left hand.
+- Activating both `Edit` and `Symbol` layers will replace the right hand with a copy of the `Data` layer (with `_` replaced by `0`, since the thumb keys are not accessible in this configuration). The `OSL Data` key also enables this layer for one keypress.
 
 These are both implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
@@ -577,34 +571,39 @@ The `Ctrl` key will also become sticky for arrow keys while the overlay is activ
 
 ## Symbol
 ![Symbol](images/symbol.png?raw=true)
-Symbol layout optimised for (La)TeX editing with many common strings as inward rolls on left hand, e.g.; `<-`, `<=`, `->`, `>=`, `|->`, `<-`, `|>`, `:=`, `:-`, `&=`, etc. (Intended to be used with [snippet extensions](https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17).) Brackets on right hand as above.
+Symbol layout optimised for (La)TeX editing with many common strings as inward rolls on left hand, e.g.; `<-`, `<=`, `->`, `>=`, `|->`, `<-`, `|>`, `:=`, `:-`, `&=`, etc. (Intended to be used with [snippet extensions](https://gist.github.com/DesyncTheThird/0c7a18dc6bedaf27e2627c07f0c53e17).) Right hand as above. The `Left Shift` key on this layer additionally sets a one shot shift modifier.
 
 
 
-## Program
-![Program](images/program.png?raw=true)
-`Program` layer optimised for programming in mostly C and Python. Inward rolls include:
-- Comparison operators: `!=`, `>=`, `<=` on home row;
-- Arithmetic assignment operators: `^=`, `+=`, `-=`, `*=`, `/=` above and below home row.
-Bitwise operator symbols are grouped on the inner index column.
+## Terminal
+![Terminal](images/program.png?raw=true)
+`Terminal` layer optimised for terminal usage and shell commands.
+
+Home row includes path and globbing syntax symbols, with common regex patterns above and below.
 
 Holding `Shift` while pressing `&` or `|` will send the respective symbol twice, i.e. as logical operators, and holding `Ctrl` will add spaces.
 
-Brackets on right hand as above.
+Right hand as above. The `Left Shift` key on this layer additionally sets a one shot shift modifier.
+
 
 
 
 ## Utility
 ![Utility](images/utility.png?raw=true)
-`Utility` layer containing media control, RGB controls, OLED controls, function keys, and debug functions. Layer is accessible using either outer thumb key.
+`Utility` layer containing media control, RGB matrix controls, OLED controls, function keys, and debug functions. This layer can be accessed by holding either outer thumb key (not both simultaneously), or the two inner thumb keys simultaneously.
 
-The `Mute` thumb keys only activate on the hand opposite to the one holding the layer key to avoid accidental activations. The `Volume Up/Down` keys are macros that rapidly and repeatedly send the volume control keycodes for smooth volume control; holding shift sends the keycodes only once for finer control.
+The `Volume Up/Down` macros rapidly and repeatedly send the volume control keycodes for smooth volume control; holding `Shift` sends the keycodes only once for finer control.
+
+When holding `Ctrl`, the volume keys will instead set the OLED clock: `Mute` will change the clock setting, and the `Volume Up/Down` keys will change the current setting up and down.
 
 The `Basic` key disables home row mods, combos, and `Space` layer-tap (the right hand of the `Data` layer is still accessible by simultaneously activating `Edit` and `Symbol` layers). The `Base` additionally changes the base layout to QWERTY.
 
-The `Clock` keys set the OLED clock. `OLED Static` disables animations and changes OLEDs to static images. `OLED Menu` toggles between layer stack view and layout display on right OLED.
+`OLED Toggle` toggles the OLEDs on and off. `OLED Static` disables animations and changes OLEDs to static images. `OLED Menu` toggles between layer stack view and layout display on right OLED.
 
 The `Alt Tab` key holds `LAlt` and taps `Tab` on first press; taps `Tab` on subsequent presses; `LAlt` is released when layer key is released.
+
+The `Nav Tabs` key moves focus between tabs, to the right by default:
+- Holding `Shift` will cycle tabs to the left; holding `Ctrl` will drag the current tab.
 
 Tap the `Reboot` key to reboot keyboard; hold for one second to enter bootloader.
 
@@ -612,7 +611,7 @@ Tap the `Reboot` key to reboot keyboard; hold for one second to enter bootloader
 
 ## Mouse
 ![Mouse](images/mouse.png?raw=true)
-Mouse emulation accessible on pinky key combo to allow mouse movement without moving from home row. A mirrored left hand combo is also available, intended to be used with the layer lock feature.
+Mouse emulation accessible on pinky key combo to allow mouse movement without moving from home row. A mirrored left hand combo is also available, mostly intended to be used with the layer lock.
 
 Cursor/scroll speed may be overridden with right thumb keys for higher speed or finer control.
 
@@ -631,15 +630,18 @@ Holding `LCTL` on any layer (including non-base layers) covers the left hand bot
 Pressing `LCTL`+`Case Lock` will toggle this feature.
 
 
+
 ## Edit Overlay
 ![Edit Overlay](images/edit_overlay.png?raw=true)
-Activating the `Program` and `Edit` layers simultaneously will activate the `Edit Overlay` layer on top (of the `Edit` layer). This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
+Activating the `Terminal` and `Edit` layers simultaneously will activate the `Edit Overlay` layer on top (of the `Edit` layer). This is implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 
 The right hand is replaced with macros useful for editing:
-- The directional `Delete` macros delete in the indicated directions from the current cursor position to the beginning/end of the current line.
+- The directional `Delete` macros delete in the indicated directions from the current point position to the beginning/end of the current line.
+- `Delete Word` macro deletes the word the point is currently in.
 - The `Line` macros add new lines above/below the current line; deletes left/right instead if `Shift` or `Ctrl` is active.
-- The `Join` macro joins current line to following line with space between; omits the space if `Shift` or `Ctrl` is active.
-- The three bracket macros enclose the current word with the listed brackets. These macros also interoperate with the rollback feature.
+- `Join` joins current line to following line with space between; omits the space if `Shift` or `Ctrl` is active.
+- `Select Line` selects the current line, leaving the point at the end of the line.
+- The three bracket macros enclose the current word with the listed brackets. These macros also interoperate0 with the rollback feature.
 
 
 
@@ -664,18 +666,18 @@ I find it difficult to press upper row keys with my pinkies and have to use my r
 These are all minor changes and do not significantly affect any layout stats in either direction, and can be easily changed as per your own preferences.
 
 ### CS_XXXX Keycodes
-I've had problems in the past with rolling built-in shifted keycodes. For instance, `&=` is a very common inward roll (in LaTeX), but the shift from the ampersand would often persist through to the equals symbol, outputting `&+` instead. (And similar problems with other rolls.)
+There is a long standing bug in QMK with modifiers persisting through multiple keys when rolled quickly, and especially when combined with layer changes. For instance, `&=` is a very common inward roll (in LaTeX) that is typed immediately after swapping to the `Symbol` layer. When typed quickly, the shift from the ampersand will often persist through to the equals symbol, outputting `&+` instead. (And similar problems with many other rolls, e.g. `~/` to `~?` on the `Terminal` layer.)
 
 The `CS_XXXX` keycodes explicitly reset shift modifiers before sending the intended keycode, fixing this issue. They also rename the keycodes to their ISO counterparts. These keycodes also can't be shifted manually: this is intended -- every symbol should be accessible on some layer without needing the shift key at all -- shift should only be needed for normal letters.
 
-This has probably been fixed in the years since I first encountered this issue, but there's little reason to swap back to ordinary keycodes as; the keycode renaming is convenient for maintenance; the shift-disabling behaviour is desired; and it works as-is.
+As far as I can tell, this still hasn't been fixed, but there's little reason to swap back to ordinary keycodes anyway even when it does get fixed, as; the keycode renaming is convenient for maintenance; the shift-disabling behaviour is desired; and it works as-is.
 
 I also don't use key overrides for this purpose, because they override all matching instances of inputs when active, and sometimes I do want to manually send strange combinations of modifiers and keycodes.
 
-By the way, `CS` originally stood for `Custom Symbol`, but I've ended up using the prefix for any custom key I implement, mostly because it's easy to search/regex for.
+By the way, `CS` originally stood for `Custom Symbol`, but I've ended up using the prefix for any custom key I implement, mostly because it's easy to search/grep for.
 
 ### Layers
-You may notice that this keymap has a lot of layers defined. In practice however, you'll only really be using 6 or so layers: the `Base` layer, `Edit`, `Data`, `Symbol`, `Program`, and `Utility`. The other 10 are either persistent locking layers (different base layers/numpad/steno, etc.), or are there to make the internal layer switching implementation simpler (including "overlay" layers).
+You may notice that this keymap has a lot of layers defined. In practice however, you'll only really be using 6 or so layers: the `Base` layer, `Edit`, `Data`, `Symbol`, `Terminal`, and `Utility`. The other 10 are either persistent locking layers (different base layers/numpad/steno, etc.), or are there to make the internal layer switching implementation simpler (including "overlay" layers).
 
 Because layers are arranged in a stack that is scanned top-down, there isn't an easy way to move from a higher layer to a lower layer momentarily. I've done some implementations of this before, but they are often error-prone to work with, difficult to maintain and troubleshoot, and often don't interact well with other features. Alternatively, I could make every key on every layer that needs this behaviour a custom key that performs different actions depending on the currently held keys, but this is even worse for maintenance, even if it is slightly more memory efficient. To save myself the trouble, I just stack extra layers on top wherever I need them.
 
