@@ -57,7 +57,7 @@ enum custom_keycodes {
     CS_VOLD,
     CS_VOLU,
     CS_MPRV,
-    CS_MPLY,
+    CS_MNXT,
 
     CS_RGBN,
     CS_RGBT,
@@ -522,11 +522,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            ALTTAB, NAVTABS, KC_PAUS, CS_VOLU, OLEDTOG, OLEDSAV,                      CS_RGBN,   KC_F7,   KC_F8,   KC_F9,  KC_F10, CS_BOOT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, KC_LGUI, KC_LALT, CS_VOLD, CS_MPLY,   BASIC,                         BASE,   KC_F1,   KC_F2,   KC_F3,  KC_F11, DB_TOGG,
+          _______, KC_LGUI, CS_MPRV, CS_VOLD, CS_MNXT,   BASIC,                         BASE,   KC_F1,   KC_F2,   KC_F3,  KC_F11, KC_LALT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, TB_TOGG,  KC_INS,    MUTE, KC_PSCR,    MENU,                      CS_RGBT,   KC_F4,   KC_F5,   KC_F6,  KC_F12, KC_SCRL,
+          _______, DB_TOGG,  KC_INS,    MUTE, KC_PSCR,    MENU,                      CS_RGBT,   KC_F4,   KC_F5,   KC_F6,  KC_F12, KC_SCRL,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              KC_MSTP,   KC_NO, KC_MNXT,    KC_MPRV,   KC_NO, KC_MSTP
+                                              KC_MSTP,    MUTE, KC_MPLY,    KC_MPLY,    MUTE, KC_MSTP
                                           //`--------------------------'  `--------------------------'
     ),
 };
@@ -1169,7 +1169,7 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
 
         // Utility layer overrides
 
-        case CS_MPLY:
+        case CS_MNXT:
             if (IS_LAYER_ON(_TRACKBALL)) {
                 if (record->event.pressed) {
                     register_code(MS_BTN1);
