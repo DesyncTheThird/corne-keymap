@@ -1,3 +1,5 @@
+// -*- mode: c; eval: (progn (apheleia-mode -1) (setq-local eglot-ignored-server-capabilities '(:documentOnTypeFormattingProvider))) -*-
+
 #define frame_size 1024
 #define logo_minor_count 5
 #define logo_major_count 3

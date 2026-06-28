@@ -436,9 +436,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT] = LAYOUT( //09
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______,    MARK, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                      CY_ENUM, CS_RCBR, CS_LCBR, CS_TILD, KC_SCLN,  KC_DEL,
+          _______,  CTRLLK, CS_HOME,   KC_UP,  CS_END, QK_LLCK,                      CY_ENUM, CS_RCBR, CS_LCBR, CS_TILD, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______,  CTRLLK, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      OSLDATA, RS_RPRN, RC_LPRN, RA_CIRC, RG_UNDS, TABRSFT,
+          _______,    MARK, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      OSLDATA, RS_RPRN, RC_LPRN, RA_CIRC, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______,    REDO,    UNDO,  SELECT,  KC_ENT,   PASTE,                      COMMENT, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -460,11 +460,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_EDIT_OVERLAY] = LAYOUT( //11
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-          _______,    MARK, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                       KC_ESC,  SPC_UP,    JOIN,  SPC_DN, WRAPCBR, _______,
+          _______,  CTRLLK, EO_HOME,   KC_UP,  EO_END, KC_CAPS,                       KC_ESC,  SPC_UP,    JOIN,  SPC_DN, WRAPCBR, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______,  CTRLLK, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      KC_BSPC, RS_DELL, RC_DELW, RA_DELR, WRAPPRN, _______,
+          _______,    MARK, KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL,                      KC_BSPC, RS_DELL, RC_DELW, RA_DELR, WRAPPRN, _______,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______,    REDO,    UNDO,  SELECT,  KC_ENT,   PASTE,                                   KC_SPC, KC_PGUP, SELLINE, KC_PGDN, WRAPBRC, _______,
+          _______,    REDO,    UNDO,  SELECT,  KC_ENT,   PASTE,                       KC_SPC, KC_PGUP, SELLINE, KC_PGDN, WRAPBRC, _______,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______, _______, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'

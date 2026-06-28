@@ -534,7 +534,7 @@ Navigation/editing keys are placed on the left, with paired delimiters and commo
 
 Most common strings are inward rolls on right hand, e.g. `[]`, `()`, `{}`, `^{}`, `_{}`, `!()`, `?()`, with some regex patterns also available as outward rolls.
 
-The `Mark` key toggles a persistent shift modifier on navigation keys (arrows, `Home`, `End`, `PgUp`, and `PgDn`), similar to the `set-mark-command` function in Emacs. Pressing any other shift modifier or leaving the `Edit` layer will deactivate the mark.
+The `Mark` key toggles a persistent shift modifier on navigation keys (arrows, `Home`, `End`, `PgUp`, and `PgDn`), similar to the `set-mark-command` function in Emacs. Pressing any other shift modifier or leaving the `Edit` layer will deactivate the mark. The key also sends `f13` on press which can be caught in Emacs to sync with the real mark.
 
 The `Ctrl Lock` key has the same functionality as the `Mark` key but with the `Ctrl` modifier in place of `Shift`, and only affecting horizontal navigation keys.
 
