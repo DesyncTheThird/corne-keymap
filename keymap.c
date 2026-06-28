@@ -388,9 +388,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_SYMBOL] = LAYOUT( //05
       //,-----------------------------------------------------.                    ,---------------------------------------------------.
-           KC_GRV, CS_PERC, CS_EXLM, CS_DQUO, CS_AMPR, CS_HASH,                      CY_MISC, CS_RCBR, CS_LCBR, CS_TILD, KC_SCLN,  KC_DEL,
+           KC_GRV, CS_PERC, CS_EXLM, CS_DQUO, CS_AMPR, CS_HASH,                      CY_ENUM, CS_RCBR, CS_LCBR, CS_TILD, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          OSMLSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                      CY_ENUM, RS_RPRN, RC_LPRN, RA_CIRC, RG_UNDS, TABRSFT,
+          OSMLSFT, CS_PIPE,   CS_LT, CS_MINS,   CS_GT,  CS_EQL,                      OSLDATA, RS_RPRN, RC_LPRN, RA_CIRC, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           CS_LCTL, CS_TILD, CS_COLN,  CS_DOT, CS_COMM,  CS_DLR,                      COMMENT, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -3017,14 +3017,12 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
                 uint16_t num_key = cycle_state.num == 0 ? KC_0 : KC_1 + cycle_state.num - 1;
-                if (shifted()) {
-                    if (get_last_key() == num_key) {
-                        del_mods(MOD_MASK_CS);
-                        tap_code(KC_BSPC);
-                        set_mods(mods);
-                    }
+                if (get_last_key() == num_key) {
+                    del_mods(MOD_MASK_CS);
+                    tap_code(KC_BSPC);
+                    set_mods(mods);
                 }
-                if (ctrl_on()) {
+                if (shifted()) {
                     cycle_state.num = (cycle_state.num + 9) % 10;
                 } else {
                     cycle_state.num = (cycle_state.num + 1) % 10;
