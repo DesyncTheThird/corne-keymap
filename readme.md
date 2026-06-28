@@ -307,7 +307,7 @@ This feature is implemented with raw HID communication, and needs [a python scri
 
 There is also a [portable version](#portable-auto-mouse-layer) of this feature that uses lock keys to communicate between the keyboard and trackball, which does not require any host-side software, but is less reliable and has some limitations in exchange.
 
-If you don't have a separate compatible pointing device, this feature doesn't do anything with the keyboard alone, apart from adding two tap-hold keys on the base layer which can be disabled with the `TB_TOGG` key.
+If you don't have a separate compatible pointing device, this feature doesn't do anything with the keyboard alone, apart from adding two tap-hold keys on the base layer which can be disabled with a key on the [`Utility` layer](#utility).
 
 ### Host-side setup
 
