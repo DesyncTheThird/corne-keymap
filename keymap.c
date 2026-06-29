@@ -2577,6 +2577,23 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
         }
     }
 
+    if (keycode == CTRLLK) {
+        if (record->event.pressed && ctrllock_active) {
+            arrow_update_mods(MOD_BIT_LCTRL, 0x00);
+        } else {
+            arrow_update_mods(0x00, 0x00);
+        }
+        return true;
+    }
+    if (keycode == MARK) {
+        if (record->event.pressed && mark_active) {
+            arrow_update_mods(MOD_BIT_LSHIFT, 0x00);
+        } else {
+            arrow_update_mods(0x00, 0x00);
+        }
+        return true;
+    }
+
     if (keycode == CS_AL4) {
         if (record->tap.count) {
             return true;
@@ -2648,6 +2665,13 @@ static bool process_mark(uint16_t keycode, keyrecord_t* record) {
             if (mark_active) {
                 add_oneshot_mods(MOD_BIT(KC_LSFT));
             }
+            if (ctrllock_active) {
+                add_oneshot_mods(MOD_BIT(KC_LCTL));
+            }
+            break;
+
+        case KC_BSPC:
+        case CS_RT1:
             if (ctrllock_active) {
                 add_oneshot_mods(MOD_BIT(KC_LCTL));
             }
@@ -5467,6 +5491,8 @@ void housekeeping_task_user(void) {
             layer_off(_TOUHOU);
             layer_off(_MOUSE);
             layer_off(_EDIT);
+            mark_active = false;
+            ctrllock_active = false;
 
             escape();
 
