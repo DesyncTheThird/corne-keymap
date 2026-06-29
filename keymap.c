@@ -2525,7 +2525,7 @@ uint16_t mod8_to_qk16(uint8_t mod_mask) {
 }
 
 static void arrow_update_mods(uint8_t add, uint8_t del) {
-    uint8_t mods = 0x00;
+    uint8_t mods = get_weak_mods();
     
     mods &= ~del;
     mods |= add;
@@ -2568,7 +2568,11 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
 
     if (is_hrm(keycode) && QK_MOD_TAP_GET_MODS(keycode) & MOD_MASK_CS) {
         if (!record->tap.count){
-            arrow_update_mods(0x00, 0x00);
+            if (mark_active) {
+                arrow_update_mods(MOD_BIT_LSHIFT, 0x00);
+            } else {
+                arrow_update_mods(0x00, 0x00);
+            }
             return true;
         }
     }
@@ -2622,6 +2626,9 @@ static bool process_mark(uint16_t keycode, keyrecord_t* record) {
         case KC_DOWN:
         case KC_PGUP:
         case KC_PGDN:
+            if (get_mods() && MOD_MASK_AG) {
+                break;
+            }
             if (mark_active) {
                 add_oneshot_mods(MOD_BIT(KC_LSFT));
             }
@@ -2635,6 +2642,9 @@ static bool process_mark(uint16_t keycode, keyrecord_t* record) {
         case KC_END:
         case CS_END:
         case EO_END:
+            if (get_mods() && MOD_MASK_AG) {
+                break;
+            }
             if (mark_active) {
                 add_oneshot_mods(MOD_BIT(KC_LSFT));
             }
