@@ -1,0 +1,247 @@
+================================================================
+Gap of 13.8 days to next commit
+----------------------------------------------------------------
+Commit:  23db123bb497be5806eb575039ae36f707f753a0
+Author:  Rin <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2026-06-15 01:44:13 +0100
+
+Context keys
+
+Updated match rules.
+
+================================================================
+Gap of 31.5 days to next commit
+----------------------------------------------------------------
+Commit:  205909e275b24bd012eaa3b3ec61596ce75c534e
+Author:  Rin Liu <liurjk@gmail.com>
+Date:    2026-04-30 05:23:35 +0100
+
+Case Lock
+
+Case lock key now functions as Enter if any mods are held.
+
+================================================================
+Gap of 12.0 days to next commit
+----------------------------------------------------------------
+Commit:  f7298255abd599bcc5d60f95d126cb2db3f383f2
+Author:  Rin <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2026-04-16 10:15:09 +0100
+
+Magic punctuation
+
+Reduced magic punctuation fallback resolution timeout;
+Magic punctuation keys now instantly return if Alt is active.
+
+================================================================
+Gap of 15.3 days to next commit
+----------------------------------------------------------------
+Commit:  f510f1e861b02ac1e792795ab068fdcf4b556487
+Author:  Rin <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2026-03-21 18:18:12 +0000
+
+Magic
+
+Swapped undo and redo repeat actions.
+
+================================================================
+Gap of 8.2 days to next commit
+----------------------------------------------------------------
+Commit:  f69f9f42de6fa503f3916b6cfab0a2cbd4d9d100
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2026-02-24 13:03:01 +0000
+
+Combos
+
+Backspace combos can now be retriggered without releasing the number key.
+
+================================================================
+Gap of 36.7 days to next commit
+----------------------------------------------------------------
+Commit:  7ef5bf36ca1765da21a065f9899cf138b99d40dd
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2026-01-18 20:32:31 +0000
+
+Combos
+
+Reenabled some combos on Edit layer.
+
+================================================================
+Gap of 8.1 days to next commit
+----------------------------------------------------------------
+Commit:  38a8ff9a12f8671587f654e1727fbcc5eba9b890
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2026-01-10 17:52:04 +0000
+
+Combos
+
+Adjusted valid combo layers.
+
+================================================================
+Gap of 27.7 days to next commit
+----------------------------------------------------------------
+Commit:  e313876bf22328a77bc4c2b4abd9a129cb5adbf1
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2025-11-30 18:14:10 +0000
+
+Minor patch
+
+Updated trackball button.
+
+================================================================
+Gap of 16.4 days to next commit
+----------------------------------------------------------------
+Commit:  beaf68d1d7b31c7a57178c7a58984680b625e534
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2025-11-02 19:04:18 +0000
+
+Magic
+
+Updated magic outputs.
+
+================================================================
+Gap of 7.0 days to next commit
+----------------------------------------------------------------
+Commit:  bd0c8613a2f489b9379597bf58f03161dc4017ee
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2025-08-07 12:11:08 +0100
+
+Refactoring
+
+Cleaned up clock code;
+Fixed Data layer macros not removing modifiers;
+Removed old code.
+
+================================================================
+Gap of 10.7 days to next commit
+----------------------------------------------------------------
+Commit:  aa522b34b25c40fe501450de2b7fce9495dac356
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2025-07-08 02:35:08 +0100
+
+Edit overlay
+
+Arrow keys now retrigger when activating and deactivating the Edit overlay.
+
+================================================================
+Gap of 7.4 days to next commit
+----------------------------------------------------------------
+Commit:  dd599294d9cbd42c863b7d2914a1f687b2181fc3
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2025-06-20 02:54:10 +0100
+
+OLED
+
+Fixed OLED not fully clearing on timeout.
+
+================================================================
+Gap of 12.9 days to next commit
+----------------------------------------------------------------
+Commit:  c85038d436544b995d022f10e7a7917d9dd1b7db
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2025-05-21 00:39:07 +0100
+
+Updated readme
+
+================================================================
+Gap of 10.6 days to next commit
+----------------------------------------------------------------
+Commit:  16d5ffaea3f2aa17c3e5423740fbf935b0dc5c1f
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2025-05-06 09:21:49 +0100
+
+Number case
+
+Added experimental feature.
+
+================================================================
+Gap of 10.8 days to next commit
+----------------------------------------------------------------
+Commit:  a185bf179a443e528581b371a2bb8e8f4916d798
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2025-04-25 14:50:30 +0100
+
+Minor patch
+
+Fixed HRM keys removing modifiers on tap actions.
+
+================================================================
+Gap of 13.5 days to next commit
+----------------------------------------------------------------
+Commit:  ad6480f1cefb2459aa9b42102bd2577a67f536c4
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2025-04-02 11:23:51 +0100
+
+Edit overlay
+
+Updated macros.
+
+================================================================
+Gap of 8.5 days to next commit
+----------------------------------------------------------------
+Commit:  b556dee5b46bd871b76a980def994a6facacb766
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2025-03-19 20:44:25 +0000
+
+Select macro
+
+The `Select Right` key now copies when pressed immediately after the `Select` key.
+
+================================================================
+Gap of 11.2 days to next commit
+----------------------------------------------------------------
+Commit:  a47f5cbb5b5ca0d2a9e20da991fbfbd1e4bf9d82
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2025-02-05 22:05:24 +0000
+
+Minor patch
+
+Fixed rollback for one magic output;
+OSMLSFT no longer resets keytracking.
+
+================================================================
+Gap of 7.3 days to next commit
+----------------------------------------------------------------
+Commit:  292dca5675faf6eec6215b1fe389bb6daa9715db
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2025-01-27 00:07:26 +0000
+
+Edit overlay
+
+Added shift behaviour for selection and deletion macros.
+
+================================================================
+Gap of 7.2 days to next commit
+----------------------------------------------------------------
+Commit:  93cd2204c4b22bb41128239fc56187e0620b6f6d
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2024-12-21 12:45:21 +0000
+
+Magic
+
+Updated magic outputs
+
+================================================================
+Gap of 10.0 days to next commit
+----------------------------------------------------------------
+Commit:  1872d4b38f689a17b7c0fee22064970a0bddb762
+Author:  Kit <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2024-10-28 00:03:38 +0000
+
+Magic
+
+Magic outputs now do not fully reset state on pressing a non-tracked key.
+New behaviour allows rollbacks on non-tracked keys.
+
+================================================================
+Gap of 19.6 days to next commit
+----------------------------------------------------------------
+Commit:  9d9331fc5fda5afd5a4407e664d51b583dfdffe1
+Author:  Kit Liu <30439030+DesyncTheThird@users.noreply.github.com>
+Date:    2024-07-03 06:26:45 +0100
+
+Layer tap
+
+Changed LT2 tap to new sentence macro;
+Updated alt-tab macro
+================================================================
+22 commit(s) found with a following gap of 7+ days.

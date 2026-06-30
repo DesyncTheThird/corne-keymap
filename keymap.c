@@ -942,7 +942,9 @@ static void escape(void) {
     case_lock_off();
     mark_active = false;
     ctrllock_active = false;
-    layer_move(_BASE);
+    for (enum corne_layers layer = _CONTROL; layer <= _UTILITY; layer++) {
+        layer_off(layer);
+    }
 }
 
 static bool schedule_escape = false;
@@ -2639,6 +2641,11 @@ static bool process_mark(uint16_t keycode, keyrecord_t* record) {
     }
 
     switch (keycode) {
+        case KC_ESC:
+            mark_active = false;
+            ctrllock_active = false;
+            break;
+
         case KC_UP:
         case KC_DOWN:
         case KC_PGUP:
