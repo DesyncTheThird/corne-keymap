@@ -146,7 +146,7 @@ The two keys beneath the vowel cluster, where punctuation keys would typically b
 | Either | `N`        | `T`        | `[n]'t⎵`        |
 | Either | `N`        | `B`        | `[n].b.⎵`       |
 | Left   | `I`        | `E`        | `[i].e.⎵`       |
-| Left   | `I`        | `I`        | `[i].e.⎵`       |
+| Left   | `I`        | `T`        | `[i].e.⎵`       |
 | Left   | `A`        | `M`        | `[a].m.`        |
 | Either | `P`        | `M`        | `[p].m.`        |
 | Either | `⎵`        | `⎵`        | `[⎵]-⎵`         |
@@ -154,13 +154,16 @@ The two keys beneath the vowel cluster, where punctuation keys would typically b
 | Right  | `E`        | `T`        | `[e]tc. `       |
 | Either | Any Key    | `Enter`    | `[-];`+`Enter`  |
 | Left   | `I`        | `S`        | `[i]t's⎵`       |
-| Left   | `Y`        | `D`        | `[y]ou'd⎵`      |
-| Left   | `Y`        | `V`        | `[y]ou've⎵`     |
-| Left   | `Y`        | `L`        | `[y]ou'll⎵`     |
-| Left   | `W`        | `S`        | `[w]ho's⎵`      |
-| Left   | `W`        | `D`        | `[w]ho'd⎵`      |
-| Left   | `W`        | `V`        | `[w]ho've⎵`     |
-| Left   | `W`        | `L`        | `[w]ho'll⎵`     |
+| Right  | `Y`        | `D`        | `[y]ou'd⎵`      |
+| Right  | `Y`        | `V`        | `[y]ou've⎵`     |
+| Right  | `Y`        | `L`        | `[y]ou'll⎵`     |
+| Right  | `W`        | `S`        | `[w]ho's⎵`      |
+| Right  | `W`        | `D`        | `[w]ho'd⎵`      |
+| Right  | `W`        | `V`        | `[w]ho've⎵`     |
+| Right  | `W`        | `L`        | `[w]ho'll⎵`     |
+| Right  | `H`        | `S`        | `[h]e's⎵`       |
+| Right  | `H`        | `D`        | `[h]e'd⎵`       |
+| Right  | `H`        | `L`        | `[h]e'll⎵`      |
 | Left   | `S`        | `⎵`        | `[s]'⎵`         |
 | Either | Any Letter | `D`        | `[-]'d⎵`        |
 | Either | Any Letter | `L`        | `[-]'ll⎵`       |
@@ -169,13 +172,20 @@ The two keys beneath the vowel cluster, where punctuation keys would typically b
 | Either | Any Letter | `S`        | `[-]'s⎵`        |
 | Either | Any Letter | `R`        | `[-]'re⎵`       |
 | Right  | Left       | Immediate  | `--`            |
-| Left   | Right      | Immediate  | `--`            |
+| Left   | Right      | Immediate  | `-`             |
 | Left   | Left       | Immediate  | `''`            |
 | Right  | Right      | Immediate  | `,⎵`            |
 
 Immediate rules eagerly trigger on context-key-down if matched; other rules trigger on next-key-down.
 
-The rules have been set up such that pressing whichever punctuation key is more comfortable while typing (i.e. sequences that aren't SFBs) will generally produce contextually sensible outputs. The rules table can easily be extended for other use-cases, such as diacritics and dead keys.
+The rules have been set up such that pressing whichever punctuation key is more comfortable while typing (i.e. sequences that aren't SFBs) will generally produce contextually sensible outputs.
+
+Some rules have also been added to eliminate repeated punctuation, e.g. most of the latin abbreviations (`e.g.`, `i.e.`, etc.), and remove skipgrams or add briefs, e.g. the strings `you've` and `who've` would usually require jumping from the top row (`U` or `O`) to bottom row (ordinary apostrophe key), while the context keys let you skip the middle letters and only type the first and following letters.
+
+
+  
+
+The rules table can easily be extended for other use-cases, such as diacritics and dead keys.
 
 > [!NOTE]
 > New rules can be added to the `keymatch_rule_t match_rules[]` table. The rules are matched greedily top down, so more general rules should go lower in the table and specific rules higher up.

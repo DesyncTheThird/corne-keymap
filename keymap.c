@@ -2018,13 +2018,13 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
             combo_term = 30;
             break;
             
-        case L_NEWSENT:
-        case R_NEWSENT:
         case L_COMMA:
         case R_COMMA:
             combo_term = 25;
             break;
 
+        case L_NEWSENT:
+        case R_NEWSENT:
         case L_EXPONENT:
         case R_EXPONENT:
         case L_MINUS:
@@ -2071,7 +2071,7 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo,
         case STENO:
         case NUMPAD:
             return true;
-        
+
         case R_EXPONENT:
         case R_COMMA:
         case R_DOT:
@@ -2531,7 +2531,7 @@ uint16_t mod8_to_qk16(uint8_t mod_mask) {
 
 static void arrow_update_mods(uint8_t add, uint8_t del) {
     uint8_t mods = get_weak_mods();
-    
+
     mods &= ~del;
     mods |= add;
 
@@ -2613,7 +2613,7 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
         }
         return true;
     }
-    
+
     if (IS_LAYER_ON(_EDIT_OVERLAY)) {
         if (keycode == CS_LCTL) {
             if (record->event.pressed) {
@@ -2751,7 +2751,7 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
                 update_last_key(keycode);
             }
             return false;
-            
+
         case WRAPPRN:
             if (record->event.pressed) {
                 if (is_wrapping_macro(get_last_key())) {
@@ -2949,7 +2949,7 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        case CY_COMP: 
+        case CY_COMP:
             if (record->event.pressed) {
                 switch (cycle_state.comp) {
                     case 0: {
@@ -3270,7 +3270,7 @@ static void update_last_keys(uint16_t new_keycode, uint8_t new_count) {
     recent_key_state.last_key_3 = recent_key_state.last_key_2;
     recent_key_state.last_key_2 = recent_key_state.last_key;
     recent_key_state.last_key   = new_keycode;
-    
+
     recent_key_state.count = new_count;
 }
 
@@ -3482,7 +3482,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 set_mods(mods);
                 return false;
             }
-            
+
             const uint16_t last_key = cs_map(get_last_key());
             switch (last_key) {
                 // Left hand keys
@@ -3734,13 +3734,16 @@ static const keymatch_rule_t match_rules[] = {
     { EITHER, { ANY_KEY       }, { JUST, KC_ENT }, /*-*/";",      { false            } },
     { EITHER, { ANY_KEY       }, { JUST, CS_LT3 }, /*-*/";",      { false            } },
     { LEFT,   { JUST, KC_I    }, { JUST, KC_S   }, /*i*/"t's ",   { true, KC_SPC,  4 } },
-    { LEFT,   { JUST, KC_Y    }, { JUST, KC_D   }, /*y*/"ou'd ",  { true, KC_SPC,  5 } },
-    { LEFT,   { JUST, KC_Y    }, { JUST, KC_V   }, /*y*/"ou've ", { true, KC_SPC,  6 } },
-    { LEFT,   { JUST, KC_Y    }, { JUST, KC_L   }, /*y*/"ou'll ", { true, KC_SPC,  6 } },
-    { LEFT,   { JUST, KC_W    }, { JUST, KC_S   }, /*w*/"ho's ",  { true, KC_SPC,  5 } },
-    { LEFT,   { JUST, KC_W    }, { JUST, KC_D   }, /*w*/"ho'd ",  { true, KC_SPC,  5 } },
-    { LEFT,   { JUST, KC_W    }, { JUST, KC_V   }, /*w*/"ho've ", { true, KC_SPC,  6 } },
-    { LEFT,   { JUST, KC_W    }, { JUST, KC_L   }, /*w*/"ho'll ", { true, KC_SPC,  6 } },
+    { RIGHT,  { JUST, KC_Y    }, { JUST, KC_D   }, /*y*/"ou'd ",  { true, KC_SPC,  5 } },
+    { RIGHT,  { JUST, KC_Y    }, { JUST, KC_V   }, /*y*/"ou've ", { true, KC_SPC,  6 } },
+    { RIGHT,  { JUST, KC_Y    }, { JUST, KC_L   }, /*y*/"ou'll ", { true, KC_SPC,  6 } },
+    { RIGHT,  { JUST, KC_W    }, { JUST, KC_S   }, /*w*/"ho's ",  { true, KC_SPC,  5 } },
+    { RIGHT,  { JUST, KC_W    }, { JUST, KC_D   }, /*w*/"ho'd ",  { true, KC_SPC,  5 } },
+    { RIGHT,  { JUST, KC_W    }, { JUST, KC_V   }, /*w*/"ho've ", { true, KC_SPC,  6 } },
+    { RIGHT,  { JUST, KC_W    }, { JUST, KC_L   }, /*w*/"ho'll ", { true, KC_SPC,  6 } },
+    { RIGHT,  { JUST, KC_H    }, { JUST, KC_S   }, /*h*/"e's ",   { true, KC_SPC,  4 } },
+    { RIGHT,  { JUST, KC_H    }, { JUST, KC_D   }, /*h*/"e'd ",   { true, KC_SPC,  4 } },
+    { RIGHT,  { JUST, KC_H    }, { JUST, KC_L   }, /*h*/"e'll ",  { true, KC_SPC,  5 } },
     { LEFT,   { JUST, KC_S    }, { ANY_SPACE    }, /*s*/"'",      { false            } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_D   }, /*-*/"'d ",    { true, KC_SPC,  3 } },
     { EITHER, { ANY_LETTER    }, { JUST, KC_L   }, /*-*/"'ll ",   { true, KC_SPC,  4 } },
@@ -3752,7 +3755,7 @@ static const keymatch_rule_t match_rules[] = {
     // Double taps and rolls
     { LEFT,   { JUST, CTXLEFT }, { IMMEDIATE    }, "''",          { true, KC_QUOT, 2 } },
     { LEFT,   { JUST, CTXRGHT }, { IMMEDIATE    }, "--",          { true, KC_MINS, 2 } },
-    { RIGHT,  { JUST, CTXLEFT }, { IMMEDIATE    }, "--",          { true, KC_MINS, 2 } },
+    { RIGHT,  { JUST, CTXLEFT }, { IMMEDIATE    }, "-",           { true, KC_MINS, 1 } },
     { RIGHT,  { JUST, CTXRGHT }, { IMMEDIATE    }, ", ",          { true, KC_SPC,  2 } },
 };
 
