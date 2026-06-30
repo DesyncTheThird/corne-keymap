@@ -1410,7 +1410,7 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t* record,
             // Ctrl mod-taps
             case LC_T:
             case RC_E:
-                return 10;
+                return 20;
 
             // Alt mod-taps
             case LA_R:
@@ -2072,11 +2072,14 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo,
         case NUMPAD:
             return true;
         
-        case R_DOT:
-        case R_PLUS:
-        case R_MINUS:
         case R_EXPONENT:
         case R_COMMA:
+        case R_DOT:
+        case R_UNDERSCORE:
+        case R_ASTERISK:
+        case R_PLUS:
+        case R_EQUALS:
+        case R_MINUS:
         case SEMICOLON:
             if (IS_LAYER_ON(_EDIT)) {
                 return true;
