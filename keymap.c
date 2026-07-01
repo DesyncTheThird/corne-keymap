@@ -3509,7 +3509,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_O: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_U: tap_code(KC_I); update_last_key(KC_I); break;
                 case KC_Y: tap_code(KC_P); update_last_key(KC_P); break;
-                case KC_H: tap_code(KC_Y); update_last_key(KC_Y); break;
+                case KC_H: send_string(/*h*/"ere"); update_last_keys(KC_E, 3); break;
                 case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
                 case KC_I: send_string(/*i*/"on"); update_last_keys(KC_N, 2); break;
                 case KC_A: send_string(/*a*/"nd "); update_last_keys(KC_SPC, 3); break;
@@ -3586,7 +3586,7 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_U: tap_code(KC_I); update_last_key(KC_I); break;
 
                 case KC_Y: tap_code(KC_P); update_last_key(KC_P); break;
-                case KC_H: send_string(/*h*/"ere"); update_last_keys(KC_E, 3); break;
+                case KC_H: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_E: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_I: send_string(/*i*/"ng "); update_last_keys(KC_SPC, 3); break;
                 case KC_A: send_string(/*a*/"ph"); update_last_keys(KC_H, 2); break;
