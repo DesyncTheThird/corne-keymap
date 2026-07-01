@@ -619,42 +619,53 @@ static void rollback_wrapping_macro(void) {
     rollback_last_key();
 }
 
-static void cs_send_char(char c) {
+static void cs_send_char(char c, uint8_t allow) {
     const uint8_t mods = get_mods();
-    del_mods(MOD_MASK_CSAG);
+    uint8_t del = MOD_MASK_CSAG & ~allow;
+    del_mods(del);
     send_char(c);
     set_mods(mods);
     send_keyboard_report();
 }
 
-static void cs_send_char_punct(char c) {
-    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
-        send_char(c);
-    } else {
-        const uint8_t mods = get_mods();
-        del_mods(MOD_MASK_CSAG);
-        send_char(c);
-        set_mods(mods);
-        send_keyboard_report();
+static void cs_send_string(const char *str, uint8_t allow) {
+    while (*str) {
+        cs_send_char(*str++, allow);
     }
 }
 
-static void cs_send_string(const char *str) {
+static void cs_send_string_allow_shift(const char *str) {
     while (*str) {
-        cs_send_char(*str++);
+        cs_send_char(*str++, MOD_MASK_SHIFT);
     }
 }
+
 
 static void cs_send_string_leading(const char *str) {
     if (!*str) {
         return;
     }
     const uint8_t mods = get_mods();
-    del_mods(MOD_MASK_CTRL);
+    del_mods(MOD_MASK_CAG);
     send_char(*str++);
     set_mods(mods);
     while (*str) {
-        cs_send_char(*str++);
+        cs_send_char(*str++, 0);
+    }
+}
+
+static void cs_send_char_punct(char c) {
+    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+        const uint8_t mods = get_mods();
+        del_mods(MOD_MASK_CAG);
+        send_char(c);
+        set_mods(mods);
+    } else {
+        const uint8_t mods = get_mods();
+        del_mods(MOD_MASK_CSAG);
+        send_char(c);
+        set_mods(mods);
+        send_keyboard_report();
     }
 }
 
@@ -3072,7 +3083,7 @@ static bool process_cycling_macros(uint16_t keycode, keyrecord_t* record) {
                     cycle_state.num = (cycle_state.num + 1) % 10;
                 }
                 char num[2] = {'0' + cycle_state.num, '\0'};
-                cs_send_string(num);
+                cs_send_string(num, 0);
                 num_key = cycle_state.num == 0 ? KC_0 : KC_1 + cycle_state.num - 1;
                 update_last_key(num_key);
             }
@@ -3472,14 +3483,11 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 layer_lock_off(_EDIT);
                 return false;
             }
-            const uint8_t mods = get_mods();
-            del_mods(MOD_MASK_CTRL);
             recent_key_state.dynamic = true;
 
             if (get_highest_layer(layer_state) == _QWERTY) {
                 tap_code(get_last_key());
                 update_last_key(get_last_key());
-                set_mods(mods);
                 return false;
             }
 
@@ -3490,37 +3498,37 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_L: tap_code(KC_R); update_last_key(KC_R); break;
                 case KC_D: tap_code(KC_G); update_last_key(KC_G); break;
                 case KC_C: tap_code(KC_S); update_last_key(KC_S); break;
-                case KC_B: send_string(/*b*/"ecause "); update_last_keys(KC_SPC, 7); break;
+                case KC_B: cs_send_string_allow_shift(/*b*/"ecause "); update_last_keys(KC_SPC, 7); break;
 
                 case KC_N: cs_send_string_punct("'t "); update_last_keys(KC_SPC,3); break;
                 case KC_R: tap_code(KC_L); update_last_key(KC_L); break;
-                case KC_T: send_string(/*t*/"ion"); update_last_keys(KC_N, 3); break;
+                case KC_T: cs_send_string_allow_shift(/*t*/"ion"); update_last_keys(KC_N, 3); break;
                 case KC_S: tap_code(KC_C); update_last_key(KC_C); break;
                 case KC_G: tap_code(KC_S); update_last_key(KC_S); break;
 
                 case KC_Q: tap_code(KC_U); update_last_key(KC_U); break;
                 case KC_X: tap_code(KC_C); update_last_key(KC_C) ;break;
-                case KC_M: send_string(/*m*/"ent"); update_last_keys(KC_T, 3); break;
+                case KC_M: cs_send_string_allow_shift(/*m*/"ent"); update_last_keys(KC_T, 3); break;
                 case KC_W: tap_code(KC_S); update_last_key(KC_S); break;
                 case KC_V: tap_code(KC_S); update_last_key(KC_S); break;
 
                 // Right hand overrides
-                case KC_J: send_string(/*j*/"ect"); update_last_keys(KC_T, 3); break;
+                case KC_J: cs_send_string_allow_shift(/*j*/"ect"); update_last_keys(KC_T, 3); break;
                 case KC_O: tap_code(KC_E); update_last_key(KC_E); break;
                 case KC_U: tap_code(KC_I); update_last_key(KC_I); break;
                 case KC_Y: tap_code(KC_P); update_last_key(KC_P); break;
-                case KC_H: send_string(/*h*/"ere"); update_last_keys(KC_E, 3); break;
+                case KC_H: cs_send_string_allow_shift(/*h*/"ere"); update_last_keys(KC_E, 3); break;
                 case KC_E: tap_code(KC_O); update_last_key(KC_O); break;
-                case KC_I: send_string(/*i*/"on"); update_last_keys(KC_N, 2); break;
-                case KC_A: send_string(/*a*/"nd "); update_last_keys(KC_SPC, 3); break;
-                case KC_K: send_string(/*k*/"now"); update_last_keys(KC_SPC, 4); break;
+                case KC_I: cs_send_string_allow_shift(/*i*/"on"); update_last_keys(KC_N, 2); break;
+                case KC_A: cs_send_string_allow_shift(/*a*/"nd "); update_last_keys(KC_SPC, 3); break;
+                case KC_K: cs_send_string_allow_shift(/*k*/"now"); update_last_keys(KC_SPC, 4); break;
                 case KC_P: tap_code(KC_Y); update_last_key(KC_Y); break;
 
                 case KC_NO:
                 case KC_SPC: set_oneshot_mods(MOD_BIT(KC_LSFT)); break;
-                case KC_COMM: send_string(" and "); update_last_keys(KC_SPC, 4); break;
+                case KC_COMM: cs_send_string_allow_shift(" and "); update_last_keys(KC_SPC, 4); break;
                 case KC_DOT: start_sentence(); break;
-                case KC_QUOT: send_string("ve "); update_last_keys(KC_SPC, 3); break;
+                case KC_QUOT: cs_send_string_allow_shift("ve "); update_last_keys(KC_SPC, 3); break;
 
                 case UNDO:
                 case REDO: tap_code16(LCTL(KC_Z)); update_last_key(UNDO); break;
@@ -3534,7 +3542,6 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                     update_last_key(get_last_key());
                     break;
             }
-            set_mods(mods);
 
             if (is_last_key(KC_SPC)) {
                 if (misc_key_state.capsword_active) {
@@ -3566,21 +3573,18 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
         }
 
         if (record->tap.count && record->event.pressed) {
-            const uint8_t mods = get_mods();
-            del_mods(MOD_MASK_CTRL);
             recent_key_state.dynamic = true;
 
             if (get_highest_layer(layer_state) == _QWERTY) {
                 tap_code(get_last_key());
                 update_last_key(get_last_key());
-                set_mods(mods);
                 return false;
             }
 
             const uint16_t last_key = cs_map(get_last_key());
             switch (last_key) {
                 // Right hand keys
-                case KC_J: send_string(/*j*/"ust"); update_last_keys(KC_T, 3); break;
+                case KC_J: cs_send_string_allow_shift(/*j*/"ust"); update_last_keys(KC_T, 3); break;
                 case KC_F: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_O: tap_code(KC_O); update_last_key(KC_O); break;
                 case KC_U: tap_code(KC_I); update_last_key(KC_I); break;
@@ -3588,23 +3592,23 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                 case KC_Y: tap_code(KC_P); update_last_key(KC_P); break;
                 case KC_H: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_E: tap_code(KC_E); update_last_key(KC_E); break;
-                case KC_I: send_string(/*i*/"ng "); update_last_keys(KC_SPC, 3); break;
-                case KC_A: send_string(/*a*/"ph"); update_last_keys(KC_H, 2); break;
+                case KC_I: cs_send_string_allow_shift(/*i*/"ng "); update_last_keys(KC_SPC, 3); break;
+                case KC_A: cs_send_string_allow_shift(/*a*/"ph"); update_last_keys(KC_H, 2); break;
 
                 case KC_K: tap_code(KC_Y); update_last_key(KC_Y); break;
                 case KC_P: tap_code(KC_H); update_last_key(KC_H); break;
 
                 // Left hand overrides
                 case KC_T: tap_code(KC_T); update_last_key(KC_T); break;
-                case KC_X: send_string(/*x*/"es"); update_last_keys(KC_S, 2); break;
-                case KC_V: send_string(/*v*/"er"); update_last_keys(KC_R, 2); break;
-                case KC_W: send_string(/*w*/"ith"); update_last_keys(KC_H, 3); break;
+                case KC_X: cs_send_string_allow_shift(/*x*/"es"); update_last_keys(KC_S, 2); break;
+                case KC_V: cs_send_string_allow_shift(/*v*/"er"); update_last_keys(KC_R, 2); break;
+                case KC_W: cs_send_string_allow_shift(/*w*/"ith"); update_last_keys(KC_H, 3); break;
 
                 case KC_NO:
                 case KC_SPC: cs_send_string_leading("the"); update_last_keys(KC_E,3); break;
-                case KC_COMM: send_string(" but "); update_last_keys(KC_SPC, 4); break;
-                case KC_DOT: send_string("com"); update_last_keys(KC_NO, 3); break;
-                case KC_QUOT: send_string("re "); update_last_keys(KC_SPC, 3); break;
+                case KC_COMM: cs_send_string_allow_shift(" but "); update_last_keys(KC_SPC, 4); break;
+                case KC_DOT: cs_send_string_allow_shift("com"); update_last_keys(KC_NO, 3); break;
+                case KC_QUOT: cs_send_string_allow_shift("re "); update_last_keys(KC_SPC, 3); break;
 
                 case UNDO:
                 case REDO: tap_code16(LCTL(KC_Y)); update_last_key(REDO); break;
@@ -3618,7 +3622,6 @@ static bool process_magic(uint16_t keycode, keyrecord_t* record) {
                     update_last_key(get_last_key());
                     break;
             }
-            set_mods(mods);
 
             if (is_last_key(KC_SPC)) {
                 if (misc_key_state.capsword_active) {

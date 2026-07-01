@@ -68,6 +68,8 @@ Other:
 | `Non-alpha` | `Undo` | `Redo` | `⎵`         | `,`     | `.`             | `'`   |
 | `OSM Shift` | `Redo` | `Undo` | `OSM Shift` | `⎵AND⎵` | `⎵`+`OSM Shift` | `VE⎵` |
 
+All other symbol keys (including combos) are also repeated.
+
 ### Repeat Key
 
 Right hand keys:
@@ -90,6 +92,8 @@ Other:
 | `Non-alpha` | `Undo` | `Redo` | `⎵`   | `,`     | `.`   | `'`   |
 | `THE`       | `Undo` | `Redo` | `THE` | `⎵BUT⎵` | `COM` | `RE⎵` |
 
+All other symbol keys (including combos) are also repeated.
+
 > [!NOTE]
 > These outputs can be adjusted in the `process_magic` function.
 
@@ -100,31 +104,41 @@ Other:
 
 ### Details
 
-Only the keys listed above are tracked (including those from combos). Pressing any other key resets the key to the default `Non-alpha` state (i.e. `OSM Shift`/`THE`).
+Pressing any key that is not listed above resets the key to the default `Non-alpha` state (i.e. `OSM Shift`/`THE`).
 
-> `a 1 [Rep]` produces `a 1 the`.
+> `b ENT [Rep]` produces `b ENT the`
 
-Modifiers are not tracked (but the dynamic keys may be modified):
+Modifiers are not tracked:
 
-> `[Shift] a [Release shift] [Magic]` produces `A a`;
+> `[Shift] b [Release shift] [Magic]` produces `B b`
+
+but the dynamic keys themselves may be modified:
+
+> `[Shift] b [Rep]` produces `B B`
 >
->` a [Shift] [Magic] [Release shift] ` produces `a A`.
+> `[Shift] b [Magic]` produces `BECAUSE`
 
-Any keys pressed while the control modifier is active are not tracked. This does not reset key tracking:
+However, if the dynamic output is more than one character, `Ctrl`, `Alt`, and `GUI` mods will be ignored:
 
-> `a [Ctrl] b [Release Ctrl] [Magic]` produces `a ^b a`.
+> `[Ctrl] b [Magic]` produces `^b ecause`
+
+Additionally, the repeat default output `the` will only capitalise the leading `t` if shifted:
+
+> `[Shift] [Rep]` produces `The`
 
 `Backspace` reverts the tracked key to the previous key:
 
-> `a b c [Rep]` produces `a b c c` (`Rep` returns `c`);
+> `a b c [Rep]` produces `a b c c` (`Rep` returns `c`)
 >
-> `a b c [BSPC] [Rep]` produces `a b b` (`Rep` returns previous tracked key `b`).
+> `a b c [BSPC] [Rep]` produces `a b b` (`Rep` returns previous tracked key `b`)
 
 However, `Ctrl`+`Backspace` will reset key tracking history.
 
-Punctuation following a dynamic output that ends with a space will remove the space within the timeout duration.
+> `a b c [Ctrl+BSPC] [Rep]` produces `the` (`Rep` returns the default behaviour `b`)
 
-> `a [Magic] ,` produces `and,` rather than `and⎵,`.
+Punctuation following a dynamic output that ends with a space will replace the space within the timeout duration:
+
+> `a [Magic] ,` produces `and,⎵` rather than `and⎵,`
 
 This feature only tracks three keys into the past.
 
