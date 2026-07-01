@@ -3737,6 +3737,7 @@ static const keymatch_rule_t match_rules[] = {
     { EITHER, { ANY_KEY       }, { JUST, KC_ENT }, /*-*/";",      { false            } },
     { EITHER, { ANY_KEY       }, { JUST, CS_LT3 }, /*-*/";",      { false            } },
     { LEFT,   { JUST, KC_I    }, { JUST, KC_S   }, /*i*/"t's ",   { true, KC_SPC,  4 } },
+    { RIGHT,  { JUST, KC_Y    }, { JUST, KC_R   }, /*y*/"ou're ", { true, KC_SPC,  6 } },
     { RIGHT,  { JUST, KC_Y    }, { JUST, KC_D   }, /*y*/"ou'd ",  { true, KC_SPC,  5 } },
     { RIGHT,  { JUST, KC_Y    }, { JUST, KC_V   }, /*y*/"ou've ", { true, KC_SPC,  6 } },
     { RIGHT,  { JUST, KC_Y    }, { JUST, KC_L   }, /*y*/"ou'll ", { true, KC_SPC,  6 } },

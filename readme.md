@@ -168,6 +168,7 @@ The two keys beneath the vowel cluster, where punctuation keys would typically b
 | Right  | `E`        | `T`        | `[e]tc. `       |
 | Either | Any Key    | `Enter`    | `[-];`+`Enter`  |
 | Left   | `I`        | `S`        | `[i]t's⎵`       |
+| Right  | `Y`        | `R`        | `[y]ou're⎵`     |
 | Right  | `Y`        | `D`        | `[y]ou'd⎵`      |
 | Right  | `Y`        | `V`        | `[y]ou've⎵`     |
 | Right  | `Y`        | `L`        | `[y]ou'll⎵`     |
