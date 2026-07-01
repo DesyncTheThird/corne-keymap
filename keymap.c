@@ -943,7 +943,7 @@ static bool ctrllock_active = false;
 
 
 //==============================================================================
-// Escape
+// Panic
 //==============================================================================
 
 static void escape(void) {
@@ -961,10 +961,14 @@ static void escape(void) {
 static bool schedule_escape = false;
 static uint8_t esc_count = 0;
 
-static bool process_escape(uint16_t keycode, keyrecord_t* record) {
+static bool process_panic(uint16_t keycode, keyrecord_t* record) {
     if (!record->event.pressed) {
         return true;
     }
+    if (misc_key_state.alt_tab_active) {
+        return true;
+    }
+
     if (record->event.key.col == 0 && record->event.key.row == 0) {
         esc_count++;
     } else {
@@ -4164,7 +4168,7 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
-    if (!process_escape(keycode, record)) { return false; }
+    if (!process_panic(keycode, record)) { return false; }
     if (!process_mark(keycode, record)) { return false; }
     if (!process_case_lock(keycode, record)) { return false; }
     if (!process_cycling_macros(keycode, record)) { return false; }
@@ -5465,7 +5469,7 @@ enum {
     TIMEOUT_CASE_LOCK,
     TIMEOUT_OLED,
     TIMEOUT_CAPSWORD,
-    TIMEOUT_ESCAPE,
+    TIMEOUT_PANIC,
 
     TIMEOUT_COUNT
 };
@@ -5480,7 +5484,7 @@ static timeout_t timeouts[TIMEOUT_COUNT] = {
     [TIMEOUT_CASE_LOCK]    = { .duration = 2000 },
     [TIMEOUT_OLED]         = { .duration = 10000 },
     [TIMEOUT_CAPSWORD]     = { .duration = 5000 },
-    [TIMEOUT_ESCAPE]       = { .duration = 200 },
+    [TIMEOUT_PANIC]       = { .duration = 200 },
 };
 
 static void update_timeouts(void) {
@@ -5584,7 +5588,7 @@ void housekeeping_task_user(void) {
             break;
     }
 
-    if (timeouts[TIMEOUT_ESCAPE].active) {
+    if (timeouts[TIMEOUT_PANIC].active) {
         esc_count = 0;
     }
 
