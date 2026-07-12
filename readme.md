@@ -601,7 +601,7 @@ Symbol layout optimised for (La)TeX editing with many common strings as inward r
 
 
 ## Terminal
-![Terminal](images/program.png?raw=true)
+![Terminal](images/terminal.png?raw=true)
 `Terminal` layer optimised for terminal usage and shell commands.
 
 Home row includes path and globbing syntax symbols, with common regex patterns above and below.

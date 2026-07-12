@@ -402,9 +402,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            KC_GRV,   CS_LT, CS_MINS, CS_PLUS,   CS_GT, CS_CONJ,                      CY_ENUM, CS_RCBR, CS_LCBR, CS_TILD, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          OSMLSFT, CS_TILD,  CS_DOT, CS_ASTR, CS_SLSH, CS_DISJ,                      OSLDATA, RS_RPRN, RC_LPRN, RA_CIRC, RG_UNDS, TABRSFT,
+          OSMLSFT, CS_TILD, CS_UNDS, CS_SLSH,  CS_DOT, CS_DISJ,                      OSLDATA, RS_RPRN, RC_LPRN, RA_CIRC, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, CS_CIRC, CS_COLN, CS_EXLM, CS_QUES,  CS_DLR,                      COMMENT, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
+          CS_LCTL, CS_CIRC, CS_COLN, CS_ASTR, CS_EXLM,  CS_DLR,                      COMMENT, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______,  CS_AL3, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
