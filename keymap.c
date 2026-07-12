@@ -566,6 +566,17 @@ void user_config_sync_handler(uint8_t initiator2target_buffer_size, const void* 
 // Variables & Helpers
 //==============================================================================
 
+enum keyboard_rows {
+    left_upper,
+    left_home,
+    left_lower,
+    left_thumb,
+    right_upper,
+    right_home,
+    right_lower,
+    right_thumb
+};
+
 typedef struct {
     bool LT3_active :1;
     bool RT3_active :1;
@@ -948,7 +959,7 @@ static bool ctrllock_active = false;
 
 static void escape(void) {
     clear_oneshot_mods();
-    clear_mods();
+    clear_keyboard();
     clear_weak_mods();
     case_lock_off();
     mark_active = false;
@@ -969,7 +980,7 @@ static bool process_panic(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
 
-    if (record->event.key.col == 0 && record->event.key.row == 0) {
+    if (record->event.key.col == 0 && record->event.key.row == left_upper) {
         esc_count++;
     } else {
         esc_count = 0;
@@ -1223,9 +1234,9 @@ static bool process_trackball_keys(uint16_t keycode, keyrecord_t* record) {
 
         default:
             if (trackball_state != TRACKBALL_IDLE) {
-                const bool right_hand = record->event.key.row >= 4;
-                const bool top_row    = record->event.key.row == 0;
-                const bool bottom_row = record->event.key.row == 2;
+                const bool right_hand = record->event.key.row >= right_upper;
+                const bool top_row    = record->event.key.row == left_upper;
+                const bool bottom_row = record->event.key.row == left_lower;
                 const bool activity_recent = timer_elapsed32(trackball_last_activity) < LINGER_EXTEND;
 
                 if (right_hand ||
@@ -1565,6 +1576,7 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
 
 bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
                       uint16_t other_keycode, keyrecord_t* other_record) {
+    char other_key_handedness = chordal_hold_handedness(other_record->event.key);
     if (is_hrm(tap_hold_keycode)) {
         return get_chordal_hold_default(tap_hold_record, other_record);
     }
@@ -1590,7 +1602,7 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
 
         case CS_LT2:
             // Block holds on outer three columns of right hand
-            if (chordal_hold_handedness(other_record->event.key) == 'R' &&
+            if (other_key_handedness == 'R' &&
                 (other_record->event.key.col == 0 ||
                  other_record->event.key.col == 1 ||
                  other_record->event.key.col == 2)) {
@@ -4853,7 +4865,7 @@ static void render_mode(void) {
     } else if (IS_LAYER_ON(_NUMPAD)) {
         oled_write_P(PSTR(" Numpad\n"), false);
     } else if (IS_LAYER_ON(_STENO)) {
-        oled_write_P(PSTR(" Stenotype\n"), false);
+        oled_write_P(PSTR(" Stenotype"), false);
     } else if (IS_LAYER_ON(_BASIC)) {
         oled_write_P(PSTR(" Basic\n"), false);
     } else if (IS_LAYER_ON(_BASE)) {
