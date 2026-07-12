@@ -1577,6 +1577,49 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
 bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
                       uint16_t other_keycode, keyrecord_t* other_record) {
     char other_key_handedness = chordal_hold_handedness(other_record->event.key);
+    switch (tap_hold_keycode) {
+        case LS_S:
+           if (other_key_handedness == 'L') {
+               if (other_record->event.key.row == left_home &&
+                   other_record->event.key.col >= 1 &&
+                   other_record->event.key.col <= 4) {
+                   return false;
+               }
+               return true;
+           }
+           return get_chordal_hold_default(tap_hold_record, other_record);
+        case RS_H:
+           if (other_key_handedness == 'R') {
+               if (other_record->event.key.row == right_home &&
+                   other_record->event.key.col >= 1 &&
+                   other_record->event.key.col <= 4) {
+                   return false;
+               }
+               return true;
+           }
+           return get_chordal_hold_default(tap_hold_record, other_record);
+        case LC_T:
+           if (other_key_handedness == 'L') {
+               if (other_record->event.key.row == left_home &&
+                   other_record->event.key.col >= 1 &&
+                   other_record->event.key.col <= 4) {
+                   return false;
+               }
+               return true;
+           }
+           return get_chordal_hold_default(tap_hold_record, other_record);
+
+        case RC_E:
+           if (other_key_handedness == 'R') {
+               if (other_record->event.key.row == right_home &&
+                   other_record->event.key.col >= 1 &&
+                   other_record->event.key.col <= 4) {
+                   return false;
+               }
+               return true;
+           }
+           return get_chordal_hold_default(tap_hold_record, other_record);
+    }
     if (is_hrm(tap_hold_keycode)) {
         return get_chordal_hold_default(tap_hold_record, other_record);
     }
@@ -2557,10 +2600,11 @@ uint16_t mod8_to_qk16(uint8_t mod_mask) {
 }
 
 static void arrow_update_mods(uint8_t add, uint8_t del) {
-    uint8_t mods = get_weak_mods();
+    uint8_t mods = 0;
 
     mods &= ~del;
     mods |= add;
+    mods |= get_weak_mods();
 
     for (int i = 0; i < 4; i++ ) {
         if (arrow_state.held_keys & 1 << i) {
@@ -2594,6 +2638,9 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
         } else {
             clear_arrow(arrow);
             arrow_state.last_press = timer_read();
+        }
+        if (mark_active) {
+            arrow_update_mods(MOD_BIT_LSHIFT, 0x00);
         }
         return true;
     }
