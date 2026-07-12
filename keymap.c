@@ -4176,6 +4176,9 @@ static deferred_token clock_down_token = INVALID_DEFERRED_TOKEN;
 static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         case MUTE:
+            if (!ctrl_on()) {
+                return true;
+            }
         case CLOCKNX:
             if (record->event.pressed) {
                 if (!shifted()) {
@@ -4187,6 +4190,9 @@ static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
             return true;
 
         case CS_VOLU:
+            if (!ctrl_on()) {
+                return true;
+            }
         case CLOCKUP:
             if (record->event.pressed) {
                 clock_up_action(0, NULL);
@@ -4198,6 +4204,9 @@ static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
             return true;
 
         case CS_VOLD:
+            if (!ctrl_on()) {
+                return true;
+            }
         case CLOCKDN:
             if (record->event.pressed) {
                 clock_down_action(0, NULL);
