@@ -2600,11 +2600,9 @@ uint16_t mod8_to_qk16(uint8_t mod_mask) {
 }
 
 static void arrow_update_mods(uint8_t add, uint8_t del) {
-    uint8_t mods = 0;
-
+    uint8_t mods = get_weak_mods();
     mods &= ~del;
     mods |= add;
-    mods |= get_weak_mods();
 
     for (int i = 0; i < 4; i++ ) {
         if (arrow_state.held_keys & 1 << i) {
@@ -2614,92 +2612,95 @@ static void arrow_update_mods(uint8_t add, uint8_t del) {
     }
 }
 
-static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
-    if (is_arrow(keycode)) {
-        arrow_bit_t arrow = arrow_bit(keycode);
+static inline void apply_mark_mods(void) {
+    arrow_update_mods(mark_active ? MOD_BIT_LSHIFT : 0x00, 0x00);
+}
 
-        if (record->event.pressed) {
-            set_arrow(arrow);
+static inline void apply_ctrl_lock_mods(void) {
+    uint8_t mods = MOD_BIT_LCTRL | (mark_active ? MOD_BIT_LSHIFT : 0x00);
+    arrow_update_mods(mods, 0x00);
+}
 
-            if (arrow_state.ctrl_active) {
-                uint32_t delay = timer_read() - arrow_state.last_press;
+static inline void apply_conditional_mod(bool condition, uint8_t mod_bit) {
+    arrow_update_mods(condition ? mod_bit : 0x00, 0x00);
+}
 
-                if (arrow_state.last_key != arrow || delay > 150) {
-                    register_code16(LCTL(keycode));
-                    arrow_state.last_key = arrow;
-                    return false;
-                } else {
-                    arrow_state.ctrl_active = false;
-                }
-            }
+static bool process_arrow_key(uint16_t keycode, keyrecord_t* record) {
+    arrow_bit_t arrow = arrow_bit(keycode);
 
-            arrow_state.ctrl_active = false;
+    if (!record->event.pressed) {
+        clear_arrow(arrow);
+        arrow_state.last_press = timer_read();
+        return true;
+    }
+
+    set_arrow(arrow);
+
+    if (arrow_state.ctrl_active) {
+        uint32_t delay = timer_read() - arrow_state.last_press;
+        bool is_retrigger = (arrow_state.last_key == arrow) && (delay <= 150);
+        if (!is_retrigger) {
             arrow_state.last_key = arrow;
-        } else {
-            clear_arrow(arrow);
-            arrow_state.last_press = timer_read();
-        }
-        if (mark_active) {
-            arrow_update_mods(MOD_BIT_LSHIFT, 0x00);
-        }
-        return true;
-    }
-
-    if (is_hrm(keycode) && QK_MOD_TAP_GET_MODS(keycode) & MOD_MASK_CS) {
-        if (!record->tap.count){
-            if (mark_active) {
-                arrow_update_mods(MOD_BIT_LSHIFT, 0x00);
-            } else {
-                arrow_update_mods(0x00, 0x00);
-            }
-            return true;
-        }
-    }
-
-    if (keycode == CTRLLK) {
-        if (record->event.pressed && ctrllock_active) {
-            arrow_update_mods(MOD_BIT_LCTRL, 0x00);
-        } else {
-            arrow_update_mods(0x00, 0x00);
-        }
-        return true;
-    }
-    if (keycode == MARK) {
-        if (record->event.pressed && mark_active) {
-            arrow_update_mods(MOD_BIT_LSHIFT, 0x00);
-        } else {
-            arrow_update_mods(0x00, 0x00);
-        }
-        return true;
-    }
-
-    if (keycode == CS_AL4) {
-        if (record->tap.count) {
-            return true;
-        }
-
-        if (record->event.pressed) {
-            arrow_state.ctrl_active = true;
-            arrow_update_mods(MOD_BIT_LCTRL, 0x00);
-        } else if (arrow_state.ctrl_active) {
-            arrow_state.ctrl_active = false;
-            arrow_update_mods(0x00, MOD_BIT_LCTRL);
-        }
-        return true;
-    }
-
-    if (IS_LAYER_ON(_EDIT_OVERLAY)) {
-        if (keycode == CS_LCTL) {
-            if (record->event.pressed) {
-                arrow_update_mods(MOD_BIT_LCTRL, 0x00);
-                arrow_state.ctrl_active = true;
-            }
-            return true;
+            apply_ctrl_lock_mods();
+            return false;
         }
     }
 
     arrow_state.ctrl_active = false;
-    return true;
+    arrow_state.last_key = arrow;
+    apply_mark_mods();
+    return false;
+}
+
+static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
+    if (is_arrow(keycode)) {
+        return process_arrow_key(keycode, record);
+    }
+
+    if (is_hrm(keycode) && (QK_MOD_TAP_GET_MODS(keycode) & MOD_MASK_CS)) {
+        if (!record->tap.count) {
+            apply_mark_mods();
+            return true;
+        }
+        /* falls through to the checks below when tap.count is nonzero */
+    }
+
+    switch (keycode) {
+        case CTRLLK:
+            apply_conditional_mod(record->event.pressed && ctrllock_active, MOD_BIT_LCTRL);
+            return true;
+
+        case MARK:
+            apply_conditional_mod(record->event.pressed && mark_active, MOD_BIT_LSHIFT);
+            return true;
+
+        case CS_AL4:
+            if (record->tap.count) {
+                return true;
+            }
+            if (record->event.pressed) {
+                arrow_state.ctrl_active = true;
+                apply_ctrl_lock_mods();
+            } else if (arrow_state.ctrl_active) {
+                arrow_state.ctrl_active = false;
+                arrow_update_mods(0x00, MOD_BIT_LCTRL);
+            }
+            return true;
+
+        case CS_LCTL:
+            if (IS_LAYER_ON(_EDIT_OVERLAY)) {
+                if (record->event.pressed) {
+                    arrow_update_mods(MOD_BIT_LCTRL, 0x00);
+                    return true;
+                }
+            }
+            // fallthrough
+
+        default:
+            arrow_state.ctrl_active = false;
+            return true;
+
+    }
 }
 
 static bool process_mark(uint16_t keycode, keyrecord_t* record) {
