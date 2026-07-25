@@ -187,6 +187,12 @@ enum custom_keycodes {
 #define RA_DELR LALT_T(KC_DEL)
 #define RG_DEL  RGUI_T(KC_DEL)
 
+// Utility home row mods
+#define RS_F1  RSFT_T(KC_F1)
+#define RC_F2  RCTL_T(KC_F2)
+#define RA_F3  LALT_T(KC_F3)
+#define RG_F11 RGUI_T(KC_F11)
+
 // Layer keys
 #define CS_LT3 LT(_UTILITY,KC_ENT)
 #define CS_LT2 LT(_EDIT,MAGIC)
@@ -522,7 +528,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
            ALTTAB, NAVTABS, KC_PAUS, CS_VOLU, OLEDTOG, OLEDSAV,                      CS_RGBN,   KC_F7,   KC_F8,   KC_F9,  KC_F10, CS_BOOT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          _______, KC_LGUI, CS_MPRV, CS_VOLD, CS_MNXT,   BASIC,                         BASE,   KC_F1,   KC_F2,   KC_F3,  KC_F11, KC_LALT,
+          _______, KC_LGUI, CS_MPRV, CS_VOLD, CS_MNXT,   BASIC,                         BASE,   RS_F1,   RC_F2,   RA_F3,  RG_F11, KC_LALT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, DB_TOGG,  KC_INS,    MUTE, KC_PSCR,    MENU,                      CS_RGBT,   KC_F4,   KC_F5,   KC_F6,  KC_F12, KC_SCRL,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -772,6 +778,11 @@ static inline bool is_hrm(uint16_t keycode) {
         case RC_DELW:
         case RA_DELR:
         case RG_DEL:
+
+        case RS_F1:
+        case RC_F2:
+        case RA_F3:
+        case RG_F11:
             return true;
         default:
             return false;
@@ -1369,6 +1380,7 @@ static bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
         case RS_RPRN:
         case RS_1:
         case RS_DELL:
+        case RS_F1:
             homerow_mod(MOD_BIT(KC_RSFT), record);
             break;
         // RCTL
@@ -1376,6 +1388,7 @@ static bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
         case RC_LPRN:
         case RC_2:
         case RC_DELW:
+        case RC_F2:
             homerow_mod(MOD_BIT(KC_RCTL), record);
             break;
         // RALT
@@ -1383,6 +1396,7 @@ static bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
         case RA_CIRC:
         case RA_3:
         case RA_DELR:
+        case RA_F3:
             homerow_mod(MOD_BIT(KC_LALT), record);
             break;
         // RGUI
@@ -1390,6 +1404,7 @@ static bool process_homerow_mod_tap(uint16_t keycode, keyrecord_t* record) {
         case RG_UNDS:
         case RG_0:
         case RG_DEL:
+        case RG_F11:
             homerow_mod(MOD_BIT(KC_RGUI), record);
             break;
     }
@@ -1562,14 +1577,14 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
         return true;
     }
 
-    uint8_t mod = mod_config(QK_MOD_TAP_GET_MODS(keycode));
+    /* uint8_t mod = mod_config(QK_MOD_TAP_GET_MODS(keycode)); */
 
-    if (mod & MOD_LALT || mod & MOD_RALT ) {
-        return false;
-    }
-    if (mod & MOD_LGUI || mod & MOD_RGUI ) {
-        return false;
-    }
+    /* if (mod & MOD_LALT || mod & MOD_RALT ) { */
+    /*     return false; */
+    /* } */
+    /* if (mod & MOD_LGUI || mod & MOD_RGUI ) { */
+    /*     return false; */
+    /* } */
 
     return true;
 }
@@ -1644,11 +1659,9 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
             return true;
 
         case CS_LT2:
-            // Block holds on outer three columns of right hand
             if (other_key_handedness == 'R' &&
-                (other_record->event.key.col == 0 ||
-                 other_record->event.key.col == 1 ||
-                 other_record->event.key.col == 2)) {
+                (other_record->event.key.col >= 0 &&
+                 other_record->event.key.col <= 2)) {
                 return false;
             }
             return true;
