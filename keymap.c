@@ -1,5 +1,6 @@
 /* -*- eval: (progn (apheleia-mode -1) (setq-local eglot-ignored-server-capabilities '(:documentOnTypeFormattingProvider))) -*- */
 
+#include "modifiers.h"
 #include QMK_KEYBOARD_H
 #include "print.h"
 #include "version.h"
@@ -2670,12 +2671,15 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
         return process_arrow_key(keycode, record);
     }
 
-    if (is_hrm(keycode) && (QK_MOD_TAP_GET_MODS(keycode) & MOD_MASK_CS)) {
-        if (!record->tap.count) {
+    if (is_hrm(keycode) && !record->tap.count) {
+        if (QK_MOD_TAP_GET_MODS(keycode) & MOD_MASK_CTRL) {
             apply_mark_mods();
             return true;
         }
-        /* falls through to the checks below when tap.count is nonzero */
+        if (QK_MOD_TAP_GET_MODS(keycode) & MOD_MASK_AG) {
+            mark_active = false;
+            return true;
+        }
     }
 
     switch (keycode) {
