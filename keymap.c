@@ -2777,6 +2777,7 @@ static bool process_mark(uint16_t keycode, keyrecord_t* record) {
             if (ctrllock_active) {
                 add_oneshot_mods(MOD_BIT(KC_LCTL));
             }
+            mark_active = false;
             break;
 
         case MARK:
