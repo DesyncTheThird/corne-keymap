@@ -4668,7 +4668,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case RG_0:
             if (record->tap.count && record->event.pressed) {
-                cs_tap_code16(KC_0);
+                tap_code(KC_0);
             }
             return false;
 
