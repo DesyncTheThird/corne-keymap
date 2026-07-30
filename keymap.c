@@ -1,6 +1,7 @@
 /* -*- eval: (progn (apheleia-mode -1) (setq-local eglot-ignored-server-capabilities '(:documentOnTypeFormattingProvider))) -*- */
 
 #include "modifiers.h"
+#include "rgb_matrix.h"
 #include QMK_KEYBOARD_H
 #include "print.h"
 #include "version.h"
@@ -5334,9 +5335,14 @@ void keyboard_post_init_user(void) {
 
     update_sync();
 
-    rgb_matrix_enable_noeeprom();
     rgb_matrix_sethsv_noeeprom(255,255,255);
     rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_boot_animation_effect);
+
+    if ((matrix_get_row(left_lower) & (1 << 5)) || (matrix_get_row(right_lower) & (1 << 5))) {
+        rgb_matrix_disable_noeeprom();
+    } else {
+        rgb_matrix_enable_noeeprom();
+    }
 
     clock_token = defer_exec(1000, clock_callback, NULL);
 
