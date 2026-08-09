@@ -2746,7 +2746,7 @@ static bool process_mark(uint16_t keycode, keyrecord_t* record) {
         case KC_DOWN:
         case KC_PGUP:
         case KC_PGDN:
-            if (get_mods() && MOD_MASK_AG) {
+            if (get_mods() & MOD_MASK_AG) {
                 break;
             }
             if (mark_active) {
@@ -2762,7 +2762,7 @@ static bool process_mark(uint16_t keycode, keyrecord_t* record) {
         case KC_END:
         case CS_END:
         case EO_END:
-            if (get_mods() && MOD_MASK_AG) {
+            if (get_mods() & MOD_MASK_AG) {
                 break;
             }
             if (mark_active) {
@@ -2788,6 +2788,10 @@ static bool process_mark(uint16_t keycode, keyrecord_t* record) {
 
         case CTRLLK:
             ctrllock_active = !ctrllock_active;
+            break;
+
+        case CS_LCTL:
+        case KC_LCTL:
             break;
 
         default:
@@ -5339,8 +5343,10 @@ void keyboard_post_init_user(void) {
     rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_boot_animation_effect);
 
     if ((matrix_get_row(left_lower) & (1 << 5)) || (matrix_get_row(right_lower) & (1 << 5))) {
+        rgb_state.active = false;
         rgb_matrix_disable_noeeprom();
     } else {
+        rgb_state.active = true;
         rgb_matrix_enable_noeeprom();
     }
 
