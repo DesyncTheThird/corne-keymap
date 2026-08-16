@@ -2804,6 +2804,19 @@ static bool process_mark(uint16_t keycode, keyrecord_t* record) {
 static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
 
+        case EO_END:
+            if (record->event.pressed) {
+                cs_tap_code16_del_mods(LSFT(KC_END), MOD_MASK_CTRL);
+                mark_active = true;
+            }
+            return false;
+        case EO_HOME:
+            if (record->event.pressed) {
+                cs_tap_code16_del_mods(LSFT(KC_HOME), MOD_MASK_CTRL);
+                mark_active = true;
+            }
+            return false;
+
         case SELECT:
             if (record->event.pressed) {
                 if (ctrl_on()) {
@@ -2884,6 +2897,53 @@ static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
 
+        case SPC_UP:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                if (!shifted() && !ctrl_on()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_HOME);
+                    tap_code(KC_ENT);
+                    tap_code(KC_UP);
+                    tap_code(KC_END);
+                } else {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LCTL(KC_BSPC));
+                }
+                set_mods(mods);
+
+            }
+            return false;
+        case JOIN:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                if (!shifted() && !ctrl_on()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_END);
+                    tap_code16(LCTL(KC_DEL));
+                    tap_code(KC_SPC);
+                } else {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_END);
+                    tap_code16(LCTL(KC_DEL));
+                }
+                set_mods(mods);
+            }
+            return false;
+        case SPC_DN:
+            if (record->event.pressed) {
+                const uint8_t mods = get_mods();
+                if (!shifted() && !ctrl_on()) {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code(KC_END);
+                    tap_code(KC_ENT);
+                } else {
+                    del_mods(MOD_MASK_CSAG);
+                    tap_code16(LCTL(KC_DEL));
+                }
+                set_mods(mods);
+            }
+            return false;
     }
     return true;
 }
@@ -4326,54 +4386,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        case SPC_UP:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                if (!shifted() && !ctrl_on()) {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code(KC_HOME);
-                    tap_code(KC_ENT);
-                    tap_code(KC_UP);
-                    tap_code(KC_END);
-                } else {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code16(LCTL(KC_BSPC));
-                }
-                set_mods(mods);
-
-            }
-            break;
-        case JOIN:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                if (!shifted() && !ctrl_on()) {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code(KC_END);
-                    tap_code16(LCTL(KC_DEL));
-                    tap_code(KC_SPC);
-                } else {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code(KC_END);
-                    tap_code16(LCTL(KC_DEL));
-                }
-                set_mods(mods);
-            }
-            break;
-        case SPC_DN:
-            if (record->event.pressed) {
-                const uint8_t mods = get_mods();
-                if (!shifted() && !ctrl_on()) {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code(KC_END);
-                    tap_code(KC_ENT);
-                } else {
-                    del_mods(MOD_MASK_CSAG);
-                    tap_code16(LCTL(KC_DEL));
-                }
-                set_mods(mods);
-            }
-            break;
-
         case CS_CONJ:
             if (record->event.pressed) {
                 const uint8_t mods = get_mods();
@@ -4564,17 +4576,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                     tap_code(KC_HOME);
                 }
                 set_mods(mods);
-            }
-            break;
-
-        case EO_END:
-            if (record->event.pressed) {
-                cs_tap_code16_del_mods(LSFT(KC_END), MOD_MASK_CTRL);
-            }
-            break;
-        case EO_HOME:
-            if (record->event.pressed) {
-                cs_tap_code16_del_mods(LSFT(KC_HOME), MOD_MASK_CTRL);
             }
             break;
 
