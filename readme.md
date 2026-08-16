@@ -577,7 +577,7 @@ The `++` macro outputs `1` on first press and increments on subsequent presses, 
 
 The right thumb keys also have additional layering actions:
 - Activating both `Edit` and `Terminal` layers will activate the [`Edit Overlay`](#edit-overlay), which contains macros useful for editing, and also hold the `LCTL` or `LSFT` modifier for various keys on the left hand.
-- Activating both `Edit` and `Symbol` layers will replace the right hand with a copy of the `Data` layer (with `_` replaced by `0`, since the thumb keys are not accessible in this configuration). The `OSL Data` key also enables this layer for one keypress.
+- Activating both `Edit` and `Symbol` layers will replace the right hand with a copy of the `Data` layer (with `_` replaced by `0`, since the thumb keys are not accessible in this configuration). The `OSL Data` key also enables this layer until a non-number non-arrow key is pressed.
 
 These are both implemented via the tri-layer feature, so the layer keys may be released in any order without issue.
 

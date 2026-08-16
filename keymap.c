@@ -47,6 +47,7 @@ enum custom_keycodes {
     BASIC,
     BASE,
     MENU,
+    OSLDATA,
 
     CS_END,
     CS_HOME,
@@ -237,7 +238,6 @@ enum custom_keycodes {
 
 // Other
 #define OSMLSFT OSM(MOD_LSFT)
-#define OSLDATA OSL(_DATA_OVERLAY)
 
 static inline uint16_t cs_map(uint16_t keycode) {
     switch (keycode) { 
@@ -591,6 +591,7 @@ typedef struct {
     bool alt_tab_active :1;
     bool capsword_active :1;
     bool control_override :1;
+    bool data_transient :1;
 } misc_key_flags_t;
 
 static misc_key_flags_t misc_key_state = {
@@ -598,7 +599,8 @@ static misc_key_flags_t misc_key_state = {
     .RT3_active = false,
     .alt_tab_active = false,
     .capsword_active = false,
-    .control_override = true
+    .control_override = true,
+    .data_transient = false,
 };
 
 typedef struct {
@@ -2801,6 +2803,29 @@ static bool process_mark(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
+
+
+static bool process_data_transient(uint16_t keycode, keyrecord_t* record) {
+    if (!record->event.pressed) {
+        return true;
+    }
+
+    if (keycode == OSLDATA) {
+        misc_key_state.data_transient = true;
+        layer_on(_DATA_OVERLAY);
+        return true;
+    }
+
+    if (!(is_num(cs_map(keycode)) || is_arrow(keycode)) && misc_key_state.data_transient) {
+        misc_key_state.data_transient = false;
+        layer_off(_DATA_OVERLAY);
+    }
+
+    return true;
+}
+
+
+
 static bool process_edit_macros(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
 
@@ -3383,7 +3408,6 @@ typedef struct {
     uint16_t last_key_3;
     bool dynamic :1;
     bool context :1;
-    bool mark :1;
 } recent_key_state_t;
 
 static recent_key_state_t recent_key_state = {
@@ -3393,7 +3417,6 @@ static recent_key_state_t recent_key_state = {
     .last_key_3  = KC_NO,
     .dynamic     = false,
     .context     = false,
-    .mark        = false,
 };
 
 static inline bool is_last_key(uint16_t keycode) {
@@ -4336,6 +4359,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     if (!process_trackball_keys(keycode, record)) { return false; }
     if (!process_cs_layer_tap(keycode, record)) { return false; }
     if (!process_edit_macros(keycode, record)) { return false; }
+    if (!process_data_transient(keycode, record)) { return false; }
     if (!process_clock_controls(keycode, record)) { return false; }
     if (!process_volume_controls(keycode, record)) { return false; }
     if (!process_mouse_lock(keycode, record)) { return false; }
