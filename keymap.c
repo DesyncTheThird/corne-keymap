@@ -55,6 +55,8 @@ enum custom_keycodes {
     COMMENT,
 
     MUTE,
+    MUTE_L,
+    MUTE_R,
     CS_VOLD,
     CS_VOLU,
     CS_MPRV,
@@ -532,7 +534,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           _______, DB_TOGG,  KC_INS,    MUTE, KC_PSCR,    MENU,                      CS_RGBT,   KC_F4,   KC_F5,   KC_F6,  KC_F12, KC_SCRL,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                              KC_MSTP,    MUTE, KC_MPLY,    KC_MPLY,    MUTE, KC_MSTP
+                                              KC_MSTP,  MUTE_L, KC_MPLY,    KC_MPLY,  MUTE_R, KC_MSTP
                                           //`--------------------------'  `--------------------------'
     ),
 };
@@ -4468,6 +4470,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case MUTE:
             if (record->event.pressed) {
+                register_code(KC_MUTE);
+                oled_state.muted = !oled_state.muted;
+            } else {
+                unregister_code(KC_MUTE);
+            }
+            break;
+        case MUTE_L:
+            if (record->event.pressed && misc_key_state.RT3_active) {
+                register_code(KC_MUTE);
+                oled_state.muted = !oled_state.muted;
+            } else {
+                unregister_code(KC_MUTE);
+            }
+            break;
+
+        case MUTE_R:
+            if (record->event.pressed && misc_key_state.LT3_active) {
                 register_code(KC_MUTE);
                 oled_state.muted = !oled_state.muted;
             } else {
