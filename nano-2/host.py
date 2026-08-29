@@ -96,13 +96,26 @@ def open_device(cfg):
                 return None
 
 
-def ensure_connected(device, cfg):
-    while device is None and running.is_set():
-        logger.debug("Waiting for device (VID=%s, PID=%s)...",
-                       hex(cfg["vendor_id"]), hex(cfg["product_id"]))
-        time.sleep(RECONNECT_INTERVAL)
-        device = open_device(cfg)
-    return device
+class ConnectionState:
+    def __init__(self, cfg, name):
+        self.cfg = cfg
+        self.name = name
+        self.next_attempt_at = 0.0
+
+    def poll(self, device):
+        if device is not None:
+            return device
+
+        now = time.time()
+        if now < self.next_attempt_at:
+            return None
+
+        device = open_device(self.cfg)
+        if device is None:
+            self.next_attempt_at = now + RECONNECT_INTERVAL
+        else:
+            self.next_attempt_at = 0.0
+        return device
 
 
 def safe_read(device, length):
@@ -164,14 +177,14 @@ def pass_messages():
     devA = None
     devB = None
 
+    state_a = ConnectionState(KEYBOARD, "Keyboard")
+    state_b = ConnectionState(TRACKBALL, "Trackball")
+
     logger.info("Pass-through loop started.")
 
     while running.is_set():
-        devA = ensure_connected(devA, KEYBOARD)
-        devB = ensure_connected(devB, TRACKBALL)
-
-        if not running.is_set():
-            break
+        devA = state_a.poll(devA)
+        devB = state_b.poll(devB)
 
         now = time.time()
         if abs(now - last_time_sent) >= TIME_SEND_INTERVAL:
@@ -179,30 +192,32 @@ def pass_messages():
             dt = datetime.now()
             time_report = make_report(time_format(dt), KEYBOARD["report_length"])
             if devA:
-                safe_write(devA, time_report)
-                log_time("Host → KB", time_report[1:])
+                if not safe_write(devA, time_report):
+                    devA = handle_disconnect(devA, "Keyboard")
+                else:
+                    log_time("Host → KB", time_report[1:])
 
-        dataA = safe_read(devA, KEYBOARD["report_length"])
-        if dataA is None:
-            devA = handle_disconnect(devA, "Keyboard")
-            continue
-        if dataA:
-            report = make_report(process_A_to_B(dataA), TRACKBALL["report_length"])
-            if not safe_write(devB, report):
-                devB = handle_disconnect(devB, "Trackball")
-                continue
-            log_data("KB → TB", report[1:])
-
-        dataB = safe_read(devB, TRACKBALL["report_length"])
-        if dataB is None:
-            devB = handle_disconnect(devB, "Trackball")
-            continue
-        if dataB:
-            report = make_report(process_B_to_A(dataB), KEYBOARD["report_length"])
-            if not safe_write(devA, report):
+        if devA:
+            dataA = safe_read(devA, KEYBOARD["report_length"])
+            if dataA is None:
                 devA = handle_disconnect(devA, "Keyboard")
-                continue
-            log_data("TB → KB", report[1:])
+            elif dataA and devB:
+                report = make_report(process_A_to_B(dataA), TRACKBALL["report_length"])
+                if not safe_write(devB, report):
+                    devB = handle_disconnect(devB, "Trackball")
+                else:
+                    log_data("KB → TB", report[1:])
+
+        if devB:
+            dataB = safe_read(devB, TRACKBALL["report_length"])
+            if dataB is None:
+                devB = handle_disconnect(devB, "Trackball")
+            elif dataB and devA:
+                report = make_report(process_B_to_A(dataB), KEYBOARD["report_length"])
+                if not safe_write(devA, report):
+                    devA = handle_disconnect(devA, "Keyboard")
+                else:
+                    log_data("TB → KB", report[1:])
 
         time.sleep(0.001)
 
