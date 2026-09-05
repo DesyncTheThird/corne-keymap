@@ -619,7 +619,7 @@ Right hand as above. The `Left Shift` key on this layer additionally sets a one 
 
 The `Volume Up/Down` macros rapidly and repeatedly send the volume control keycodes for smooth volume control; holding `Shift` sends the keycodes only once for finer control.
 
-When holding `Ctrl`, the volume keys will instead set the OLED clock: `Mute` will change the clock setting, and the `Volume Up/Down` keys will change the current setting up and down.
+When holding `Ctrl`, the volume keys will instead set the OLED clock: `Mute` and the `Next/Previous Media` keys will change the current clock setting, and the `Volume Up/Down` keys will change the current setting up and down.
 
 The `Basic` key disables home row mods, combos, and `Space` layer-tap (the right hand of the `Data` layer is still accessible by simultaneously activating `Edit` and `Symbol` layers). The `Base` additionally changes the base layout to QWERTY.
 
@@ -739,7 +739,7 @@ Precompiled binaries for RP2040 controllers can be found [here](/compiled/). Oth
 > [!CAUTION]
 > Unmodified, this keymap will not fit on most AVR MCUs (and in fact may fail to compile in some cases due to overflowing 8-bit integers).
 
-For reference, my compiled uf2 file is 220kB (accurate as of commit [`dd59929`](https://github.com/DesyncTheThird/corne-keymap/tree/dd599294d9cbd42c863b7d2914a1f687b2181fc3)), though you should be able to save a significant amount of space by removing various OLED animations, deleting unused layers (along with the associated OLED layout `PROGMEM`), and disabling additional RGB animations (the `CS_RGBN` key will need to be updated in this case).
+For reference, my compiled uf2 file is 232KB (accurate as of commit [`0325ccf`](https://github.com/DesyncTheThird/corne-keymap/tree/0325ccf699979b327352a96842c8ab4cce4c9cc1)), though you should be able to save a significant amount of space by removing various OLED animations, deleting unused layers (along with the associated OLED layout `PROGMEM`), and disabling additional RGB animations (the `CS_RGBN` key will need to be updated in this case).
 
 See [here](https://docs.qmk.fm/squeezing_avr) for more ways to save space. (Most space-saving `rules.mk` and `config.h` options have already been enabled; only modify those files if you have disabled additional features in `keymap.c`.)
 

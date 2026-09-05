@@ -4277,6 +4277,18 @@ static deferred_token clock_down_token = INVALID_DEFERRED_TOKEN;
 
 static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
+        case CS_MPRV:
+            if (!ctrl_on() || !record->event.pressed) {
+                return true;
+            }
+            clock_state.setting = clock_state.setting == 0 ? 3 : clock_state.setting - 1;
+            return false;
+        case CS_MNXT:
+            if (!ctrl_on() || !record->event.pressed) {
+                return true;
+            }
+            clock_state.setting = (clock_state.setting + 1) % 4;
+            return false;
         case MUTE:
             if (!ctrl_on()) {
                 return true;
@@ -4289,7 +4301,7 @@ static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
                     clock_state.setting = clock_state.setting == 0 ? 3 : clock_state.setting - 1;
                 }
             }
-            return true;
+            return false;
 
         case CS_VOLU:
             if (!ctrl_on()) {
@@ -4303,7 +4315,7 @@ static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
                 cancel_deferred_exec(clock_up_token);
                 clock_up_token = INVALID_DEFERRED_TOKEN;
             }
-            return true;
+            return false;
 
         case CS_VOLD:
             if (!ctrl_on()) {
@@ -4317,7 +4329,7 @@ static bool process_clock_controls(uint16_t keycode, keyrecord_t* record) {
                 cancel_deferred_exec(clock_down_token);
                 clock_down_token = INVALID_DEFERRED_TOKEN;
             }
-            return true;
+            return false;
 
         default: 
             return true;
