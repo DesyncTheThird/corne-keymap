@@ -2685,11 +2685,14 @@ static bool process_arrow_retrigger(uint16_t keycode, keyrecord_t* record) {
 
     switch (keycode) {
         case CTRLLK:
-            apply_conditional_mod(record->event.pressed && ctrllock_active, MOD_BIT_LCTRL);
+            if (record->event.pressed) {
+                apply_conditional_mod(record->event.pressed && ctrllock_active, MOD_BIT_LCTRL);
+            }
             return true;
-
         case MARK:
-            apply_conditional_mod(record->event.pressed && mark_active, MOD_BIT_LSHIFT);
+            if (record->event.pressed) {
+                apply_conditional_mod(mark_active, MOD_BIT_LSHIFT);
+            }
             return true;
 
         case CS_AL4:
@@ -4127,7 +4130,6 @@ static bool process_lingering_mods(uint16_t keycode, keyrecord_t* record) {
     if (keycode == CS_LCTL) {
         ctrl_linger = true;
         defer_exec(LINGERING_MOD_TIMEOUT, ctrl_linger_callback, NULL);
-        clear_oneshot_mods();
         return true;
     }
 
