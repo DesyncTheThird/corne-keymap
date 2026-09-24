@@ -207,7 +207,7 @@ enum custom_keycodes {
 
 #define CS_AL1 LT(_TERMINAL,KC_0)
 #define CS_AL2 LT(_EDIT,CS_BSLS)
-#define CS_AL3 LT(_EDIT,KC_NUBS)
+#define CS_AL3 LT(_EDIT,KC_EXLM)
 #define CS_AL4 LT(_EDIT_OVERLAY,KC_0)
 
 // Custom tap-hold keys
@@ -408,11 +408,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_TERMINAL] = LAYOUT( //06
       //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-           KC_GRV,   CS_LT, CS_MINS, CS_PLUS,   CS_GT, CS_CONJ,                      CY_ENUM, CS_RCBR, CS_LCBR, CS_TILD, KC_SCLN,  KC_DEL,
+           KC_GRV,   CS_LT, CS_MINS, CS_CIRC,   CS_GT, CS_CONJ,                      CY_ENUM, CS_RCBR, CS_LCBR, CS_TILD, KC_SCLN,  KC_DEL,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
           OSMLSFT, CS_TILD, CS_ASTR, CS_SLSH,  CS_DOT, CS_DISJ,                      OSLDATA, RS_RPRN, RC_LPRN, RA_CIRC, RG_UNDS, TABRSFT,
       //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-          CS_LCTL, CS_CIRC, CS_COLN, CS_UNDS, CS_EXLM,  CS_DLR,                      COMMENT, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
+          CS_LCTL, CS_PLUS, CS_COLN,  CS_DLR, CS_DQUO, CS_UNDS,                      COMMENT, CS_RBRC, CS_LBRC, CS_EXLM, CS_QUES,  KC_ENT,
       //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                               _______,  CS_AL3, _______,    _______, _______, _______
                                           //`--------------------------'  `--------------------------'
@@ -1760,7 +1760,7 @@ static bool process_cs_layer_tap(uint16_t keycode, keyrecord_t* record) {
         case CS_AL3:
             tap_hold_tri_layer(record, _EDIT, _TERMINAL, _EDIT_OVERLAY);
             if (record->tap.count && record->event.pressed) {
-                cs_tap_code16(KC_NUBS);
+                cs_tap_code16(KC_EXLM);
             }
             return false;
         case CS_AL4:
@@ -2815,7 +2815,7 @@ static bool process_data_transient(uint16_t keycode, keyrecord_t* record) {
         return true;
     }
 
-    if (!(is_num(cs_map(keycode)) || is_arrow(keycode)) && misc_key_state.data_transient) {
+  if (!(is_num(cs_map(keycode)) || is_arrow(keycode) || is_bspc(keycode)) && misc_key_state.data_transient) {
         misc_key_state.data_transient = false;
         layer_off(_DATA_OVERLAY);
     }
@@ -5437,16 +5437,23 @@ bool shutdown_user(bool jump_to_bootloader) {
 // int column5[] = {     21, 22, 23,     48, 49, 50};
 // int column6[] = {     26, 25, 24,     53, 52, 51};
 
+rgb_t hsv_to_rgb_limited(hsv_t hsv) {
+    if (hsv.v >= RGB_MATRIX_MAXIMUM_BRIGHTNESS) {
+        hsv.v = RGB_MATRIX_MAXIMUM_BRIGHTNESS;
+    };
+    return hsv_to_rgb(hsv);
+}
+
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (case_lock_state.capturing || sync_data.case_lock.capturing) {
         for (uint8_t index = 6; index < 27; index++) {
-            rgb_t green = hsv_to_rgb((hsv_t){ 85, 255, 100 });
+            rgb_t green = hsv_to_rgb_limited((hsv_t){ 85, 255, 100 });
             rgb_matrix_set_color(index, green.r, green.g, green.b);
             rgb_matrix_set_color(index+27, green.r, green.g, green.b);
         }
     } else if (case_lock_state.active || sync_data.case_lock.active) {
         for (uint8_t index = 6; index < 27; index++) {
-            rgb_t red = hsv_to_rgb((hsv_t){ 255, 255, 100 });
+            rgb_t red = hsv_to_rgb_limited((hsv_t){ 255, 255, 100 });
             rgb_matrix_set_color(index, red.r, red.g, red.b);
             rgb_matrix_set_color(index+27, red.r, red.g, red.b);
         }
@@ -5456,57 +5463,57 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
 
     hsv_t arrow_hsv = (hsv_t){ 169, 255, 255 };
-    rgb_t arrow_rgb = hsv_to_rgb(arrow_hsv);
+    rgb_t arrow_rgb = hsv_to_rgb_limited(arrow_hsv);
 
     hsv_t underglow_hsv = (hsv_t){ 0, 0, 0 };
-    rgb_t underglow_rgb = hsv_to_rgb(underglow_hsv);
+    rgb_t underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
 
     switch (get_highest_layer(layer_state|default_layer_state)) {
         case _TERMINAL:
             underglow_hsv = (hsv_t){ 85, 255, 255 };
-            underglow_rgb = hsv_to_rgb(underglow_hsv);
+            underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
             for (uint8_t i = 0; i < 12; i++) {
                 rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
             }
             break;
         case _DATA:
             underglow_hsv = (hsv_t){ 127, 255, 255 };
-            underglow_rgb = hsv_to_rgb(underglow_hsv);
+            underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
             for (uint8_t i = 0; i < 12; i++) {
                 rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
             }
             break;
         case _EDIT:
             underglow_hsv = (hsv_t){ 0, 255, 255 };
-            underglow_rgb = hsv_to_rgb(underglow_hsv);
+            underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
             for (uint8_t i = 0; i < 12; i++) {
                 rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
             }
             break;
         case _SYMBOL:
             underglow_hsv = (hsv_t){ 169, 255, 255 };
-            underglow_rgb = hsv_to_rgb(underglow_hsv);
+            underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
             for (uint8_t i = 0; i < 12; i++) {
                 rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
             }
             break;
         case _MOUSE:
             underglow_hsv = (hsv_t){ 222, 255, 255 };
-            underglow_rgb = hsv_to_rgb(underglow_hsv);
+            underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
             for (uint8_t i = 0; i < 12; i++) {
                 rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
             }
             break;
         case _NUMPAD:
             underglow_hsv = (hsv_t){ 43, 255, 255 };
-            underglow_rgb = hsv_to_rgb(underglow_hsv);
+            underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
             for (uint8_t i = 0; i < 12; i++) {
                 rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
             }
             break;
         case _UTILITY:
             underglow_hsv = (hsv_t){ 201, 255, 255 };
-            underglow_rgb = hsv_to_rgb(underglow_hsv);
+            underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
             for (uint8_t i = 0; i < 12; i++) {
                 rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
             }
