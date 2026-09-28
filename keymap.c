@@ -4508,16 +4508,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        case MENU:
-            if (record->event.pressed) {
-                if (oled_state.menu == 0) {
-                    oled_state.menu = 1;
-                } else if (oled_state.menu == 1) {
-                    oled_state.menu = 0;
-                }
-            }
-            break;
-
         case CS_RGBN:
             if (record->event.pressed) {
                 if (!shifted()) {
@@ -4549,6 +4539,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
         case OLEDSAV:
             if (record->event.pressed) {
+                if (!oled_state.active) {
+                    oled_state.active = true;
+                    break;
+                }
                 oled_state.static_display = !oled_state.static_display;
                 update_sync();
                 if (!oled_state.static_display) {
@@ -4562,6 +4556,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (record->event.pressed) {
                 oled_state.active = !oled_state.active;
                 update_sync();
+            }
+            break;
+
+        case MENU:
+            if (record->event.pressed) {
+                if (!oled_state.active || oled_state.static_display) {
+                    oled_state.active = true;
+                    oled_state.static_display = false;
+                    break;
+                }
+                if (oled_state.menu == 0) {
+                    oled_state.menu = 1;
+                } else if (oled_state.menu == 1) {
+                    oled_state.menu = 0;
+                }
             }
             break;
 
