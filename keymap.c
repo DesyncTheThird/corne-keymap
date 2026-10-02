@@ -5446,25 +5446,25 @@ bool shutdown_user(bool jump_to_bootloader) {
 // int column5[] = {     21, 22, 23,     48, 49, 50};
 // int column6[] = {     26, 25, 24,     53, 52, 51};
 
-rgb_t hsv_to_rgb_limited(hsv_t hsv) {
-    if (hsv.v >= RGB_MATRIX_MAXIMUM_BRIGHTNESS) {
-        hsv.v = RGB_MATRIX_MAXIMUM_BRIGHTNESS;
+#define UNDERGLOW_MAXIMUM_BRIGHTNESS 120
+
+rgb_t hsv_to_rgb_underglow(hsv_t hsv) {
+    if (hsv.v >= UNDERGLOW_MAXIMUM_BRIGHTNESS) {
+        hsv.v = UNDERGLOW_MAXIMUM_BRIGHTNESS;
     };
     return hsv_to_rgb(hsv);
 }
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (case_lock_state.capturing || sync_data.case_lock.capturing) {
-        for (uint8_t index = 6; index < 27; index++) {
-            rgb_t green = hsv_to_rgb_limited((hsv_t){ 85, 255, 100 });
+        for (uint8_t index = 6; index < 54; index++) {
+            rgb_t green = hsv_to_rgb_underglow((hsv_t){ 85, 255, 100 });
             rgb_matrix_set_color(index, green.r, green.g, green.b);
-            rgb_matrix_set_color(index+27, green.r, green.g, green.b);
         }
     } else if (case_lock_state.active || sync_data.case_lock.active) {
-        for (uint8_t index = 6; index < 27; index++) {
-            rgb_t red = hsv_to_rgb_limited((hsv_t){ 255, 255, 100 });
+        for (uint8_t index = 6; index < 54; index++) {
+            rgb_t red = hsv_to_rgb_underglow((hsv_t){ 255, 255, 100 });
             rgb_matrix_set_color(index, red.r, red.g, red.b);
-            rgb_matrix_set_color(index+27, red.r, red.g, red.b);
         }
     }
 
@@ -5472,57 +5472,57 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     int underglow[12] = { 0, 1, 2, 3, 4, 5, 27, 28, 29, 30, 31, 32 };
 
     hsv_t arrow_hsv = (hsv_t){ 169, 255, 255 };
-    rgb_t arrow_rgb = hsv_to_rgb_limited(arrow_hsv);
+    rgb_t arrow_rgb = hsv_to_rgb(arrow_hsv);
 
     hsv_t underglow_hsv = (hsv_t){ 0, 0, 0 };
-    rgb_t underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
+    rgb_t underglow_rgb = hsv_to_rgb_underglow(underglow_hsv);
 
     switch (get_highest_layer(layer_state|default_layer_state)) {
         case _TERMINAL:
             underglow_hsv = (hsv_t){ 85, 255, 255 };
-            underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
+            underglow_rgb = hsv_to_rgb_underglow(underglow_hsv);
             for (uint8_t i = 0; i < 12; i++) {
                 rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
             }
             break;
         case _DATA:
             underglow_hsv = (hsv_t){ 127, 255, 255 };
-            underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
+            underglow_rgb = hsv_to_rgb_underglow(underglow_hsv);
             for (uint8_t i = 0; i < 12; i++) {
                 rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
             }
             break;
         case _EDIT:
             underglow_hsv = (hsv_t){ 0, 255, 255 };
-            underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
+            underglow_rgb = hsv_to_rgb_underglow(underglow_hsv);
             for (uint8_t i = 0; i < 12; i++) {
                 rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
             }
             break;
         case _SYMBOL:
             underglow_hsv = (hsv_t){ 169, 255, 255 };
-            underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
+            underglow_rgb = hsv_to_rgb_underglow(underglow_hsv);
             for (uint8_t i = 0; i < 12; i++) {
                 rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
             }
             break;
         case _MOUSE:
             underglow_hsv = (hsv_t){ 222, 255, 255 };
-            underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
+            underglow_rgb = hsv_to_rgb_underglow(underglow_hsv);
             for (uint8_t i = 0; i < 12; i++) {
                 rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
             }
             break;
         case _NUMPAD:
             underglow_hsv = (hsv_t){ 43, 255, 255 };
-            underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
+            underglow_rgb = hsv_to_rgb_underglow(underglow_hsv);
             for (uint8_t i = 0; i < 12; i++) {
                 rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
             }
             break;
         case _UTILITY:
             underglow_hsv = (hsv_t){ 201, 255, 255 };
-            underglow_rgb = hsv_to_rgb_limited(underglow_hsv);
+            underglow_rgb = hsv_to_rgb_underglow(underglow_hsv);
             for (uint8_t i = 0; i < 12; i++) {
                 rgb_matrix_set_color(underglow[i], underglow_rgb.r, underglow_rgb.g, underglow_rgb.b);
             }
